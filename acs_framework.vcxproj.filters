@@ -126,6 +126,9 @@
     <ClCompile Include="Source\AcsFramework_Core\Event\EventSubsystem.cpp">
       <Filter>Source\AcsFramework_Core\Event</Filter>
     </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Event\EventSubscription.cpp">
+      <Filter>Source\AcsFramework_Core\Event</Filter>
+    </ClCompile>
     <ClCompile Include="Source\AcsFramework_Core\Fade\FadeSubsystem.cpp">
       <Filter>Source\AcsFramework_Core\Fade</Filter>
     </ClCompile>
@@ -336,6 +339,9 @@
       <Filter>Source\AcsFramework_Core\Boot</Filter>
     </ClInclude>
     <ClInclude Include="Source\AcsFramework_Core\Event\EventSubsystem.h">
+      <Filter>Source\AcsFramework_Core\Event</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Event\EventSubscription.h">
       <Filter>Source\AcsFramework_Core\Event</Filter>
     </ClInclude>
     <ClInclude Include="Source\AcsFramework_Core\Fade\FadeSubsystem.h">

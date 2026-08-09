@@ -1,7 +1,8 @@
-﻿#pragma once
+﻿// SPDX-License-Identifier: Apache-2.0
+#pragma once
 #include <acs.h>
 
-#include "AcsFramework_Core/Event/EventSubsystem.h"
+#include "AcsFramework_Core/Event/EventSubscription.h"
 
 using namespace acs;
 

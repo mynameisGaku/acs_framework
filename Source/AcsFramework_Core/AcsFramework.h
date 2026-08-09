@@ -6,6 +6,7 @@
 #include "AcsFramework_Core/Assets/AssetLoaderSubsystem.h"
 #include "AcsFramework_Core/Audio/AudioSubsystem.h"
 #include "AcsFramework_Core/Boot/BootScene.h"
+#include "AcsFramework_Core/Event/EventSubscription.h"
 #include "AcsFramework_Core/Event/EventSubsystem.h"
 #include "AcsFramework_Core/Fade/FadeSubsystem.h"
 #include "AcsFramework_Core/Input/InputRepeat.h"

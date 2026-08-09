@@ -185,6 +185,7 @@
     <ClInclude Include="Source\AcsFramework_Core\App\AppSubsystem.h" />
     <ClInclude Include="Source\AcsFramework_Core\Screen\ScreenSubsystem.h" />
     <ClInclude Include="Source\AcsFramework_Core\Timer\TimerSubsystem.h" />
+    <ClInclude Include="Source\AcsFramework_Core\Event\EventSubscription.h" />
     <ClInclude Include="Source\AcsFramework_Core\Event\EventSubsystem.h" />
     <ClInclude Include="Source\AcsFramework_Sample\Scene\SampleModalScene.h" />
     <ClInclude Include="Source\AcsFramework_Core\State\AppStateSubsystem.h" />
@@ -260,6 +261,7 @@
     <ClCompile Include="Source\AcsFramework_Core\App\AppSubsystem.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Screen\ScreenSubsystem.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Timer\TimerSubsystem.cpp" />
+    <ClCompile Include="Source\AcsFramework_Core\Event\EventSubscription.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Event\EventSubsystem.cpp" />
     <ClCompile Include="Source\AcsFramework_Sample\Scene\SampleModalScene.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\State\AppStateSubsystem.cpp" />

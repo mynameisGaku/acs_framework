@@ -72,7 +72,7 @@ Core はACSの部品を再実装しない。たとえば設定の値と検証付
 | `CTimeSubsystem` | pause理由、速度、fixed step | `CGame` / `Update()` |
 | `CTimerSubsystem` | scaled / unscaled の待機処理 | engine timer / `Update()` |
 
-`FInputRepeat`、`FSaveSlotInfo`、`FGameTimer`、`ESceneTransition`は共有状態を継続更新する
+`FEventSubscription`、`FInputRepeat`、`FSaveSlotInfo`、`FGameTimer`、`ESceneTransition`は共有状態を継続更新する
 所有者ではないため、必要な利用側が値として持つ。
 
 ## 起動・更新・描画の契約

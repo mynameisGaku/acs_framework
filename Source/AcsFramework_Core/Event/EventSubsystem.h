@@ -1,78 +1,11 @@
+// SPDX-License-Identifier: Apache-2.0
 #pragma once
 
 #include <acs.h>
 
+#include "AcsFramework_Core/Event/EventSubscription.h"
+
 using namespace acs;
-
-class CEventSubsystem;
-
-/**
- * 購読の控え。
- *
- * @details
- * **持っている間だけ届き、捨てると自動で外れる。** 購読しっぱなしで購読側が先に死ぬと、
- * 次の配信で解放済みのものを呼びに行って落ちる。外し忘れが起きない形にしておく。
- *
- * 購読側 (シーンやノード) がメンバとして持つのが基本。持ち回るときはムーブする
- * (2 つが同じ購読を指すと二重に外れてしまうため、コピーはできない)。
- */
-class FEventSubscription
-{
-public:
-	/** 何も購読していない控えを作る。 */
-	FEventSubscription() noexcept = default;
-
-	/** 外してから畳む。 */
-	~FEventSubscription() noexcept { Reset(); }
-
-	/** コピー禁止 (同じ購読を 2 つが指すと二重に外れる)。 */
-	FEventSubscription( const FEventSubscription& ) = delete;
-
-	/** コピー代入も禁止。 */
-	FEventSubscription& operator=( const FEventSubscription& ) = delete;
-
-	/**
-	 * 購読を引き取って構築する。
-	 *
-	 * @param Other 引き取り元 (空になる)。
-	 */
-	FEventSubscription( FEventSubscription&& Other ) noexcept : m_Owner( Other.m_Owner ), m_Handle( Other.m_Handle )
-	{
-		Other.m_Owner = nullptr;
-		Other.m_Handle = FSubscriptionHandle{};
-	}
-
-	/**
-	 * 購読を引き取る (自分が持っていたものは先に外す)。
-	 *
-	 * @param Other 引き取り元 (空になる)。
-	 * @return 自分自身。
-	 */
-	FEventSubscription& operator=( FEventSubscription&& Other ) noexcept;
-
-	/** 購読を外す (既に外れていれば何もしない)。 */
-	void Reset() noexcept;
-
-	/** まだ購読しているかを返す。 */
-	bool IsValid() const noexcept { return m_Owner != nullptr && m_Handle.IsValid(); }
-
-private:
-	friend class CEventSubsystem;
-
-	/**
-	 * 購読済みの控えを作る。
-	 *
-	 * @param Owner 外し先。
-	 * @param Handle エンジン側の控え。
-	 */
-	FEventSubscription( CEventSubsystem& Owner, FSubscriptionHandle Handle ) noexcept : m_Owner( &Owner ), m_Handle( Handle ) {}
-
-	/** 外し先。所有はしない (GameInstance の間ずっと生きている)。 */
-	CEventSubsystem* m_Owner = nullptr;
-
-	/** エンジン側の控え。 */
-	FSubscriptionHandle m_Handle{};
-};
 
 
 /**
