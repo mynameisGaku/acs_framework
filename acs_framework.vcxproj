@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>18.0</VCProjectVersion>
+    <Keyword>Win32Proj</Keyword>
+    <ProjectGuid>{7867a8d6-1f0e-4df6-93b9-f91644af4258}</ProjectGuid>
+    <RootNamespace>acs_framework</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v145</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v145</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros">
+    <AcsDistRoot Condition="'$(AcsDistRoot)'==''">$(ACS_DIST_ROOT)</AcsDistRoot>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions);_HAS_EXCEPTIONS=1;KIT_WITH_EFFEKSEER=1;PLATFORM_WIN32=1</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalIncludeDirectories>$(AcsDistRoot);$(ProjectDir)Source;$(ProjectDir)ThirdParty\Effekseer\Dev\Cpp\Effekseer;$(ProjectDir)ThirdParty\Effekseer\Dev\Cpp\EffekseerRendererCommon;$(ProjectDir)ThirdParty\Effekseer\Dev\Cpp\EffekseerRendererLLGI;$(ProjectDir)ThirdParty\Effekseer\Dev\Cpp\EffekseerRendererDX12;$(ProjectDir)ThirdParty\Effekseer\Dev\Cpp\3rdParty\LLGI\src;$(ProjectDir)ThirdParty\Effekseer\Dev\Cpp\3rdParty\LLGI\src\Utils;$(ProjectDir)ThirdParty\DiligentCore\Common\interface;$(ProjectDir)ThirdParty\DiligentCore\Primitives\interface;$(ProjectDir)ThirdParty\DiligentCore\Platforms\Basic\interface;$(ProjectDir)ThirdParty\DiligentCore\Graphics\GraphicsEngine\interface;$(ProjectDir)ThirdParty\DiligentCore\Graphics\GraphicsEngineD3D12\interface</AdditionalIncludeDirectories>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <RuntimeTypeInfo>false</RuntimeTypeInfo>
+      <TreatAngleIncludeAsExternal>true</TreatAngleIncludeAsExternal>
+      <ExternalWarningLevel>TurnOffAllWarnings</ExternalWarningLevel>
+      <DisableAnalyzeExternal>true</DisableAnalyzeExternal>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>Common/Pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile>$(IntDir)acs_framework.pch</PrecompiledHeaderOutputFile>
+      <ForcedIncludeFiles>Common/Pch.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
+      <AdditionalOptions>/utf-8 /permissive- /Zc:__cplusplus /Zc:preprocessor /EHsc /GR- %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(AcsDistRoot)\lib\x64\$(Configuration);$(ProjectDir)ThirdParty\Effekseer\build\vs2026\Dev\Cpp\Effekseer\$(Configuration);$(ProjectDir)ThirdParty\Effekseer\build\vs2026\Dev\Cpp\EffekseerRendererCommon\$(Configuration);$(ProjectDir)ThirdParty\Effekseer\build\vs2026\Dev\Cpp\EffekseerRendererLLGI\$(Configuration);$(ProjectDir)ThirdParty\Effekseer\build\vs2026\Dev\Cpp\EffekseerRendererDX12\$(Configuration);$(ProjectDir)ThirdParty\Effekseer\build\vs2026\Dev\Cpp\3rdParty\LLGI\src\$(Configuration)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>Effekseer.lib;EffekseerRendererCommon.lib;EffekseerRendererLLGI.lib;EffekseerRendererDX12.lib;LLGI.lib;d3d12.lib;dxgi.lib;dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <!-- acs.lib / Diligent は配布物に各モジュール PDB を含まないため LNK4099 を抑止する。 -->
+      <AdditionalOptions>/ignore:4099 %(AdditionalOptions)</AdditionalOptions>
+    </Link>
+    <Manifest>
+      <EnableSegmentHeap>true</EnableSegmentHeap>
+    </Manifest>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions);_HAS_EXCEPTIONS=1;KIT_WITH_EFFEKSEER=1;PLATFORM_WIN32=1</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalIncludeDirectories>$(AcsDistRoot);$(ProjectDir)Source;$(ProjectDir)ThirdParty\Effekseer\Dev\Cpp\Effekseer;$(ProjectDir)ThirdParty\Effekseer\Dev\Cpp\EffekseerRendererCommon;$(ProjectDir)ThirdParty\Effekseer\Dev\Cpp\EffekseerRendererLLGI;$(ProjectDir)ThirdParty\Effekseer\Dev\Cpp\EffekseerRendererDX12;$(ProjectDir)ThirdParty\Effekseer\Dev\Cpp\3rdParty\LLGI\src;$(ProjectDir)ThirdParty\Effekseer\Dev\Cpp\3rdParty\LLGI\src\Utils;$(ProjectDir)ThirdParty\DiligentCore\Common\interface;$(ProjectDir)ThirdParty\DiligentCore\Primitives\interface;$(ProjectDir)ThirdParty\DiligentCore\Platforms\Basic\interface;$(ProjectDir)ThirdParty\DiligentCore\Graphics\GraphicsEngine\interface;$(ProjectDir)ThirdParty\DiligentCore\Graphics\GraphicsEngineD3D12\interface</AdditionalIncludeDirectories>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <RuntimeTypeInfo>false</RuntimeTypeInfo>
+      <TreatAngleIncludeAsExternal>true</TreatAngleIncludeAsExternal>
+      <ExternalWarningLevel>TurnOffAllWarnings</ExternalWarningLevel>
+      <DisableAnalyzeExternal>true</DisableAnalyzeExternal>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>Common/Pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile>$(IntDir)acs_framework.pch</PrecompiledHeaderOutputFile>
+      <ForcedIncludeFiles>Common/Pch.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
+      <AdditionalOptions>/utf-8 /permissive- /Zc:__cplusplus /Zc:preprocessor /EHsc /GR- %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(AcsDistRoot)\lib\x64\$(Configuration);$(ProjectDir)ThirdParty\Effekseer\build\vs2026\Dev\Cpp\Effekseer\$(Configuration);$(ProjectDir)ThirdParty\Effekseer\build\vs2026\Dev\Cpp\EffekseerRendererCommon\$(Configuration);$(ProjectDir)ThirdParty\Effekseer\build\vs2026\Dev\Cpp\EffekseerRendererLLGI\$(Configuration);$(ProjectDir)ThirdParty\Effekseer\build\vs2026\Dev\Cpp\EffekseerRendererDX12\$(Configuration);$(ProjectDir)ThirdParty\Effekseer\build\vs2026\Dev\Cpp\3rdParty\LLGI\src\$(Configuration)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>Effekseer.lib;EffekseerRendererCommon.lib;EffekseerRendererLLGI.lib;EffekseerRendererDX12.lib;LLGI.lib;d3d12.lib;dxgi.lib;dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <!-- acs.lib / Diligent は配布物に各モジュール PDB を含まないため LNK4099 を抑止する。 -->
+      <AdditionalOptions>/ignore:4099 %(AdditionalOptions)</AdditionalOptions>
+    </Link>
+    <Manifest>
+      <EnableSegmentHeap>true</EnableSegmentHeap>
+    </Manifest>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="Source\AcsFramework_Core\App\AcsFrameworkApp.h" />
+    <ClInclude Include="Source\Common\Pch.h" />
+    <ClInclude Include="Source\EntryPoint\EntryPoint.h" />
+    <ClInclude Include="Source\AcsFramework_Core\Boot\BootScene.h" />
+    <ClInclude Include="Source\AcsFramework_Sample\Scene\SampleScene.h" />
+    <ClInclude Include="Source\AcsFramework_Core\Fade\FadeSubsystem.h" />
+    <ClInclude Include="Source\AcsFramework_Core\Loading\LoadingScreenSubsystem.h" />
+    <ClInclude Include="Source\AcsFramework_Core\Assets\AssetLoaderSubsystem.h" />
+    <ClInclude Include="Source\AcsFramework_Core\Scene\SceneTravelSubsystem.h" />
+    <ClInclude Include="Source\Debug\DebugTopSample\DebugTopScene.h" />
+    <ClInclude Include="Source\Debug\DebugTop\DebugTopHUD.h" />
+    <ClInclude Include="Source\Debug\DebugTop\Element\DebugTopElement.h" />
+    <ClInclude Include="Source\Debug\DebugTop\Element\DebugTopEnum.h" />
+    <ClInclude Include="Source\Debug\DebugTop\Input\DebugTopCursor.h" />
+    <ClInclude Include="Source\Debug\DebugTop\Input\DebugTopGamepad.h" />
+    <ClInclude Include="Source\Debug\DebugTop\Input\DebugTopTextEdit.h" />
+    <ClInclude Include="Source\Debug\DebugTop\Page\DebugTopEntity.h" />
+    <ClInclude Include="Source\Debug\DebugTop\Render\DebugTopColorField.h" />
+    <ClInclude Include="Source\Debug\DebugTop\Render\DebugTopDraw.h" />
+    <ClInclude Include="Source\Debug\DebugTop\Render\DebugTopFontCache.h" />
+    <ClInclude Include="Source\Debug\DebugTop\Service\DebugTopFileDialog.h" />
+    <ClInclude Include="Source\Debug\DebugTop\Service\DebugTopSearchIndex.h" />
+    <ClInclude Include="Source\Debug\DebugTop\Settings\DebugTopSetting.h" />
+    <ClInclude Include="Source\Debug\DebugTop\Settings\DebugTopSettings.h" />
+    <ClInclude Include="Source\Debug\DebugTop\Settings\DebugTopSettingsBinary.h" />
+    <ClInclude Include="Source\Debug\DebugTop\Settings\DebugTopSettingsBytes.h" />
+    <ClInclude Include="Source\Debug\DebugTop\Settings\DebugTopSettingsFormat.h" />
+    <ClInclude Include="Source\Debug\DebugTop\Settings\DebugTopSettingsJson.h" />
+    <ClInclude Include="Source\Debug\DebugTop\Settings\DebugTopSettingsPath.h" />
+    <ClInclude Include="Source\Debug\DebugTop\Settings\DebugTopSettingsText.h" />
+    <ClInclude Include="Source\Debug\DebugTop\Settings\DebugTopSettingsVisitor.h" />
+    <ClInclude Include="Source\Debug\DebugTop\Widget\DebugTopColorPicker.h" />
+    <ClInclude Include="Source\Debug\DebugTop\Widget\DebugTopSearchBox.h" />
+    <ClInclude Include="Source\Debug\DebugTop\Widget\DebugTopToast.h" />
+    <ClInclude Include="Source\Debug\DebugTop\Widget\DebugTopToastStack.h" />
+    <ClInclude Include="Source\Debug\DebugTop\Builtin\DebugTopFavorites.h" />
+    <ClInclude Include="Source\Debug\DebugTop\Page\DebugTopValueEditor.h" />
+    <ClInclude Include="Source\Debug\DebugTop\Page\DebugTopRowScroller.h" />
+    <ClInclude Include="Source\Debug\DebugTop\Page\DebugTopRowMouse.h" />
+    <ClInclude Include="Source\Debug\DebugTop\Element\DebugTopElementAction.h" />
+    <ClInclude Include="Source\Debug\DebugTop\Element\DebugTopElementArray.h" />
+    <ClInclude Include="Source\Debug\DebugTop\Element\DebugTopElementBool.h" />
+    <ClInclude Include="Source\Debug\DebugTop\Element\DebugTopElementColor.h" />
+    <ClInclude Include="Source\Debug\DebugTop\Element\DebugTopElementEnum.h" />
+    <ClInclude Include="Source\Debug\DebugTop\Element\DebugTopElementGraph.h" />
+    <ClInclude Include="Source\Debug\DebugTop\Element\DebugTopElementNumber.h" />
+    <ClInclude Include="Source\Debug\DebugTop\Element\DebugTopElements.h" />
+    <ClInclude Include="Source\Debug\DebugTop\Element\DebugTopElementText.h" />
+    <ClInclude Include="Source\Debug\DebugTopSample\Pages\DisplaySettingsEntity.h" />
+    <ClInclude Include="Source\Debug\DebugTopSample\Pages\LongListEntity.h" />
+    <ClInclude Include="Source\Debug\DebugTopSample\Pages\RootEntity.h" />
+    <ClInclude Include="Source\Debug\DebugTopSample\Pages\SampleProfile.h" />
+    <ClInclude Include="Source\Debug\DebugTopSample\Pages\TravelEntity.h" />
+    <ClInclude Include="Source\Debug\DebugTopSample\Pages\SampleSettingsPath.h" />
+    <ClInclude Include="Source\Debug\DebugTop\Element\DebugTopElementVector.h" />
+    <ClInclude Include="Source\Debug\DebugTop\Element\DebugTopElementWatch.h" />
+    <ClInclude Include="Source\Debug\DebugTop\Widget\DebugTopTooltip.h" />
+    <ClInclude Include="Source\Debug\DebugTop\Service\DebugTopShortcuts.h" />
+    <ClInclude Include="Source\Debug\DebugTop\Service\DebugTopSnapshot.h" />
+    <ClInclude Include="Source\Debug\DebugTop\Builtin\DebugTopAppearance.h" />
+    <ClInclude Include="Source\Debug\DebugTop\Element\DebugTopElementTypes.h" />
+    <ClInclude Include="Source\Debug\DebugTop\Widget\DebugTopFilterBox.h" />
+    <ClInclude Include="Source\AcsFramework_Sample\Scene\SampleDebugPage.h" />
+    <ClInclude Include="Source\Debug\DebugTop\DebugTopOverlaySubsystem.h" />
+    <ClInclude Include="Source\AcsFramework_Core\Input\InputRepeat.h" />
+    <ClInclude Include="Source\Debug\DebugTop\Input\DebugTopKeyNav.h" />
+    <ClInclude Include="Source\Debug\DebugTop\Element\DebugTopElementValue.h" />
+    <ClInclude Include="Source\Debug\DebugTop\Service\DebugTopHistory.h" />
+    <ClInclude Include="Source\Debug\DebugTop\Service\DebugTopDirectory.h" />
+    <ClInclude Include="Source\Debug\DebugTop\Widget\DebugTopPathBrowser.h" />
+    <ClInclude Include="Source\AcsFramework_Core\Time\TimeSubsystem.h" />
+    <ClInclude Include="Source\AcsFramework_Core\Pause\PauseScreenSubsystem.h" />
+    <ClInclude Include="Source\AcsFramework_Core\Text\UiFontSubsystem.h" />
+    <ClInclude Include="Source\AcsFramework_Core\App\AppSubsystem.h" />
+    <ClInclude Include="Source\AcsFramework_Core\Screen\ScreenSubsystem.h" />
+    <ClInclude Include="Source\AcsFramework_Core\Timer\TimerSubsystem.h" />
+    <ClInclude Include="Source\AcsFramework_Core\Event\EventSubsystem.h" />
+    <ClInclude Include="Source\AcsFramework_Sample\Scene\SampleModalScene.h" />
+    <ClInclude Include="Source\AcsFramework_Core\State\AppStateSubsystem.h" />
+    <ClInclude Include="Source\AcsFramework_Core\Save\SaveSubsystem.h" />
+    <ClInclude Include="Source\AcsFramework_Core\Text\StringConvert.h" />
+    <ClInclude Include="Source\AcsFramework_Core\Settings\GameSettingsSubsystem.h" />
+    <ClInclude Include="Source\AcsFramework_Core\Audio\AudioSubsystem.h" />
+    <ClInclude Include="Source\AcsFramework_Core\AcsFramework.h" />
+    <None Include="Source\AcsFramework_Core\README.md" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Source\Common\Pch.cpp">
+      <PrecompiledHeader>Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\App\AcsFrameworkApp.cpp" />
+    <ClCompile Include="Source\EntryPoint\EntryPoint.cpp" />
+    <ClCompile Include="Source\AcsFramework_Core\Boot\BootScene.cpp" />
+    <ClCompile Include="Source\AcsFramework_Sample\Scene\SampleScene.cpp" />
+    <ClCompile Include="Source\AcsFramework_Core\Fade\FadeSubsystem.cpp" />
+    <ClCompile Include="Source\AcsFramework_Core\Loading\LoadingScreenSubsystem.cpp" />
+    <ClCompile Include="Source\AcsFramework_Core\Assets\AssetLoaderSubsystem.cpp" />
+    <ClCompile Include="Source\AcsFramework_Core\Scene\SceneTravelSubsystem.cpp" />
+    <ClCompile Include="Source\Debug\DebugTopSample\DebugTopScene.cpp" />
+    <ClCompile Include="Source\Debug\DebugTop\DebugTopHUD.cpp" />
+    <ClCompile Include="Source\Debug\DebugTop\Element\DebugTopElement.cpp" />
+    <ClCompile Include="Source\Debug\DebugTop\Input\DebugTopCursor.cpp" />
+    <ClCompile Include="Source\Debug\DebugTop\Input\DebugTopGamepad.cpp" />
+    <ClCompile Include="Source\Debug\DebugTop\Input\DebugTopTextEdit.cpp" />
+    <ClCompile Include="Source\Debug\DebugTop\Page\DebugTopEntity.cpp" />
+    <ClCompile Include="Source\Debug\DebugTop\Render\DebugTopColorField.cpp" />
+    <ClCompile Include="Source\Debug\DebugTop\Render\DebugTopDraw.cpp" />
+    <ClCompile Include="Source\Debug\DebugTop\Render\DebugTopFontCache.cpp" />
+    <ClCompile Include="Source\Debug\DebugTop\Service\DebugTopFileDialog.cpp" />
+    <ClCompile Include="Source\Debug\DebugTop\Service\DebugTopSearchIndex.cpp" />
+    <ClCompile Include="Source\Debug\DebugTop\Settings\DebugTopSettings.cpp" />
+    <ClCompile Include="Source\Debug\DebugTop\Settings\DebugTopSettingsBinary.cpp" />
+    <ClCompile Include="Source\Debug\DebugTop\Settings\DebugTopSettingsBytes.cpp" />
+    <ClCompile Include="Source\Debug\DebugTop\Settings\DebugTopSettingsFormat.cpp" />
+    <ClCompile Include="Source\Debug\DebugTop\Settings\DebugTopSettingsJson.cpp" />
+    <ClCompile Include="Source\Debug\DebugTop\Settings\DebugTopSettingsPath.cpp" />
+    <ClCompile Include="Source\Debug\DebugTop\Settings\DebugTopSettingsText.cpp" />
+    <ClCompile Include="Source\Debug\DebugTop\Settings\DebugTopSettingsVisitor.cpp" />
+    <ClCompile Include="Source\Debug\DebugTop\Widget\DebugTopColorPicker.cpp" />
+    <ClCompile Include="Source\Debug\DebugTop\Widget\DebugTopSearchBox.cpp" />
+    <ClCompile Include="Source\Debug\DebugTop\Widget\DebugTopToast.cpp" />
+    <ClCompile Include="Source\Debug\DebugTop\Widget\DebugTopToastStack.cpp" />
+    <ClCompile Include="Source\Debug\DebugTop\Builtin\DebugTopFavorites.cpp" />
+    <ClCompile Include="Source\Debug\DebugTop\Page\DebugTopValueEditor.cpp" />
+    <ClCompile Include="Source\Debug\DebugTop\Page\DebugTopRowScroller.cpp" />
+    <ClCompile Include="Source\Debug\DebugTop\Page\DebugTopRowMouse.cpp" />
+    <ClCompile Include="Source\Debug\DebugTop\Element\DebugTopElementAction.cpp" />
+    <ClCompile Include="Source\Debug\DebugTop\Element\DebugTopElementBool.cpp" />
+    <ClCompile Include="Source\Debug\DebugTop\Element\DebugTopElementColor.cpp" />
+    <ClCompile Include="Source\Debug\DebugTop\Element\DebugTopElementEnum.cpp" />
+    <ClCompile Include="Source\Debug\DebugTop\Element\DebugTopElementGraph.cpp" />
+    <ClCompile Include="Source\Debug\DebugTop\Element\DebugTopElementNumber.cpp" />
+    <ClCompile Include="Source\Debug\DebugTop\Element\DebugTopElementText.cpp" />
+    <ClCompile Include="Source\Debug\DebugTop\Widget\DebugTopTooltip.cpp" />
+    <ClCompile Include="Source\Debug\DebugTop\Service\DebugTopShortcuts.cpp" />
+    <ClCompile Include="Source\Debug\DebugTop\Service\DebugTopSnapshot.cpp" />
+    <ClCompile Include="Source\Debug\DebugTop\Builtin\DebugTopAppearance.cpp" />
+    <ClCompile Include="Source\Debug\DebugTop\Widget\DebugTopFilterBox.cpp" />
+    <ClCompile Include="Source\Debug\DebugTop\DebugTopOverlaySubsystem.cpp" />
+    <ClCompile Include="Source\AcsFramework_Core\Input\InputRepeat.cpp" />
+    <ClCompile Include="Source\Debug\DebugTop\Input\DebugTopKeyNav.cpp" />
+    <ClCompile Include="Source\Debug\DebugTop\Element\DebugTopElementValue.cpp" />
+    <ClCompile Include="Source\Debug\DebugTop\Service\DebugTopHistory.cpp" />
+    <ClCompile Include="Source\Debug\DebugTop\Service\DebugTopDirectory.cpp" />
+    <ClCompile Include="Source\Debug\DebugTop\Widget\DebugTopPathBrowser.cpp" />
+    <ClCompile Include="Source\AcsFramework_Core\Time\TimeSubsystem.cpp" />
+    <ClCompile Include="Source\AcsFramework_Core\Pause\PauseScreenSubsystem.cpp" />
+    <ClCompile Include="Source\AcsFramework_Core\Text\UiFontSubsystem.cpp" />
+    <ClCompile Include="Source\AcsFramework_Core\App\AppSubsystem.cpp" />
+    <ClCompile Include="Source\AcsFramework_Core\Screen\ScreenSubsystem.cpp" />
+    <ClCompile Include="Source\AcsFramework_Core\Timer\TimerSubsystem.cpp" />
+    <ClCompile Include="Source\AcsFramework_Core\Event\EventSubsystem.cpp" />
+    <ClCompile Include="Source\AcsFramework_Sample\Scene\SampleModalScene.cpp" />
+    <ClCompile Include="Source\AcsFramework_Core\State\AppStateSubsystem.cpp" />
+    <ClCompile Include="Source\AcsFramework_Core\Save\SaveSubsystem.cpp" />
+    <ClCompile Include="Source\AcsFramework_Core\Text\StringConvert.cpp" />
+    <ClCompile Include="Source\AcsFramework_Core\Settings\GameSettingsSubsystem.cpp" />
+    <ClCompile Include="Source\AcsFramework_Core\Audio\AudioSubsystem.cpp" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

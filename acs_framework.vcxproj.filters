@@ -1,0 +1,578 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source">
+      <UniqueIdentifier>{3204a5fc-503f-459f-9dc1-1441a634da9c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\AcsFramework_Core">
+      <UniqueIdentifier>{fdb952d6-8727-16fa-be67-df41a1755f31}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\AcsFramework_Core\App">
+      <UniqueIdentifier>{a7ef2528-88a7-e40c-68a8-c2357cc06595}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\AcsFramework_Core\Assets">
+      <UniqueIdentifier>{e03abc72-4d81-b01f-8a6f-64022d98d25f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\AcsFramework_Core\Audio">
+      <UniqueIdentifier>{c9205f2d-0948-48eb-5288-fa2e81ee35dd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\AcsFramework_Core\Boot">
+      <UniqueIdentifier>{571aa2f2-8b43-1714-b981-355e92a6406c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\AcsFramework_Core\Event">
+      <UniqueIdentifier>{4deac0f5-3ece-d63e-e4eb-349b2ddcd50e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\AcsFramework_Core\Fade">
+      <UniqueIdentifier>{f250aa12-d173-12fd-5b33-a908b9ecfcd6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\AcsFramework_Core\Input">
+      <UniqueIdentifier>{578b40b6-d626-1aa0-afca-e46214355e27}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\AcsFramework_Core\Loading">
+      <UniqueIdentifier>{e394080d-0bf0-6127-0091-7a1c9f6697ee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\AcsFramework_Core\Pause">
+      <UniqueIdentifier>{890baa7b-6c9d-b590-39e8-13489b0e5746}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\AcsFramework_Core\Save">
+      <UniqueIdentifier>{72d6d081-0eae-6625-2f76-86ea0b835ae4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\AcsFramework_Core\Scene">
+      <UniqueIdentifier>{67c1841a-b13b-7209-39b4-8393eb5073d6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\AcsFramework_Core\Screen">
+      <UniqueIdentifier>{baf65697-257d-0cf3-e822-e17c15909ac1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\AcsFramework_Core\Settings">
+      <UniqueIdentifier>{6101c26c-1126-a64e-e5ac-bcd6f630cdfc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\AcsFramework_Core\State">
+      <UniqueIdentifier>{e5bf6216-ce8b-cf76-ac7a-8852ab71ae9d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\AcsFramework_Core\Text">
+      <UniqueIdentifier>{5dfdb26a-8201-9452-3974-b3161e229a93}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\AcsFramework_Core\Time">
+      <UniqueIdentifier>{5a2dd199-e48e-8d78-a182-b8679f301882}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\AcsFramework_Core\Timer">
+      <UniqueIdentifier>{1a0bf668-8aba-a2f0-141e-19da0ecf4793}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\AcsFramework_Sample">
+      <UniqueIdentifier>{c6ca8f33-14b7-d32b-63a8-8b39066ed096}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\AcsFramework_Sample\Scene">
+      <UniqueIdentifier>{80300694-7f9f-57b1-6c1b-b3b0ae0437cb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Common">
+      <UniqueIdentifier>{0d9f2c6e-6a7b-4a1e-9f2d-5c1b8a7e4d30}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Debug">
+      <UniqueIdentifier>{074c9bd0-6ce5-1e05-ec87-3c23be35bff5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Debug\DebugTop">
+      <UniqueIdentifier>{5affac60-4ca5-6091-7653-c6f0d33a876b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Debug\DebugTopSample">
+      <UniqueIdentifier>{69521ce9-8112-d19f-0cf6-1bd294361bb4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Debug\DebugTopSample\Pages">
+      <UniqueIdentifier>{e22da821-a2bd-5f84-fdbe-62fd2a584152}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Debug\DebugTop\Builtin">
+      <UniqueIdentifier>{43a270f2-8657-1674-b44b-de7bf7d70a06}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Debug\DebugTop\Element">
+      <UniqueIdentifier>{74ecca40-565c-1e27-df86-35335330aaa7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Debug\DebugTop\Input">
+      <UniqueIdentifier>{1792b1b5-c3fc-c50f-abd1-5f792f4b9cea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Debug\DebugTop\Page">
+      <UniqueIdentifier>{7eab955d-2265-49c0-2690-1b8a4a7ae189}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Debug\DebugTop\Render">
+      <UniqueIdentifier>{993efdb9-29c8-0613-870b-8fc80ae6966d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Debug\DebugTop\Service">
+      <UniqueIdentifier>{ace50b88-a1cf-0f7d-54cb-9e4c41ee8ccd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Debug\DebugTop\Settings">
+      <UniqueIdentifier>{8ddd5689-27db-fa4a-984a-eb15236c12d2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Debug\DebugTop\Widget">
+      <UniqueIdentifier>{70734b3b-65c1-cb75-4eb0-e8a70a106a5d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\EntryPoint">
+      <UniqueIdentifier>{5a8c13f7-90e2-4b46-8d71-af6290c4b3d5}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Source\AcsFramework_Core\App\AcsFrameworkApp.cpp">
+      <Filter>Source\AcsFramework_Core\App</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\App\AppSubsystem.cpp">
+      <Filter>Source\AcsFramework_Core\App</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Assets\AssetLoaderSubsystem.cpp">
+      <Filter>Source\AcsFramework_Core\Assets</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Audio\AudioSubsystem.cpp">
+      <Filter>Source\AcsFramework_Core\Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Boot\BootScene.cpp">
+      <Filter>Source\AcsFramework_Core\Boot</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Event\EventSubsystem.cpp">
+      <Filter>Source\AcsFramework_Core\Event</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Fade\FadeSubsystem.cpp">
+      <Filter>Source\AcsFramework_Core\Fade</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Input\InputRepeat.cpp">
+      <Filter>Source\AcsFramework_Core\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Loading\LoadingScreenSubsystem.cpp">
+      <Filter>Source\AcsFramework_Core\Loading</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Pause\PauseScreenSubsystem.cpp">
+      <Filter>Source\AcsFramework_Core\Pause</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Save\SaveSubsystem.cpp">
+      <Filter>Source\AcsFramework_Core\Save</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Scene\SceneTravelSubsystem.cpp">
+      <Filter>Source\AcsFramework_Core\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Screen\ScreenSubsystem.cpp">
+      <Filter>Source\AcsFramework_Core\Screen</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Settings\GameSettingsSubsystem.cpp">
+      <Filter>Source\AcsFramework_Core\Settings</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\State\AppStateSubsystem.cpp">
+      <Filter>Source\AcsFramework_Core\State</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Text\StringConvert.cpp">
+      <Filter>Source\AcsFramework_Core\Text</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Text\UiFontSubsystem.cpp">
+      <Filter>Source\AcsFramework_Core\Text</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Timer\TimerSubsystem.cpp">
+      <Filter>Source\AcsFramework_Core\Timer</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Time\TimeSubsystem.cpp">
+      <Filter>Source\AcsFramework_Core\Time</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Sample\Scene\SampleModalScene.cpp">
+      <Filter>Source\AcsFramework_Sample\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Sample\Scene\SampleScene.cpp">
+      <Filter>Source\AcsFramework_Sample\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Common\Pch.cpp">
+      <Filter>Source\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Debug\DebugTopSample\DebugTopScene.cpp">
+      <Filter>Source\Debug\DebugTopSample</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Debug\DebugTop\Builtin\DebugTopAppearance.cpp">
+      <Filter>Source\Debug\DebugTop\Builtin</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Debug\DebugTop\Builtin\DebugTopFavorites.cpp">
+      <Filter>Source\Debug\DebugTop\Builtin</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Debug\DebugTop\DebugTopHUD.cpp">
+      <Filter>Source\Debug\DebugTop</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Debug\DebugTop\DebugTopOverlaySubsystem.cpp">
+      <Filter>Source\Debug\DebugTop</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Debug\DebugTop\Element\DebugTopElement.cpp">
+      <Filter>Source\Debug\DebugTop\Element</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Debug\DebugTop\Element\DebugTopElementAction.cpp">
+      <Filter>Source\Debug\DebugTop\Element</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Debug\DebugTop\Element\DebugTopElementBool.cpp">
+      <Filter>Source\Debug\DebugTop\Element</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Debug\DebugTop\Element\DebugTopElementColor.cpp">
+      <Filter>Source\Debug\DebugTop\Element</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Debug\DebugTop\Element\DebugTopElementEnum.cpp">
+      <Filter>Source\Debug\DebugTop\Element</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Debug\DebugTop\Element\DebugTopElementGraph.cpp">
+      <Filter>Source\Debug\DebugTop\Element</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Debug\DebugTop\Element\DebugTopElementNumber.cpp">
+      <Filter>Source\Debug\DebugTop\Element</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Debug\DebugTop\Element\DebugTopElementText.cpp">
+      <Filter>Source\Debug\DebugTop\Element</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Debug\DebugTop\Element\DebugTopElementValue.cpp">
+      <Filter>Source\Debug\DebugTop\Element</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Debug\DebugTop\Input\DebugTopCursor.cpp">
+      <Filter>Source\Debug\DebugTop\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Debug\DebugTop\Input\DebugTopGamepad.cpp">
+      <Filter>Source\Debug\DebugTop\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Debug\DebugTop\Input\DebugTopKeyNav.cpp">
+      <Filter>Source\Debug\DebugTop\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Debug\DebugTop\Input\DebugTopTextEdit.cpp">
+      <Filter>Source\Debug\DebugTop\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Debug\DebugTop\Page\DebugTopEntity.cpp">
+      <Filter>Source\Debug\DebugTop\Page</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Debug\DebugTop\Page\DebugTopRowMouse.cpp">
+      <Filter>Source\Debug\DebugTop\Page</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Debug\DebugTop\Page\DebugTopRowScroller.cpp">
+      <Filter>Source\Debug\DebugTop\Page</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Debug\DebugTop\Page\DebugTopValueEditor.cpp">
+      <Filter>Source\Debug\DebugTop\Page</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Debug\DebugTop\Render\DebugTopColorField.cpp">
+      <Filter>Source\Debug\DebugTop\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Debug\DebugTop\Render\DebugTopDraw.cpp">
+      <Filter>Source\Debug\DebugTop\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Debug\DebugTop\Render\DebugTopFontCache.cpp">
+      <Filter>Source\Debug\DebugTop\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Debug\DebugTop\Service\DebugTopDirectory.cpp">
+      <Filter>Source\Debug\DebugTop\Service</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Debug\DebugTop\Service\DebugTopFileDialog.cpp">
+      <Filter>Source\Debug\DebugTop\Service</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Debug\DebugTop\Service\DebugTopHistory.cpp">
+      <Filter>Source\Debug\DebugTop\Service</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Debug\DebugTop\Service\DebugTopSearchIndex.cpp">
+      <Filter>Source\Debug\DebugTop\Service</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Debug\DebugTop\Service\DebugTopShortcuts.cpp">
+      <Filter>Source\Debug\DebugTop\Service</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Debug\DebugTop\Service\DebugTopSnapshot.cpp">
+      <Filter>Source\Debug\DebugTop\Service</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Debug\DebugTop\Settings\DebugTopSettings.cpp">
+      <Filter>Source\Debug\DebugTop\Settings</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Debug\DebugTop\Settings\DebugTopSettingsBinary.cpp">
+      <Filter>Source\Debug\DebugTop\Settings</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Debug\DebugTop\Settings\DebugTopSettingsBytes.cpp">
+      <Filter>Source\Debug\DebugTop\Settings</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Debug\DebugTop\Settings\DebugTopSettingsFormat.cpp">
+      <Filter>Source\Debug\DebugTop\Settings</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Debug\DebugTop\Settings\DebugTopSettingsJson.cpp">
+      <Filter>Source\Debug\DebugTop\Settings</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Debug\DebugTop\Settings\DebugTopSettingsPath.cpp">
+      <Filter>Source\Debug\DebugTop\Settings</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Debug\DebugTop\Settings\DebugTopSettingsText.cpp">
+      <Filter>Source\Debug\DebugTop\Settings</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Debug\DebugTop\Settings\DebugTopSettingsVisitor.cpp">
+      <Filter>Source\Debug\DebugTop\Settings</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Debug\DebugTop\Widget\DebugTopColorPicker.cpp">
+      <Filter>Source\Debug\DebugTop\Widget</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Debug\DebugTop\Widget\DebugTopFilterBox.cpp">
+      <Filter>Source\Debug\DebugTop\Widget</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Debug\DebugTop\Widget\DebugTopPathBrowser.cpp">
+      <Filter>Source\Debug\DebugTop\Widget</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Debug\DebugTop\Widget\DebugTopSearchBox.cpp">
+      <Filter>Source\Debug\DebugTop\Widget</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Debug\DebugTop\Widget\DebugTopToast.cpp">
+      <Filter>Source\Debug\DebugTop\Widget</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Debug\DebugTop\Widget\DebugTopToastStack.cpp">
+      <Filter>Source\Debug\DebugTop\Widget</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Debug\DebugTop\Widget\DebugTopTooltip.cpp">
+      <Filter>Source\Debug\DebugTop\Widget</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\EntryPoint\EntryPoint.cpp">
+      <Filter>Source\EntryPoint</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Source\AcsFramework_Core\AcsFramework.h">
+      <Filter>Source\AcsFramework_Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\App\AcsFrameworkApp.h">
+      <Filter>Source\AcsFramework_Core\App</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\App\AppSubsystem.h">
+      <Filter>Source\AcsFramework_Core\App</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Assets\AssetLoaderSubsystem.h">
+      <Filter>Source\AcsFramework_Core\Assets</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Audio\AudioSubsystem.h">
+      <Filter>Source\AcsFramework_Core\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Boot\BootScene.h">
+      <Filter>Source\AcsFramework_Core\Boot</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Event\EventSubsystem.h">
+      <Filter>Source\AcsFramework_Core\Event</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Fade\FadeSubsystem.h">
+      <Filter>Source\AcsFramework_Core\Fade</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Input\InputRepeat.h">
+      <Filter>Source\AcsFramework_Core\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Loading\LoadingScreenSubsystem.h">
+      <Filter>Source\AcsFramework_Core\Loading</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Pause\PauseScreenSubsystem.h">
+      <Filter>Source\AcsFramework_Core\Pause</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Save\SaveSubsystem.h">
+      <Filter>Source\AcsFramework_Core\Save</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Scene\SceneTravelSubsystem.h">
+      <Filter>Source\AcsFramework_Core\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Screen\ScreenSubsystem.h">
+      <Filter>Source\AcsFramework_Core\Screen</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Settings\GameSettingsSubsystem.h">
+      <Filter>Source\AcsFramework_Core\Settings</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\State\AppStateSubsystem.h">
+      <Filter>Source\AcsFramework_Core\State</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Text\StringConvert.h">
+      <Filter>Source\AcsFramework_Core\Text</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Text\UiFontSubsystem.h">
+      <Filter>Source\AcsFramework_Core\Text</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Timer\TimerSubsystem.h">
+      <Filter>Source\AcsFramework_Core\Timer</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Time\TimeSubsystem.h">
+      <Filter>Source\AcsFramework_Core\Time</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Sample\Scene\SampleDebugPage.h">
+      <Filter>Source\AcsFramework_Sample\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Sample\Scene\SampleModalScene.h">
+      <Filter>Source\AcsFramework_Sample\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Sample\Scene\SampleScene.h">
+      <Filter>Source\AcsFramework_Sample\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Common\Pch.h">
+      <Filter>Source\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Debug\DebugTopSample\DebugTopScene.h">
+      <Filter>Source\Debug\DebugTopSample</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Debug\DebugTopSample\Pages\DisplaySettingsEntity.h">
+      <Filter>Source\Debug\DebugTopSample\Pages</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Debug\DebugTopSample\Pages\LongListEntity.h">
+      <Filter>Source\Debug\DebugTopSample\Pages</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Debug\DebugTopSample\Pages\RootEntity.h">
+      <Filter>Source\Debug\DebugTopSample\Pages</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Debug\DebugTopSample\Pages\SampleProfile.h">
+      <Filter>Source\Debug\DebugTopSample\Pages</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Debug\DebugTopSample\Pages\SampleSettingsPath.h">
+      <Filter>Source\Debug\DebugTopSample\Pages</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Debug\DebugTopSample\Pages\TravelEntity.h">
+      <Filter>Source\Debug\DebugTopSample\Pages</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Debug\DebugTop\Builtin\DebugTopAppearance.h">
+      <Filter>Source\Debug\DebugTop\Builtin</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Debug\DebugTop\Builtin\DebugTopFavorites.h">
+      <Filter>Source\Debug\DebugTop\Builtin</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Debug\DebugTop\DebugTopHUD.h">
+      <Filter>Source\Debug\DebugTop</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Debug\DebugTop\DebugTopOverlaySubsystem.h">
+      <Filter>Source\Debug\DebugTop</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Debug\DebugTop\Element\DebugTopElement.h">
+      <Filter>Source\Debug\DebugTop\Element</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Debug\DebugTop\Element\DebugTopElementAction.h">
+      <Filter>Source\Debug\DebugTop\Element</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Debug\DebugTop\Element\DebugTopElementArray.h">
+      <Filter>Source\Debug\DebugTop\Element</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Debug\DebugTop\Element\DebugTopElementBool.h">
+      <Filter>Source\Debug\DebugTop\Element</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Debug\DebugTop\Element\DebugTopElementColor.h">
+      <Filter>Source\Debug\DebugTop\Element</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Debug\DebugTop\Element\DebugTopElementEnum.h">
+      <Filter>Source\Debug\DebugTop\Element</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Debug\DebugTop\Element\DebugTopElementGraph.h">
+      <Filter>Source\Debug\DebugTop\Element</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Debug\DebugTop\Element\DebugTopElementNumber.h">
+      <Filter>Source\Debug\DebugTop\Element</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Debug\DebugTop\Element\DebugTopElements.h">
+      <Filter>Source\Debug\DebugTop\Element</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Debug\DebugTop\Element\DebugTopElementText.h">
+      <Filter>Source\Debug\DebugTop\Element</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Debug\DebugTop\Element\DebugTopElementTypes.h">
+      <Filter>Source\Debug\DebugTop\Element</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Debug\DebugTop\Element\DebugTopElementValue.h">
+      <Filter>Source\Debug\DebugTop\Element</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Debug\DebugTop\Element\DebugTopElementVector.h">
+      <Filter>Source\Debug\DebugTop\Element</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Debug\DebugTop\Element\DebugTopElementWatch.h">
+      <Filter>Source\Debug\DebugTop\Element</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Debug\DebugTop\Element\DebugTopEnum.h">
+      <Filter>Source\Debug\DebugTop\Element</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Debug\DebugTop\Input\DebugTopCursor.h">
+      <Filter>Source\Debug\DebugTop\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Debug\DebugTop\Input\DebugTopGamepad.h">
+      <Filter>Source\Debug\DebugTop\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Debug\DebugTop\Input\DebugTopKeyNav.h">
+      <Filter>Source\Debug\DebugTop\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Debug\DebugTop\Input\DebugTopTextEdit.h">
+      <Filter>Source\Debug\DebugTop\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Debug\DebugTop\Page\DebugTopEntity.h">
+      <Filter>Source\Debug\DebugTop\Page</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Debug\DebugTop\Page\DebugTopRowMouse.h">
+      <Filter>Source\Debug\DebugTop\Page</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Debug\DebugTop\Page\DebugTopRowScroller.h">
+      <Filter>Source\Debug\DebugTop\Page</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Debug\DebugTop\Page\DebugTopValueEditor.h">
+      <Filter>Source\Debug\DebugTop\Page</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Debug\DebugTop\Render\DebugTopColorField.h">
+      <Filter>Source\Debug\DebugTop\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Debug\DebugTop\Render\DebugTopDraw.h">
+      <Filter>Source\Debug\DebugTop\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Debug\DebugTop\Render\DebugTopFontCache.h">
+      <Filter>Source\Debug\DebugTop\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Debug\DebugTop\Service\DebugTopDirectory.h">
+      <Filter>Source\Debug\DebugTop\Service</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Debug\DebugTop\Service\DebugTopFileDialog.h">
+      <Filter>Source\Debug\DebugTop\Service</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Debug\DebugTop\Service\DebugTopHistory.h">
+      <Filter>Source\Debug\DebugTop\Service</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Debug\DebugTop\Service\DebugTopSearchIndex.h">
+      <Filter>Source\Debug\DebugTop\Service</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Debug\DebugTop\Service\DebugTopShortcuts.h">
+      <Filter>Source\Debug\DebugTop\Service</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Debug\DebugTop\Service\DebugTopSnapshot.h">
+      <Filter>Source\Debug\DebugTop\Service</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Debug\DebugTop\Settings\DebugTopSetting.h">
+      <Filter>Source\Debug\DebugTop\Settings</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Debug\DebugTop\Settings\DebugTopSettings.h">
+      <Filter>Source\Debug\DebugTop\Settings</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Debug\DebugTop\Settings\DebugTopSettingsBinary.h">
+      <Filter>Source\Debug\DebugTop\Settings</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Debug\DebugTop\Settings\DebugTopSettingsBytes.h">
+      <Filter>Source\Debug\DebugTop\Settings</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Debug\DebugTop\Settings\DebugTopSettingsFormat.h">
+      <Filter>Source\Debug\DebugTop\Settings</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Debug\DebugTop\Settings\DebugTopSettingsJson.h">
+      <Filter>Source\Debug\DebugTop\Settings</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Debug\DebugTop\Settings\DebugTopSettingsPath.h">
+      <Filter>Source\Debug\DebugTop\Settings</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Debug\DebugTop\Settings\DebugTopSettingsText.h">
+      <Filter>Source\Debug\DebugTop\Settings</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Debug\DebugTop\Settings\DebugTopSettingsVisitor.h">
+      <Filter>Source\Debug\DebugTop\Settings</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Debug\DebugTop\Widget\DebugTopColorPicker.h">
+      <Filter>Source\Debug\DebugTop\Widget</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Debug\DebugTop\Widget\DebugTopFilterBox.h">
+      <Filter>Source\Debug\DebugTop\Widget</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Debug\DebugTop\Widget\DebugTopPathBrowser.h">
+      <Filter>Source\Debug\DebugTop\Widget</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Debug\DebugTop\Widget\DebugTopSearchBox.h">
+      <Filter>Source\Debug\DebugTop\Widget</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Debug\DebugTop\Widget\DebugTopToast.h">
+      <Filter>Source\Debug\DebugTop\Widget</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Debug\DebugTop\Widget\DebugTopToastStack.h">
+      <Filter>Source\Debug\DebugTop\Widget</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Debug\DebugTop\Widget\DebugTopTooltip.h">
+      <Filter>Source\Debug\DebugTop\Widget</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\EntryPoint\EntryPoint.h">
+      <Filter>Source\EntryPoint</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Source\AcsFramework_Core\README.md">
+      <Filter>Source\AcsFramework_Core</Filter>
+    </None>
+  </ItemGroup>
+</Project>

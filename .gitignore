@@ -1,0 +1,28 @@
+.vs/
+*.user
+*.suo
+
+# 生成されたビルド出力
+**/x64/
+**/Out/
+**/Int/
+**/build/
+**/Saved/
+**/evidence/
+**/Evidence/
+**/Artifacts/
+
+# ThirdParty の直接出力
+ThirdParty/**/Debug/
+ThirdParty/**/Release/
+ThirdParty/Effekseer/ResourceData/
+
+# 生成された構成保存ファイル
+/DebugTopSettings.txt
+
+# 子リポジトリの管理情報
+**/.git/
+
+# 必須ライブラリは配布対象として明示的に追加する
+!ThirdParty/Effekseer/build/**/Debug/*.lib
+!ThirdParty/Effekseer/build/**/Release/*.lib

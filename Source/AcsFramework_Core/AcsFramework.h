@@ -1,0 +1,22 @@
+// SPDX-License-Identifier: Apache-2.0
+#pragma once
+
+#include "AcsFramework_Core/App/AcsFrameworkApp.h"
+#include "AcsFramework_Core/App/AppSubsystem.h"
+#include "AcsFramework_Core/Assets/AssetLoaderSubsystem.h"
+#include "AcsFramework_Core/Audio/AudioSubsystem.h"
+#include "AcsFramework_Core/Boot/BootScene.h"
+#include "AcsFramework_Core/Event/EventSubsystem.h"
+#include "AcsFramework_Core/Fade/FadeSubsystem.h"
+#include "AcsFramework_Core/Input/InputRepeat.h"
+#include "AcsFramework_Core/Loading/LoadingScreenSubsystem.h"
+#include "AcsFramework_Core/Pause/PauseScreenSubsystem.h"
+#include "AcsFramework_Core/Save/SaveSubsystem.h"
+#include "AcsFramework_Core/Scene/SceneTravelSubsystem.h"
+#include "AcsFramework_Core/Screen/ScreenSubsystem.h"
+#include "AcsFramework_Core/Settings/GameSettingsSubsystem.h"
+#include "AcsFramework_Core/State/AppStateSubsystem.h"
+#include "AcsFramework_Core/Text/StringConvert.h"
+#include "AcsFramework_Core/Text/UiFontSubsystem.h"
+#include "AcsFramework_Core/Time/TimeSubsystem.h"
+#include "AcsFramework_Core/Timer/TimerSubsystem.h"
