@@ -6,7 +6,7 @@
 using namespace acs;
 using namespace acs::game;
 
-/** GameInstanceの寿命で音の出力先と音の取りまとめを所有・接続する窓口。 */
+/** GameInstance の寿命で音の出力先と音の取りまとめを所有・接続する窓口。 */
 class CAudioSubsystem : public ASubsystem
 {
 public:
@@ -32,7 +32,7 @@ public:
 
 	/**
 	 * BGM を鳴らす。
-	 * @details 既にBGM 名が鳴っていれば、指定秒数で入れ替える。名前の保持に失敗した場合だけ要求しない。出力先がない、または再生に失敗してもBGM 名と音量の状態は保持する。
+	 * @details 同じ BGM 名が再生中なら継続する。別の BGM が再生中なら指定秒数で入れ替える。名前の保持に失敗した場合だけ要求しない。出力先がない、または再生に失敗しても BGM 名と音量の状態は保持する。
 	 * @param Name アセット名またはパス。
 	 * @param FadeInSeconds 入りにかける秒数。
 	 * @param bLoop 繰り返すなら true。
@@ -45,12 +45,12 @@ public:
 	 */
 	void StopBgm( f32 FadeOutSeconds = 0.5f );
 
-	/** 現在のBGM名を返す。再生中でなければ空文字列を返す。 */
+	/** 現在の BGM 名を返す。再生中でなければ空文字列を返す。 */
 	FString GetCurrentBgmName() const;
 
 	/**
 	 * 効果音を 1 回鳴らす。
-	 * @details 音量倍率が0 以下または名前の保持に失敗した場合だけ要求しない。出力先がない、または再生に失敗しても音量の状態は保持する。
+	 * @details 音量の倍率が 0 以下または名前の保持に失敗した場合だけ要求しない。出力先がない、または再生に失敗しても音量の状態は保持する。
 	 * @param Name アセット名またはパス。
 	 * @param VolumeScale この 1 回だけの音量の倍率。
 	 */
@@ -106,7 +106,7 @@ private:
 	/** 音を止め、非所有参照を切り、未接続の状態へ戻す。 */
 	void ReleaseBinding() noexcept;
 
-	/** 音声名を保持配列へ複製し、確保または複製に失敗した場合はnullptrを返す。 */
+	/** 音声名を保持配列へ複製し、確保または複製に失敗した場合は nullptr を返す。 */
 	const char* TryInternAudioName( const FString& Name ) noexcept;
 
 	/** 音の取りまとめへ渡す名前をサブシステムの寿命中保持する配列。 */
