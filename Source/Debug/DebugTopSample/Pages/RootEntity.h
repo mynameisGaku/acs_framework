@@ -17,6 +17,35 @@
 
 using namespace acs;
 
+namespace DebugTopDetail
+{
+	/**
+	 * プロファイル名を保存先のファイル名へ変換する。
+	 *
+	 * @param OutFileName 変換結果。失敗時は呼出し前の内容を保つ。
+	 * @param BaseName 既定のファイル名。
+	 * @param Profile 追加するプロファイル。
+	 * @return 文字列の確保と変換に成功すれば true。
+	 */
+	inline bool TryBuildProfileFileName( FString& OutFileName, const char* BaseName, EDebugTopProfile Profile ) noexcept
+	{
+		if ( BaseName == nullptr ) return false;
+
+		FString Staged( *OutFileName.GetAllocator() );
+		if ( !Staged.TryAppend( FStringView( BaseName ) ) ) return false;
+		if ( Profile != EDebugTopProfile::Default )
+		{
+			if ( !Staged.TryAppend( FStringView( "_" ) ) ) return false;
+			const acs::FEnumName ProfileName = acs::ToString( Profile );
+			if ( ProfileName.IsEmpty() ) return false;
+			if ( !Staged.TryAppend( FStringView( ProfileName.Data, ProfileName.Size ) ) ) return false;
+		}
+
+		OutFileName = Move( Staged );
+		return true;
+	}
+}
+
 // デバッグメニューのルートページ。行の型を一通り並べた見本になっている。
 
 /**
@@ -154,14 +183,20 @@ protected:
 		const EDebugTopSettingsFormat CurrentFormat = m_Settings != nullptr
 			? m_Settings->GetPath().GetFormat()
 			: EDebugTopSettingsFormat::Text;
-		m_Format = DebugTopAddEnumRow<EDebugTopSettingsFormat>( *Settings, "Format", CurrentFormat );
-		m_Format->SetOnChanged( FSimpleDelegate::CreateRaw<&ARootEntity::ApplyFormat>( this ) );
-		m_Format->SetDescription( FString( "保存する形式\n" "Text : 1 行 1 設定のテキスト (手で直せる)\n" "Json : 外部ツールから読ませる\n" "Binary : acs 独自形式 (.acsset)" ) );
+		if ( CDebugTopElementEnum* const Format = DebugTopAddEnumRow<EDebugTopSettingsFormat>( *Settings, "Format", CurrentFormat ) )
+		{
+			m_Format = Format;
+			m_Format->SetOnChanged( FSimpleDelegate::CreateRaw<&ARootEntity::ApplyFormat>( this ) );
+			m_Format->SetDescription( FString( "保存する形式\n" "Text : 1 行 1 設定のテキスト (手で直せる)\n" "Json : 外部ツールから読ませる\n" "Binary : acs 独自形式 (.acsset)" ) );
+		}
 
 		// プロファイル。切り替えると保存先のファイル名が変わるので、セットごとに独立する。
-		m_Profile = DebugTopAddEnumRow<EDebugTopProfile>( *Settings, "Profile", EDebugTopProfile::Default );
-		m_Profile->SetOnChanged( FSimpleDelegate::CreateRaw<&ARootEntity::ApplyProfile>( this ) );
-		m_Profile->SetDescription( FString( "設定のセットを切り替えます\n" "切り替えると保存先のファイル名が変わるので\n" "セットごとに別々の値を持てます" ) );
+		if ( CDebugTopElementEnum* const Profile = DebugTopAddEnumRow<EDebugTopProfile>( *Settings, "Profile", EDebugTopProfile::Default ) )
+		{
+			m_Profile = Profile;
+			m_Profile->SetOnChanged( FSimpleDelegate::CreateRaw<&ARootEntity::ApplyProfile>( this ) );
+			m_Profile->SetDescription( FString( "設定のセットを切り替えます\n" "切り替えると保存先のファイル名が変わるので\n" "セットごとに別々の値を持てます" ) );
+		}
 
 		Settings->Add<CDebugTopElementAction>( "Save", "現在値をファイルへ書き出す", m_OnSaveSettings )
 			->SetDescription( FString( "Enter かダブルクリックで実行\n" "いまのメニューの値を保存します\n" "書き出した絶対パスはログに出ます" ) );
@@ -275,13 +310,8 @@ private:
 
 		const EDebugTopProfile Profile = DebugTopGetEnumValue<EDebugTopProfile>( *m_Profile );
 
-		// 既定のセットだけは元のファイル名のまま (今まで保存したものを読めるように)。
-		FString FileName( kSampleSettingsFileName );
-		if ( Profile != EDebugTopProfile::Default )
-		{
-			FileName.Append( "_" );
-			FileName.Append( DebugTopToString( Profile ).ToString().View() );
-		}
+		FString FileName;
+		if ( !DebugTopDetail::TryBuildProfileFileName( FileName, kSampleSettingsFileName, Profile ) ) return;
 		m_Settings->MutablePath().SetFileName( FileName );
 	}
 

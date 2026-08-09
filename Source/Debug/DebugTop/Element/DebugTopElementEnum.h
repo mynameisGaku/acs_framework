@@ -4,7 +4,6 @@
 #include <acs.h>
 
 #include "Debug/DebugTop/Element/DebugTopElement.h"
-#include "Debug/DebugTop/Element/DebugTopEnum.h"
 
 using namespace acs;
 
@@ -134,6 +133,71 @@ private:
 
 
 
+
+namespace DebugTopDetail
+{
+	/**
+	 * 列挙型の名前を選択肢へ変換する。
+	 *
+	 * @param Names 変換元の名前表。
+	 * @param NameCount 名前表の個数。
+	 * @param ExpectedCount 必要な選択肢の個数。
+	 * @param OutOptions 変換結果。失敗時は呼出し前の内容を保つ。
+	 * @return 個数一致と確保に成功すれば true。
+	 */
+	inline bool TryBuildEnumOptions( const acs::FEnumName* Names, usize NameCount, usize ExpectedCount, TArray<FString>& OutOptions )
+	{
+		if ( NameCount != ExpectedCount ) return false;
+		if ( Names == nullptr && NameCount != 0u ) return false;
+
+		TArray<FString> StagedOptions( *OutOptions.GetAllocator() );
+		if ( !StagedOptions.TryReserve( ExpectedCount ) ) return false;
+
+		for ( usize Index = 0; Index < NameCount; ++Index )
+		{
+			const acs::FEnumName& Name = Names[Index];
+			if ( Name.Data == nullptr || Name.IsEmpty() ) return false;
+
+			FString Option( *OutOptions.GetAllocator() );
+			if ( !Option.TryAppend( FStringView( Name.Data, Name.Size ) ) ) return false;
+			if ( !StagedOptions.TryAdd( Move( Option ) ) ) return false;
+		}
+
+		if ( StagedOptions.Num() != ExpectedCount ) return false;
+		OutOptions = Move( StagedOptions );
+		return true;
+	}
+}
+
+/**
+ * 列挙型の名前から選択肢を作る。
+ *
+ * @tparam TEnum 対象の列挙型。
+ * @param OutOptions 変換結果。失敗時は呼出し前の内容を保つ。
+ * @return 列挙子の個数と名前表が一致し、確保に成功すれば true。
+ */
+template<typename TEnum>
+bool DebugTopMakeEnumOptions( TArray<FString>& OutOptions )
+{
+	const auto Names = acs::EnumNames<TEnum>();
+	return DebugTopDetail::TryBuildEnumOptions( Names.Items, Names.Size(), acs::EnumCount<TEnum>, OutOptions );
+}
+
+/**
+ * 列挙型の値から選択肢配列を返す。
+ *
+ * @tparam TEnum 対象の列挙型。
+ * @return 変換結果。確保に失敗した場合は検査で停止する。
+ */
+template<typename TEnum>
+TArray<FString> DebugTopMakeEnumOptions()
+{
+	TArray<FString> Options;
+	const bool bBuilt = DebugTopMakeEnumOptions<TEnum>( Options );
+	ACS_CHECKF( bBuilt, "DebugTopMakeEnumOptions failed" );
+	return Options;
+}
+
 /**
  * 列挙型から選択肢を作った Enum 行を親へ足す。
  *
@@ -154,7 +218,9 @@ private:
 template<typename TEnum, typename TParent>
 CDebugTopElementEnum* DebugTopAddEnumRow( TParent& Parent, const FString& Label, TEnum Current )
 {
-	return Parent.template Add<CDebugTopElementEnum>( Label, DebugTopMakeEnumOptions<TEnum>(), TDebugTopEnum<TEnum>::ToIndex( Current ) );
+	TArray<FString> Options;
+	if ( !DebugTopMakeEnumOptions<TEnum>( Options ) ) return nullptr;
+	return Parent.template Add<CDebugTopElementEnum>( Label, Move( Options ), acs::EnumToIndex( Current ) );
 }
 
 /**
@@ -167,5 +233,5 @@ CDebugTopElementEnum* DebugTopAddEnumRow( TParent& Parent, const FString& Label,
 template<typename TEnum>
 TEnum DebugTopGetEnumValue( const CDebugTopElementEnum& Element ) noexcept
 {
-	return TDebugTopEnum<TEnum>::FromIndex( Element.GetSelectedIndex() );
+	return acs::EnumFromIndex<TEnum>( Element.GetSelectedIndex() );
 }

@@ -11,40 +11,9 @@ using namespace acs;
 class ADebugTopHUD;
 
 /**
- * デバッグメニューで設定した値の置き場。
+ * 設定値と保存先をまとめ、値の読み書きと形式変換の窓口を提供する。
  *
- * @details
- * ゲーム側とデバッグメニューを直接つながずに値を渡すための、キーと値だけの保管庫。
- * GameInstance スコープのサブシステムなので、シーンを切り替えても同じ実体が残り、
- * 「メニューで設定 → 次のレベルで受け取る」がそのまま成立する。ファイルへ保存すれば
- * プロセスを跨いでも残り、形式を選べるので他のツールやゲームからも読める。
- *
- * 受け取り側 (ゲーム・システム) の書き方:
- * @code
- * if ( CDebugTopSettings* const Settings = GetSubsystem<CDebugTopSettings>() )
- * {
- *     const f32 Speed = Settings->GetFloat( FString( "Gameplay/MoveSpeed" ), 1.0f );
- * }
- * @endcode
- *
- * 渡す側 (デバッグメニュー) の書き方:
- * @code
- * // 行に絶対キーを付けておくと、メニューのどこへ移しても同じキーで受け取れる。
- * ChildMenu->Add<CDebugTopElementFloat>( "MoveSpeed", 1.0f, 0.0f, 8.0f, 0.25f )
- *          ->SetSaveKey( FString( "Gameplay/MoveSpeed" ) );
- *
- * CDebugTopSettings* const Settings = GetSubsystem<CDebugTopSettings>();
- * Settings->MutablePath().SetDirectory( FString( "Saved/Debug" ) );
- * Settings->MutablePath().SetFileName( FString( "MySettings" ) );
- * Settings->MutablePath().SetFormat( EDebugTopSettingsFormat::Binary );
- * Settings->CaptureFrom( *m_HUD );
- * Settings->Save();   // 保存先の絶対パスと件数と形式をログへ出す
- * @endcode
- *
- * 置き場所について: 本クラスは Debug モジュール側にある。acs はビルド済みの acs.h + acs.lib
- * として配布されており、この構成からはエンジンへ手を入れて配布し直せないため。形式まわりだけは
- * メニューを知らない層 (DebugTopSetting / DebugTopSettings*Format 等) に切ってあるので、
- * 配布物を更新できるようになった時点でそのまま acs 側へ移せる。
+ * 不正な入力、形式変換の失敗、ファイル操作の失敗では既存の値を変更しない。
  */
 class CDebugTopSettings : public ASubsystem
 {

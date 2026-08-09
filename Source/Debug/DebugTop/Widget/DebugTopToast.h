@@ -3,8 +3,6 @@
 
 #include <acs.h>
 
-#include "Debug/DebugTop/Element/DebugTopEnum.h"
-
 using namespace acs;
 
 /**

@@ -3,7 +3,6 @@
 
 #include <acs.h>
 
-#include "Debug/DebugTop/Element/DebugTopEnum.h"
 #include "Debug/DebugTop/Settings/DebugTopSetting.h"
 
 using namespace acs;
@@ -12,8 +11,7 @@ using namespace acs;
  * 保存ファイルの形式。
  *
  * @details
- * 番兵を持たない。個数と名前は TDebugTopEnum<EDebugTopSettingsFormat> から引ける
- * (選択肢を作るときは DebugTopMakeEnumOptions を使う)。
+ * 番兵を持たない。個数と名前は acs::TEnumTraits から取得する。
  */
 ACS_ENUM()
 enum class EDebugTopSettingsFormat : u8
@@ -38,7 +36,8 @@ enum class EDebugTopSettingsFormat : u8
  */
 inline FString DebugTopSettingsFormatName( EDebugTopSettingsFormat Format )
 {
-	return DebugTopToString( Format ).ToString();
+	const acs::FEnumName Name = acs::ToString( Format );
+	return FString( FStringView( Name.Data, Name.Size ) );
 }
 
 /**
@@ -53,8 +52,7 @@ const char* DebugTopSettingsFormatExtension( EDebugTopSettingsFormat Format ) no
  * 設定の配列を指定形式の byte 列へ書き出す。
  *
  * @details
- * ここから下の層はデバッグメニューを一切知らない「キーと値の入れ物 ↔ byte 列」だけの
- * 作りにしてあるので、そのまま acs 側へ移せる。
+ * キーと値の配列を指定形式の byte 列へ変換し、変換できない値や容量不足では false を返す。
  * @param Settings 書き出す設定の配列。
  * @param Format 書き出す形式。
  * @param OutBytes 書き出し先 (呼び出し前の内容は捨てられる)。

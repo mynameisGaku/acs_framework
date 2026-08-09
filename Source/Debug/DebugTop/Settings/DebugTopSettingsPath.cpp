@@ -37,7 +37,7 @@ void CDebugTopSettingsPath::SetFileName( const FString& FileName )
 
 void CDebugTopSettingsPath::SetFormat( EDebugTopSettingsFormat Format ) noexcept
 {
-	if ( TDebugTopEnum<EDebugTopSettingsFormat>::Name( Format ).IsEmpty() ) return;
+	if ( !acs::IsValidEnum( Format ) ) return;
 
 	m_Format = Format;
 }

@@ -464,9 +464,6 @@
     <ClInclude Include="Source\Debug\DebugTop\Element\DebugTopElementWatch.h">
       <Filter>Source\Debug\DebugTop\Element</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Debug\DebugTop\Element\DebugTopEnum.h">
-      <Filter>Source\Debug\DebugTop\Element</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Debug\DebugTop\Input\DebugTopCursor.h">
       <Filter>Source\Debug\DebugTop\Input</Filter>
     </ClInclude>
