@@ -32,10 +32,10 @@ public:
 
 	/**
 	 * BGM を鳴らす。
+	 * @details 既にBGM 名が鳴っていれば、指定秒数で入れ替える。名前の保持に失敗した場合だけ要求しない。出力先がない、または再生に失敗してもBGM 名と音量の状態は保持する。
 	 * @param Name アセット名またはパス。
 	 * @param FadeInSeconds 入りにかける秒数。
 	 * @param bLoop 繰り返すなら true。
-	 * 名前の保持に失敗した場合だけ要求しない。出力先がない、または再生に失敗してもBGM名と音量状態は保持する。
 	 */
 	void PlayBgm( const FString& Name, f32 FadeInSeconds = 1.0f, bool bLoop = true );
 
@@ -50,9 +50,9 @@ public:
 
 	/**
 	 * 効果音を 1 回鳴らす。
+	 * @details 音量倍率が0 以下または名前の保持に失敗した場合だけ要求しない。出力先がない、または再生に失敗しても音量の状態は保持する。
 	 * @param Name アセット名またはパス。
 	 * @param VolumeScale この 1 回だけの音量の倍率。
-	 * 音量倍率が0以下または名前の保持に失敗した場合だけ要求しない。出力先がない、または再生に失敗しても音声状態は保持する。
 	 */
 	void PlaySfx( const FString& Name, f32 VolumeScale = 1.0f );
 
