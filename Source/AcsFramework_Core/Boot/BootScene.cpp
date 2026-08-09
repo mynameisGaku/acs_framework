@@ -10,7 +10,7 @@
 void ABootScene::OnEnter() noexcept
 {
 #if _DEBUG
-	GetSubsystem<CFadeSubsystem>()->FadeOut( 0.5f );
+	GetSubsystem<CFadeSubsystem>()->FadeIn( 0.5f );
 	Scenes().ChangeScene( MakeUnique<ADebugTopScene>() );
 #else
 	Scenes().ChangeScene( MakeUnique<ASampleScene>() );
