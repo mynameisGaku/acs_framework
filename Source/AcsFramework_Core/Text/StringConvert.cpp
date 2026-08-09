@@ -43,7 +43,11 @@ bool AcsToWide( const FString& Utf8, wchar_t* OutWide, usize Capacity ) noexcept
 	if ( static_cast<usize>( Required ) >= Capacity ) return false;
 
 	const int Converted = ::MultiByteToWideChar( CP_UTF8, 0, Utf8.Data(), InputLength, OutWide, Required );
-	if ( Converted != Required ) return false;
+	if ( Converted != Required )
+	{
+		OutWide[0] = L'\0';
+		return false;
+	}
 
 	OutWide[static_cast<usize>( Required )] = L'\0';
 	return true;
