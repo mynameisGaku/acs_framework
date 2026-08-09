@@ -1,6 +1,7 @@
+// SPDX-License-Identifier: Apache-2.0
 #include "AudioSubsystem.h"
 
-// GameInstance スコープへ登録する。シーンを跨いでも同じ音が鳴り続ける。
+// GameInstanceの寿命で音声窓口を共有する。
 ACS_REGISTER_SUBSYSTEM( CAudioSubsystem, ESubsystemScope::GameInstance )
 
 
@@ -46,7 +47,6 @@ bool CAudioSubsystem::Bind( CApplication& Application, u32 MaxVoices )
 	if ( !m_bBackendReady )
 	{
 		ReleaseBinding();
-		// 音が出ないだけで、頼む側は同じように書ける。落とさずに続ける。
 		ACS_LOG_WARN( "CAudioSubsystem: 音を出す層を用意できなかった (無音で続ける)" );
 		return false;
 	}
