@@ -1,4 +1,5 @@
-﻿#pragma once
+// SPDX-License-Identifier: Apache-2.0
+#pragma once
 
 #include <acs.h>
 
@@ -22,6 +23,9 @@ class ADebugTopScene : public AScene
 public:
 	/** シーンが top に積まれたときに 1 回呼ばれる。 */
 	void OnEnter() noexcept override;
+
+	/** シーン終了前にアセット読み込みの観測と表示追従を解除する。 */
+	void OnExit() noexcept override;
 
 	/** 2D の標準サービス構成 (Default2D | Camera2D | Physics2D) を要求する。 */
 	ESvc WantedServices() const noexcept override { return kScene2DServices; }
@@ -101,4 +105,7 @@ private:
 
 	/** ロード画面の見本で進捗のバーを出すか。 */
 	bool m_bLoadingDemoProgress = false;
+
+	/** アセット読み込み完了通知を待っているか。 */
+	bool m_bAssetLoadPending = false;
 };

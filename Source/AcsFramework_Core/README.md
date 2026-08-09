@@ -144,3 +144,15 @@ OnShutdown
 単純な計算、決定論的な値、1つの画面だけの状態はサブシステムにしない。まず既存の
 `F`値型、`CApplication`、`CGame`、`FScene`、`FSceneServices`、engineのregistryや
 managerを使い、Coreに必要な責任だけを置く。
+
+## アセット読み込み
+
+`CAssetLoaderSubsystem`はGameInstanceの寿命に合わせてregistryと1件の
+`FAssetLoadBatch`を保持し、`Update()`から読み込み結果を通知する窓口である。
+同時に複数のownerが同じbatchを使う契約ではなく、現在の1件だけを観測する。
+`FAssetLoadBatch`はBeginへ渡したpathの順序と件数を保つ。path本文は最大259 UTF-16 code unitで、終端NUL込み容量は260である。これを超えるpath、開始できないfuture、結果エラーを該当indexの失敗として完了させる。空入力は即完了し、
+確保失敗時も入力件数、進捗1、失敗状態、空のasset結果を保つ。
+
+1件のbatchだけが現在の観測対象となる。新しいBeginは旧callbackとfutureの観測を外し、
+旧workerはEngine側で継続し得るが新batchへ影響しない。Cancelはcallbackを解除し、
+scene終了時には利用側がCancelとLoadingScreenの追従解除を行う。

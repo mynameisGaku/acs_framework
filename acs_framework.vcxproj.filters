@@ -114,6 +114,9 @@
     <ClCompile Include="Source\AcsFramework_Core\App\AppSubsystem.cpp">
       <Filter>Source\AcsFramework_Core\App</Filter>
     </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Assets\AssetLoadBatch.cpp">
+      <Filter>Source\AcsFramework_Core\Assets</Filter>
+    </ClCompile>
     <ClCompile Include="Source\AcsFramework_Core\Assets\AssetLoaderSubsystem.cpp">
       <Filter>Source\AcsFramework_Core\Assets</Filter>
     </ClCompile>
@@ -123,10 +126,10 @@
     <ClCompile Include="Source\AcsFramework_Core\Boot\BootScene.cpp">
       <Filter>Source\AcsFramework_Core\Boot</Filter>
     </ClCompile>
-    <ClCompile Include="Source\AcsFramework_Core\Event\EventSubsystem.cpp">
+    <ClCompile Include="Source\AcsFramework_Core\Event\EventSubscription.cpp">
       <Filter>Source\AcsFramework_Core\Event</Filter>
     </ClCompile>
-    <ClCompile Include="Source\AcsFramework_Core\Event\EventSubscription.cpp">
+    <ClCompile Include="Source\AcsFramework_Core\Event\EventSubsystem.cpp">
       <Filter>Source\AcsFramework_Core\Event</Filter>
     </ClCompile>
     <ClCompile Include="Source\AcsFramework_Core\Fade\FadeSubsystem.cpp">
@@ -329,6 +332,9 @@
     <ClInclude Include="Source\AcsFramework_Core\App\AppSubsystem.h">
       <Filter>Source\AcsFramework_Core\App</Filter>
     </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Assets\AssetLoadBatch.h">
+      <Filter>Source\AcsFramework_Core\Assets</Filter>
+    </ClInclude>
     <ClInclude Include="Source\AcsFramework_Core\Assets\AssetLoaderSubsystem.h">
       <Filter>Source\AcsFramework_Core\Assets</Filter>
     </ClInclude>
@@ -338,10 +344,10 @@
     <ClInclude Include="Source\AcsFramework_Core\Boot\BootScene.h">
       <Filter>Source\AcsFramework_Core\Boot</Filter>
     </ClInclude>
-    <ClInclude Include="Source\AcsFramework_Core\Event\EventSubsystem.h">
+    <ClInclude Include="Source\AcsFramework_Core\Event\EventSubscription.h">
       <Filter>Source\AcsFramework_Core\Event</Filter>
     </ClInclude>
-    <ClInclude Include="Source\AcsFramework_Core\Event\EventSubscription.h">
+    <ClInclude Include="Source\AcsFramework_Core\Event\EventSubsystem.h">
       <Filter>Source\AcsFramework_Core\Event</Filter>
     </ClInclude>
     <ClInclude Include="Source\AcsFramework_Core\Fade\FadeSubsystem.h">

@@ -1,4 +1,5 @@
-﻿#include "DebugTopScene.h"
+// SPDX-License-Identifier: Apache-2.0
+#include "DebugTopScene.h"
 
 #include <cstdlib>
 
@@ -21,6 +22,7 @@ namespace
 
 void ADebugTopScene::OnEnter() noexcept
 {
+	m_bAssetLoadPending = false;
 	m_HUD = NewObject<ADebugTopHUD>();
 	if ( !m_HUD ) return;
 
@@ -89,6 +91,22 @@ void ADebugTopScene::OnEnter() noexcept
 
 	// 前回の設定を復元する (初回はファイルが無いので何もしない)。
 	LoadSettings();
+}
+
+void ADebugTopScene::OnExit() noexcept
+{
+	const bool bWasPending = m_bAssetLoadPending;
+	m_bAssetLoadPending = false;
+	if ( !bWasPending ) return;
+
+	if ( CAssetLoaderSubsystem* const Loader = GetSubsystem<CAssetLoaderSubsystem>() )
+	{
+		Loader->Cancel();
+	}
+	if ( CLoadingScreenSubsystem* const Loading = GetSubsystem<CLoadingScreenSubsystem>() )
+	{
+		Loading->Unfollow();
+	}
 }
 
 void ADebugTopScene::SaveSettings() noexcept
@@ -293,7 +311,9 @@ void ADebugTopScene::LoadAssetsDemo() noexcept
 	Assets.Add( FString( "Assets/loader.png" ) );
 	Assets.Add( FString( "Assets/Suzanne.obj" ) );
 
+	m_bAssetLoadPending = true;
 	Loader->Begin( Assets, FSimpleDelegate::CreateRaw<&ADebugTopScene::OnAssetsLoaded>( this ) );
+	if ( !m_bAssetLoadPending ) return;
 
 	// 待っている間に何を見せるかは、こちらが決める。読み込み側はこの行を知らない。
 	if ( CLoadingScreenSubsystem* const Loading = GetSubsystem<CLoadingScreenSubsystem>() )
@@ -304,6 +324,8 @@ void ADebugTopScene::LoadAssetsDemo() noexcept
 
 void ADebugTopScene::OnAssetsLoaded() noexcept
 {
+	if ( !m_bAssetLoadPending ) return;
+	m_bAssetLoadPending = false;
 	const CAssetLoaderSubsystem* const Loader = GetSubsystem<CAssetLoaderSubsystem>();
 	if ( Loader != nullptr && Loader->HasFailed() )
 	{
