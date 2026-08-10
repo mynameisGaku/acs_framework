@@ -10,7 +10,7 @@
 
 | | シーンとして使う | 重ねて使う |
 |---|---|---|
-| 入口 | `ADebugTopScene` (利用者側で用意する) | `CDebugTopOverlaySubsystem` |
+| 入口 | ゲーム側が所有する専用シーン | `CDebugTopOverlaySubsystem` |
 | 画面 | メニューだけ | ゲームの上に被さる (下は透ける) |
 | ゲーム | 動いていない (別のシーン) | 動いたまま。既定では出している間だけ止める |
 | 向く場面 | 起動直後の入口。腰を据えて触る | 詰めの調整。いじった結果がその場で見える |
@@ -20,13 +20,17 @@
 アプリがシーンを描き終えた後に描く。
 
 ```cpp
-// アプリの更新から (シーンを進める前に)
-const bool bCaptured = Overlay->Update( DeltaSeconds );
-if ( !bCaptured ) CGame::OnUpdate( DeltaSeconds );
-
-// アプリの描画から (シーンを描き終えた後に)
-Overlay->Draw( GetRenderer(), GetRenderCtx().HasFont() ? &GetRenderCtx().GetFont() : nullptr );
+// ゲーム側で用意したページを初期化時に追加する。
+CDebugTopOverlaySubsystem* const Overlay = GetSubsystem<CDebugTopOverlaySubsystem>();
+if ( Overlay != nullptr )
+{
+	Overlay->GetHUD().AddEntity( NewObject<AGameDebugPage>( "GameDebugPage" ) );
+}
 ```
+
+`CAcsFrameworkApp` が更新、表示中の時間停止、シーン後の描画を所有するため、ゲーム側は `Update` と `Draw` を直接呼ばない。
+
+`GetHUD()` でメニューを組み立てるまでは、切替キーを受けずゲーム時間を止めない。
 
 `CGame::GetRenderCtx()` はシーンを描き終えた時点で畳まれている。そのまま使うと落ちるので、
 重ねる側は文脈を自前で組み立てること。
@@ -44,8 +48,8 @@ Overlay->Draw( GetRenderer(), GetRenderCtx().HasFont() ? &GetRenderCtx().GetFont
 | `ADebugTopEntity` | `Page/` | 1 画面ぶんのページ。`OnBuild` で行を並べる |
 | `ADebugTopHUD` | 直下 | メニュー全体。見出しや説明文の出し方を変えたいとき |
 
-利用者の例は `Source/Debug/DebugTopSample/`。ここはモジュールの外にある
-(`ARootEntity` 等はモジュールを**使う側**なので、モジュールと同居させない)。
+ゲーム固有の専用シーンと派生ページは、DebugTop モジュールの外にある機能フォルダーへ置く。
+これらはモジュールを使う側であり、DebugTop 本体と同居させない。
 
 ---
 
@@ -148,7 +152,7 @@ Overlay->Draw( GetRenderer(), GetRenderCtx().HasFont() ? &GetRenderCtx().GetFont
 | やりたいこと | 触る場所 |
 |---|---|
 | 行の種類を増やす | `Element/` に `CDebugTopElement` の派生を足し、`DebugTopElements.h` (傘) へ 1 行足す |
-| ページを増やす | 利用者側 (`DebugTopSample/` 等) に `ADebugTopEntity` の派生を足す |
+| ページを増やす | ゲーム側の機能フォルダーに `ADebugTopEntity` の派生を足す |
 | 浮かせる UI を増やす | `Widget/` に部品を足し、`Page/` から持たせる |
 | 保存形式を増やす | `Settings/` に `EDebugTopSettingsFormat` の分岐を足す |
 | 値の型を増やす | `Element/DebugTopElementValue.cpp` の取り出し / 書き戻しにも足す (足さないと保存と取り消しから漏れる) |

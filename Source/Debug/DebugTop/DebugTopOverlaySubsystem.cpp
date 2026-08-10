@@ -26,6 +26,9 @@ ADebugTopHUD& CDebugTopOverlaySubsystem::GetHUD()
 
 bool CDebugTopOverlaySubsystem::Update( f32 DeltaSeconds )
 {
+	// メニューが組み立てられるまでは、切替入力とゲーム時間を掴まない。
+	if ( !m_HUD ) return false;
+
 	if ( m_ToggleKey != EKey::Unknown && CInput::IsKeyPressed( m_ToggleKey ) )
 	{
 		Toggle();
@@ -37,7 +40,7 @@ bool CDebugTopOverlaySubsystem::Update( f32 DeltaSeconds )
 
 	if ( !m_bVisible ) return false;
 
-	if ( m_HUD ) m_HUD->Update( DeltaSeconds );
+	m_HUD->Update( DeltaSeconds );
 
 	return m_bPauseWhileVisible;
 }
