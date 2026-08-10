@@ -11,18 +11,27 @@
 ```cpp
 #include "AcsFramework_Core/AcsFramework.h"
 
-void AMyScene::OnEnter() noexcept
+class AMyScene : public AScene
 {
-    if ( CGameSettingsSubsystem* const Settings = GetSubsystem<CGameSettingsSubsystem>() )
+public:
+    explicit AMyScene( const FString& DecisionSoundPath ) : m_DecisionSoundPath( DecisionSoundPath ) {}
+
+    void OnEnter() noexcept override
     {
-        Settings->SetFloat( FString( "Audio/Bgm" ), 0.8f );
+        if ( CGameSettingsSubsystem* const Settings = GetSubsystem<CGameSettingsSubsystem>() )
+        {
+            Settings->SetFloat( FString( "Audio/Bgm" ), 0.8f );
+        }
+
+        if ( CAudioSubsystem* const Audio = GetSubsystem<CAudioSubsystem>() )
+        {
+            Audio->PlaySfx( m_DecisionSoundPath );
+        }
     }
 
-    if ( CAudioSubsystem* const Audio = GetSubsystem<CAudioSubsystem>() )
-    {
-        Audio->PlaySfx( FString( "Assets/Se/Decide.wav" ) );
-    }
-}
+private:
+    FString m_DecisionSoundPath;
+};
 ```
 
 ゲーム固有のアプリは `CAcsFrameworkApp` を継承し、`CreateInitialScene()` だけを override する。
@@ -205,17 +214,23 @@ scene終了時には利用側がCancelとLoadingScreenの追従解除を行う�
 class AMyScene : public AScene
 {
 public:
-    explicit AMyScene( CAssetLoaderSubsystem& Loader ) : m_LoadScope( Loader ) {}
+    AMyScene( CAssetLoaderSubsystem& Loader, const FString& AssetPath )
+        : m_LoadScope( Loader )
+        , m_AssetPath( AssetPath )
+    {
+    }
+
     void OnEnter() noexcept override
     {
         TArray<FString> Paths;
-        if ( !Paths.TryAdd( FString( "Assets/loader.png" ) ) ) return;
+        if ( !Paths.TryAdd( m_AssetPath ) ) return;
         m_LoadScope.Begin( Paths );
     }
     void OnExit() noexcept override { m_LoadScope.CancelAll(); }
 
 private:
     CAssetLoadScope m_LoadScope;
+    FString m_AssetPath;
 };
 ```
 
