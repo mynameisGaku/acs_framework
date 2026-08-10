@@ -95,8 +95,9 @@ Core はACSの部品を再実装しない。たとえば設定の値と検証付
 非サブシステム型で、`CTimeSubsystem`が1つ所有する。`CTimeSubsystem`は決定した実効速度を`CGame`へ
 反映し、fixed timestepの設定と照会を`CGame`へ渡す。
 
-`FEventSubscription`、`FInputRepeat`、`FSaveSlotInfo`、`FGameTimer`、`ESceneTransition`は共有状態を継続更新する
-所有者ではないため、必要な利用側が値として持つ。
+`FSaveSlotInfo`は枠番号、存在、版、サイズ、パスをまとめる値で、`CSaveSubsystem`が一覧情報として返す。
+`FEventSubscription`、`FInputRepeat`、`FGameTimer`、`ESceneTransition`は共有状態を継続更新する所有者ではないため、
+必要な利用側が値として持つ。
 
 `CTimerSubsystem`はGameInstanceの寿命で2つの時計を所有し、アプリの更新から毎フレーム進める。
 `CGameTimerScope`はシーンまたは所有者が登録した`FGameTimer`を追跡する通常型で、タイマー窓口を所有しない。

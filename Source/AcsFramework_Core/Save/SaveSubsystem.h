@@ -2,36 +2,11 @@
 
 #include <acs.h>
 
+#include "AcsFramework_Core/Save/SaveSlotInfo.h"
 #include "AcsFramework_Core/Text/StringConvert.h"
 
 using namespace acs;
 using namespace acs::game;
-
-/**
- * セーブ 1 枠の見出し。
- *
- * @details
- * 中身を読まずに一覧へ出せるものだけを持つ。「どの枠が埋まっているか」を出すために、
- * タイトル画面が全枠を読み込む必要は無い。
- */
-struct FSaveSlotInfo
-{
-	/** 何番目の枠か。 */
-	i32 Index = 0;
-
-	/** 中身があるか。 */
-	bool bExists = false;
-
-	/** 書き込んだときの版 (無ければ 0)。 */
-	u32 Version = 0;
-
-	/** 中身の大きさ (バイト。無ければ 0)。 */
-	u64 SizeBytes = 0;
-
-	/** ファイルのパス (UTF-8)。 */
-	FString Path;
-};
-
 
 /**
  * 複数枠のセーブを取りまとめるサブシステム。

@@ -187,6 +187,7 @@
     <ClInclude Include="Source\AcsFramework_Core\Event\EventSubscription.h" />
     <ClInclude Include="Source\AcsFramework_Core\Event\EventSubsystem.h" />
     <ClInclude Include="Source\AcsFramework_Core\State\AppStateSubsystem.h" />
+    <ClInclude Include="Source\AcsFramework_Core\Save\SaveSlotInfo.h" />
     <ClInclude Include="Source\AcsFramework_Core\Save\SaveSubsystem.h" />
     <ClInclude Include="Source\AcsFramework_Core\Text\StringConvert.h" />
     <ClInclude Include="Source\AcsFramework_Core\Settings\GameSettingsSubsystem.h" />
