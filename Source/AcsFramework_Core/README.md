@@ -214,11 +214,7 @@ scene終了時には利用側がCancelとLoadingScreenの追従解除を行う�
 class AMyScene : public AScene
 {
 public:
-    AMyScene( CAssetLoaderSubsystem& Loader, const FString& AssetPath )
-        : m_LoadScope( Loader )
-        , m_AssetPath( AssetPath )
-    {
-    }
+    AMyScene( CAssetLoaderSubsystem& Loader, const FString& AssetPath ) : m_LoadScope( Loader ), m_AssetPath( AssetPath ) {}
 
     void OnEnter() noexcept override
     {
