@@ -338,6 +338,9 @@
     <ClInclude Include="Source\AcsFramework_Core\Assets\AssetLoaderSubsystem.h">
       <Filter>Source\AcsFramework_Core\Assets</Filter>
     </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Assets\AssetLoadRequest.h">
+      <Filter>Source\AcsFramework_Core\Assets</Filter>
+    </ClInclude>
     <ClInclude Include="Source\AcsFramework_Core\Audio\AudioSubsystem.h">
       <Filter>Source\AcsFramework_Core\Audio</Filter>
     </ClInclude>

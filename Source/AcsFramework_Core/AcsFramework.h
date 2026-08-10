@@ -4,6 +4,7 @@
 #include "AcsFramework_Core/App/AcsFrameworkApp.h"
 #include "AcsFramework_Core/App/AppSubsystem.h"
 #include "AcsFramework_Core/Assets/AssetLoadBatch.h"
+#include "AcsFramework_Core/Assets/AssetLoadRequest.h"
 #include "AcsFramework_Core/Assets/AssetLoaderSubsystem.h"
 #include "AcsFramework_Core/Audio/AudioSubsystem.h"
 #include "AcsFramework_Core/Boot/BootScene.h"

@@ -1,7 +1,9 @@
+// SPDX-License-Identifier: Apache-2.0
 #pragma once
 
 #include <acs.h>
 
+#include "AcsFramework_Core/Assets/AssetLoadRequest.h"
 #include "AcsFramework_Core/Assets/AssetLoaderSubsystem.h"
 
 using namespace acs;
@@ -80,6 +82,24 @@ public:
 	void Unfollow() noexcept;
 
 	/**
+	 * Requestが現在のLoaderの識別を示す場合だけ追従する。完了後に保持された要求も受理する。
+	 *
+	 * @param Loader 対象の読み込み窓口。非所有で、UnfollowRequestまたは自動完了まで生存させる。同じGameInstanceの寿命で管理する。
+	 * @param Request 追従する要求。
+	 * @param Message 画面中央へ表示する文言。
+	 * @return Loaderの現在要求と一致した場合はtrue。無効または古い要求ではfalseで画面状態を変えない。
+	 */
+	bool FollowRequest( const CAssetLoaderSubsystem& Loader, FAssetLoadRequest Request, const FString& Message = FString() );
+
+	/**
+	 * 保存した要求と一致する場合だけ追従を解除する。
+	 *
+	 * @param Request 解除する要求。
+	 * @return 保存した要求と完全一致した場合はtrue。別要求、無効値、未追従ではfalseで状態を変えない。
+	 */
+	bool UnfollowRequest( FAssetLoadRequest Request ) noexcept;
+
+	/**
 	 * 進捗を設定する。
 	 *
 	 * @details
@@ -136,6 +156,9 @@ private:
 	/** 見に行っている読み込みの進み具合を、出し入れと進捗へ反映する。 */
 	void UpdateFollow() noexcept;
 
+	/** 読み込み窓口、要求、表示状態を同時に解除する。 */
+	void ClearFollow() noexcept;
+
 	/** 中央へ出す文言。 */
 	FString m_Message;
 
@@ -154,8 +177,11 @@ private:
 	/** 幕を描くための SpriteBatch (最初に出すときだけ用意する)。 */
 	CSpriteBatch m_Overlay;
 
-	/** 見に行っている読み込み。所有はしない (nullptr なら誰も見ていない)。 */
+	/** 追従中に参照する読み込み窓口。非所有で、Unfollowまたは自動完了まで生存させる。同じGameInstanceの寿命で管理する。 */
 	const CAssetLoaderSubsystem* m_Followed = nullptr;
+
+	/** 見に行っている読み込みに対応する要求。無効値は要求を持たない追従を示す。 */
+	FAssetLoadRequest m_FollowedRequest;
 
 	/** 出す指示が生きているか。 */
 	bool m_bVisible = false;

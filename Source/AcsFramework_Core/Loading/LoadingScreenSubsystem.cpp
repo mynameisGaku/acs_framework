@@ -72,6 +72,7 @@ void CLoadingScreenSubsystem::SetEnabled( bool bEnabled ) noexcept
 void CLoadingScreenSubsystem::Follow( const CAssetLoaderSubsystem& Loader, const FString& Message )
 {
 	m_Followed = &Loader;
+	m_FollowedRequest = FAssetLoadRequest();
 	m_Message = Message;
 
 	// ここでは出さない。実際に読み込んでいることを Update で見てから出す。こうしておくと、
@@ -81,13 +82,43 @@ void CLoadingScreenSubsystem::Follow( const CAssetLoaderSubsystem& Loader, const
 
 void CLoadingScreenSubsystem::Unfollow() noexcept
 {
+	ClearFollow();
+}
+
+bool CLoadingScreenSubsystem::FollowRequest( const CAssetLoaderSubsystem& Loader, FAssetLoadRequest Request, const FString& Message )
+{
+	if ( !Request.IsValid() || !Loader.IsCurrent( Request ) ) return false;
+
+	m_Followed = &Loader;
+	m_FollowedRequest = Request;
+	m_Message = Message;
+	SetProgress( Loader.GetProgress() );
+	return true;
+}
+
+bool CLoadingScreenSubsystem::UnfollowRequest( FAssetLoadRequest Request ) noexcept
+{
+	if ( !Request.IsValid() || m_FollowedRequest != Request ) return false;
+
+	ClearFollow();
+	return true;
+}
+
+void CLoadingScreenSubsystem::ClearFollow() noexcept
+{
 	m_Followed = nullptr;
+	m_FollowedRequest = FAssetLoadRequest();
 	m_bVisible = false;
 }
 
 void CLoadingScreenSubsystem::UpdateFollow() noexcept
 {
 	if ( m_Followed == nullptr ) return;
+	if ( m_FollowedRequest.IsValid() && !m_Followed->IsCurrent( m_FollowedRequest ) )
+	{
+		ClearFollow();
+		return;
+	}
 
 	if ( m_Followed->IsLoading() )
 	{
@@ -97,8 +128,7 @@ void CLoadingScreenSubsystem::UpdateFollow() noexcept
 	}
 
 	// 読み終わった。幕を下ろして、見に行くのもここで終わる。
-	m_Followed = nullptr;
-	m_bVisible = false;
+	ClearFollow();
 }
 
 void CLoadingScreenSubsystem::SetProgress( f32 Ratio ) noexcept

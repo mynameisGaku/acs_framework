@@ -23,6 +23,7 @@ namespace
 void ADebugTopScene::OnEnter() noexcept
 {
 	m_bAssetLoadPending = false;
+	m_AssetLoadRequest = FAssetLoadRequest();
 	m_HUD = NewObject<ADebugTopHUD>();
 	if ( !m_HUD ) return;
 
@@ -95,17 +96,20 @@ void ADebugTopScene::OnEnter() noexcept
 
 void ADebugTopScene::OnExit() noexcept
 {
-	const bool bWasPending = m_bAssetLoadPending;
+	// 退出するシーンが保持している要求識別子。
+	const FAssetLoadRequest Request = m_AssetLoadRequest;
 	m_bAssetLoadPending = false;
-	if ( !bWasPending ) return;
+	m_AssetLoadRequest = FAssetLoadRequest();
 
-	if ( CAssetLoaderSubsystem* const Loader = GetSubsystem<CAssetLoaderSubsystem>() )
+	// 取消し対象のアセット読み込み窓口。
+	CAssetLoaderSubsystem* const Loader = GetSubsystem<CAssetLoaderSubsystem>();
+	if ( Loader != nullptr )
 	{
-		Loader->Cancel();
+		Loader->CancelRequest( Request );
 	}
 	if ( CLoadingScreenSubsystem* const Loading = GetSubsystem<CLoadingScreenSubsystem>() )
 	{
-		Loading->Unfollow();
+		Loading->UnfollowRequest( Request );
 	}
 }
 
@@ -312,21 +316,49 @@ void ADebugTopScene::LoadAssetsDemo() noexcept
 	Assets.Add( FString( "Assets/Suzanne.obj" ) );
 
 	m_bAssetLoadPending = true;
-	Loader->Begin( Assets, FSimpleDelegate::CreateRaw<&ADebugTopScene::OnAssetsLoaded>( this ) );
-	if ( !m_bAssetLoadPending ) return;
+	m_AssetLoadRequest = FAssetLoadRequest();
+	// 開始した読み込み処理へ割り当てられた要求識別子。
+	const FAssetLoadRequest Request = Loader->BeginRequest( Assets, FSimpleDelegate::CreateRaw<&ADebugTopScene::OnAssetsLoaded>( this ) );
+	if ( !Request.IsValid() )
+	{
+		m_bAssetLoadPending = false;
+		return;
+	}
+	m_AssetLoadRequest = Request;
+	if ( !m_bAssetLoadPending )
+	{
+		m_AssetLoadRequest = FAssetLoadRequest();
+		return;
+	}
+	if ( !Loader->IsCurrent( Request ) || !Loader->IsLoading() )
+	{
+		m_bAssetLoadPending = false;
+		m_AssetLoadRequest = FAssetLoadRequest();
+		return;
+	}
 
 	// 待っている間に何を見せるかは、こちらが決める。読み込み側はこの行を知らない。
 	if ( CLoadingScreenSubsystem* const Loading = GetSubsystem<CLoadingScreenSubsystem>() )
 	{
-		Loading->Follow( *Loader, FString( "アセットを読み込んでいます" ) );
+		if ( !Loading->FollowRequest( *Loader, Request, FString( "アセットを読み込んでいます" ) ) )
+		{
+			Loader->CancelRequest( Request );
+			Loading->UnfollowRequest( Request );
+			m_bAssetLoadPending = false;
+			m_AssetLoadRequest = FAssetLoadRequest();
+		}
 	}
 }
 
 void ADebugTopScene::OnAssetsLoaded() noexcept
 {
 	if ( !m_bAssetLoadPending ) return;
+	// 完了通知に対応するシーン側の要求識別子。
+	const FAssetLoadRequest Request = m_AssetLoadRequest;
 	m_bAssetLoadPending = false;
+	m_AssetLoadRequest = FAssetLoadRequest();
 	const CAssetLoaderSubsystem* const Loader = GetSubsystem<CAssetLoaderSubsystem>();
+	if ( Request.IsValid() && ( Loader == nullptr || !Loader->IsCurrent( Request ) ) ) return;
 	if ( Loader != nullptr && Loader->HasFailed() )
 	{
 		DebugTopNotifyError( FString( "読み込めなかったアセットがあります" ), FString( "詳しくはログを見てください" ) );

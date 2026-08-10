@@ -118,6 +118,7 @@
     <ClInclude Include="Source\AcsFramework_Core\Fade\FadeSubsystem.h" />
     <ClInclude Include="Source\AcsFramework_Core\Loading\LoadingScreenSubsystem.h" />
     <ClInclude Include="Source\AcsFramework_Core\Assets\AssetLoadBatch.h" />
+    <ClInclude Include="Source\AcsFramework_Core\Assets\AssetLoadRequest.h" />
     <ClInclude Include="Source\AcsFramework_Core\Assets\AssetLoaderSubsystem.h" />
     <ClInclude Include="Source\AcsFramework_Core\Scene\SceneTravelSubsystem.h" />
     <ClInclude Include="Source\Debug\DebugTopSample\DebugTopScene.h" />

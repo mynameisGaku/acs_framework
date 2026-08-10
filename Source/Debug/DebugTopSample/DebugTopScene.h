@@ -3,6 +3,7 @@
 
 #include <acs.h>
 
+#include "AcsFramework_Core/Assets/AssetLoadRequest.h"
 #include "AcsFramework_Core/Scene/SceneTravelSubsystem.h"
 #include "Debug/DebugTop/DebugTopHUD.h"
 #include "Debug/DebugTop/Element/DebugTopElements.h"
@@ -108,4 +109,7 @@ private:
 
 	/** アセット読み込み完了通知を待っているか。 */
 	bool m_bAssetLoadPending = false;
+
+	/** 待機中のアセット読み込み要求。完了または終了時に無効化する。 */
+	FAssetLoadRequest m_AssetLoadRequest;
 };
