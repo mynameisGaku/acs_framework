@@ -2,24 +2,9 @@
 
 #include <acs.h>
 
+#include "AcsFramework_Core/Scene/SceneTransition.h"
+
 using namespace acs;
-
-/**
- * シーンを切り替えるときの見せ方。
- *
- * @details
- * Fade を選ぶと暗転しきった時点でエンジンが切り替えるので、遷移先のシーンは
- * フェード明けのコードを一切書かなくてよい (書くと二重に幕が張られる)。
- */
-enum class ESceneTransition : u8
-{
-	/** 幕を使わず、その場で切り替える。見せ方は遷移先が自分で作る。 */
-	Cut,
-
-	/** 暗転 → 切り替え → 明転。遷移先は幕のことを考えなくてよい。 */
-	Fade,
-};
-
 
 /**
  * シーンの切り替えを、どこからでも頼めるようにするサブシステム。

@@ -19,6 +19,7 @@
 #include "AcsFramework_Core/Pause/PauseScreenSubsystem.h"
 #include "AcsFramework_Core/Save/SaveSlotInfo.h"
 #include "AcsFramework_Core/Save/SaveSubsystem.h"
+#include "AcsFramework_Core/Scene/SceneTransition.h"
 #include "AcsFramework_Core/Scene/SceneTravelSubsystem.h"
 #include "AcsFramework_Core/Screen/ScreenSubsystem.h"
 #include "AcsFramework_Core/Settings/GameSettingsSubsystem.h"

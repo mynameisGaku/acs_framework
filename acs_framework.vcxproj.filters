@@ -374,6 +374,9 @@
     <ClInclude Include="Source\AcsFramework_Core\Save\SaveSubsystem.h">
       <Filter>Source\AcsFramework_Core\Save</Filter>
     </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Scene\SceneTransition.h">
+      <Filter>Source\AcsFramework_Core\Scene</Filter>
+    </ClInclude>
     <ClInclude Include="Source\AcsFramework_Core\Scene\SceneTravelSubsystem.h">
       <Filter>Source\AcsFramework_Core\Scene</Filter>
     </ClInclude>

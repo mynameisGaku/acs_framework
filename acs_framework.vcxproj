@@ -122,6 +122,7 @@
     <ClInclude Include="Source\AcsFramework_Core\Assets\AssetLoadRequest.h" />
     <ClInclude Include="Source\AcsFramework_Core\Assets\AssetLoaderSubsystem.h" />
     <ClInclude Include="Source\AcsFramework_Core\Assets\AssetLoadScope.h" />
+    <ClInclude Include="Source\AcsFramework_Core\Scene\SceneTransition.h" />
     <ClInclude Include="Source\AcsFramework_Core\Scene\SceneTravelSubsystem.h" />
     <ClInclude Include="Source\Debug\DebugTop\DebugTopHUD.h" />
     <ClInclude Include="Source\Debug\DebugTop\Element\DebugTopElement.h" />

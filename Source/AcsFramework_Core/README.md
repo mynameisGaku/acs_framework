@@ -96,7 +96,8 @@ Core はACSの部品を再実装しない。たとえば設定の値と検証付
 反映し、fixed timestepの設定と照会を`CGame`へ渡す。
 
 `FSaveSlotInfo`は枠番号、存在、版、サイズ、パスをまとめる値で、`CSaveSubsystem`が一覧情報として返す。
-`FEventSubscription`、`FInputRepeat`、`FGameTimer`、`ESceneTransition`は共有状態を継続更新する所有者ではないため、
+`ESceneTransition`は幕なしと暗転を使う切替方法を表し、`CSceneTravelSubsystem`の公開要求が受け取る値である。
+`FEventSubscription`、`FInputRepeat`、`FGameTimer`は共有状態を継続更新する所有者ではないため、
 必要な利用側が値として持つ。
 
 `CTimerSubsystem`はGameInstanceの寿命で2つの時計を所有し、アプリの更新から毎フレーム進める。
