@@ -58,12 +58,6 @@
     <Filter Include="Source\AcsFramework_Core\Timer">
       <UniqueIdentifier>{1a0bf668-8aba-a2f0-141e-19da0ecf4793}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\AcsFramework_Sample">
-      <UniqueIdentifier>{c6ca8f33-14b7-d32b-63a8-8b39066ed096}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source\AcsFramework_Sample\Scene">
-      <UniqueIdentifier>{80300694-7f9f-57b1-6c1b-b3b0ae0437cb}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source\Common">
       <UniqueIdentifier>{0d9f2c6e-6a7b-4a1e-9f2d-5c1b8a7e4d30}</UniqueIdentifier>
     </Filter>
@@ -72,12 +66,6 @@
     </Filter>
     <Filter Include="Source\Debug\DebugTop">
       <UniqueIdentifier>{5affac60-4ca5-6091-7653-c6f0d33a876b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source\Debug\DebugTopSample">
-      <UniqueIdentifier>{69521ce9-8112-d19f-0cf6-1bd294361bb4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source\Debug\DebugTopSample\Pages">
-      <UniqueIdentifier>{e22da821-a2bd-5f84-fdbe-62fd2a584152}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source\Debug\DebugTop\Builtin">
       <UniqueIdentifier>{43a270f2-8657-1674-b44b-de7bf7d70a06}</UniqueIdentifier>
@@ -171,17 +159,8 @@
     <ClCompile Include="Source\AcsFramework_Core\Time\TimeSubsystem.cpp">
       <Filter>Source\AcsFramework_Core\Time</Filter>
     </ClCompile>
-    <ClCompile Include="Source\AcsFramework_Sample\Scene\SampleModalScene.cpp">
-      <Filter>Source\AcsFramework_Sample\Scene</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\AcsFramework_Sample\Scene\SampleScene.cpp">
-      <Filter>Source\AcsFramework_Sample\Scene</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Common\Pch.cpp">
       <Filter>Source\Common</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Debug\DebugTopSample\DebugTopScene.cpp">
-      <Filter>Source\Debug\DebugTopSample</Filter>
     </ClCompile>
     <ClCompile Include="Source\Debug\DebugTop\Builtin\DebugTopAppearance.cpp">
       <Filter>Source\Debug\DebugTop\Builtin</Filter>
@@ -392,38 +371,8 @@
     <ClInclude Include="Source\AcsFramework_Core\Time\TimeSubsystem.h">
       <Filter>Source\AcsFramework_Core\Time</Filter>
     </ClInclude>
-    <ClInclude Include="Source\AcsFramework_Sample\Scene\SampleDebugPage.h">
-      <Filter>Source\AcsFramework_Sample\Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\AcsFramework_Sample\Scene\SampleModalScene.h">
-      <Filter>Source\AcsFramework_Sample\Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\AcsFramework_Sample\Scene\SampleScene.h">
-      <Filter>Source\AcsFramework_Sample\Scene</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Common\Pch.h">
       <Filter>Source\Common</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Debug\DebugTopSample\DebugTopScene.h">
-      <Filter>Source\Debug\DebugTopSample</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Debug\DebugTopSample\Pages\DisplaySettingsEntity.h">
-      <Filter>Source\Debug\DebugTopSample\Pages</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Debug\DebugTopSample\Pages\LongListEntity.h">
-      <Filter>Source\Debug\DebugTopSample\Pages</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Debug\DebugTopSample\Pages\RootEntity.h">
-      <Filter>Source\Debug\DebugTopSample\Pages</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Debug\DebugTopSample\Pages\SampleProfile.h">
-      <Filter>Source\Debug\DebugTopSample\Pages</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Debug\DebugTopSample\Pages\SampleSettingsPath.h">
-      <Filter>Source\Debug\DebugTopSample\Pages</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Debug\DebugTopSample\Pages\TravelEntity.h">
-      <Filter>Source\Debug\DebugTopSample\Pages</Filter>
     </ClInclude>
     <ClInclude Include="Source\Debug\DebugTop\Builtin\DebugTopAppearance.h">
       <Filter>Source\Debug\DebugTop\Builtin</Filter>

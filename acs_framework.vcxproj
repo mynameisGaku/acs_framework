@@ -114,14 +114,12 @@
     <ClInclude Include="Source\Common\Pch.h" />
     <ClInclude Include="Source\EntryPoint\EntryPoint.h" />
     <ClInclude Include="Source\AcsFramework_Core\Boot\BootScene.h" />
-    <ClInclude Include="Source\AcsFramework_Sample\Scene\SampleScene.h" />
     <ClInclude Include="Source\AcsFramework_Core\Fade\FadeSubsystem.h" />
     <ClInclude Include="Source\AcsFramework_Core\Loading\LoadingScreenSubsystem.h" />
     <ClInclude Include="Source\AcsFramework_Core\Assets\AssetLoadBatch.h" />
     <ClInclude Include="Source\AcsFramework_Core\Assets\AssetLoadRequest.h" />
     <ClInclude Include="Source\AcsFramework_Core\Assets\AssetLoaderSubsystem.h" />
     <ClInclude Include="Source\AcsFramework_Core\Scene\SceneTravelSubsystem.h" />
-    <ClInclude Include="Source\Debug\DebugTopSample\DebugTopScene.h" />
     <ClInclude Include="Source\Debug\DebugTop\DebugTopHUD.h" />
     <ClInclude Include="Source\Debug\DebugTop\Element\DebugTopElement.h" />
     <ClInclude Include="Source\Debug\DebugTop\Input\DebugTopCursor.h" />
@@ -159,12 +157,6 @@
     <ClInclude Include="Source\Debug\DebugTop\Element\DebugTopElementNumber.h" />
     <ClInclude Include="Source\Debug\DebugTop\Element\DebugTopElements.h" />
     <ClInclude Include="Source\Debug\DebugTop\Element\DebugTopElementText.h" />
-    <ClInclude Include="Source\Debug\DebugTopSample\Pages\DisplaySettingsEntity.h" />
-    <ClInclude Include="Source\Debug\DebugTopSample\Pages\LongListEntity.h" />
-    <ClInclude Include="Source\Debug\DebugTopSample\Pages\RootEntity.h" />
-    <ClInclude Include="Source\Debug\DebugTopSample\Pages\SampleProfile.h" />
-    <ClInclude Include="Source\Debug\DebugTopSample\Pages\TravelEntity.h" />
-    <ClInclude Include="Source\Debug\DebugTopSample\Pages\SampleSettingsPath.h" />
     <ClInclude Include="Source\Debug\DebugTop\Element\DebugTopElementVector.h" />
     <ClInclude Include="Source\Debug\DebugTop\Element\DebugTopElementWatch.h" />
     <ClInclude Include="Source\Debug\DebugTop\Widget\DebugTopTooltip.h" />
@@ -173,7 +165,6 @@
     <ClInclude Include="Source\Debug\DebugTop\Builtin\DebugTopAppearance.h" />
     <ClInclude Include="Source\Debug\DebugTop\Element\DebugTopElementTypes.h" />
     <ClInclude Include="Source\Debug\DebugTop\Widget\DebugTopFilterBox.h" />
-    <ClInclude Include="Source\AcsFramework_Sample\Scene\SampleDebugPage.h" />
     <ClInclude Include="Source\Debug\DebugTop\DebugTopOverlaySubsystem.h" />
     <ClInclude Include="Source\AcsFramework_Core\Input\InputRepeat.h" />
     <ClInclude Include="Source\Debug\DebugTop\Input\DebugTopKeyNav.h" />
@@ -189,7 +180,6 @@
     <ClInclude Include="Source\AcsFramework_Core\Timer\TimerSubsystem.h" />
     <ClInclude Include="Source\AcsFramework_Core\Event\EventSubscription.h" />
     <ClInclude Include="Source\AcsFramework_Core\Event\EventSubsystem.h" />
-    <ClInclude Include="Source\AcsFramework_Sample\Scene\SampleModalScene.h" />
     <ClInclude Include="Source\AcsFramework_Core\State\AppStateSubsystem.h" />
     <ClInclude Include="Source\AcsFramework_Core\Save\SaveSubsystem.h" />
     <ClInclude Include="Source\AcsFramework_Core\Text\StringConvert.h" />
@@ -205,13 +195,11 @@
     <ClCompile Include="Source\AcsFramework_Core\App\AcsFrameworkApp.cpp" />
     <ClCompile Include="Source\EntryPoint\EntryPoint.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Boot\BootScene.cpp" />
-    <ClCompile Include="Source\AcsFramework_Sample\Scene\SampleScene.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Fade\FadeSubsystem.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Loading\LoadingScreenSubsystem.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Assets\AssetLoadBatch.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Assets\AssetLoaderSubsystem.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Scene\SceneTravelSubsystem.cpp" />
-    <ClCompile Include="Source\Debug\DebugTopSample\DebugTopScene.cpp" />
     <ClCompile Include="Source\Debug\DebugTop\DebugTopHUD.cpp" />
     <ClCompile Include="Source\Debug\DebugTop\Element\DebugTopElement.cpp" />
     <ClCompile Include="Source\Debug\DebugTop\Input\DebugTopCursor.cpp" />
@@ -266,7 +254,6 @@
     <ClCompile Include="Source\AcsFramework_Core\Timer\TimerSubsystem.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Event\EventSubscription.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Event\EventSubsystem.cpp" />
-    <ClCompile Include="Source\AcsFramework_Sample\Scene\SampleModalScene.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\State\AppStateSubsystem.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Save\SaveSubsystem.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Text\StringConvert.cpp" />
