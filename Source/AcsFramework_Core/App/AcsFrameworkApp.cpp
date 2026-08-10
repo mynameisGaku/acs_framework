@@ -111,6 +111,11 @@ TUniquePtr<AScene> CAcsFrameworkApp::InitialScene() noexcept
 		Loader->Bind( GetAssets() );
 	}
 
+	return CreateInitialScene();
+}
+
+TUniquePtr<AScene> CAcsFrameworkApp::CreateInitialScene() noexcept
+{
 	return MakeUnique<ABootScene>();
 }
 

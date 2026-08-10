@@ -1,4 +1,5 @@
-﻿#pragma once
+﻿// SPDX-License-Identifier: Apache-2.0
+#pragma once
 
 #include <acs.h>
 using namespace acs;
@@ -11,19 +12,29 @@ public:
 
 private:
     /**
-     * 起動時に最初に積む AScene を返す (CGame の純粋仮想)。
+     * サービス配線を完了して初期シーンを返す。
      *
-     * @details CGame::OnStart() がこの戻り値を push して即時適用する。
-     * @return 最初のシーン (所有権が CSceneManager へ移る)。
+     * @details 配線後に CreateInitialScene() を呼び、空の TUniquePtr<AScene> は CGame の終了契約へ渡す。
+     * @return ゲーム固有の初期シーン。
      */
-    TUniquePtr<AScene> InitialScene() noexcept override;
+    TUniquePtr<AScene> InitialScene() noexcept final override;
 
     /**
-     * 起動時に 1 回呼ばれる初期化フック。
+     * 起動時の初期シーン適用を基底へ委譲する。
      *
-     * @details CGame::OnStart() が InitialScene() を push するため、基底呼び出しは必須。
+     * @details InitialScene() の配線と初期シーン適用を CGame::OnStart() へ渡す。
      */
-    void OnStart() noexcept override;
+    void OnStart() noexcept final override;
+
+protected:
+    /**
+     * ゲーム固有の初期シーンを生成する。
+     *
+     * @return 初期シーン。空の TUniquePtr<AScene> は CGame の終了契約へ渡る。
+     */
+    virtual TUniquePtr<AScene> CreateInitialScene() noexcept;
+
+private:
 
     /**
      * 毎フレーム呼ばれる更新フック。

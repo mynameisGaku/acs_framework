@@ -25,8 +25,12 @@ void AMyScene::OnEnter() noexcept
 }
 ```
 
-ゲーム固有のアプリは `CAcsFrameworkApp` を継承し、`InitialScene()` を実装する。共通の
-起動・更新・描画・終了処理は基底側へ残す。
+ゲーム固有のアプリは `CAcsFrameworkApp` を継承し、`CreateInitialScene()` だけを override する。
+`InitialScene()` はサービス配線を完了してからこの hook を呼び、`OnStart()` は基底の起動処理へ
+渡すため上書きできない。hook が空の `TUniquePtr<AScene>` を返した場合は代替シーンを作らず、`CGame` の既存の
+null から終了する契約へ渡す。既定の Framework exe は `CAcsFrameworkApp` と `ABootScene` を使い、
+ゲーム側の EntryPoint は `ACS_DEFINE_MAIN(CMyApp)` を定義して既定の EntryPoint.cpp を target へ入れない。
+共通の起動・更新・描画・終了処理は基底側へ残す。
 
 ## 責務の境界
 
@@ -95,12 +99,19 @@ Core はACSの部品を再実装しない。たとえば設定の値と検証付
 置く理由と、停止中も動くべきかを先に決める。
 
 ```text
-OnStart
-  CGame::OnStart
-  Fade / SceneTravel / AssetRegistry / Screen / App / Event / AppState を配線
-  Save / GameSettings を設定
-  Audio を asset registry と player settings へ接続
-  Time / AssetLoader を配線
+CAcsFrameworkApp::OnStart(final)
+  → CGame::OnStart
+     → GameInstance 初期化
+     → CAcsFrameworkApp::InitialScene(final: Bind / Configure)
+        → CreateInitialScene(virtual hook)
+     → push / apply
+     → 初期シーンの OnEnter
+
+InitialScene の配線
+  Fade / SceneTravel / AssetRegistry / Screen / App / Event / AppState
+  Save / GameSettings
+  Audio と asset registry / player settings
+  Time / AssetLoader
 
 OnUpdate(real dt)
   DebugTop の入力と時間の理由
