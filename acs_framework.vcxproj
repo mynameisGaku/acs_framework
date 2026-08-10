@@ -177,6 +177,8 @@
     <ClInclude Include="Source\AcsFramework_Core\Text\UiFontSubsystem.h" />
     <ClInclude Include="Source\AcsFramework_Core\App\AppSubsystem.h" />
     <ClInclude Include="Source\AcsFramework_Core\Screen\ScreenSubsystem.h" />
+    <ClInclude Include="Source\AcsFramework_Core\Timer\GameTimer.h" />
+    <ClInclude Include="Source\AcsFramework_Core\Timer\GameTimerScope.h" />
     <ClInclude Include="Source\AcsFramework_Core\Timer\TimerSubsystem.h" />
     <ClInclude Include="Source\AcsFramework_Core\Event\EventSubscription.h" />
     <ClInclude Include="Source\AcsFramework_Core\Event\EventSubsystem.h" />
@@ -251,6 +253,7 @@
     <ClCompile Include="Source\AcsFramework_Core\Text\UiFontSubsystem.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\App\AppSubsystem.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Screen\ScreenSubsystem.cpp" />
+    <ClCompile Include="Source\AcsFramework_Core\Timer\GameTimerScope.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Timer\TimerSubsystem.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Event\EventSubscription.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Event\EventSubsystem.cpp" />

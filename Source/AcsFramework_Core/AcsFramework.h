@@ -22,4 +22,6 @@
 #include "AcsFramework_Core/Text/StringConvert.h"
 #include "AcsFramework_Core/Text/UiFontSubsystem.h"
 #include "AcsFramework_Core/Time/TimeSubsystem.h"
+#include "AcsFramework_Core/Timer/GameTimer.h"
+#include "AcsFramework_Core/Timer/GameTimerScope.h"
 #include "AcsFramework_Core/Timer/TimerSubsystem.h"

@@ -153,6 +153,9 @@
     <ClCompile Include="Source\AcsFramework_Core\Text\UiFontSubsystem.cpp">
       <Filter>Source\AcsFramework_Core\Text</Filter>
     </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Timer\GameTimerScope.cpp">
+      <Filter>Source\AcsFramework_Core\Timer</Filter>
+    </ClCompile>
     <ClCompile Include="Source\AcsFramework_Core\Timer\TimerSubsystem.cpp">
       <Filter>Source\AcsFramework_Core\Timer</Filter>
     </ClCompile>
@@ -364,6 +367,12 @@
     </ClInclude>
     <ClInclude Include="Source\AcsFramework_Core\Text\UiFontSubsystem.h">
       <Filter>Source\AcsFramework_Core\Text</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Timer\GameTimer.h">
+      <Filter>Source\AcsFramework_Core\Timer</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Timer\GameTimerScope.h">
+      <Filter>Source\AcsFramework_Core\Timer</Filter>
     </ClInclude>
     <ClInclude Include="Source\AcsFramework_Core\Timer\TimerSubsystem.h">
       <Filter>Source\AcsFramework_Core\Timer</Filter>

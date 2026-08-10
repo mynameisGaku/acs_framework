@@ -3,59 +3,13 @@
 
 #include <acs.h>
 
+#include "GameTimer.h"
+
 using namespace acs;
-
 /**
- * 仕掛けたタイマーの控え。
- *
- * @details
- * 止められる時計と実時間の時計は別物なので、どちらに仕掛けたかまで含めて持つ。これが無いと
- * 取り消すときにどちらを探せばよいか分からない。
- */
-struct FGameTimer
-{
-	/** Engine のタイマーを参照する値。無効な値では取り消しや状態取得を行わない。 */
-	acs::FTimerHandle Handle{};
-
-	/** 実時間の時計に仕掛けたか (false ならゲーム時間)。 */
-	bool bUnscaled = false;
-
-	/** 仕掛かっているものを指せる値かを返す。 */
-	bool IsValid() const noexcept { return Handle.IsValid(); }
-};
-
-
-/**
- * 「n 秒後に呼ぶ」を、どこからでも頼めるようにするサブシステム。
- *
- * @details
- * 仕組みそのものはエンジン (CTimerManager) が持っている。ただしアプリが持っている実体は
- * 実時間で進むので、それをそのまま配るとゲームを止めても敵の出現やクールダウンが進んでしまう。
- *
- * そこでこの層で時計を 2 つ持つ。
- *
- * | 時計 | 進み方 | 向く用途 |
- * |---|---|---|
- * | ゲーム時間 (既定) | 時間の倍率が乗る。止めれば止まる | 敵の出現、クールダウン、演出 |
- * | 実時間 | 倍率に関わらず進む | 通信の再試行、自動保存、ポーズ画面の演出 |
- *
- * どちらに仕掛けたかは FGameTimer が覚えているので、取り消すときに呼び分けなくてよい。
- *
- * 進める材料 (実経過秒と倍率) は自分では取りに行かず、アプリから渡してもらう。時間の担当を
- * 直接見に行くと、時計の話と止め方の話が絡まる。
- *
- * @code
- * if ( CTimerSubsystem* Timers = GetSubsystem<CTimerSubsystem>() )
- * {
- *     // 3 秒後に 1 回 (止めている間は進まない)
- *     m_Spawn = Timers->After( 3.0f, FSimpleDelegate::CreateRaw<&AMyScene::Spawn>( this ) );
- *
- *     // 30 秒ごとに (止めていても進む)
- *     Timers->EveryUnscaled( 30.0f, FSimpleDelegate::CreateRaw<&AMyScene::AutoSave>( this ) );
- *
- *     Timers->Cancel( m_Spawn );
- * }
- * @endcode
+ * GameInstance に属する予約をゲーム時間と実時間で更新し、取消しと照会の窓口を提供する。
+ * 返す FGameTimer は生成元の CTimerSubsystem 実体内だけで使い、別実体の値とは相互利用しない。
+ * 利用シーンは OnExit で先に予約を取り消し、デストラクタは終了順が変わった場合の保護に使う。
  */
 class CTimerSubsystem : public ASubsystem
 {
@@ -107,7 +61,7 @@ public:
 	/**
 	 * 仕掛けたものを取り消す。
 	 *
-	 * @param Timer 取り消す控え。
+	 * @param Timer この CTimerSubsystem 実体が返した、取り消す控え。
 	 * @return 取り消せたら true (既に呼ばれた後なら false)。
 	 */
 	bool Cancel( const FGameTimer& Timer ) noexcept;
@@ -115,7 +69,7 @@ public:
 	/**
 	 * まだ仕掛かっているかを返す。
 	 *
-	 * @param Timer 調べる控え。
+	 * @param Timer この CTimerSubsystem 実体が返した、調べる控え。
 	 * @return 仕掛かっていれば true。
 	 */
 	bool IsActive( const FGameTimer& Timer ) const noexcept;

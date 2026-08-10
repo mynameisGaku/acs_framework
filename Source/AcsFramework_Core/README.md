@@ -85,6 +85,28 @@ Core はACSの部品を再実装しない。たとえば設定の値と検証付
 `FEventSubscription`、`FInputRepeat`、`FSaveSlotInfo`、`FGameTimer`、`ESceneTransition`は共有状態を継続更新する
 所有者ではないため、必要な利用側が値として持つ。
 
+`CTimerSubsystem`はGameInstanceの寿命で2つの時計を所有し、アプリの更新から毎フレーム進める。
+`CGameTimerScope`はシーンまたは所有者が登録した`FGameTimer`を追跡する通常型で、タイマー窓口を所有しない。
+`CGameTimerScope`はコンストラクタで受けた同じ`CTimerSubsystem`へ結び付き、`FGameTimer`は生成元の
+GameInstanceまたはタイマー窓口をまたいで使わない。別のGameInstanceまたは別の窓口から得た値は相互に互換ではない。
+シーンの`OnExit`で`CancelAll()`を呼び、追跡中の処理と生コールバックをシーン破棄より先に解除する。シーン遷移中も
+全体の時計は進むため、自動pauseは行わない。pause中に止める所有者は`OnPause`で`CancelAll()`を呼び、
+`OnResume`で必要な処理を再登録する。
+デストラクタの取消しは終了順が変わった場合の保護であり、`OnExit`の代わりにはしない。
+
+```cpp
+#include "AcsFramework_Core/Timer/GameTimerScope.h"
+
+class AMyScene : public AScene
+{
+    CGameTimerScope Timers;
+public:
+    explicit AMyScene( CTimerSubsystem& Service ) : Timers( Service ) {}
+    void OnEnter() noexcept override { Timers.After( 3.0f, FSimpleDelegate::CreateRaw<&AMyScene::Spawn>( this ) ); }
+    void OnExit() noexcept override { Timers.CancelAll(); }
+};
+```
+
 ### 音声の契約
 
 `CAudioSubsystem`はGameInstanceの寿命で音の取りまとめと音の出力先を所有し、`Bind`でアセットレジストリと出力先を接続する。
