@@ -125,7 +125,7 @@ public:
 	 * 渡したフォントは呼び出し側が生かし続けること。
 	 * @param Font 使うフォント (nullptr で共有フォントへ戻す)。
 	 */
-	void SetFont( const FFont* Font ) noexcept { m_Font = Font; }
+	void SetFont( const FFont* Font ) noexcept;
 
 	/** 出す指示が生きているかを返す (薄くなっている最中は false)。 */
 	bool IsVisible() const noexcept { return m_bVisible; }
@@ -156,6 +156,9 @@ private:
 	/** この通常型だけが要求と追従世代を照合して局所解除を行う。 */
 	friend class CLoadingScreenFollowScope;
 
+	/** この通常型だけが表示世代を照合して局所表示を解除する。 */
+	friend class CLoadingScreenDisplayScope;
+
 	/** LoaderとRequestをscope用に登録し、成功時の追従世代を返す。無効または現在でない要求はfalseで世代0を返す。 */
 	bool FollowScopedRequest( const CAssetLoaderSubsystem& Loader, FAssetLoadRequest Request, const FString& Message, u64& Revision );
 
@@ -174,11 +177,41 @@ private:
 	/** 読み込み窓口、要求、表示状態を同時に解除する。 */
 	void ClearFollow() noexcept;
 
+	/** 手動表示用フォントを解除し、永続設定または共有フォントへ戻す。 */
+	void ClearDisplayScopeFont() noexcept;
+
+	/** 手動表示を取得し、成功時の表示世代を返す。追従中はfalseで状態を変えない。 */
+	bool AcquireDisplayScope( const FString& Message, u64& Revision );
+
+	/** 表示世代が現在値で追従中でないかを返す。無効世代はfalseを返す。 */
+	bool IsDisplayScopeCurrent( u64 Revision ) const noexcept;
+
+	/** 現在の表示世代だけ文言を差し替える。古い世代はfalseで状態を変えない。 */
+	bool SetDisplayScopeMessage( u64 Revision, const FString& Message );
+
+	/** 現在の表示世代だけ進捗を差し替える。古い世代はfalseで状態を変えない。 */
+	bool SetDisplayScopeProgress( u64 Revision, f32 Ratio ) noexcept;
+
+	/** 現在の表示世代だけフォントを差し替える。古い世代はfalseで状態を変えない。 */
+	bool SetDisplayScopeFont( u64 Revision, const FFont* Font ) noexcept;
+
+	/** 現在の表示世代だけ表示を解除する。古い世代はfalseで状態を変えない。 */
+	bool ReleaseDisplayScope( u64 Revision ) noexcept;
+
+	/** 手動表示用フォントを解除して表示世代を進め、0を無効値として避ける。 */
+	void AdvanceDisplayRevision() noexcept;
+
+	/** 進捗値を範囲へ収めて内部状態へ書き込む。 */
+	void SetProgressValue( f32 Ratio ) noexcept;
+
 	/** 中央へ出す文言。 */
 	FString m_Message;
 
-	/** 文言に使うフォント (nullptr なら共有フォント)。所有はしない。 */
+	/** 公開設定で使うフォント (nullptr なら共有フォント)。所有せず、設定中は置換またはnullptrまで生存させる。 */
 	const FFont* m_Font = nullptr;
+
+	/** 手動表示だけで使うフォント。所有せず、表示世代の交代時に解除する。 */
+	const FFont* m_DisplayScopeFont = nullptr;
 
 	/** 幕の濃さ (0 で透明、1 で出し切り)。 */
 	f32 m_Alpha = 0.0f;
@@ -200,6 +233,9 @@ private:
 
 	/** 追従所有者の交代を識別する非0世代。 */
 	u64 m_FollowRevision = 1u;
+
+	/** 手動表示と追従表示の交代を識別する非0世代。 */
+	u64 m_DisplayRevision = 1u;
 
 	/** 出す指示が生きているか。 */
 	bool m_bVisible = false;

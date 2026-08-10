@@ -221,3 +221,5 @@ private:
 
 `CLoadingScreenFollowScope` は `CLoadingScreenSubsystem` の特定要求への追従を、sceneまたは処理単位の寿命へ束ねる通常型である。
 LoadingScreenはscope全期間、LoaderはFollow成功からResetまたは自動完了まで参照可能にする。利用側は終了処理で `Reset` を明示し、デストラクタは解除漏れを保護する。外部置換後の古い要求は新しい追従を変更せず、同じRequestを再取得した場合も追従世代が異なるため古いscopeは解除しない。`Owns` と `GetRequest` は現在追従を所有している場合だけ有効値を返す。
+
+`CLoadingScreenDisplayScope` は手動ロード表示をsceneまたは処理単位で所有する通常型である。`Show` は追従中なら失敗し、既存の表示状態を変えない。表示世代が現在の場合だけ `SetMessage`、`SetProgress`、`SetFont`、`Reset` が成功し、別のscopeや公開APIが表示を置き換えた後は古いscopeから状態を戻さない。描画フォントは手動表示用、公開設定用、共有フォントの順で選び、手動表示用は表示世代の交代で解除する。公開設定用は置換またはnullptrまで、手動表示用はReset・失効・再設定まで参照可能にする。LoadingScreenはscopeより長く生存させる。

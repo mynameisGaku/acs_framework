@@ -60,12 +60,14 @@ ACS_REGISTER_SUBSYSTEM( CLoadingScreenSubsystem, ESubsystemScope::GameInstance )
 
 void CLoadingScreenSubsystem::Show( const FString& Message )
 {
+	AdvanceDisplayRevision();
 	m_Message = Message;
 	m_bVisible = true;
 }
 
 void CLoadingScreenSubsystem::SetEnabled( bool bEnabled ) noexcept
 {
+	AdvanceDisplayRevision();
 	m_bVisible = bEnabled;
 }
 
@@ -74,11 +76,12 @@ void CLoadingScreenSubsystem::Follow( const CAssetLoaderSubsystem& Loader, const
 	m_Followed = &Loader;
 	m_FollowedRequest = FAssetLoadRequest();
 	AdvanceFollowRevision();
+	AdvanceDisplayRevision();
 	m_Message = Message;
 
 	// ここでは出さない。実際に読み込んでいることを Update で見てから出す。こうしておくと、
 	// キャッシュ済みで一瞬で終わる読み込みのときに 1 フレームだけ点滅しない。
-	SetProgress( Loader.GetProgress() );
+	SetProgressValue( Loader.GetProgress() );
 }
 
 void CLoadingScreenSubsystem::Unfollow() noexcept
@@ -93,8 +96,9 @@ bool CLoadingScreenSubsystem::FollowRequest( const CAssetLoaderSubsystem& Loader
 	m_Followed = &Loader;
 	m_FollowedRequest = Request;
 	AdvanceFollowRevision();
+	AdvanceDisplayRevision();
 	m_Message = Message;
-	SetProgress( Loader.GetProgress() );
+	SetProgressValue( Loader.GetProgress() );
 	return true;
 }
 
@@ -142,6 +146,7 @@ void CLoadingScreenSubsystem::ClearFollow() noexcept
 	m_Followed = nullptr;
 	m_FollowedRequest = FAssetLoadRequest();
 	AdvanceFollowRevision();
+	AdvanceDisplayRevision();
 	m_bVisible = false;
 }
 
@@ -157,7 +162,7 @@ void CLoadingScreenSubsystem::UpdateFollow() noexcept
 	if ( m_Followed->IsLoading() )
 	{
 		m_bVisible = true;
-		SetProgress( m_Followed->GetProgress() );
+		SetProgressValue( m_Followed->GetProgress() );
 		return;
 	}
 
@@ -167,9 +172,15 @@ void CLoadingScreenSubsystem::UpdateFollow() noexcept
 
 void CLoadingScreenSubsystem::SetProgress( f32 Ratio ) noexcept
 {
+	AdvanceDisplayRevision();
+	SetProgressValue( Ratio );
+}
+
+void CLoadingScreenSubsystem::SetProgressValue( f32 Ratio ) noexcept
+{
 	if ( Ratio < 0.0f )
 	{
-		m_Progress = -1.0f;   // どれだけ掛かるか分からない状態へ戻す
+		m_Progress = -1.0f;
 		return;
 	}
 	if ( Ratio > 1.0f ) Ratio = 1.0f;
@@ -179,7 +190,80 @@ void CLoadingScreenSubsystem::SetProgress( f32 Ratio ) noexcept
 
 void CLoadingScreenSubsystem::SetMessage( const FString& Message )
 {
+	AdvanceDisplayRevision();
 	m_Message = Message;
+}
+
+void CLoadingScreenSubsystem::SetFont( const FFont* Font ) noexcept
+{
+	AdvanceDisplayRevision();
+	m_Font = Font;
+}
+
+bool CLoadingScreenSubsystem::AcquireDisplayScope( const FString& Message, u64& Revision )
+{
+	if ( m_Followed != nullptr )
+	{
+		Revision = 0u;
+		return false;
+	}
+
+	AdvanceDisplayRevision();
+	m_Message = Message;
+	SetProgressValue( -1.0f );
+	m_bVisible = true;
+	Revision = m_DisplayRevision;
+	return true;
+}
+
+bool CLoadingScreenSubsystem::IsDisplayScopeCurrent( u64 Revision ) const noexcept
+{
+	return Revision != 0u && m_Followed == nullptr && m_DisplayRevision == Revision;
+}
+
+bool CLoadingScreenSubsystem::SetDisplayScopeMessage( u64 Revision, const FString& Message )
+{
+	if ( !IsDisplayScopeCurrent( Revision ) ) return false;
+
+	m_Message = Message;
+	return true;
+}
+
+bool CLoadingScreenSubsystem::SetDisplayScopeProgress( u64 Revision, f32 Ratio ) noexcept
+{
+	if ( !IsDisplayScopeCurrent( Revision ) ) return false;
+
+	SetProgressValue( Ratio );
+	return true;
+}
+
+bool CLoadingScreenSubsystem::SetDisplayScopeFont( u64 Revision, const FFont* Font ) noexcept
+{
+	if ( !IsDisplayScopeCurrent( Revision ) ) return false;
+
+	m_DisplayScopeFont = Font;
+	return true;
+}
+
+bool CLoadingScreenSubsystem::ReleaseDisplayScope( u64 Revision ) noexcept
+{
+	if ( !IsDisplayScopeCurrent( Revision ) ) return false;
+
+	m_bVisible = false;
+	AdvanceDisplayRevision();
+	return true;
+}
+
+void CLoadingScreenSubsystem::AdvanceDisplayRevision() noexcept
+{
+	ClearDisplayScopeFont();
+	++m_DisplayRevision;
+	if ( m_DisplayRevision == 0u ) ++m_DisplayRevision;
+}
+
+void CLoadingScreenSubsystem::ClearDisplayScopeFont() noexcept
+{
+	m_DisplayScopeFont = nullptr;
 }
 
 void CLoadingScreenSubsystem::Update( f32 DeltaSeconds ) noexcept
@@ -199,7 +283,7 @@ void CLoadingScreenSubsystem::Update( f32 DeltaSeconds ) noexcept
 	if ( m_Elapsed >= kSpinSeconds ) m_Elapsed -= kSpinSeconds;
 }
 
-void CLoadingScreenSubsystem::Draw( CRenderer& Renderer, const FFont* Font ) noexcept
+void CLoadingScreenSubsystem::Draw( CRenderer& Renderer, const FFont* SharedFont ) noexcept
 {
 	if ( !IsOnScreen() ) return;
 
@@ -228,6 +312,8 @@ void CLoadingScreenSubsystem::Draw( CRenderer& Renderer, const FFont* Font ) noe
 	const f32 Short = Width < Height ? Width : Height;
 	const f32 CenterX = Width * 0.5f;
 	const f32 CenterY = Height * 0.5f;
+	/** 表示世代、公開設定、共有設定の順で使うフォント。 */
+	const FFont* const ActiveFont = m_DisplayScopeFont != nullptr ? m_DisplayScopeFont : ( m_Font != nullptr ? m_Font : SharedFont );
 
 	m_Overlay.Begin( *CommandList, Swapchain->Width(), Swapchain->Height() );
 
@@ -252,12 +338,12 @@ void CLoadingScreenSubsystem::Draw( CRenderer& Renderer, const FFont* Font ) noe
 
 	// 文言はスピナーの下へ。中央へ寄せるので幅を測ってから置く。
 	f32 TextBottom = CenterY + Radius;
-	if ( Font != nullptr && !m_Message.IsEmpty() )
+	if ( ActiveFont != nullptr && !m_Message.IsEmpty() )
 	{
-		const f32 TextWidth = Font->MeasureWidth( m_Message.Data() );
+		const f32 TextWidth = ActiveFont->MeasureWidth( m_Message.Data() );
 		const f32 TextY = CenterY + Radius + Short * 0.04f;
-		m_Overlay.DrawString( *Font, m_Message.Data(), CenterX - TextWidth * 0.5f, TextY, Fade( kTextColor, m_Alpha ) );
-		TextBottom = TextY + Font->LineHeight();
+		m_Overlay.DrawString( *ActiveFont, m_Message.Data(), CenterX - TextWidth * 0.5f, TextY, Fade( kTextColor, m_Alpha ) );
+		TextBottom = TextY + ActiveFont->LineHeight();
 	}
 
 	// 割合が分かっているときだけバーを出す。分からないのに空のバーを出すと、
