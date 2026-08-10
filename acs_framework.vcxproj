@@ -175,6 +175,7 @@
     <ClInclude Include="Source\Debug\DebugTop\Service\DebugTopHistory.h" />
     <ClInclude Include="Source\Debug\DebugTop\Service\DebugTopDirectory.h" />
     <ClInclude Include="Source\Debug\DebugTop\Widget\DebugTopPathBrowser.h" />
+    <ClInclude Include="Source\AcsFramework_Core\Time\TimeControlState.h" />
     <ClInclude Include="Source\AcsFramework_Core\Time\TimeSubsystem.h" />
     <ClInclude Include="Source\AcsFramework_Core\Pause\PauseScreenSubsystem.h" />
     <ClInclude Include="Source\AcsFramework_Core\Text\UiFontSubsystem.h" />
@@ -254,6 +255,7 @@
     <ClCompile Include="Source\Debug\DebugTop\Service\DebugTopHistory.cpp" />
     <ClCompile Include="Source\Debug\DebugTop\Service\DebugTopDirectory.cpp" />
     <ClCompile Include="Source\Debug\DebugTop\Widget\DebugTopPathBrowser.cpp" />
+    <ClCompile Include="Source\AcsFramework_Core\Time\TimeControlState.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Time\TimeSubsystem.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Pause\PauseScreenSubsystem.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Text\UiFontSubsystem.cpp" />

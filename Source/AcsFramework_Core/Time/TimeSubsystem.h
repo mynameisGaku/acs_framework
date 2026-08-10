@@ -1,6 +1,9 @@
-﻿#pragma once
+﻿// SPDX-License-Identifier: Apache-2.0
+#pragma once
 
 #include <acs.h>
+
+#include "AcsFramework_Core/Time/TimeControlState.h"
 
 using namespace acs;
 
@@ -67,7 +70,7 @@ public:
 	void ResumeAll() noexcept;
 
 	/** 止まっているかを返す。 */
-	bool IsPaused() const noexcept { return m_Reasons.Num() > 0; }
+	bool IsPaused() const noexcept { return m_Control.IsPaused(); }
 
 	/**
 	 * その理由で止めているかを返す。
@@ -78,10 +81,10 @@ public:
 	 * @param Reason 調べる理由。
 	 * @return その理由で止めていれば true。
 	 */
-	bool IsPausedBy( const FString& Reason ) const noexcept { return FindReason( Reason ) < m_Reasons.Num(); }
+	bool IsPausedBy( const FString& Reason ) const noexcept { return m_Control.IsPausedBy( Reason ); }
 
 	/** 止めている理由の数を返す。 */
-	usize GetPauseReasonCount() const noexcept { return m_Reasons.Num(); }
+	usize GetPauseReasonCount() const noexcept { return m_Control.GetPauseReasonCount(); }
 
 	/**
 	 * 止めている理由を返す。
@@ -99,10 +102,10 @@ public:
 	 * 止めている間に変えてもよい (再開したときにこの速さで動き出す)。0 以下は 0 へ丸める。
 	 * @param Speed 1 で等速、0.25 で 1/4 の速さ、2 で倍速。
 	 */
-	void SetSpeed( f32 Speed ) noexcept { m_Speed = Speed > 0.0f ? Speed : 0.0f; }
+	void SetSpeed( f32 Speed ) noexcept { m_Control.SetSpeed( Speed ); }
 
 	/** 動いているときの速さを返す。 */
-	f32 GetSpeed() const noexcept { return m_Speed; }
+	f32 GetSpeed() const noexcept { return m_Control.GetSpeed(); }
 
 	/**
 	 * 止めたまま 1 フレームだけ進める。
@@ -111,7 +114,7 @@ public:
 	 * 1 フレームずつ確かめたいとき (当たり判定の瞬間を見る等) に使う。止めていないときに
 	 * 呼んでも何も変わらない。
 	 */
-	void StepOnce() noexcept { m_bStepRequested = true; }
+	void StepOnce() noexcept { m_Control.StepOnce(); }
 
 	/**
 	 * この回に実際に掛かっている倍率を返す。
@@ -121,7 +124,7 @@ public:
 	 * (タイマー等) が、実経過秒へ掛けるために使う。答えは Update が決める。
 	 * @return この回の倍率。
 	 */
-	f32 GetEffectiveScale() const noexcept { return m_EffectiveScale; }
+	f32 GetEffectiveScale() const noexcept { return m_Control.GetEffectiveScale(); }
 
 	/**
 	 * この回にシーンを進めてよいかを返す。
@@ -132,7 +135,7 @@ public:
 	 * 答えは Update が決める。Update より前に聞くと、前の回の答えが返る。
 	 * @return 進めてよいなら true。
 	 */
-	bool ShouldTickScenes() const noexcept { return m_bTickThisFrame; }
+	bool ShouldTickScenes() const noexcept { return m_Control.ShouldTickScenes(); }
 
 	/**
 	 * 物理などを回す固定の刻み幅を設定する。
@@ -164,33 +167,9 @@ public:
 	void Update() noexcept;
 
 private:
-	/**
-	 * その理由で既に止めているかを返す。
-	 *
-	 * @param Reason 探す理由。
-	 * @return 見つかれば添字、無ければ理由の数。
-	 */
-	usize FindReason( const FString& Reason ) const noexcept;
-
 	/** 時間の倍率を持っているもの。所有はしない (アプリが持っている)。 */
 	CGame* m_Game = nullptr;
 
-	/** いま止めている理由。空なら動いている。 */
-	TArray<FString> m_Reasons;
-
-	/** 動いているときの速さ。 */
-	f32 m_Speed = 1.0f;
-
-	/** 止めたまま 1 フレームだけ進める要求が出ているか。 */
-	bool m_bStepRequested = false;
-
-	/**
-	 * この回にシーンを進めるか (Update が決める)。
-	 *
-	 * @details まだ Update を通っていない間は進める側にしておく (配線前に止まらないように)。
-	 */
-	bool m_bTickThisFrame = true;
-
-	/** この回に実際に掛かっている倍率 (Update が決める)。 */
-	f32 m_EffectiveScale = 1.0f;
+	/** 停止理由、通常速度、フレームごとの進行判断を保持する状態。 */
+	FTimeControlState m_Control;
 };

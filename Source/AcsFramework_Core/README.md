@@ -88,8 +88,12 @@ Core はACSの部品を再実装しない。たとえば設定の値と検証付
 | `CGameSettingsSubsystem` | プレイヤー設定の保持と永続化 | `CSettings` / `Update()` |
 | `CAppStateSubsystem` | シーンを跨ぐ型付き状態 | Core所有 / 呼出し時 |
 | `CUiFontSubsystem` | UIフォントの遅延生成と保持 | `CRenderer` / `Acquire()` |
-| `CTimeSubsystem` | pause理由、速度、fixed step | `CGame` / `Update()` |
+| `CTimeSubsystem` | 時間の適用とfixed stepの窓口 | `CGame` / `Update()` |
 | `CTimerSubsystem` | scaled / unscaled の待機処理 | engine timer / `Update()` |
+
+`FTimeControlState`はpause理由、通常速度、1フレーム進行、フレームごとの更新可否と実効速度を保持する
+非サブシステム型で、`CTimeSubsystem`が1つ所有する。`CTimeSubsystem`は決定した実効速度を`CGame`へ
+反映し、fixed timestepの設定と照会を`CGame`へ渡す。
 
 `FEventSubscription`、`FInputRepeat`、`FSaveSlotInfo`、`FGameTimer`、`ESceneTransition`は共有状態を継続更新する
 所有者ではないため、必要な利用側が値として持つ。

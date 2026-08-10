@@ -129,10 +129,10 @@
     <ClCompile Include="Source\AcsFramework_Core\Input\InputRepeat.cpp">
       <Filter>Source\AcsFramework_Core\Input</Filter>
     </ClCompile>
-    <ClCompile Include="Source\AcsFramework_Core\Loading\LoadingScreenFollowScope.cpp">
+    <ClCompile Include="Source\AcsFramework_Core\Loading\LoadingScreenDisplayScope.cpp">
       <Filter>Source\AcsFramework_Core\Loading</Filter>
     </ClCompile>
-    <ClCompile Include="Source\AcsFramework_Core\Loading\LoadingScreenDisplayScope.cpp">
+    <ClCompile Include="Source\AcsFramework_Core\Loading\LoadingScreenFollowScope.cpp">
       <Filter>Source\AcsFramework_Core\Loading</Filter>
     </ClCompile>
     <ClCompile Include="Source\AcsFramework_Core\Loading\LoadingScreenSubsystem.cpp">
@@ -167,6 +167,9 @@
     </ClCompile>
     <ClCompile Include="Source\AcsFramework_Core\Timer\TimerSubsystem.cpp">
       <Filter>Source\AcsFramework_Core\Timer</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Time\TimeControlState.cpp">
+      <Filter>Source\AcsFramework_Core\Time</Filter>
     </ClCompile>
     <ClCompile Include="Source\AcsFramework_Core\Time\TimeSubsystem.cpp">
       <Filter>Source\AcsFramework_Core\Time</Filter>
@@ -353,10 +356,10 @@
     <ClInclude Include="Source\AcsFramework_Core\Input\InputRepeat.h">
       <Filter>Source\AcsFramework_Core\Input</Filter>
     </ClInclude>
-    <ClInclude Include="Source\AcsFramework_Core\Loading\LoadingScreenFollowScope.h">
+    <ClInclude Include="Source\AcsFramework_Core\Loading\LoadingScreenDisplayScope.h">
       <Filter>Source\AcsFramework_Core\Loading</Filter>
     </ClInclude>
-    <ClInclude Include="Source\AcsFramework_Core\Loading\LoadingScreenDisplayScope.h">
+    <ClInclude Include="Source\AcsFramework_Core\Loading\LoadingScreenFollowScope.h">
       <Filter>Source\AcsFramework_Core\Loading</Filter>
     </ClInclude>
     <ClInclude Include="Source\AcsFramework_Core\Loading\LoadingScreenSubsystem.h">
@@ -394,6 +397,9 @@
     </ClInclude>
     <ClInclude Include="Source\AcsFramework_Core\Timer\TimerSubsystem.h">
       <Filter>Source\AcsFramework_Core\Timer</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Time\TimeControlState.h">
+      <Filter>Source\AcsFramework_Core\Time</Filter>
     </ClInclude>
     <ClInclude Include="Source\AcsFramework_Core\Time\TimeSubsystem.h">
       <Filter>Source\AcsFramework_Core\Time</Filter>
