@@ -129,6 +129,9 @@
     <ClCompile Include="Source\AcsFramework_Core\Input\InputRepeat.cpp">
       <Filter>Source\AcsFramework_Core\Input</Filter>
     </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Loading\LoadingScreenFollowScope.cpp">
+      <Filter>Source\AcsFramework_Core\Loading</Filter>
+    </ClCompile>
     <ClCompile Include="Source\AcsFramework_Core\Loading\LoadingScreenSubsystem.cpp">
       <Filter>Source\AcsFramework_Core\Loading</Filter>
     </ClCompile>
@@ -346,6 +349,9 @@
     </ClInclude>
     <ClInclude Include="Source\AcsFramework_Core\Input\InputRepeat.h">
       <Filter>Source\AcsFramework_Core\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Loading\LoadingScreenFollowScope.h">
+      <Filter>Source\AcsFramework_Core\Loading</Filter>
     </ClInclude>
     <ClInclude Include="Source\AcsFramework_Core\Loading\LoadingScreenSubsystem.h">
       <Filter>Source\AcsFramework_Core\Loading</Filter>

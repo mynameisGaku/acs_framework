@@ -13,6 +13,7 @@
 #include "AcsFramework_Core/Event/EventSubsystem.h"
 #include "AcsFramework_Core/Fade/FadeSubsystem.h"
 #include "AcsFramework_Core/Input/InputRepeat.h"
+#include "AcsFramework_Core/Loading/LoadingScreenFollowScope.h"
 #include "AcsFramework_Core/Loading/LoadingScreenSubsystem.h"
 #include "AcsFramework_Core/Pause/PauseScreenSubsystem.h"
 #include "AcsFramework_Core/Save/SaveSubsystem.h"

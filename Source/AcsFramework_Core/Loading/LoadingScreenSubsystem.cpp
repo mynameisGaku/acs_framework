@@ -73,6 +73,7 @@ void CLoadingScreenSubsystem::Follow( const CAssetLoaderSubsystem& Loader, const
 {
 	m_Followed = &Loader;
 	m_FollowedRequest = FAssetLoadRequest();
+	AdvanceFollowRevision();
 	m_Message = Message;
 
 	// ここでは出さない。実際に読み込んでいることを Update で見てから出す。こうしておくと、
@@ -91,8 +92,21 @@ bool CLoadingScreenSubsystem::FollowRequest( const CAssetLoaderSubsystem& Loader
 
 	m_Followed = &Loader;
 	m_FollowedRequest = Request;
+	AdvanceFollowRevision();
 	m_Message = Message;
 	SetProgress( Loader.GetProgress() );
+	return true;
+}
+
+bool CLoadingScreenSubsystem::FollowScopedRequest( const CAssetLoaderSubsystem& Loader, FAssetLoadRequest Request, const FString& Message, u64& Revision )
+{
+	if ( !FollowRequest( Loader, Request, Message ) )
+	{
+		Revision = 0u;
+		return false;
+	}
+
+	Revision = m_FollowRevision;
 	return true;
 }
 
@@ -104,10 +118,30 @@ bool CLoadingScreenSubsystem::UnfollowRequest( FAssetLoadRequest Request ) noexc
 	return true;
 }
 
+bool CLoadingScreenSubsystem::IsScopedFollowCurrent( FAssetLoadRequest Request, u64 Revision ) const noexcept
+{
+	return Request.IsValid() && m_Followed != nullptr && m_FollowedRequest == Request && m_FollowRevision == Revision;
+}
+
+bool CLoadingScreenSubsystem::UnfollowRequest( FAssetLoadRequest Request, u64 Revision ) noexcept
+{
+	if ( !IsScopedFollowCurrent( Request, Revision ) ) return false;
+
+	ClearFollow();
+	return true;
+}
+
+void CLoadingScreenSubsystem::AdvanceFollowRevision() noexcept
+{
+	++m_FollowRevision;
+	if ( m_FollowRevision == 0u ) ++m_FollowRevision;
+}
+
 void CLoadingScreenSubsystem::ClearFollow() noexcept
 {
 	m_Followed = nullptr;
 	m_FollowedRequest = FAssetLoadRequest();
+	AdvanceFollowRevision();
 	m_bVisible = false;
 }
 

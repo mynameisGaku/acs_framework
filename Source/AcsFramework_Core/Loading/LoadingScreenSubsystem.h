@@ -153,6 +153,21 @@ public:
 	void Draw( CRenderer& Renderer, const FFont* SharedFont ) noexcept;
 
 private:
+	/** この通常型だけが要求と追従世代を照合して局所解除を行う。 */
+	friend class CLoadingScreenFollowScope;
+
+	/** LoaderとRequestをscope用に登録し、成功時の追従世代を返す。無効または現在でない要求はfalseで世代0を返す。 */
+	bool FollowScopedRequest( const CAssetLoaderSubsystem& Loader, FAssetLoadRequest Request, const FString& Message, u64& Revision );
+
+	/** Requestと追従世代が現在のLoader追従と一致するか返す。無効または外部変更後はfalseを返す。 */
+	bool IsScopedFollowCurrent( FAssetLoadRequest Request, u64 Revision ) const noexcept;
+
+	/** Requestと追従世代が一致する場合だけ追従を解除する。不一致はfalseで状態を変えない。 */
+	bool UnfollowRequest( FAssetLoadRequest Request, u64 Revision ) noexcept;
+
+	/** 追従世代を進め、0を無効値として避ける。 */
+	void AdvanceFollowRevision() noexcept;
+
 	/** 見に行っている読み込みの進み具合を、出し入れと進捗へ反映する。 */
 	void UpdateFollow() noexcept;
 
@@ -182,6 +197,9 @@ private:
 
 	/** 見に行っている読み込みに対応する要求。無効値は要求を持たない追従を示す。 */
 	FAssetLoadRequest m_FollowedRequest;
+
+	/** 追従所有者の交代を識別する非0世代。 */
+	u64 m_FollowRevision = 1u;
 
 	/** 出す指示が生きているか。 */
 	bool m_bVisible = false;

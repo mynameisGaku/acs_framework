@@ -218,3 +218,6 @@ private:
     CAssetLoadScope m_LoadScope;
 };
 ```
+
+`CLoadingScreenFollowScope` は `CLoadingScreenSubsystem` の特定要求への追従を、sceneまたは処理単位の寿命へ束ねる通常型である。
+LoadingScreenはscope全期間、LoaderはFollow成功からResetまたは自動完了まで参照可能にする。利用側は終了処理で `Reset` を明示し、デストラクタは解除漏れを保護する。外部置換後の古い要求は新しい追従を変更せず、同じRequestを再取得した場合も追従世代が異なるため古いscopeは解除しない。`Owns` と `GetRequest` は現在追従を所有している場合だけ有効値を返す。
