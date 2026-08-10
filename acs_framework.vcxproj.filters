@@ -108,6 +108,9 @@
     <ClCompile Include="Source\AcsFramework_Core\Assets\AssetLoaderSubsystem.cpp">
       <Filter>Source\AcsFramework_Core\Assets</Filter>
     </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Assets\AssetLoadScope.cpp">
+      <Filter>Source\AcsFramework_Core\Assets</Filter>
+    </ClCompile>
     <ClCompile Include="Source\AcsFramework_Core\Audio\AudioSubsystem.cpp">
       <Filter>Source\AcsFramework_Core\Audio</Filter>
     </ClCompile>
@@ -321,6 +324,9 @@
       <Filter>Source\AcsFramework_Core\Assets</Filter>
     </ClInclude>
     <ClInclude Include="Source\AcsFramework_Core\Assets\AssetLoadRequest.h">
+      <Filter>Source\AcsFramework_Core\Assets</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Assets\AssetLoadScope.h">
       <Filter>Source\AcsFramework_Core\Assets</Filter>
     </ClInclude>
     <ClInclude Include="Source\AcsFramework_Core\Audio\AudioSubsystem.h">

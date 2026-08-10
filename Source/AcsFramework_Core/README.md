@@ -195,3 +195,26 @@ scene終了時には利用側がCancelとLoadingScreenの追従解除を行う�
 `CancelRequest`は処理中の現在要求だけを解除し、完了済みや古い要求では結果を保持する。`FollowRequest`と`UnfollowRequest`も要求を完全一致で照合し、シーン終了時は追従解除と読み込み取消を行う。
 `CLoadingScreenSubsystem`は追従区間中に読み込み窓口を参照するため、解除または自動完了までGameInstanceと読み込み窓口が生存する前提で使う。
 既存のBeginは要求を発行せず、GetCurrentRequestは無効値を返す。既存のFollowはLoaderの最新batchを追従し、要求APIは発行元と世代で追従対象を分離する。
+
+`CAssetLoadScope`は`CAssetLoaderSubsystem`を所有せず、シーンまたは処理単位が自身の要求だけを追跡する通常型である。Loaderはscopeより長く生存し、Begin呼出し中（callbackでscopeが破棄される場合を含む）から追従終了まで参照可能でなければならない。利用側はsceneの`OnExit`で`CancelAll`を呼び、デストラクタの取消しは`OnExit`で明示取消しできなかった場合の保護とする。内部状態の確保に失敗した場合はBeginが無効値を返し、Cancel・IsActiveはfalse、CancelAllは何もしない。
+`Begin`の同期callbackや入れ子のBegin・CancelAll、Loader直呼出しの再入では最後に変わった状態を優先し、scopeがcallback内で破棄されても共有状態で外部呼出しを安全に完了する。無効な返却値は旧要求が現在かつ処理中の場合だけ旧追跡を戻す。返却値は完了済みでも返すが、`IsActive`が判定する追跡対象とは分ける。`Cancel`は無効・外部要求なら状態を変えずfalseを返し、所有要求は先に追跡から外してLoaderの実取消結果だけを返すため、完了・置換済みならfalseになり得る。
+
+```cpp
+#include "AcsFramework_Core/Assets/AssetLoadScope.h"
+
+class AMyScene : public AScene
+{
+public:
+    explicit AMyScene( CAssetLoaderSubsystem& Loader ) : m_LoadScope( Loader ) {}
+    void OnEnter() noexcept override
+    {
+        TArray<FString> Paths;
+        if ( !Paths.TryAdd( FString( "Assets/loader.png" ) ) ) return;
+        m_LoadScope.Begin( Paths );
+    }
+    void OnExit() noexcept override { m_LoadScope.CancelAll(); }
+
+private:
+    CAssetLoadScope m_LoadScope;
+};
+```
