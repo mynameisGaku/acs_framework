@@ -195,6 +195,7 @@
     <ClInclude Include="Source\AcsFramework_Core\Event\EventSubsystem.h" />
     <ClInclude Include="Source\AcsFramework_Core\State\AppStateSubsystem.h" />
     <ClInclude Include="Source\AcsFramework_Core\Save\SaveSlotInfo.h" />
+    <ClInclude Include="Source\AcsFramework_Core\Save\SaveSlotStore.h" />
     <ClInclude Include="Source\AcsFramework_Core\Save\SaveSubsystem.h" />
     <ClInclude Include="Source\AcsFramework_Core\Text\StringConvert.h" />
     <ClInclude Include="Source\AcsFramework_Core\Settings\GameSettingsStore.h" />
@@ -281,6 +282,7 @@
     <ClCompile Include="Source\AcsFramework_Core\Event\EventSubscription.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Event\EventSubsystem.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\State\AppStateSubsystem.cpp" />
+    <ClCompile Include="Source\AcsFramework_Core\Save\SaveSlotStore.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Save\SaveSubsystem.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Text\StringConvert.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Settings\GameSettingsStore.cpp" />

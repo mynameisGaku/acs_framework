@@ -150,6 +150,9 @@
     <ClCompile Include="Source\AcsFramework_Core\Pause\PauseScreenSubsystem.cpp">
       <Filter>Source\AcsFramework_Core\Pause</Filter>
     </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Save\SaveSlotStore.cpp">
+      <Filter>Source\AcsFramework_Core\Save</Filter>
+    </ClCompile>
     <ClCompile Include="Source\AcsFramework_Core\Save\SaveSubsystem.cpp">
       <Filter>Source\AcsFramework_Core\Save</Filter>
     </ClCompile>
@@ -399,6 +402,9 @@
       <Filter>Source\AcsFramework_Core\Pause</Filter>
     </ClInclude>
     <ClInclude Include="Source\AcsFramework_Core\Save\SaveSlotInfo.h">
+      <Filter>Source\AcsFramework_Core\Save</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Save\SaveSlotStore.h">
       <Filter>Source\AcsFramework_Core\Save</Filter>
     </ClInclude>
     <ClInclude Include="Source\AcsFramework_Core\Save\SaveSubsystem.h">

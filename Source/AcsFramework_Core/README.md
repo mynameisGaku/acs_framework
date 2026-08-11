@@ -57,7 +57,7 @@ Core はACSの部品を再実装しない。たとえば設定の値と検証付
 | `CFadeSubsystem` | 暗転・明転 | `CGame` / `Update()` 相当の呼出し |
 | `CLoadingScreenSubsystem` | ロード中の表示 | loader、renderer / `Update()`・`Draw()` |
 | `CPauseScreenSubsystem` | ポーズ表示の状態と時間追従 | time、`FPauseScreenRenderer` / `Update()`・`Draw()` |
-| `CSaveSubsystem` | スロットの一覧、検証付き読み書き | `TSaveSlot` / 呼出し時 |
+| `CSaveSubsystem` | GameInstance単位のセーブ枠公開 | `FSaveSlotStore` / 呼出し時 |
 | `CSceneTravelSubsystem` | シーン遷移の共有窓口とゲーム配線 | `FSceneTravelController` / `Update()` |
 | `CScreenSubsystem` | 解像度、全画面、窓の操作 | `CApplication` / なし |
 | `CGameSettingsSubsystem` | プレイヤー設定の保存先、自動保存、外部窓口 | `FGameSettingsStore` / `Update()` |
@@ -75,6 +75,9 @@ Core はACSの部品を再実装しない。たとえば設定の値と検証付
 反映し、fixed timestepの設定と照会を`CGame`へ渡す。
 
 `FSaveSlotInfo`は枠番号、存在、版、サイズ、パスをまとめる値で、`CSaveSubsystem`が一覧情報として返す。
+`FSaveSlotStore`は保存先と枠数を値として保持し、枠のパス、範囲、同期入出力を調整する。
+`CSaveSubsystem`はGameInstance単位の所有者と公開窓口を担い、保存書式、CRC検証、一時ファイルと
+置換処理はEngineの`TSaveSlot`と`CSaveArchive`が所有する。
 `ESceneTransition`は幕なしと暗転を使う切替方法を表し、`CSceneTravelSubsystem`の公開要求が受け取る値である。
 `FSceneTravelController`は切替方法の選択と暗転待ちの積み下ろし状態を所有し、`CSceneTravelSubsystem`はGameInstanceの共有窓口と`CGame`の配線を所有する。
 `CLoadingScreenSubsystem`は読み込み追従、表示世代、表示指示、フォント優先順位を所有し、
