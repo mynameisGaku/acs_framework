@@ -156,6 +156,9 @@
     <ClCompile Include="Source\AcsFramework_Core\Scene\SceneTravelSubsystem.cpp">
       <Filter>Source\AcsFramework_Core\Scene</Filter>
     </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Scene\SceneTravelController.cpp">
+      <Filter>Source\AcsFramework_Core\Scene</Filter>
+    </ClCompile>
     <ClCompile Include="Source\AcsFramework_Core\Screen\ScreenSubsystem.cpp">
       <Filter>Source\AcsFramework_Core\Screen</Filter>
     </ClCompile>
@@ -402,6 +405,9 @@
       <Filter>Source\AcsFramework_Core\Save</Filter>
     </ClInclude>
     <ClInclude Include="Source\AcsFramework_Core\Scene\SceneTransition.h">
+      <Filter>Source\AcsFramework_Core\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Scene\SceneTravelController.h">
       <Filter>Source\AcsFramework_Core\Scene</Filter>
     </ClInclude>
     <ClInclude Include="Source\AcsFramework_Core\Scene\SceneTravelSubsystem.h">

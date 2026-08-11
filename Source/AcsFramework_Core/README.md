@@ -58,7 +58,7 @@ Core はACSの部品を再実装しない。たとえば設定の値と検証付
 | `CLoadingScreenSubsystem` | ロード中の表示 | loader、renderer / `Update()`・`Draw()` |
 | `CPauseScreenSubsystem` | ポーズ表示の状態と時間追従 | time、`FPauseScreenRenderer` / `Update()`・`Draw()` |
 | `CSaveSubsystem` | スロットの一覧、検証付き読み書き | `TSaveSlot` / 呼出し時 |
-| `CSceneTravelSubsystem` | Change、Push、Pop、遷移演出 | `CGame` / `Update()` |
+| `CSceneTravelSubsystem` | シーン遷移の共有窓口とゲーム配線 | `FSceneTravelController` / `Update()` |
 | `CScreenSubsystem` | 解像度、全画面、窓の操作 | `CApplication` / なし |
 | `CGameSettingsSubsystem` | プレイヤー設定の保存先、自動保存、外部窓口 | `FGameSettingsStore` / `Update()` |
 | `CAppStateSubsystem` | シーンを跨ぐ型付き状態 | Core所有 / 呼出し時 |
@@ -76,6 +76,7 @@ Core はACSの部品を再実装しない。たとえば設定の値と検証付
 
 `FSaveSlotInfo`は枠番号、存在、版、サイズ、パスをまとめる値で、`CSaveSubsystem`が一覧情報として返す。
 `ESceneTransition`は幕なしと暗転を使う切替方法を表し、`CSceneTravelSubsystem`の公開要求が受け取る値である。
+`FSceneTravelController`は切替方法の選択と暗転待ちの積み下ろし状態を所有し、`CSceneTravelSubsystem`はGameInstanceの共有窓口と`CGame`の配線を所有する。
 `CLoadingScreenSubsystem`は読み込み追従、表示世代、表示指示、フォント優先順位を所有し、
 `FLoadingScreenRenderer`はスピナー時間、SpriteBatchの遅延初期化、ロード画面のGPU描画を所有する。
 `FUiFontResource`はUIフォントのGPU資源、生成設定、読み込み結果を単独所有する。
@@ -145,12 +146,8 @@ OnShutdown
 `CGameSettingsSubsystem`が所有する。既定の保存先は`Saved/GameSettings.acscfg`である。
 `CDebugTopSettings`は開発中の診断・調整値なので、同じキーを共有しない。
 
-設定を追加するときは次の順にする。
-
-1. 読めない場合の既定値を決める。
-2. 起動時に`Get*`して実行中の部品へ反映する。
-3. UIの変更時に`Set*`する。
-4. 変更のたびに`Save()`せず、`Update()`または終了処理へ任せる。
+設定ごとの既定値と初期反映はゲーム側が決定する。`Set*`は変更状態を立て、`Update()`と
+終了処理が待ち時間を含む保存の実行を所有する。
 
 ## 新しい機能を追加する判断
 

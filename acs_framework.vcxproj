@@ -125,6 +125,7 @@
     <ClInclude Include="Source\AcsFramework_Core\Assets\AssetLoaderSubsystem.h" />
     <ClInclude Include="Source\AcsFramework_Core\Assets\AssetLoadScope.h" />
     <ClInclude Include="Source\AcsFramework_Core\Scene\SceneTransition.h" />
+    <ClInclude Include="Source\AcsFramework_Core\Scene\SceneTravelController.h" />
     <ClInclude Include="Source\AcsFramework_Core\Scene\SceneTravelSubsystem.h" />
     <ClInclude Include="Source\Debug\DebugTop\DebugTopHUD.h" />
     <ClInclude Include="Source\Debug\DebugTop\Element\DebugTopElement.h" />
@@ -218,6 +219,7 @@
     <ClCompile Include="Source\AcsFramework_Core\Assets\AssetLoadBatch.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Assets\AssetLoaderSubsystem.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Assets\AssetLoadScope.cpp" />
+    <ClCompile Include="Source\AcsFramework_Core\Scene\SceneTravelController.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Scene\SceneTravelSubsystem.cpp" />
     <ClCompile Include="Source\Debug\DebugTop\DebugTopHUD.cpp" />
     <ClCompile Include="Source\Debug\DebugTop\Element\DebugTopElement.cpp" />
