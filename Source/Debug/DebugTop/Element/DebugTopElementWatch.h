@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 #pragma once
 
 #include <acs.h>
@@ -17,10 +18,6 @@ using namespace acs;
  *
  * 左カラムの表示名を差し替えたいだけなら CDebugTopElement::SetLabelProvider を使う。
  * こちらは右カラムを差し替える。折れ線で推移も見たいなら CDebugTopElementGraph。
- *
- * @code
- * ChildMenu->Add<CDebugTopElementWatch>( "State", FDebugTopTextDelegate::CreateRaw<&AMyScene::MakeStateText>( this ) );
- * @endcode
  */
 class CDebugTopElementWatch : public CDebugTopElement
 {

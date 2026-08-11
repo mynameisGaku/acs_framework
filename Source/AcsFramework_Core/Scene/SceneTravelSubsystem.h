@@ -1,4 +1,5 @@
-﻿#pragma once
+﻿// SPDX-License-Identifier: Apache-2.0
+#pragma once
 
 #include <acs.h>
 
@@ -17,14 +18,6 @@ using namespace acs;
  * 幕を張るかどうかを ESceneTransition で選べる以外は、エンジンの遷移そのまま。
  * 幕の進行も描画もエンジンが持っているので、ここは幕の状態を持たない
  * (幕そのものを触りたいときは CFadeSubsystem を使う)。
- *
- * @code
- * if ( CSceneTravelSubsystem* Travel = GetSubsystem<CSceneTravelSubsystem>() )
- * {
- *     Travel->TravelTo( MakeUnique<AMyScene>() );                            // 暗転して切替
- *     Travel->TravelTo( MakeUnique<AMyScene>(), ESceneTransition::Cut );     // その場で切替
- * }
- * @endcode
  */
 class CSceneTravelSubsystem : public ASubsystem
 {

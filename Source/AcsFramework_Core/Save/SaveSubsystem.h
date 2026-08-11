@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 #pragma once
 
 #include <acs.h>
@@ -24,23 +25,6 @@ using namespace acs::game;
  *
  * 置ける型はエンジンの決まりに従い、そのままメモリを写せるもの (trivially copyable) だけ。
  * 文字列や配列を持たせたいなら、固定長の配列にして型の中へ埋めること。
- *
- * @code
- * struct FMySave { i32 Stage = 1; i32 Score = 0; };   // そのまま写せる型
- *
- * Save->Configure( FString( "Saved/Save" ), FString( "Slot" ), 3 );
- *
- * Save->Write( 0, FMySave{ 3, 12000 } );
- *
- * FMySave Loaded;
- * if ( Save->Read( 0, Loaded ) ) m_Stage = Loaded.Stage;
- *
- * for ( i32 Index = 0; Index < Save->GetSlotCount(); ++Index )
- * {
- *     const FSaveSlotInfo Info = Save->GetSlotInfo( Index );
- *     // Info.bExists で「つづきから」を出し分ける
- * }
- * @endcode
  */
 class CSaveSubsystem : public ASubsystem
 {

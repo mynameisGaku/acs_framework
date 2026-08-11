@@ -8,32 +8,6 @@
 共通の入口は `AcsFramework_Core/AcsFramework.h` である。ゲーム側は必要な型だけを使い、
 実体の取得はシーンまたはアプリから `GetSubsystem<T>()` で行う。
 
-```cpp
-#include "AcsFramework_Core/AcsFramework.h"
-
-class AMyScene : public AScene
-{
-public:
-    explicit AMyScene( const FString& DecisionSoundPath ) : m_DecisionSoundPath( DecisionSoundPath ) {}
-
-    void OnEnter() noexcept override
-    {
-        if ( CGameSettingsSubsystem* const Settings = GetSubsystem<CGameSettingsSubsystem>() )
-        {
-            Settings->SetFloat( FString( "Audio/Bgm" ), 0.8f );
-        }
-
-        if ( CAudioSubsystem* const Audio = GetSubsystem<CAudioSubsystem>() )
-        {
-            Audio->PlaySfx( m_DecisionSoundPath );
-        }
-    }
-
-private:
-    FString m_DecisionSoundPath;
-};
-```
-
 ゲーム固有のアプリは `CAcsFrameworkApp` を継承し、`CreateInitialScene()` だけを override する。
 `InitialScene()` はサービス配線を完了してからこの hook を呼び、`OnStart()` は基底の起動処理へ
 渡すため上書きできない。hook が空の `TUniquePtr<AScene>` を返した場合は代替シーンを作らず、`CGame` の既存の
@@ -114,19 +88,6 @@ GameInstanceまたはタイマー窓口をまたいで使わない。別のGameI
 全体の時計は進むため、自動pauseは行わない。pause中に止める所有者は`OnPause`で`CancelAll()`を呼び、
 `OnResume`で必要な処理を再登録する。
 デストラクタの取消しは終了順が変わった場合の保護であり、`OnExit`の代わりにはしない。
-
-```cpp
-#include "AcsFramework_Core/Timer/GameTimerScope.h"
-
-class AMyScene : public AScene
-{
-    CGameTimerScope Timers;
-public:
-    explicit AMyScene( CTimerSubsystem& Service ) : Timers( Service ) {}
-    void OnEnter() noexcept override { Timers.After( 3.0f, FSimpleDelegate::CreateRaw<&AMyScene::Spawn>( this ) ); }
-    void OnExit() noexcept override { Timers.CancelAll(); }
-};
-```
 
 ### 音声の契約
 
@@ -219,28 +180,6 @@ scene終了時には利用側がCancelとLoadingScreenの追従解除を行う�
 
 `CAssetLoadScope`は`CAssetLoaderSubsystem`を所有せず、シーンまたは処理単位が自身の要求だけを追跡する通常型である。Loaderはscopeより長く生存し、Begin呼出し中（callbackでscopeが破棄される場合を含む）から追従終了まで参照可能でなければならない。利用側はsceneの`OnExit`で`CancelAll`を呼び、デストラクタの取消しは`OnExit`で明示取消しできなかった場合の保護とする。内部状態の確保に失敗した場合はBeginが無効値を返し、Cancel・IsActiveはfalse、CancelAllは何もしない。
 `Begin`の同期callbackや入れ子のBegin・CancelAll、Loader直呼出しの再入では最後に変わった状態を優先し、scopeがcallback内で破棄されても共有状態で外部呼出しを安全に完了する。無効な返却値は旧要求が現在かつ処理中の場合だけ旧追跡を戻す。返却値は完了済みでも返すが、`IsActive`が判定する追跡対象とは分ける。`Cancel`は無効・外部要求なら状態を変えずfalseを返し、所有要求は先に追跡から外してLoaderの実取消結果だけを返すため、完了・置換済みならfalseになり得る。
-
-```cpp
-#include "AcsFramework_Core/Assets/AssetLoadScope.h"
-
-class AMyScene : public AScene
-{
-public:
-    AMyScene( CAssetLoaderSubsystem& Loader, const FString& AssetPath ) : m_LoadScope( Loader ), m_AssetPath( AssetPath ) {}
-
-    void OnEnter() noexcept override
-    {
-        TArray<FString> Paths;
-        if ( !Paths.TryAdd( m_AssetPath ) ) return;
-        m_LoadScope.Begin( Paths );
-    }
-    void OnExit() noexcept override { m_LoadScope.CancelAll(); }
-
-private:
-    CAssetLoadScope m_LoadScope;
-    FString m_AssetPath;
-};
-```
 
 `CLoadingScreenFollowScope` は `CLoadingScreenSubsystem` の特定要求への追従を、sceneまたは処理単位の寿命へ束ねる通常型である。
 LoadingScreenはscope全期間、LoaderはFollow成功からResetまたは自動完了まで参照可能にする。利用側は終了処理で `Reset` を明示し、デストラクタは解除漏れを保護する。外部置換後の古い要求は新しい追従を変更せず、同じRequestを再取得した場合も追従世代が異なるため古いscopeは解除しない。`Owns` と `GetRequest` は現在追従を所有している場合だけ有効値を返す。

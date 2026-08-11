@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 #pragma once
 
 #include <acs.h>
@@ -19,14 +20,6 @@ using namespace acs::game;
  *
  * 扱うのは幕だけ。シーンの切り替えは CSceneTravelSubsystem が持つ
  * (幕付きで遷移したいときも、頼む先はそちら)。
- *
- * @code
- * if ( CFadeSubsystem* Fade = GetSubsystem<CFadeSubsystem>() )
- * {
- *     Fade->FadeOut( 0.3f );   // 暗転したまま留まる
- *     Fade->FadeIn( 0.3f );    // 明転して戻す
- * }
- * @endcode
  */
 class CFadeSubsystem : public ASubsystem
 {

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 #pragma once
 
 #include <acs.h>
@@ -22,17 +23,6 @@ using namespace acs;
  * | ここ (AppState) | アプリが終わるまで | 進行状況、所持品、通しの成績 |
  * | CSceneTravelContext | 1 回の遷移だけ | 遷移先へ渡す引数、モーダルの答え |
  * | シーンのメンバ | そのシーンだけ | 画面ごとの一時的なもの |
- *
- * @code
- * // 置く型 (まとめて 1 つにする)
- * struct FMyGameState { i32 Score = 0; i32 Stage = 1; };
- *
- * // どこかで 1 度
- * State->GetOrCreate<FMyGameState>().Stage = 3;
- *
- * // 別のシーンから
- * if ( FMyGameState* S = State->Get<FMyGameState>() ) m_Stage = S->Stage;
- * @endcode
  */
 class CAppStateSubsystem : public ASubsystem
 {

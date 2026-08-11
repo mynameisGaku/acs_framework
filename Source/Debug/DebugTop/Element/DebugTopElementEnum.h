@@ -203,11 +203,6 @@ TArray<FString> DebugTopMakeEnumOptions()
  *
  * @details
  * 選択肢を手で並べる必要が無く、列挙子を足せば行にも自動で増える。
- * @code
- * ACS_ENUM()
- * enum class EQuality : u8 { Low, Middle, High };
- * DebugTopAddEnumRow<EQuality>( *ChildMenu, "Quality", EQuality::Middle );
- * @endcode
  * @tparam TEnum 選択肢にする列挙型。
  * @tparam TParent 行を足す先の型 (CDebugTopElement か ADebugTopEntity)。
  * @param Parent 行を足す先。

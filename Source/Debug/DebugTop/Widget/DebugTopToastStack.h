@@ -1,4 +1,5 @@
-﻿#pragma once
+﻿// SPDX-License-Identifier: Apache-2.0
+#pragma once
 
 #include <acs.h>
 
@@ -17,20 +18,6 @@ inline constexpr usize kDebugTopToastMax = 3;
  * 新しいものが一番下に出て、既にあるものは上へずれる。同時に 3 件まで持ち、それを超えると
  * 一番古いものから閉じる。GameInstance スコープなので、シーンを切り替えても出したものは
  * 残り続ける (遷移した先で「保存しました」が消えないため)。
- *
- * 出し方はこれだけ。
- * @code
- * DebugTopNotify( "保存しました", Path );
- * DebugTopNotifyError( "読み込みに失敗しました", Reason );
- * @endcode
- *
- * ボタンを付けるときは、そのまま続けて書ける。
- * @code
- * DebugTopNotifySuccess( "保存しました", Path )
- *     .AddButton( FString( "フォルダを開く" ),
- *                 FSimpleDelegate::CreateRaw<&AMyScene::OpenSaveFolder>( this ) );
- * @endcode
- *
  * 更新と描画は ADebugTopHUD が呼ぶ。描画にフォントが要るので、通知自体は画面を持つ側に任せる。
  */
 class CDebugTopToastSubsystem : public ASubsystem

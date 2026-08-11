@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 #pragma once
 
 #include <acs.h>
@@ -17,14 +18,6 @@ using namespace acs;
  *
  * **経過秒に時間の倍率は掛かっていない。** 止めていてもスローにしていても、ここが返すのは
  * 実時間そのもの。幕やメニューのように「止まっていても動き続けるもの」はこちらを使う。
- *
- * @code
- * if ( CAppSubsystem* App = GetSubsystem<CAppSubsystem>() )
- * {
- *     App->Quit();                                  // タイトル画面の「終了」から
- *     const f32 Fps = App->GetFps();                // 目安の表示に
- * }
- * @endcode
  */
 class CAppSubsystem : public ASubsystem
 {

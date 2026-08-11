@@ -6,7 +6,7 @@
 
 ---
 
-## 使い方は 2 通り
+## 表示方式と所有者
 
 | | シーンとして使う | 重ねて使う |
 |---|---|---|
@@ -18,15 +18,6 @@
 **重ねる側はシーンにしない。** エンジンは top のシーンしか描かないので、シーンで作ると
 下のゲームが消える。ロード画面と同じく、自前の `CSpriteBatch` と `FRenderContext` を持ち、
 アプリがシーンを描き終えた後に描く。
-
-```cpp
-// ゲーム側で用意したページを初期化時に追加する。
-CDebugTopOverlaySubsystem* const Overlay = GetSubsystem<CDebugTopOverlaySubsystem>();
-if ( Overlay != nullptr )
-{
-	Overlay->GetHUD().AddEntity( NewObject<AGameDebugPage>( "GameDebugPage" ) );
-}
-```
 
 `CAcsFrameworkApp` が更新、表示中の時間停止、シーン後の描画を所有するため、ゲーム側は `Update` と `Draw` を直接呼ばない。
 

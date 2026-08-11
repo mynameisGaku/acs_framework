@@ -1,4 +1,5 @@
-﻿#pragma once
+﻿// SPDX-License-Identifier: Apache-2.0
+#pragma once
 
 #include <acs.h>
 
@@ -31,11 +32,6 @@ using FDebugTopPathChosen = TDelegate<void( const FString& )>;
  *
  * ファイルシステムのことは自分では読まない (Service/DebugTopDirectory に任せる)。開いた理由も、
  * 選ばれた先で何をするかも知らない。選ばれたパスは、頼むときに差されたデリゲートへ渡すだけ。
- *
- * @code
- * // 持ち主の Update
- * if ( m_Browser.Update( DeltaSeconds ) ) return;   // 開いている間は入力を後ろへ流さない
- * @endcode
  */
 class CDebugTopPathBrowser
 {

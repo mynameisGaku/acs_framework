@@ -1,4 +1,5 @@
-﻿#pragma once
+﻿// SPDX-License-Identifier: Apache-2.0
+#pragma once
 
 #include <acs.h>
 
@@ -23,12 +24,6 @@ using namespace acs::game;
  * **文字列はこちらが持つ。** エンジンの入れ物はキーと文字列値を «ポインタで指すだけ» で、
  * 寿命は渡した側の責任になっている。その場で作った FString を渡すとすぐ宙を指すので、
  * ここで写して持ち、指し先が動かないようにしている。
- *
- * @code
- * Settings->SetFloat( FString( "Audio/Bgm" ), 0.7f );        // 手が止まったら書かれる
- * const f32 Bgm = Settings->GetFloat( FString( "Audio/Bgm" ), 1.0f );
- * Settings->Save();                                          // すぐ書きたいとき
- * @endcode
  */
 class CGameSettingsSubsystem : public ASubsystem
 {

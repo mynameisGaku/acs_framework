@@ -1,4 +1,5 @@
-﻿#pragma once
+﻿// SPDX-License-Identifier: Apache-2.0
+#pragma once
 
 #include <acs.h>
 
@@ -28,15 +29,6 @@ using FDebugTopSearchCollector = TDelegate<void( const FString&, TArray<FDebugTo
  * 何を探すか (対象) も、選ばれた先で何をするか (遷移) も知らない。候補は
  * FDebugTopSearchCollector で外から集めてもらい、選ばれた候補は ConsumeChosen で
  * 持ち主が引き取って好きに扱う。これで検索欄はメニューの構造に依存しない。
- *
- * @code
- * // 持ち主の Update
- * if ( m_SearchBox.Update( DeltaSeconds, bTypingInPage ) )
- * {
- *     if ( const FDebugTopSearchHit* Chosen = m_SearchBox.ConsumeChosen() ) JumpTo( *Chosen );
- *     return;   // 検索が入力を食っている間はページへ流さない
- * }
- * @endcode
  */
 class CDebugTopSearchBox
 {

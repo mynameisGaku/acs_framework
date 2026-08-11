@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 #pragma once
 
 #include <acs.h>
@@ -18,22 +19,6 @@ using namespace acs;
  *
  * 待ち時間と間隔は用途ごとに変えてよい。押しっぱなしで大きく動かしたい所は短く、
  * 1 つずつ選びたい所は長めにする。
- *
- * 本来は acs の入力モジュール (src/platform、Input.h の隣) に置くべきもの。CInput を触らず
- * 状態も持ち込まないので、そのまま移せば済むように書いてある。移したらこの層からは消すこと
- * (acs::FInputRepeat と両立させると、using namespace acs で名前が衝突する)。
- *
- * @code
- * // 押しっぱなしで送れるカーソル移動。
- * FInputRepeat Repeat;
- *
- * i32 Raw = 0;
- * if ( CInput::IsKeyDown( EKey::Up ) )   Raw -= 1;
- * if ( CInput::IsKeyDown( EKey::Down ) ) Raw += 1;
- *
- * const i32 Step = Repeat.Step( Raw, DeltaSeconds );
- * if ( Step != 0 ) MoveCursor( Step );
- * @endcode
  */
 class FInputRepeat
 {

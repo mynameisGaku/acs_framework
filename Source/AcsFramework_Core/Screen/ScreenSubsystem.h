@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 #pragma once
 
 #include <acs.h>
@@ -17,15 +18,6 @@ using namespace acs;
  *
  * 画面の大きさは窓から毎回取り直す。フルスクリーンの切り替えや窓のリサイズで変わるので、
  * 値を控えて持ち回らないこと。
- *
- * @code
- * if ( CScreenSubsystem* Screen = GetSubsystem<CScreenSubsystem>() )
- * {
- *     Screen->ToggleFullscreen();
- *     Screen->SetTitle( FString( "拙作ゲーム" ) );
- *     const f32 Aspect = Screen->GetAspect();
- * }
- * @endcode
  */
 class CScreenSubsystem : public ASubsystem
 {

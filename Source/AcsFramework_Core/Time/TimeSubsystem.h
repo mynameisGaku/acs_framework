@@ -24,16 +24,6 @@ using namespace acs;
  *
  * 画面には関わらない (「止まっている」ことをどう見せるかは別の担当)。逆に、画面が無くても
  * 時間は止められる。
- *
- * @code
- * if ( CTimeSubsystem* Time = GetSubsystem<CTimeSubsystem>() )
- * {
- *     Time->Pause( "PauseMenu" );      // 止める
- *     Time->SetSpeed( 0.25f );         // ゆっくり動かす
- *     Time->StepOnce();                // 止めたまま 1 フレームだけ進める
- *     Time->Resume( "PauseMenu" );     // この理由を外す (他の理由が残っていればまだ動かない)
- * }
- * @endcode
  */
 class CTimeSubsystem : public ASubsystem
 {

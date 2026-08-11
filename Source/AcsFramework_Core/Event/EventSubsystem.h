@@ -23,21 +23,6 @@ using namespace acs;
  *    受ける側にとって void* は余分なので、こちらで畳んで渡す。
  *
  * 知らせの型は「ただのデータ」であればよい (継承も登録も要らない)。型そのものが宛先になる。
- *
- * @code
- * // 知らせの型
- * struct FScoreChanged { i32 Score = 0; };
- *
- * // 受け取る側 (控えをメンバに持つ)
- * void AMyHud::OnEnter()
- * {
- *     m_ScoreSub = GetSubsystem<CEventSubsystem>()->Subscribe<FScoreChanged, &AMyHud::OnScoreChanged>( this );
- * }
- * void AMyHud::OnScoreChanged( const FScoreChanged& Event ) { m_Score = Event.Score; }
- *
- * // 出す側 (受け取る相手を知らない)
- * Events->Publish( FScoreChanged{ 1200 } );
- * @endcode
  */
 class CEventSubsystem : public ASubsystem
 {
