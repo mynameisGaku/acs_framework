@@ -159,6 +159,9 @@
     <ClCompile Include="Source\AcsFramework_Core\Screen\ScreenSubsystem.cpp">
       <Filter>Source\AcsFramework_Core\Screen</Filter>
     </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Settings\GameSettingsStore.cpp">
+      <Filter>Source\AcsFramework_Core\Settings</Filter>
+    </ClCompile>
     <ClCompile Include="Source\AcsFramework_Core\Settings\GameSettingsSubsystem.cpp">
       <Filter>Source\AcsFramework_Core\Settings</Filter>
     </ClCompile>
@@ -406,6 +409,9 @@
     </ClInclude>
     <ClInclude Include="Source\AcsFramework_Core\Screen\ScreenSubsystem.h">
       <Filter>Source\AcsFramework_Core\Screen</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Settings\GameSettingsStore.h">
+      <Filter>Source\AcsFramework_Core\Settings</Filter>
     </ClInclude>
     <ClInclude Include="Source\AcsFramework_Core\Settings\GameSettingsSubsystem.h">
       <Filter>Source\AcsFramework_Core\Settings</Filter>

@@ -31,7 +31,8 @@ Subsystem は共有状態の所有と外部窓口に限定し、値、要求、�
 利用側は `AcsFramework_Core/AcsFramework.h` を読み込み、GameInstance の Subsystem を取得して呼び出す。
 
 Core はACSの部品を再実装しない。たとえば設定の値と検証付きファイル書き込みは
-`CSettings`に任せ、Coreは文字列の寿命、ファイルの場所、遅延保存、終了時保存を引き受ける。
+`CSettings`に任せる。`FGameSettingsStore`は値と安定した文字列領域を所有し、
+`CGameSettingsSubsystem`はファイルの場所、遅延保存、警告、終了時保存を引き受ける。
 同じ理由で音声は`CAudioDirector`とXAudio2 backendを所有・配線するが、音声のミキシングや
 アセット解決を複製しない。
 
@@ -59,7 +60,7 @@ Core はACSの部品を再実装しない。たとえば設定の値と検証付
 | `CSaveSubsystem` | スロットの一覧、検証付き読み書き | `TSaveSlot` / 呼出し時 |
 | `CSceneTravelSubsystem` | Change、Push、Pop、遷移演出 | `CGame` / `Update()` |
 | `CScreenSubsystem` | 解像度、全画面、窓の操作 | `CApplication` / なし |
-| `CGameSettingsSubsystem` | プレイヤー設定の保持と永続化 | `CSettings` / `Update()` |
+| `CGameSettingsSubsystem` | プレイヤー設定の保存先、自動保存、外部窓口 | `FGameSettingsStore` / `Update()` |
 | `CAppStateSubsystem` | シーンを跨ぐ型付き状態 | Core所有 / 呼出し時 |
 | `CUiFontSubsystem` | GameInstance単位のUIフォント公開 | `FUiFontResource`、`CRenderer` / `Acquire()` |
 | `CTimeSubsystem` | 時間の適用とfixed stepの窓口 | `CGame` / `Update()` |
@@ -139,9 +140,10 @@ OnShutdown
 
 ## 設定とデバッグ設定を混ぜない
 
-`CGameSettingsSubsystem`は製品としてプレイヤーが決める値を扱い、既定の保存先は
-`Saved/GameSettings.acscfg`である。キー文字列はCoreが安定した領域へ写してから
-`CSettings`へ渡す。`CDebugTopSettings`は開発中の診断・調整値なので、同じキーを共有しない。
+`FGameSettingsStore`は製品としてプレイヤーが決める値と、設定へ渡すキー・文字列値の
+安定した領域を所有する。保存先、存在確認、UTF変換、変更状態、自動保存、警告、終了処理は
+`CGameSettingsSubsystem`が所有する。既定の保存先は`Saved/GameSettings.acscfg`である。
+`CDebugTopSettings`は開発中の診断・調整値なので、同じキーを共有しない。
 
 設定を追加するときは次の順にする。
 

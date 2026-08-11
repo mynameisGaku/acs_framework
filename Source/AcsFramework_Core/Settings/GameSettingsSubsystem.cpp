@@ -16,20 +16,6 @@ bool CGameSettingsSubsystem::Configure( const FString& FilePath )
 }
 
 
-const char* CGameSettingsSubsystem::Intern( const FString& Text )
-{
-	for ( usize Index = 0; Index < m_Interned.Num(); ++Index )
-	{
-		if ( m_Interned[Index] && *m_Interned[Index] == Text ) return m_Interned[Index]->Data();
-	}
-
-	TUniquePtr<FString> Owned = MakeUnique<FString>( Text );
-	const char* const Data = Owned->Data();
-	m_Interned.Add( Move( Owned ) );
-	return Data;
-}
-
-
 void CGameSettingsSubsystem::MarkDirty() noexcept
 {
 	m_bDirty = true;
@@ -39,57 +25,53 @@ void CGameSettingsSubsystem::MarkDirty() noexcept
 
 void CGameSettingsSubsystem::SetFloat( const FString& Key, f32 Value )
 {
-	m_Settings.SetF32( Intern( Key ), Value );
+	m_Store.SetFloat( Key, Value );
 	MarkDirty();
 }
 
 
 void CGameSettingsSubsystem::SetInt( const FString& Key, i32 Value )
 {
-	m_Settings.SetI32( Intern( Key ), Value );
+	m_Store.SetInt( Key, Value );
 	MarkDirty();
 }
 
 
 void CGameSettingsSubsystem::SetBool( const FString& Key, bool bValue )
 {
-	m_Settings.SetBool( Intern( Key ), bValue );
+	m_Store.SetBool( Key, bValue );
 	MarkDirty();
 }
 
 
 void CGameSettingsSubsystem::SetString( const FString& Key, const FString& Value )
 {
-	m_Settings.SetString( Intern( Key ), Intern( Value ) );
+	m_Store.SetString( Key, Value );
 	MarkDirty();
 }
 
 
 f32 CGameSettingsSubsystem::GetFloat( const FString& Key, f32 DefaultValue ) const
 {
-	return m_Settings.GetF32( Key.Data(), DefaultValue );
+	return m_Store.GetFloat( Key, DefaultValue );
 }
 
 
 i32 CGameSettingsSubsystem::GetInt( const FString& Key, i32 DefaultValue ) const
 {
-	return m_Settings.GetI32( Key.Data(), DefaultValue );
+	return m_Store.GetInt( Key, DefaultValue );
 }
 
 
 bool CGameSettingsSubsystem::GetBool( const FString& Key, bool bDefaultValue ) const
 {
-	return m_Settings.GetBool( Key.Data(), bDefaultValue );
+	return m_Store.GetBool( Key, bDefaultValue );
 }
 
 
 FString CGameSettingsSubsystem::GetString( const FString& Key, const FString& DefaultValue ) const
 {
-	// 返ってくるのは中の領域を指すポインタ。次の書き換えで指し先が変わるので写して返す。
-	const char* const Found = m_Settings.GetString( Key.Data(), nullptr );
-	if ( Found == nullptr ) return DefaultValue;
-
-	return FString( Found );
+	return m_Store.GetString( Key, DefaultValue );
 }
 
 
@@ -97,10 +79,12 @@ bool CGameSettingsSubsystem::Save()
 {
 	if ( m_FilePath.IsEmpty() ) return false;
 
+	// 設定保存先へ渡す広い文字のパス。
 	TArray<wchar_t> Wide;
 	if ( !AcsToWide( m_FilePath, Wide ) ) return false;
 
-	const auto Result = m_Settings.Save( Wide.GetData() );
+	// 設定値を書き込んだ結果。
+	const auto Result = m_Store.SaveTo( Wide.GetData() );
 	if ( !Result.IsOk() )
 	{
 		// 黙って書けていないと、次の起動で «設定が戻る» としか分からない。1 度だけ知らせる。
@@ -123,13 +107,15 @@ bool CGameSettingsSubsystem::Load()
 {
 	if ( m_FilePath.IsEmpty() ) return false;
 
+	// 設定読込元へ渡す広い文字のパス。
 	TArray<wchar_t> Wide;
 	if ( !AcsToWide( m_FilePath, Wide ) ) return false;
 
 	// ファイルが無いのは初回起動。読めなかっただけで、持っている値はそのまま使える。
 	if ( !CFileSystem::Exists( Wide.GetData() ) ) return false;
 
-	const bool bLoaded = m_Settings.Load( Wide.GetData() ).IsOk();
+	// 現在値を置き換えられたかを示す読込結果。
+	const bool bLoaded = m_Store.LoadFrom( Wide.GetData() ).IsOk();
 	if ( bLoaded )
 	{
 		m_bDirty = false;

@@ -196,6 +196,7 @@
     <ClInclude Include="Source\AcsFramework_Core\Save\SaveSlotInfo.h" />
     <ClInclude Include="Source\AcsFramework_Core\Save\SaveSubsystem.h" />
     <ClInclude Include="Source\AcsFramework_Core\Text\StringConvert.h" />
+    <ClInclude Include="Source\AcsFramework_Core\Settings\GameSettingsStore.h" />
     <ClInclude Include="Source\AcsFramework_Core\Settings\GameSettingsSubsystem.h" />
     <ClInclude Include="Source\AcsFramework_Core\Audio\AudioSubsystem.h" />
     <ClInclude Include="Source\AcsFramework_Core\AcsFramework.h" />
@@ -280,6 +281,7 @@
     <ClCompile Include="Source\AcsFramework_Core\State\AppStateSubsystem.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Save\SaveSubsystem.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Text\StringConvert.cpp" />
+    <ClCompile Include="Source\AcsFramework_Core\Settings\GameSettingsStore.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Settings\GameSettingsSubsystem.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Audio\AudioSubsystem.cpp" />
   </ItemGroup>
