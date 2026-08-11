@@ -181,6 +181,7 @@
     <ClInclude Include="Source\AcsFramework_Core\Time\TimeSubsystem.h" />
     <ClInclude Include="Source\AcsFramework_Core\Pause\PauseScreenRenderer.h" />
     <ClInclude Include="Source\AcsFramework_Core\Pause\PauseScreenSubsystem.h" />
+    <ClInclude Include="Source\AcsFramework_Core\Text\UiFontResource.h" />
     <ClInclude Include="Source\AcsFramework_Core\Text\UiFontSubsystem.h" />
     <ClInclude Include="Source\AcsFramework_Core\App\AppSubsystem.h" />
     <ClInclude Include="Source\AcsFramework_Core\Screen\ScreenSubsystem.h" />
@@ -264,6 +265,7 @@
     <ClCompile Include="Source\AcsFramework_Core\Time\TimeSubsystem.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Pause\PauseScreenRenderer.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Pause\PauseScreenSubsystem.cpp" />
+    <ClCompile Include="Source\AcsFramework_Core\Text\UiFontResource.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Text\UiFontSubsystem.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\App\AppSubsystem.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Screen\ScreenSubsystem.cpp" />

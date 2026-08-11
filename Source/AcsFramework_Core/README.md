@@ -87,7 +87,7 @@ Core はACSの部品を再実装しない。たとえば設定の値と検証付
 | `CScreenSubsystem` | 解像度、全画面、窓の操作 | `CApplication` / なし |
 | `CGameSettingsSubsystem` | プレイヤー設定の保持と永続化 | `CSettings` / `Update()` |
 | `CAppStateSubsystem` | シーンを跨ぐ型付き状態 | Core所有 / 呼出し時 |
-| `CUiFontSubsystem` | UIフォントの遅延生成と保持 | `CRenderer` / `Acquire()` |
+| `CUiFontSubsystem` | GameInstance単位のUIフォント公開 | `FUiFontResource`、`CRenderer` / `Acquire()` |
 | `CTimeSubsystem` | 時間の適用とfixed stepの窓口 | `CGame` / `Update()` |
 | `CTimerSubsystem` | scaled / unscaled の待機処理 | engine timer / `Update()` |
 
@@ -102,6 +102,7 @@ Core はACSの部品を再実装しない。たとえば設定の値と検証付
 `ESceneTransition`は幕なしと暗転を使う切替方法を表し、`CSceneTravelSubsystem`の公開要求が受け取る値である。
 `CLoadingScreenSubsystem`は読み込み追従、表示世代、フェード、フォント優先順位を所有し、
 `FLoadingScreenRenderer`はスピナー時間、SpriteBatchの遅延初期化、ロード画面のGPU描画を所有する。
+`FUiFontResource`はUIフォントのGPU資源、生成設定、読み込み結果を単独所有する。
 `FEventSubscription`、`FInputRepeat`、`FGameTimer`は共有状態を継続更新する所有者ではないため、
 必要な利用側が値として持つ。
 

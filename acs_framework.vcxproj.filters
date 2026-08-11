@@ -165,6 +165,9 @@
     <ClCompile Include="Source\AcsFramework_Core\Text\StringConvert.cpp">
       <Filter>Source\AcsFramework_Core\Text</Filter>
     </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Text\UiFontResource.cpp">
+      <Filter>Source\AcsFramework_Core\Text</Filter>
+    </ClCompile>
     <ClCompile Include="Source\AcsFramework_Core\Text\UiFontSubsystem.cpp">
       <Filter>Source\AcsFramework_Core\Text</Filter>
     </ClCompile>
@@ -402,6 +405,9 @@
       <Filter>Source\AcsFramework_Core\State</Filter>
     </ClInclude>
     <ClInclude Include="Source\AcsFramework_Core\Text\StringConvert.h">
+      <Filter>Source\AcsFramework_Core\Text</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Text\UiFontResource.h">
       <Filter>Source\AcsFramework_Core\Text</Filter>
     </ClInclude>
     <ClInclude Include="Source\AcsFramework_Core\Text\UiFontSubsystem.h">

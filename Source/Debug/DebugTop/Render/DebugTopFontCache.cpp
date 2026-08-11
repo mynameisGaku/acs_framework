@@ -2,12 +2,6 @@
 
 namespace
 {
-	/** 専用フォントのアトラス一辺 (ピクセル)。25px 程度なら ASCII と仮名がこれで収まる。 */
-	constexpr u32 kAtlasSize = 1024;
-
-	/** 漢字まで焼くときのアトラス一辺。常用漢字を入れるとこれだけ要る。 */
-	constexpr u32 kCjkAtlasSize = 4096;
-
 	/**
 	 * 設定が変わってから焼き直すまでの待ち時間 (秒)。
 	 *
@@ -19,11 +13,8 @@ namespace
 	constexpr f32 kRebakeDelaySeconds = 0.35f;
 }
 
+CDebugTopFontCache::~CDebugTopFontCache() noexcept = default;
 
-CDebugTopFontCache::~CDebugTopFontCache() noexcept
-{
-	if ( m_bReady ) m_Font.Shutdown();
-}
 
 void CDebugTopFontCache::SetFontSize( f32 FontSize ) noexcept
 {
@@ -58,8 +49,10 @@ CDebugTopText CDebugTopFontCache::Resolve( FRenderContext& RenderContext ) noexc
 	{
 		Ensure( RenderContext );
 
+		// 描画へ渡す読み込み済みの専用フォント。
+		const FFont* const Font = m_FontResource.Peek();
 		// 専用アトラスは指定サイズそのもので焼いてあるので、拡縮せずそのまま描ける。
-		if ( m_bReady ) return CDebugTopText( m_Font, m_FontSize );
+		if ( Font != nullptr ) return CDebugTopText( *Font, m_FontSize );
 	}
 
 	if ( !RenderContext.HasFont() ) return CDebugTopText();
@@ -70,7 +63,7 @@ CDebugTopText CDebugTopFontCache::Resolve( FRenderContext& RenderContext ) noexc
 
 bool CDebugTopFontCache::IsRebakePending() const noexcept
 {
-	return !m_bTried || m_LoadedFontSize != m_FontSize || m_bLoadedCjk != m_bIncludeCjk;
+	return !m_bTried || !m_FontResource.MatchesConfiguration( m_FontSize, m_bIncludeCjk );
 }
 
 void CDebugTopFontCache::Ensure( FRenderContext& RenderContext ) noexcept
@@ -80,22 +73,12 @@ void CDebugTopFontCache::Ensure( FRenderContext& RenderContext ) noexcept
 	// 手が止まるまでは焼かない。初回 (まだ 1 度も焼いていない) だけは待たずに焼く。
 	if ( m_bTried && m_SettleSeconds < kRebakeDelaySeconds ) return;
 
+	// 専用フォントのatlas生成に使う描画device。
 	IRhiDevice* const Device = RenderContext.GetRenderer().Device();
-	if ( Device == nullptr ) return;   // デバイス未準備。次のフレームで焼き直す。
+	// デバイス未準備なら次のフレームで焼き直す。
+	if ( Device == nullptr ) return;
 
-	m_bTried         = true;
-	m_LoadedFontSize = m_FontSize;
-	m_bLoadedCjk     = m_bIncludeCjk;
-
-	// 焼き直しの前に古いアトラスを解放する (LoadFromBytes 側でも解放されるが、失敗時に残さない)。
-	if ( m_bReady ) m_Font.Shutdown();
-	m_bReady = false;
-
-	const u32 AtlasSize = m_bIncludeCjk ? kCjkAtlasSize : kAtlasSize;
-	const auto Result = FSample::TryLoadDefaultUIFont( m_Font, *Device, m_FontSize, AtlasSize, m_bIncludeCjk );
-	m_bReady = Result.IsOk();
-	if ( !m_bReady )
-	{
-		ACS_LOG_WARN( "CDebugTopFontCache: %.1fpx のフォントを焼けなかった (共有フォントで代用する)", static_cast<double>( m_FontSize ) );
-	}
+	m_FontResource.Configure( m_FontSize, m_bIncludeCjk );
+	m_bTried = true;
+	( void )m_FontResource.Acquire( *Device );
 }

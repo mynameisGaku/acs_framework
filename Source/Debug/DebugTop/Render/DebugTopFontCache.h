@@ -1,7 +1,9 @@
-﻿#pragma once
+﻿// SPDX-License-Identifier: Apache-2.0
+#pragma once
 
 #include <acs.h>
 
+#include "AcsFramework_Core/Text/UiFontResource.h"
 #include "Debug/DebugTop/Render/DebugTopDraw.h"
 
 using namespace acs;
@@ -24,7 +26,7 @@ public:
 	/** 空で構築する (最初に Resolve を呼んだときに焼く)。 */
 	CDebugTopFontCache() noexcept = default;
 
-	/** 焼いたアトラスを解放する。 */
+	/** 専用フォント資源を解放する。 */
 	~CDebugTopFontCache() noexcept;
 
 	/** コピー禁止 (GPU 資源を単独所有するため)。 */
@@ -84,26 +86,17 @@ private:
 	/** 焼き直しが要るなら焼く (手が止まってから)。 */
 	void Ensure( FRenderContext& RenderContext ) noexcept;
 
-	/** 焼いたアトラス (m_bReady が false の間は中身が無い)。 */
-	FFont m_Font;
+	/** 専用フォントのGPU資源と読み込み状態。 */
+	FUiFontResource m_FontResource;
 
 	/** 焼く文字のピクセルサイズ (0 で共有フォントをそのまま使う)。 */
 	f32 m_FontSize = 0.0f;
 
-	/** 焼いたときのサイズ (設定が変わったかの判定に使う)。 */
-	f32 m_LoadedFontSize = 0.0f;
-
 	/** 漢字を焼き込むか。 */
 	bool m_bIncludeCjk = true;
 
-	/** 焼いたときの漢字設定 (設定が変わったかの判定に使う)。 */
-	bool m_bLoadedCjk = false;
-
 	/** 現在の設定で焼こうとしたか (失敗を毎フレーム繰り返さないため)。 */
 	bool m_bTried = false;
-
-	/** 焼けていて使える状態か。 */
-	bool m_bReady = false;
 
 	/** 設定が変わってからの経過秒 (これが待ち時間を超えたら焼く)。 */
 	f32 m_SettleSeconds = 0.0f;
