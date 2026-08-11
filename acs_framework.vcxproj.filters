@@ -126,6 +126,9 @@
     <ClCompile Include="Source\AcsFramework_Core\Fade\FadeSubsystem.cpp">
       <Filter>Source\AcsFramework_Core\Fade</Filter>
     </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Fade\ScreenOverlayFadeState.cpp">
+      <Filter>Source\AcsFramework_Core\Fade</Filter>
+    </ClCompile>
     <ClCompile Include="Source\AcsFramework_Core\Input\InputRepeat.cpp">
       <Filter>Source\AcsFramework_Core\Input</Filter>
     </ClCompile>
@@ -363,6 +366,9 @@
       <Filter>Source\AcsFramework_Core\Event</Filter>
     </ClInclude>
     <ClInclude Include="Source\AcsFramework_Core\Fade\FadeSubsystem.h">
+      <Filter>Source\AcsFramework_Core\Fade</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Fade\ScreenOverlayFadeState.h">
       <Filter>Source\AcsFramework_Core\Fade</Filter>
     </ClInclude>
     <ClInclude Include="Source\AcsFramework_Core\Input\InputRepeat.h">

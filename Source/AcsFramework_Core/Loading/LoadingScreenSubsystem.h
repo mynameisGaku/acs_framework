@@ -5,6 +5,7 @@
 
 #include "AcsFramework_Core/Assets/AssetLoadRequest.h"
 #include "AcsFramework_Core/Assets/AssetLoaderSubsystem.h"
+#include "AcsFramework_Core/Fade/ScreenOverlayFadeState.h"
 #include "AcsFramework_Core/Loading/LoadingScreenRenderer.h"
 
 using namespace acs;
@@ -109,7 +110,7 @@ public:
 	bool IsVisible() const noexcept { return m_bVisible; }
 
 	/** 画面に何か出ているかを返す (消えかけも含む)。 */
-	bool IsOnScreen() const noexcept { return m_bVisible || m_Alpha > 0.0f; }
+	bool IsOnScreen() const noexcept { return m_Fade.IsOnScreen( m_bVisible ); }
 
 	/**
 	 * 1 フレーム進める。
@@ -191,8 +192,8 @@ private:
 	/** 手動表示だけで使うフォント。所有せず、表示世代の交代時に解除する。 */
 	const FFont* m_DisplayScopeFont = nullptr;
 
-	/** 幕の濃さ (0 で透明、1 で出し切り)。 */
-	f32 m_Alpha = 0.0f;
+	/** ロード表示の出し入れ時間と現在の濃さ。 */
+	FScreenOverlayFadeState m_Fade{ 0.18f };
 
 	/** 進捗 (負なら不定)。 */
 	f32 m_Progress = -1.0f;

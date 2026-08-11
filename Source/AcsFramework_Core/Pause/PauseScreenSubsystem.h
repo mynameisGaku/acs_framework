@@ -3,6 +3,7 @@
 
 #include <acs.h>
 
+#include "AcsFramework_Core/Fade/ScreenOverlayFadeState.h"
 #include "AcsFramework_Core/Pause/PauseScreenRenderer.h"
 #include "AcsFramework_Core/Time/TimeSubsystem.h"
 
@@ -78,7 +79,7 @@ public:
 	bool IsVisible() const noexcept { return m_bVisible; }
 
 	/** 画面に何か出ているかを返す (消えかけも含む)。 */
-	bool IsOnScreen() const noexcept { return m_bVisible || m_Alpha > 0.0f; }
+	bool IsOnScreen() const noexcept { return m_Fade.IsOnScreen( m_bVisible ); }
 
 	/**
 	 * 1 フレーム進める。
@@ -114,8 +115,8 @@ private:
 	/** 文言に使うフォント (nullptr なら共有フォント)。所有はしない。 */
 	const FFont* m_Font = nullptr;
 
-	/** 幕の濃さ (0 で透明、1 で出し切り)。 */
-	f32 m_Alpha = 0.0f;
+	/** ポーズ表示の出し入れ時間と現在の濃さ。 */
+	FScreenOverlayFadeState m_Fade{ 0.14f };
 
 	/** GPU 描画資源とポーズ幕の見た目を保持する通常型。 */
 	FPauseScreenRenderer m_Renderer;

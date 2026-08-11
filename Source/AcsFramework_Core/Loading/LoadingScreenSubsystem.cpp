@@ -1,12 +1,5 @@
 ﻿#include "LoadingScreenSubsystem.h"
 
-namespace
-{
-	/** 出し入れにかける秒数。一瞬で終わる処理に被せてもちらつかない程度に短く取る。 */
-	constexpr f32 kFadeSeconds = 0.18f;
-}
-
-
 // GameInstance スコープへ登録する。シーンを切り替えても出したままにできる。
 ACS_REGISTER_SUBSYSTEM( CLoadingScreenSubsystem, ESubsystemScope::GameInstance )
 
@@ -225,10 +218,7 @@ void CLoadingScreenSubsystem::Update( f32 DeltaSeconds ) noexcept
 	UpdateFollow();
 
 	// 出し入れは滑らかに繋ぐ。出しっぱなしでも回り続けるようスピナーは常に進める。
-	const f32 Step = kFadeSeconds > 0.0f ? DeltaSeconds / kFadeSeconds : 1.0f;
-	m_Alpha += m_bVisible ? Step : -Step;
-	if ( m_Alpha < 0.0f ) m_Alpha = 0.0f;
-	if ( m_Alpha > 1.0f ) m_Alpha = 1.0f;
+	m_Fade.Update( m_bVisible, DeltaSeconds );
 
 	if ( !IsOnScreen() ) return;
 
@@ -241,5 +231,5 @@ void CLoadingScreenSubsystem::Draw( CRenderer& Renderer, const FFont* SharedFont
 
 	/** 表示世代、公開設定、共有設定の順で使うフォント。 */
 	const FFont* const ActiveFont = m_DisplayScopeFont != nullptr ? m_DisplayScopeFont : ( m_Font != nullptr ? m_Font : SharedFont );
-	m_Renderer.Draw( Renderer, ActiveFont, m_Message, m_Alpha, m_Progress );
+	m_Renderer.Draw( Renderer, ActiveFont, m_Message, m_Fade.GetAlpha(), m_Progress );
 }

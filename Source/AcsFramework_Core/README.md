@@ -65,8 +65,9 @@ Core はACSの部品を再実装しない。たとえば設定の値と検証付
 | `CTimeSubsystem` | 時間の適用とfixed stepの窓口 | `CGame` / `Update()` |
 | `CTimerSubsystem` | scaled / unscaled の待機処理 | engine timer / `Update()` |
 
+`FScreenOverlayFadeState`は画面へ重ねる表示の出し入れ時間と現在の濃さだけを保持する通常値型である。
 `FPauseScreenRenderer`はポーズ幕のSpriteBatch、遅延初期化、フォント不足の通知、色と配置を保持する。
-`CPauseScreenSubsystem`は表示理由、文言、フォントの選択、濃さを保持し、描画時だけこの通常型へ状態を渡す。
+`CPauseScreenSubsystem`は表示理由、文言、フォントの選択、表示指示を保持し、フェード後の濃さを描画型へ渡す。
 
 `FTimeControlState`はpause理由、通常速度、1フレーム進行、フレームごとの更新可否と実効速度を保持する
 非サブシステム型で、`CTimeSubsystem`が1つ所有する。`CTimeSubsystem`は決定した実効速度を`CGame`へ
@@ -74,7 +75,7 @@ Core はACSの部品を再実装しない。たとえば設定の値と検証付
 
 `FSaveSlotInfo`は枠番号、存在、版、サイズ、パスをまとめる値で、`CSaveSubsystem`が一覧情報として返す。
 `ESceneTransition`は幕なしと暗転を使う切替方法を表し、`CSceneTravelSubsystem`の公開要求が受け取る値である。
-`CLoadingScreenSubsystem`は読み込み追従、表示世代、フェード、フォント優先順位を所有し、
+`CLoadingScreenSubsystem`は読み込み追従、表示世代、表示指示、フォント優先順位を所有し、
 `FLoadingScreenRenderer`はスピナー時間、SpriteBatchの遅延初期化、ロード画面のGPU描画を所有する。
 `FUiFontResource`はUIフォントのGPU資源、生成設定、読み込み結果を単独所有する。
 `FDebugTopOverlayRenderer`はDebugTopを重ねるSpriteBatch、遅延初期化、描画文脈、背景幕からHUDまでの描画順を所有する。

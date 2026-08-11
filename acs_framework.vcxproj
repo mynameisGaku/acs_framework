@@ -115,6 +115,7 @@
     <ClInclude Include="Source\EntryPoint\EntryPoint.h" />
     <ClInclude Include="Source\AcsFramework_Core\Boot\BootScene.h" />
     <ClInclude Include="Source\AcsFramework_Core\Fade\FadeSubsystem.h" />
+    <ClInclude Include="Source\AcsFramework_Core\Fade\ScreenOverlayFadeState.h" />
     <ClInclude Include="Source\AcsFramework_Core\Loading\LoadingScreenFollowScope.h" />
     <ClInclude Include="Source\AcsFramework_Core\Loading\LoadingScreenDisplayScope.h" />
     <ClInclude Include="Source\AcsFramework_Core\Loading\LoadingScreenRenderer.h" />
@@ -208,6 +209,7 @@
     <ClCompile Include="Source\EntryPoint\EntryPoint.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Boot\BootScene.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Fade\FadeSubsystem.cpp" />
+    <ClCompile Include="Source\AcsFramework_Core\Fade\ScreenOverlayFadeState.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Loading\LoadingScreenFollowScope.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Loading\LoadingScreenDisplayScope.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Loading\LoadingScreenRenderer.cpp" />
