@@ -81,7 +81,7 @@ Core はACSの部品を再実装しない。たとえば設定の値と検証付
 | `CEventSubsystem` | 型付き通知の購読と発行 | engine event broker / なし |
 | `CFadeSubsystem` | 暗転・明転 | `CGame` / `Update()` 相当の呼出し |
 | `CLoadingScreenSubsystem` | ロード中の表示 | loader、renderer / `Update()`・`Draw()` |
-| `CPauseScreenSubsystem` | ポーズ表示 | time、renderer / `Update()`・`Draw()` |
+| `CPauseScreenSubsystem` | ポーズ表示の状態と時間追従 | time、`FPauseScreenRenderer` / `Update()`・`Draw()` |
 | `CSaveSubsystem` | スロットの一覧、検証付き読み書き | `TSaveSlot` / 呼出し時 |
 | `CSceneTravelSubsystem` | Change、Push、Pop、遷移演出 | `CGame` / `Update()` |
 | `CScreenSubsystem` | 解像度、全画面、窓の操作 | `CApplication` / なし |
@@ -91,12 +91,17 @@ Core はACSの部品を再実装しない。たとえば設定の値と検証付
 | `CTimeSubsystem` | 時間の適用とfixed stepの窓口 | `CGame` / `Update()` |
 | `CTimerSubsystem` | scaled / unscaled の待機処理 | engine timer / `Update()` |
 
+`FPauseScreenRenderer`はポーズ幕のSpriteBatch、遅延初期化、フォント不足の通知、色と配置を保持する。
+`CPauseScreenSubsystem`は表示理由、文言、フォントの選択、濃さを保持し、描画時だけこの通常型へ状態を渡す。
+
 `FTimeControlState`はpause理由、通常速度、1フレーム進行、フレームごとの更新可否と実効速度を保持する
 非サブシステム型で、`CTimeSubsystem`が1つ所有する。`CTimeSubsystem`は決定した実効速度を`CGame`へ
 反映し、fixed timestepの設定と照会を`CGame`へ渡す。
 
 `FSaveSlotInfo`は枠番号、存在、版、サイズ、パスをまとめる値で、`CSaveSubsystem`が一覧情報として返す。
 `ESceneTransition`は幕なしと暗転を使う切替方法を表し、`CSceneTravelSubsystem`の公開要求が受け取る値である。
+`CLoadingScreenSubsystem`は読み込み追従、表示世代、フェード、フォント優先順位を所有し、
+`FLoadingScreenRenderer`はスピナー時間、SpriteBatchの遅延初期化、ロード画面のGPU描画を所有する。
 `FEventSubscription`、`FInputRepeat`、`FGameTimer`は共有状態を継続更新する所有者ではないため、
 必要な利用側が値として持つ。
 

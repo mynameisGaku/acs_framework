@@ -5,36 +5,14 @@
 
 #include "AcsFramework_Core/Assets/AssetLoadRequest.h"
 #include "AcsFramework_Core/Assets/AssetLoaderSubsystem.h"
+#include "AcsFramework_Core/Loading/LoadingScreenRenderer.h"
 
 using namespace acs;
 
 /**
- * いつでも被せられるロード画面。
+ * GameInstance の寿命でロード表示の状態と外部窓口を所有するサブシステム。
  *
- * @details
- * シーンを差し替えず、いま動いている画面の上へ幕として重ねる。押している間だけ出したい、
- * 何かが終わるまで出したい、といった用途をシーン構成に影響させずに済ませる。
- * acs にロード画面の仕組みは無いので、フェード幕と同じ作法 (専用の SpriteBatch を遅らせて
- * 用意し、シーン描画の後に重ねる) で自前に持つ。
- *
- * 出すもの・進み具合を「どう見せるか」だけを持つ。何を待っているかは知らないので、
- * アセットの読み込みに限らず何にでも被せられる。読み込みに繋ぎたいときは Follow で
- * CAssetLoaderSubsystem を見に行かせる (読み込み側はこの画面を知らない)。
- *
- * 出し入れは滑らかに繋ぐので、一瞬で終わる処理に被せてもちらつかない。
- *
- * @code
- * if ( CLoadingScreenSubsystem* Loading = GetSubsystem<CLoadingScreenSubsystem>() )
- * {
- *     // 自分で出し入れする
- *     Loading->Show( FString( "読み込み中..." ) );
- *     Loading->SetProgress( 0.4f );   // 割合が分かるなら渡す (省略時はスピナーだけ)
- *     Loading->Disable();
- *
- *     // 読み込みに任せる (出るのも、バーが進むのも、消えるのも自動)
- *     Loading->Follow( *Loader, FString( "アセットを読み込んでいます" ) );
- * }
- * @endcode
+ * 読み込み追従、表示世代、フェード、フォント優先順位を管理し、GPU 描画は専用の描画型へ任せる。
  */
 class CLoadingScreenSubsystem : public ASubsystem
 {
@@ -216,14 +194,11 @@ private:
 	/** 幕の濃さ (0 で透明、1 で出し切り)。 */
 	f32 m_Alpha = 0.0f;
 
-	/** スピナーを回すのに使う経過秒。 */
-	f32 m_Elapsed = 0.0f;
-
 	/** 進捗 (負なら不定)。 */
 	f32 m_Progress = -1.0f;
 
-	/** 幕を描くための SpriteBatch (最初に出すときだけ用意する)。 */
-	CSpriteBatch m_Overlay;
+	/** ロード画面の GPU 描画を受け持つ通常型。 */
+	FLoadingScreenRenderer m_Renderer;
 
 	/** 追従中に参照する読み込み窓口。非所有で、Unfollowまたは自動完了まで生存させる。同じGameInstanceの寿命で管理する。 */
 	const CAssetLoaderSubsystem* m_Followed = nullptr;
@@ -240,9 +215,4 @@ private:
 	/** 出す指示が生きているか。 */
 	bool m_bVisible = false;
 
-	/** 描画資源を用意しようとしたか (失敗を毎フレーム繰り返さないため)。 */
-	bool m_bOverlayTried = false;
-
-	/** 描画資源が使える状態か。 */
-	bool m_bOverlayReady = false;
 };

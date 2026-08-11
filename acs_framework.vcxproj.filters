@@ -135,8 +135,14 @@
     <ClCompile Include="Source\AcsFramework_Core\Loading\LoadingScreenFollowScope.cpp">
       <Filter>Source\AcsFramework_Core\Loading</Filter>
     </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Loading\LoadingScreenRenderer.cpp">
+      <Filter>Source\AcsFramework_Core\Loading</Filter>
+    </ClCompile>
     <ClCompile Include="Source\AcsFramework_Core\Loading\LoadingScreenSubsystem.cpp">
       <Filter>Source\AcsFramework_Core\Loading</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Pause\PauseScreenRenderer.cpp">
+      <Filter>Source\AcsFramework_Core\Pause</Filter>
     </ClCompile>
     <ClCompile Include="Source\AcsFramework_Core\Pause\PauseScreenSubsystem.cpp">
       <Filter>Source\AcsFramework_Core\Pause</Filter>
@@ -362,8 +368,14 @@
     <ClInclude Include="Source\AcsFramework_Core\Loading\LoadingScreenFollowScope.h">
       <Filter>Source\AcsFramework_Core\Loading</Filter>
     </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Loading\LoadingScreenRenderer.h">
+      <Filter>Source\AcsFramework_Core\Loading</Filter>
+    </ClInclude>
     <ClInclude Include="Source\AcsFramework_Core\Loading\LoadingScreenSubsystem.h">
       <Filter>Source\AcsFramework_Core\Loading</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Pause\PauseScreenRenderer.h">
+      <Filter>Source\AcsFramework_Core\Pause</Filter>
     </ClInclude>
     <ClInclude Include="Source\AcsFramework_Core\Pause\PauseScreenSubsystem.h">
       <Filter>Source\AcsFramework_Core\Pause</Filter>

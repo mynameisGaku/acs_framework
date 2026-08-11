@@ -1,35 +1,16 @@
-﻿#pragma once
+﻿// SPDX-License-Identifier: MIT
+#pragma once
 
 #include <acs.h>
 
+#include "AcsFramework_Core/Pause/PauseScreenRenderer.h"
 #include "AcsFramework_Core/Time/TimeSubsystem.h"
 
 using namespace acs;
 
 /**
- * 止まっていることを見せる幕。
- *
- * @details
- * ロード画面と同じ作りで、シーンを差し替えず今の画面の上へ重ねる。時間を止める側
- * (CTimeSubsystem) はこの幕を知らないので、止め方を変えても見せ方は影響を受けない。
- *
- * **見に行くのは名前を決めた理由 1 つだけ。** 時間はいろいろな理由で止まる (デバッグメニューを
- * 開いた、ムービーに入った) が、そのたびにポーズ画面が出ては困る。「この理由で止まっている
- * ときだけ出す」と決めておく。
- *
- * 出し入れは滑らかに繋ぐので、一瞬だけ止めてもちらつかない。
- *
- * @code
- * // 止める側 (ゲーム)
- * Time->Pause( "PauseMenu" );
- *
- * // 見せる側 (シーンの入り口で 1 度だけ)
- * Pause->Follow( *Time, FString( "PauseMenu" ), FString( "PAUSED" ) );
- *
- * // 自分で出し入れしたいときは Follow を使わずに
- * Pause->Show( FString( "PAUSED" ) );
- * Pause->Disable();
- * @endcode
+ * 指定した時間停止理由または直接設定した状態に従い、ポーズ幕と濃さを管理する。
+ * 追従先が無い場合は自動判定せず、描画資源を取得できない場合は無描画で継続する。
  */
 class CPauseScreenSubsystem : public ASubsystem
 {
@@ -93,7 +74,7 @@ public:
 	 */
 	void SetFont( const FFont* Font ) noexcept { m_Font = Font; }
 
-	/** 出す指示が生きているかを返す (薄くなっている最中は false)。 */
+	/** 表示する状態かを返す (薄くなっている最中は false)。 */
 	bool IsVisible() const noexcept { return m_bVisible; }
 
 	/** 画面に何か出ているかを返す (消えかけも含む)。 */
@@ -136,21 +117,13 @@ private:
 	/** 幕の濃さ (0 で透明、1 で出し切り)。 */
 	f32 m_Alpha = 0.0f;
 
-	/** 幕を描くための SpriteBatch (最初に出すときだけ用意する)。 */
-	CSpriteBatch m_Overlay;
+	/** GPU 描画資源とポーズ幕の見た目を保持する通常型。 */
+	FPauseScreenRenderer m_Renderer;
 
 	/** 見に行っている時間の担当。所有はしない (nullptr なら誰も見ていない)。 */
 	const CTimeSubsystem* m_Followed = nullptr;
 
-	/** 出す指示が生きているか。 */
+	/** 表示を求めているか。 */
 	bool m_bVisible = false;
 
-	/** 描画資源を用意しようとしたか (失敗を毎フレーム繰り返さないため)。 */
-	bool m_bOverlayTried = false;
-
-	/** 描画資源が使える状態か。 */
-	bool m_bOverlayReady = false;
-
-	/** フォントが無いことを既に知らせたか (毎フレーム出さないため)。 */
-	bool m_bFontWarned = false;
 };

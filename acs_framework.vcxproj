@@ -117,6 +117,7 @@
     <ClInclude Include="Source\AcsFramework_Core\Fade\FadeSubsystem.h" />
     <ClInclude Include="Source\AcsFramework_Core\Loading\LoadingScreenFollowScope.h" />
     <ClInclude Include="Source\AcsFramework_Core\Loading\LoadingScreenDisplayScope.h" />
+    <ClInclude Include="Source\AcsFramework_Core\Loading\LoadingScreenRenderer.h" />
     <ClInclude Include="Source\AcsFramework_Core\Loading\LoadingScreenSubsystem.h" />
     <ClInclude Include="Source\AcsFramework_Core\Assets\AssetLoadBatch.h" />
     <ClInclude Include="Source\AcsFramework_Core\Assets\AssetLoadRequest.h" />
@@ -178,6 +179,7 @@
     <ClInclude Include="Source\Debug\DebugTop\Widget\DebugTopPathBrowser.h" />
     <ClInclude Include="Source\AcsFramework_Core\Time\TimeControlState.h" />
     <ClInclude Include="Source\AcsFramework_Core\Time\TimeSubsystem.h" />
+    <ClInclude Include="Source\AcsFramework_Core\Pause\PauseScreenRenderer.h" />
     <ClInclude Include="Source\AcsFramework_Core\Pause\PauseScreenSubsystem.h" />
     <ClInclude Include="Source\AcsFramework_Core\Text\UiFontSubsystem.h" />
     <ClInclude Include="Source\AcsFramework_Core\App\AppSubsystem.h" />
@@ -206,6 +208,7 @@
     <ClCompile Include="Source\AcsFramework_Core\Fade\FadeSubsystem.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Loading\LoadingScreenFollowScope.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Loading\LoadingScreenDisplayScope.cpp" />
+    <ClCompile Include="Source\AcsFramework_Core\Loading\LoadingScreenRenderer.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Loading\LoadingScreenSubsystem.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Assets\AssetLoadBatch.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Assets\AssetLoaderSubsystem.cpp" />
@@ -259,6 +262,7 @@
     <ClCompile Include="Source\Debug\DebugTop\Widget\DebugTopPathBrowser.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Time\TimeControlState.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Time\TimeSubsystem.cpp" />
+    <ClCompile Include="Source\AcsFramework_Core\Pause\PauseScreenRenderer.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Pause\PauseScreenSubsystem.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Text\UiFontSubsystem.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\App\AppSubsystem.cpp" />
