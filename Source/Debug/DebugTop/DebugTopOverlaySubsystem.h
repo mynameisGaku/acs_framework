@@ -4,6 +4,7 @@
 #include <acs.h>
 
 #include "Debug/DebugTop/DebugTopHUD.h"
+#include "Debug/DebugTop/Render/DebugTopOverlayRenderer.h"
 
 using namespace acs;
 
@@ -65,8 +66,8 @@ private:
 	/** 重ねるメニュー。 */
 	TObjectPtr<ADebugTopHUD> m_HUD;
 
-	/** 重ねて描くための SpriteBatch (最初に出すときだけ用意する)。 */
-	CSpriteBatch m_Overlay;
+	/** HUD の GPU 描画と描画資源を所有する通常型。 */
+	FDebugTopOverlayRenderer m_Renderer;
 
 	/** 出し入れするキー。 */
 	EKey m_ToggleKey = EKey::F1;
@@ -80,9 +81,4 @@ private:
 	/** 出ている間ゲームを止めるか。 */
 	bool m_bPauseWhileVisible = true;
 
-	/** 描画資源を用意しようとしたか (失敗を毎フレーム繰り返さないため)。 */
-	bool m_bOverlayTried = false;
-
-	/** 描画資源が使える状態か。 */
-	bool m_bOverlayReady = false;
 };

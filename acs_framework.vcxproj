@@ -134,6 +134,7 @@
     <ClInclude Include="Source\Debug\DebugTop\Render\DebugTopColorField.h" />
     <ClInclude Include="Source\Debug\DebugTop\Render\DebugTopDraw.h" />
     <ClInclude Include="Source\Debug\DebugTop\Render\DebugTopFontCache.h" />
+    <ClInclude Include="Source\Debug\DebugTop\Render\DebugTopOverlayRenderer.h" />
     <ClInclude Include="Source\Debug\DebugTop\Service\DebugTopFileDialog.h" />
     <ClInclude Include="Source\Debug\DebugTop\Service\DebugTopSearchIndex.h" />
     <ClInclude Include="Source\Debug\DebugTop\Settings\DebugTopSetting.h" />
@@ -224,6 +225,7 @@
     <ClCompile Include="Source\Debug\DebugTop\Render\DebugTopColorField.cpp" />
     <ClCompile Include="Source\Debug\DebugTop\Render\DebugTopDraw.cpp" />
     <ClCompile Include="Source\Debug\DebugTop\Render\DebugTopFontCache.cpp" />
+    <ClCompile Include="Source\Debug\DebugTop\Render\DebugTopOverlayRenderer.cpp" />
     <ClCompile Include="Source\Debug\DebugTop\Service\DebugTopFileDialog.cpp" />
     <ClCompile Include="Source\Debug\DebugTop\Service\DebugTopSearchIndex.cpp" />
     <ClCompile Include="Source\Debug\DebugTop\Settings\DebugTopSettings.cpp" />

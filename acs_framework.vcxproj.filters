@@ -258,6 +258,9 @@
     <ClCompile Include="Source\Debug\DebugTop\Render\DebugTopFontCache.cpp">
       <Filter>Source\Debug\DebugTop\Render</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Debug\DebugTop\Render\DebugTopOverlayRenderer.cpp">
+      <Filter>Source\Debug\DebugTop\Render</Filter>
+    </ClCompile>
     <ClCompile Include="Source\Debug\DebugTop\Service\DebugTopDirectory.cpp">
       <Filter>Source\Debug\DebugTop\Service</Filter>
     </ClCompile>
@@ -516,6 +519,9 @@
       <Filter>Source\Debug\DebugTop\Render</Filter>
     </ClInclude>
     <ClInclude Include="Source\Debug\DebugTop\Render\DebugTopFontCache.h">
+      <Filter>Source\Debug\DebugTop\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Debug\DebugTop\Render\DebugTopOverlayRenderer.h">
       <Filter>Source\Debug\DebugTop\Render</Filter>
     </ClInclude>
     <ClInclude Include="Source\Debug\DebugTop\Service\DebugTopDirectory.h">

@@ -16,10 +16,11 @@
 | 向く場面 | 起動直後の入口。腰を据えて触る | 詰めの調整。いじった結果がその場で見える |
 
 **重ねる側はシーンにしない。** エンジンは top のシーンしか描かないので、シーンで作ると
-下のゲームが消える。ロード画面と同じく、自前の `CSpriteBatch` と `FRenderContext` を持ち、
-アプリがシーンを描き終えた後に描く。
+下のゲームが消える。`FDebugTopOverlayRenderer` が `CSpriteBatch` とフレーム内だけの `FRenderContext` を所有し、
+アプリがシーンを描き終えた後に背景幕、HUDの順で描く。
 
-`CAcsFrameworkApp` が更新、表示中の時間停止、シーン後の描画を所有するため、ゲーム側は `Update` と `Draw` を直接呼ばない。
+`CDebugTopOverlaySubsystem` はHUDの寿命、表示、切替入力、時間停止、背景幕の設定を所有する。
+`CAcsFrameworkApp` は更新、表示中の時間停止、シーン後の描画を所有する。
 
 `GetHUD()` でメニューを組み立てるまでは、切替キーを受けずゲーム時間を止めない。
 

@@ -77,6 +77,8 @@ Core はACSの部品を再実装しない。たとえば設定の値と検証付
 `CLoadingScreenSubsystem`は読み込み追従、表示世代、フェード、フォント優先順位を所有し、
 `FLoadingScreenRenderer`はスピナー時間、SpriteBatchの遅延初期化、ロード画面のGPU描画を所有する。
 `FUiFontResource`はUIフォントのGPU資源、生成設定、読み込み結果を単独所有する。
+`FDebugTopOverlayRenderer`はDebugTopを重ねるSpriteBatch、遅延初期化、描画文脈、背景幕からHUDまでの描画順を所有する。
+`CDebugTopOverlaySubsystem`はHUDの寿命、表示、切替入力、時間停止、背景幕の設定を所有し、描画時の値だけを通常型へ渡す。
 `FEventSubscription`、`FInputRepeat`、`FGameTimer`は共有状態を継続更新する所有者ではないため、
 必要な利用側が値として持つ。
 
