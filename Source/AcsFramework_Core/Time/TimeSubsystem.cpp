@@ -1,7 +1,7 @@
 ﻿#include "TimeSubsystem.h"
 
-// GameInstance スコープへ登録する。シーンを跨いでも同じ実体を指すので、遷移の前後で
-// 呼び出し側が持ち替えなくてよい。
+// GameInstance が時間制御の実体を所有し、シーン遷移を跨いで
+// 同じ状態を保持する。
 ACS_REGISTER_SUBSYSTEM( CTimeSubsystem, ESubsystemScope::GameInstance )
 
 
