@@ -37,31 +37,31 @@ protected:
 private:
 
     /**
-     * 毎フレーム呼ばれる更新フック。
+     * 時間制御に従って現 top シーンとシーン外の各機能を更新する。
      *
-     * @details CGame::OnUpdate() が現 top シーンを駆動するため、基底呼び出しは必須。
+     * @details 時間制御がシーン進行を許可したフレームだけ CGame::OnUpdate() が現 top シーンを駆動する。
      * @param DeltaSeconds 前フレームからの経過秒。
      */
     void OnUpdate( f32 DeltaSeconds ) noexcept override;
 
     /**
-     * 毎フレーム呼ばれる描画フック (BeginFrame/EndFrame は基底が囲む)。
+     * 現 top シーンとポーズ、デバッグ、ロードの表示を定めた順で描画する。
      *
-     * @details CGame::OnRender() が現 top シーンを描画するため、基底呼び出しは必須。
+     * @details CGame::OnRender() が現 top シーンを描画し、その後に各表示を順番に重ねる。
      */
     void OnRender() noexcept override;
 
     /**
-     * 終了時に 1 回呼ばれる後始末フック。
+     * 未保存の設定を保存し、残ったシーンを終了処理する。
      *
-     * @details CGame::OnShutdown() が残ったシーンへ OnExit を流すため、基底呼び出しは必須。
+     * @details 設定を保存した後、CGame::OnShutdown() が残ったシーンを終了処理する。
      */
     void OnShutdown() noexcept override;
 
     /**
-     * ウィンドウ/入力イベントを受信したときに呼ばれるフック。
+     * 受信したウィンドウ/入力イベントを現 top シーンへ配送する。
      *
-     * @details CGame::OnEvent() が現 top シーンへ配送するため、基底呼び出しは必須。
+     * @details CGame::OnEvent() が現 top シーンへの配送を担う。
      * @param Event 受信したイベント。
      */
     void OnEvent( const FEvent& Event ) noexcept override;
