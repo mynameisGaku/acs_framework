@@ -9,7 +9,7 @@ using namespace acs;
 /**
  * GameInstance に属する予約をゲーム時間と実時間で更新し、取消しと照会の窓口を提供する。
  * 返す FGameTimer は生成元の CTimerSubsystem 実体内だけで使い、別実体の値とは相互利用しない。
- * 利用シーンは OnExit で先に予約を取り消し、デストラクタは終了順が変わった場合の保護に使う。
+ * 所有者スコープの終了と本型のデストラクタは、それぞれが追跡する残存予約を回収する。
  */
 class CTimerSubsystem : public ASubsystem
 {
@@ -87,7 +87,7 @@ public:
 	 * 1 フレーム進める。
 	 *
 	 * @details
-	 * アプリの更新から毎フレーム呼ぶ。止まっている間も呼ぶこと (実時間の時計は進めたいため)。
+	 * 実時間の時計は UnscaledDeltaSeconds で常時進み、ゲーム時間の時計だけに TimeScale を適用する。
 	 * @param UnscaledDeltaSeconds 前フレームからの実経過秒。
 	 * @param TimeScale いま掛かっている時間の倍率 (CTimeSubsystem::GetEffectiveScale)。
 	 */
