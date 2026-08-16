@@ -308,6 +308,8 @@
     <ClInclude Include="Source\Debug\HotReload\WatcherEventSource.h" />
     <None Include="Source\AcsFramework_Core\Scene\Prefab\Test\PrefabSpawnerTest.cpp" />
     <None Include="Source\Debug\HotReload\Test\HotReloadDispatcherTest.cpp" />
+    <None Include="Source\AcsFramework_Core\Scene\Snapshot\Test\SceneSnapshotTest.cpp" />
+    <None Include="Source\AcsFramework_Core\Simulation\Test\FixedStepDriverTest.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Common\Pch.cpp">

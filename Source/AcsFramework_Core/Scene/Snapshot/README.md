@@ -32,6 +32,7 @@
 
 `CSceneSnapshotStatus` はどの段からも使える「結果の読み解き方」。
 `CSceneSnapshotSubsystem` はこの順番と入れ物を持つだけ。
+ファイルの置き換えは `Common/File/CAcsArchiveFile` へ集約してある (親フォルダの作成込み)。
 
 ---
 
@@ -62,6 +63,11 @@ if ( !Restored ) ACS_LOG_WARN( "%s", Snapshot->MakeLastErrorMessage().Data() );
 
 ## 気をつけること
 
+- **ノード名は保存されない。** Engine の形式 (version 4) に名前の欄が無く、保存されるのは
+  親子関係・変換・enabled/visible/drawLayer/drawPriority/ySort とコンポーネントだけ。
+  復元すると全ノードが**無名**になるので、**名前で引くゲームは静かに壊れる**。
+  どれがどれかを見分けるには、並び順かコンポーネントの中身を使うこと
+  (自己テストでこの前提を毎回確かめている。通らなくなったら Engine が名前を持った合図)。
 - **コンポーネントは名前から作り直される** (`CreateComponentByName`)。ゲーム固有の
   コンポーネントは、その名前でエンジンに知られていなければ復元されない。復元したい型が
   出てこないときは、まずここを疑うこと。

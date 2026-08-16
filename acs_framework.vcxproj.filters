@@ -1162,5 +1162,11 @@
     <None Include="Source\Debug\HotReload\Test\HotReloadDispatcherTest.cpp">
       <Filter>Source\Debug\HotReload\Test</Filter>
     </None>
+    <None Include="Source\AcsFramework_Core\Scene\Snapshot\Test\SceneSnapshotTest.cpp">
+      <Filter>Source\AcsFramework_Core\Scene\Snapshot\Test</Filter>
+    </None>
+    <None Include="Source\AcsFramework_Core\Simulation\Test\FixedStepDriverTest.cpp">
+      <Filter>Source\AcsFramework_Core\Simulation\Test</Filter>
+    </None>
   </ItemGroup>
 </Project>
