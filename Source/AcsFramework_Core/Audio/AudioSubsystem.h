@@ -102,6 +102,13 @@ public:
 	 */
 	void Update( f32 UnscaledDeltaSeconds );
 
+	/**
+	 * 音の取りまとめを返す。
+	 * @details Engine の部品どうしを接続するための窓口である。`CMusicDirector` のように `CAudioDirector` を受け取って委譲する部品へ渡す。ゲーム側の再生・停止・音量は本クラスの窓口を使う。
+	 * @return 音の取りまとめ。所有は移らない。
+	 */
+	CAudioDirector& GetDirector() noexcept { return m_Director; }
+
 private:
 	/** 音を止め、非所有参照を切り、未接続の状態へ戻す。 */
 	void ReleaseBinding() noexcept;

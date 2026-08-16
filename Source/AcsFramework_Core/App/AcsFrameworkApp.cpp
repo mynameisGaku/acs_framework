@@ -3,6 +3,8 @@
 #include "AcsFramework_Core/App/AppSubsystem.h"
 #include "AcsFramework_Core/Assets/AssetLoaderSubsystem.h"
 #include "AcsFramework_Core/Audio/AudioSubsystem.h"
+#include "AcsFramework_Core/Audio/Music/MusicSubsystem.h"
+#include "AcsFramework_Core/Audio/Spatial/SpatialAudioSubsystem.h"
 #include "AcsFramework_Core/Event/EventSubsystem.h"
 #include "AcsFramework_Core/Boot/BootScene.h"
 #include "AcsFramework_Core/Fade/FadeSubsystem.h"
@@ -17,8 +19,26 @@
 #include "AcsFramework_Core/Time/TimeSubsystem.h"
 #include "AcsFramework_Core/Timer/TimerSubsystem.h"
 
+#include "Debug/Perf/PerfBudgetSubsystem.h"
+#include "Debug/Perf/ScopedPerfSample.h"
+
+namespace
+{
+	/** 1 フレームの目標時間 (ms)。60fps を基準にする。 */
+	constexpr f32 kFrameBudgetMilliseconds = 16.6f;
+}
+
 #if _DEBUG
 #include "Debug/DebugTop/DebugTopOverlaySubsystem.h"
+#include "Debug/DevConsole/Builtin/ConsoleCommandsApp.h"
+#include "Debug/DevConsole/Builtin/ConsoleCommandsAudio.h"
+#include "Debug/DevConsole/Builtin/ConsoleCommandsPerf.h"
+#include "Debug/DevConsole/DevConsoleSubsystem.h"
+#include "Debug/DevConsole/View/DevConsolePage.h"
+#include "Debug/HotReload/Builtin/HotReloadLogHandler.h"
+#include "Debug/HotReload/HotReloadSubsystem.h"
+#include "Debug/HotReload/View/HotReloadPage.h"
+#include "Debug/Perf/View/PerfBudgetPage.h"
 
 namespace
 {
@@ -88,7 +108,8 @@ TUniquePtr<AScene> CAcsFrameworkApp::InitialScene() noexcept
 
 	// 音の一式を組み立てる。音量は «残す側» と «鳴らす側» のどちらも相手を知らないので、
 	// 決め所であるここで繋ぐ。
-	if ( CAudioSubsystem* const Audio = GetSubsystem<CAudioSubsystem>() )
+	CAudioSubsystem* const Audio = GetSubsystem<CAudioSubsystem>();
+	if ( Audio != nullptr )
 	{
 		Audio->Bind( *this );
 		if ( Settings != nullptr )
@@ -97,6 +118,15 @@ TUniquePtr<AScene> CAcsFrameworkApp::InitialScene() noexcept
 			Audio->SetBgmVolume( Settings->GetFloat( FString( "Audio/Bgm" ), 1.0f ) );
 			Audio->SetSfxVolume( Settings->GetFloat( FString( "Audio/Sfx" ), 1.0f ) );
 		}
+	}
+
+	// 曲を «決める側» と 場所のある音は、どちらも «鳴らす側» を知らない。ここで繋ぐ
+	// (曲の登録と聴く位置の指定はゲーム側が行う)。
+	if ( Audio != nullptr )
+	{
+		if ( CMusicSubsystem* const Music = GetSubsystem<CMusicSubsystem>() ) Music->Bind( *Audio );
+
+		if ( CSpatialAudioSubsystem* const Spatial = GetSubsystem<CSpatialAudioSubsystem>() ) Spatial->Bind( *Audio );
 	}
 
 	// 時間の倍率もアプリ (CGame) が持っている。同じ理由でここから渡す。
@@ -110,6 +140,61 @@ TUniquePtr<AScene> CAcsFrameworkApp::InitialScene() noexcept
 	{
 		Loader->Bind( GetAssets() );
 	}
+
+	// フレームの予算。枠組みが測る場所は既定で入る。ゲーム側の区分は DefineCategory で足す。
+	CPerfBudgetSubsystem* const Perf = GetSubsystem<CPerfBudgetSubsystem>();
+	if ( Perf != nullptr )
+	{
+		Perf->Configure( kFrameBudgetMilliseconds );
+	}
+
+	// 開発中の道具はここで組む。どのコマンドを積むかは «決め所» であるアプリが決め、
+	// コンソール側は積まれたものを知らないままにしておく。
+#if _DEBUG
+	CDebugTopOverlaySubsystem* const Overlay = GetSubsystem<CDebugTopOverlaySubsystem>();
+
+	if ( Perf != nullptr && Overlay != nullptr )
+	{
+		Overlay->GetHUD().AddEntity( NewObject<APerfBudgetPage>( FString( "Perf" ), *Perf ) );
+	}
+
+	if ( CDevConsoleSubsystem* const Console = GetSubsystem<CDevConsoleSubsystem>() )
+	{
+		if ( CAppSubsystem* const ConsoleApp = GetSubsystem<CAppSubsystem>() )
+		{
+			Console->AddProvider( MakeUnique<CConsoleCommandsApp>( *Console, *ConsoleApp ) );
+		}
+
+		if ( Audio != nullptr )
+		{
+			Console->AddProvider( MakeUnique<CConsoleCommandsAudio>( *Console, *Audio ) );
+		}
+
+		if ( Perf != nullptr )
+		{
+			Console->AddProvider( MakeUnique<CConsoleCommandsPerf>( *Console, *Perf ) );
+		}
+
+		if ( Overlay != nullptr )
+		{
+			Overlay->GetHUD().AddEntity( NewObject<ADevConsolePage>( FString( "Console" ), *Console ) );
+		}
+	}
+
+	// 差し替えの見張り。何を作り直すかは引き受け手が決めるので、既定では記録に残すだけ。
+	if ( CHotReloadSubsystem* const HotReload = GetSubsystem<CHotReloadSubsystem>() )
+	{
+		if ( HotReload->StartWatchingDefaults() )
+		{
+			HotReload->AddHandler( MakeUnique<CHotReloadLogHandler>() );
+		}
+
+		if ( Overlay != nullptr )
+		{
+			Overlay->GetHUD().AddEntity( NewObject<AHotReloadPage>( FString( "HotReload" ), *HotReload ) );
+		}
+	}
+#endif
 
 	return CreateInitialScene();
 }
@@ -127,6 +212,10 @@ void CAcsFrameworkApp::OnStart() noexcept
 
 void CAcsFrameworkApp::OnUpdate( f32 DeltaSeconds ) noexcept
 {
+	// 予算の計測はこのフレームの全てを含めたいので、何よりも先に開ける。
+	CPerfBudgetSubsystem* const Perf = GetSubsystem<CPerfBudgetSubsystem>();
+	if ( Perf != nullptr ) Perf->BeginFrame();
+
 	CTimeSubsystem* const Time = GetSubsystem<CTimeSubsystem>();
 
 	// 重ねているデバッグメニューはシーンより先に見る。出ている間はゲームを止めたいので、
@@ -136,6 +225,8 @@ void CAcsFrameworkApp::OnUpdate( f32 DeltaSeconds ) noexcept
 #if _DEBUG
 	if ( CDebugTopOverlaySubsystem* const Overlay = GetSubsystem<CDebugTopOverlaySubsystem>() )
 	{
+		const FScopedPerfSample Sample( Perf, "Debug/Overlay" );
+
 		const bool bCaptured = Overlay->Update( DeltaSeconds );
 		if ( Time != nullptr )
 		{
@@ -150,12 +241,19 @@ void CAcsFrameworkApp::OnUpdate( f32 DeltaSeconds ) noexcept
 
 	// 現 top シーンの駆動は基底が行う。止まっている間は呼ばない (倍率 0 だけだとシーンは
 	// 呼ばれ続けるので、止めているつもりでもキー入力が奥まで届いてしまう)。
-	if ( Time == nullptr || Time->ShouldTickScenes() ) CGame::OnUpdate( DeltaSeconds );
+	if ( Time == nullptr || Time->ShouldTickScenes() )
+	{
+		const FScopedPerfSample Sample( Perf, "Scene/Update" );
+
+		CGame::OnUpdate( DeltaSeconds );
+	}
 
 	// 読み込みはシーンに属さない (遷移を跨いで続く) ので、アプリの側で進める。
 	// ロード画面より先に進めること。同じフレームの進み具合が画面へ乗る。
 	if ( CAssetLoaderSubsystem* const Loader = GetSubsystem<CAssetLoaderSubsystem>() )
 	{
+		const FScopedPerfSample Sample( Perf, "Assets/Load" );
+
 		Loader->Update();
 	}
 
@@ -181,7 +279,15 @@ void CAcsFrameworkApp::OnUpdate( f32 DeltaSeconds ) noexcept
 	// 音は実時間で進める。ゲームを止めても曲は流れ続ける。
 	if ( CAudioSubsystem* const Audio = GetSubsystem<CAudioSubsystem>() )
 	{
+		const FScopedPerfSample Sample( Perf, "Audio/Update" );
+
 		Audio->Update( DeltaSeconds );
+
+		// 曲の切り替えは、鳴らす側を進めた直後に見る。集まった申告はここで 1 つに決まる。
+		if ( CMusicSubsystem* const Music = GetSubsystem<CMusicSubsystem>() ) Music->Update( DeltaSeconds );
+
+		// 聴く位置はシーンが動いた後の位置を使いたいので、曲の後に更新する。
+		if ( CSpatialAudioSubsystem* const Spatial = GetSubsystem<CSpatialAudioSubsystem>() ) Spatial->Update( DeltaSeconds );
 	}
 
 	// 設定は書き換えられてから手が止まったところで書く。ここで測る。
@@ -196,6 +302,17 @@ void CAcsFrameworkApp::OnUpdate( f32 DeltaSeconds ) noexcept
 	{
 		Pause->Update( DeltaSeconds );
 	}
+
+	// 差し替えの見張りも実時間で進める。止めて眺めながら絵を差し替えることがあるため。
+#if _DEBUG
+	if ( CHotReloadSubsystem* const HotReload = GetSubsystem<CHotReloadSubsystem>() )
+	{
+		HotReload->Update( DeltaSeconds );
+	}
+#endif
+
+	// 予算の計測はここで閉じる。以降このフレームでは積まない。
+	if ( Perf != nullptr ) Perf->EndFrame();
 }
 
 void CAcsFrameworkApp::OnRender() noexcept
@@ -206,7 +323,11 @@ void CAcsFrameworkApp::OnRender() noexcept
 	if ( CUiFontSubsystem* const UiFont = GetSubsystem<CUiFontSubsystem>() ) m_UiFont = UiFont->Acquire( GetRenderer() );
 
 	// 現 top シーンの描画は基底が行う。
-	CGame::OnRender();
+	{
+		const FScopedPerfSample Sample( GetSubsystem<CPerfBudgetSubsystem>(), "Scene/Render" );
+
+		CGame::OnRender();
+	}
 
 	// ポーズの幕はゲームのすぐ上。開発用の道具 (デバッグメニュー) はその更に上に出したいので、
 	// ここで先に重ねておく。

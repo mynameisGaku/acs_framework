@@ -65,6 +65,15 @@ Core はACSの部品を再実装しない。たとえば設定の値と検証付
 | `CUiFontSubsystem` | GameInstance単位のUIフォント公開 | `FUiFontResource`、`CRenderer` / `Acquire()` |
 | `CTimeSubsystem` | 時間の適用とfixed stepの窓口 | `CGame` / `Update()` |
 | `CTimerSubsystem` | scaled / unscaled の待機処理 | engine timer / `Update()` |
+| `CMusicSubsystem` | 状態に応じたBGM切替と差し込みの一音 | `CMusicDirector` + `CAudioSubsystem` / 実時間 `Update()` |
+| `CSpatialAudioSubsystem` | 場所のある効果音と聴取位置 | `CSpatialAudio` + `CAudioSubsystem` / 実時間 `Update()` |
+| `CPrefabSubsystem` | 名前からのANode生成 | `CPrefabSystem` / 呼出し時 |
+| `CSceneSnapshotSubsystem` | ANodeツリーの保存と復元 | `TrySaveNodeTree` / `CSaveArchive` / 呼出し時 |
+
+開発中だけ使うものは `Source/Debug/` 側に置く。`CPerfBudgetSubsystem`はフレーム予算の計測、
+`CDevConsoleSubsystem`は打ち込みコマンド、`CHotReloadSubsystem`はファイル差し替えの監視を担う。
+いずれも配線とページの登録は`#if _DEBUG`の内側で行う。各モジュールの取り決めはそれぞれの
+`README.md`が正本である。
 
 `FScreenOverlayFadeState`は画面へ重ねる表示の出し入れ時間と現在の濃さだけを保持する通常値型である。
 `FPauseScreenRenderer`はポーズ幕のSpriteBatch、遅延初期化、フォント不足の通知、色と配置を保持する。
@@ -126,11 +135,14 @@ InitialScene の配線
   Time / AssetLoader
 
 OnUpdate(real dt)
+  PerfBudget::BeginFrame（このフレーム全体を含めるため最初に開ける）
   DebugTop の入力と時間の理由
   Time の反映 → シーン更新（停止中は呼ばない）
   AssetLoader → LoadingScreen → SceneTravel
-  Timer（ゲーム時間倍率を受ける）→ Audio（実時間）
+  Timer（ゲーム時間倍率を受ける）→ Audio（実時間）→ Music（実時間）→ SpatialAudio（実時間）
   GameSettings（手が止まったら保存）→ PauseScreen（実時間）
+  HotReload（実時間・_DEBUG のみ）
+  PerfBudget::EndFrame
 
 OnRender
   UI font → scene → pause → DebugTop → loading screen
