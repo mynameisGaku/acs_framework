@@ -18,6 +18,8 @@
 #include "AcsFramework_Core/Simulation/Input/ActionBindingTable.h"
 #include "AcsFramework_Core/Simulation/ReplayFile.h"
 #include "AcsFramework_Core/Simulation/SimulationEventQueue.h"
+#include "AcsFramework_Core/Simulation/SimulationSnapshot.h"
+#include "AcsFramework_Core/Simulation/SimulationSnapshotFile.h"
 
 namespace
 {
@@ -103,6 +105,29 @@ namespace
 			m_FireCount = 0u;
 		}
 
+		/** 盤面は 2 つだけ。結果へ影響する値をここへ漏らさず入れる。 */
+		bool TrySaveState( TArray<u8>& OutBytes ) const noexcept override
+		{
+			OutBytes.Reset();
+			OutBytes.SetNum( sizeof( f32 ) + sizeof( u32 ) );
+
+			u8* Cursor = OutBytes.GetData();
+			MemCopy( Cursor, &m_PositionX, sizeof( f32 ) );
+			MemCopy( Cursor + sizeof( f32 ), &m_FireCount, sizeof( u32 ) );
+
+			return true;
+		}
+
+		bool TryRestoreState( const u8* Bytes, usize Size ) noexcept override
+		{
+			if ( Bytes == nullptr || Size != sizeof( f32 ) + sizeof( u32 ) ) return false;
+
+			MemCopy( &m_PositionX, Bytes, sizeof( f32 ) );
+			MemCopy( &m_FireCount, Bytes + sizeof( f32 ), sizeof( u32 ) );
+
+			return true;
+		}
+
 		f32 GetPositionX() const noexcept { return m_PositionX; }
 		u32 GetFireCount() const noexcept { return m_FireCount; }
 
@@ -171,6 +196,63 @@ namespace
 		OutResult.DrawCount = Random.GetDrawCount();
 
 		for ( usize Index = 0u; Index < Events.Num(); ++Index ) OutResult.Events.TryAdd( Events.Get( Index ) );
+	}
+
+	/** 与えられた部品のまま N ステップだけ進める (途中から再開する試験に使う)。 */
+	void StepRange( CTestRule& Rule, const CActionInputTape& Tape, CFixedStepDriver& Driver,
+		CDeterministicRandom& Random, CSimulationEventQueue& Events,
+		FActionInput& Current, FActionInput& Previous, u32 StepCount )
+	{
+		for ( u32 Step = 0u; Step < StepCount; ++Step )
+		{
+			const u32 Tick = Driver.GetTick();
+
+			Previous = Current;
+			Current = FActionInput();
+			Tape.TryGet( Tick, Current );
+
+			FSimulationContext Context;
+			Context.Input = Current;
+			Context.PreviousInput = Previous;
+			Context.Tick = Tick;
+			Context.StepSeconds = Driver.GetStepSeconds();
+			Context.Random = &Random;
+			Context.Events = &Events;
+
+			Rule.AdvanceStep( Context );
+			Driver.AdvanceTick();
+		}
+	}
+
+	/** 進んだ結果を控える。 */
+	void Collect( const CTestRule& Rule, const CDeterministicRandom& Random, const CSimulationEventQueue& Events, FRunResult& OutResult )
+	{
+		OutResult.PositionX = Rule.GetPositionX();
+		OutResult.FireCount = Rule.GetFireCount();
+		OutResult.DrawCount = Random.GetDrawCount();
+		OutResult.Events.Reset();
+
+		for ( usize Index = 0u; Index < Events.Num(); ++Index ) OutResult.Events.TryAdd( Events.Get( Index ) );
+	}
+
+	/**
+	 * 盤面と乱数だけを比べる。
+	 *
+	 * @details
+	 * イベントは「どの区間ぶんを溜めたか」で数が変わるので、区間の違う 2 つを比べるときは
+	 * こちらを使う。区間が同じなら CheckEqual でイベント列まで比べる。
+	 */
+	bool CheckScalarEqual( const FRunResult& A, const FRunResult& B, const char* Label )
+	{
+		bool bOk = true;
+
+		if ( A.PositionX != B.PositionX ) { std::printf( "  [NG] %s: PositionX %.9f vs %.9f\n", Label, A.PositionX, B.PositionX ); bOk = false; }
+		if ( A.FireCount != B.FireCount ) { std::printf( "  [NG] %s: FireCount %u vs %u\n", Label, A.FireCount, B.FireCount ); bOk = false; }
+		if ( A.DrawCount != B.DrawCount ) { std::printf( "  [NG] %s: DrawCount %llu vs %llu\n", Label, (unsigned long long)A.DrawCount, (unsigned long long)B.DrawCount ); bOk = false; }
+
+		if ( bOk ) std::printf( "  [OK] %s\n", Label );
+
+		return bOk;
 	}
 
 	bool CheckEqual( const FRunResult& A, const FRunResult& B, const char* Label )
@@ -314,6 +396,109 @@ int main()
 			RunSteps( RuleD, nullptr, FromFile, false, FromFile.GetSeed(), RunD );
 
 			bAllOk &= CheckEqual( RunA, RunD, "record -> file -> load -> replay" );
+		}
+	}
+
+	// 7. 途中で写して、そこへ戻って続きを回す。同じ道を進むはず。
+	{
+		const u32 kHalf = kStepCount / 2u;
+
+		CTestRule Rule;
+		CFixedStepDriver Driver;
+		CDeterministicRandom Random;
+		CSimulationEventQueue Events;
+		FActionInput Current;
+		FActionInput Previous;
+
+		Driver.Configure( 1.0 / 60.0, 8u );
+		Random.Reseed( LoadedTape.GetSeed() );
+		Rule.ResetState();
+
+		StepRange( Rule, LoadedTape, Driver, Random, Events, Current, Previous, kHalf );
+
+		CSimulationSnapshot Snapshot;
+		const bool bCaptured = Snapshot.TryCaptureFrom( Driver, Random, Rule );
+
+		// 写した地点から後だけを比べたいので、ここで一度捨てる。
+		// 前半ぶんを残したまま比べると «区間の違う 2 つ» を比べることになる。
+		Events.Clear();
+
+		// 写した地点から最後まで進める (1 回目)。
+		StepRange( Rule, LoadedTape, Driver, Random, Events, Current, Previous, kStepCount - kHalf );
+
+		FRunResult FirstHalfEnd;
+		Collect( Rule, Random, Events, FirstHalfEnd );
+
+		// 戻して、もう一度同じ区間を進める (2 回目)。
+		Events.Clear();
+		Current = FActionInput();
+		Previous = FActionInput();
+
+		const bool bRestored = bCaptured && Snapshot.TryRestoreTo( Driver, Random, Rule );
+
+		StepRange( Rule, LoadedTape, Driver, Random, Events, Current, Previous, kStepCount - kHalf );
+
+		FRunResult SecondHalfEnd;
+		Collect( Rule, Random, Events, SecondHalfEnd );
+
+		if ( !bCaptured || !bRestored )
+		{
+			std::printf( "  [NG] スナップショット: capture=%d restore=%d\n", bCaptured ? 1 : 0, bRestored ? 1 : 0 );
+			bAllOk = false;
+		}
+		else
+		{
+			std::printf( "snapshot: tick=%u draws=%llu rule=%zu bytes\n",
+				Snapshot.GetTick(), (unsigned long long)Snapshot.GetDrawCount(), Snapshot.GetRuleByteCount() );
+
+			bAllOk &= CheckEqual( FirstHalfEnd, SecondHalfEnd, "途中で写す -> 戻す -> 続きが同じ" );
+
+			// 最後まで通しで回した結果とも一致するはず (途中で写しても道は変わらない)。
+			// イベントは溜めた区間が違う (通しは 600 步ぶん、こちらは後半 300 步ぶん) ので比べない。
+			bAllOk &= CheckScalarEqual( RunA, SecondHalfEnd, "通し と 途中から の盤面が同じ" );
+		}
+
+		// 8. 写したものをファイルへ置いて戻す。
+		if ( bCaptured )
+		{
+			const FString Path( "snapshot_roundtrip.acssave" );
+
+			CSimulationSnapshot FromFile;
+			const bool bSaved = CSimulationSnapshotFile::Save( Snapshot, Path );
+			const bool bLoaded = bSaved && CSimulationSnapshotFile::Load( Path, FromFile );
+
+			if ( !bSaved || !bLoaded )
+			{
+				std::printf( "  [NG] スナップショットのファイル: save=%d load=%d\n", bSaved ? 1 : 0, bLoaded ? 1 : 0 );
+				bAllOk = false;
+			}
+			else
+			{
+				CTestRule FileRule;
+				CFixedStepDriver FileDriver;
+				CDeterministicRandom FileRandom;
+				CSimulationEventQueue FileEvents;
+				FActionInput FileCurrent;
+				FActionInput FilePrevious;
+
+				FileDriver.Configure( 1.0 / 60.0, 8u );
+
+				if ( !FromFile.TryRestoreTo( FileDriver, FileRandom, FileRule ) )
+				{
+					std::printf( "  [NG] ファイルから戻せません\n" );
+					bAllOk = false;
+				}
+				else
+				{
+					StepRange( FileRule, LoadedTape, FileDriver, FileRandom, FileEvents, FileCurrent, FilePrevious, kStepCount - kHalf );
+
+					FRunResult FromFileEnd;
+					Collect( FileRule, FileRandom, FileEvents, FromFileEnd );
+
+					// 区間が同じ (どちらも写した地点から後半 300 步) のでイベント列まで比べる。
+					bAllOk &= CheckEqual( FirstHalfEnd, FromFileEnd, "snapshot -> file -> load -> 続き" );
+				}
+			}
 		}
 	}
 

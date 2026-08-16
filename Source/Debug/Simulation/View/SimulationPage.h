@@ -3,6 +3,7 @@
 
 #include <acs.h>
 
+#include "AcsFramework_Core/Simulation/SimulationSnapshot.h"
 #include "Debug/DebugTop/Page/DebugTopEntity.h"
 
 using namespace acs;
@@ -51,6 +52,9 @@ private:
 	/** ファイルの保存・読込の行を足す。 */
 	void BuildFileRows();
 
+	/** 途中から始めるための行を足す。 */
+	void BuildSnapshotRows();
+
 	/** 記録を始める。 */
 	void StartRecording();
 
@@ -69,6 +73,18 @@ private:
 	/** 溜まっているイベントを捨てる。 */
 	void ClearEvents();
 
+	/** いまの様子を写し取る。 */
+	void CaptureSnapshot();
+
+	/** 写し取った様子へ戻す。 */
+	void RestoreSnapshot();
+
+	/** 写し取った様子をファイルへ保存する。 */
+	void SaveSnapshot();
+
+	/** 写し取った様子をファイルから読み込む。 */
+	void LoadSnapshot();
+
 	/** 回り方の文字列を作る。 */
 	FString MakeModeText() const;
 
@@ -81,6 +97,9 @@ private:
 	/** イベントと処理落ちの文字列を作る。 */
 	FString MakeRuntimeText() const;
 
+	/** 写し取った様子の文字列を作る。 */
+	FString MakeSnapshotText() const;
+
 	/** 直近の操作の結果を作る。 */
 	FString MakeLastResultText() const;
 
@@ -90,8 +109,14 @@ private:
 	/** 記録を始めるときの種。行の所有はページの行配列。 */
 	CDebugTopElementInt* m_SeedField = nullptr;
 
-	/** 保存・読込のパス。行の所有はページの行配列。 */
+	/** テープの保存・読込のパス。行の所有はページの行配列。 */
 	CDebugTopElementString* m_PathField = nullptr;
+
+	/** 様子の保存・読込のパス。行の所有はページの行配列。 */
+	CDebugTopElementString* m_SnapshotPathField = nullptr;
+
+	/** 写し取った様子。ここが持つ 1 つだけを使い回す。 */
+	CSimulationSnapshot m_Snapshot;
 
 	/** 直近の操作の結果。 */
 	FString m_LastResult;

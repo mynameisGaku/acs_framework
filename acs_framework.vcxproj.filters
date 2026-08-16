@@ -546,6 +546,12 @@
     <ClCompile Include="Source\Debug\Simulation\View\SimulationPage.cpp">
       <Filter>Source\Debug\Simulation\View</Filter>
     </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Simulation\SimulationSnapshot.cpp">
+      <Filter>Source\AcsFramework_Core\Simulation</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Simulation\SimulationSnapshotFile.cpp">
+      <Filter>Source\AcsFramework_Core\Simulation</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\AcsFramework_Core\AcsFramework.h">
@@ -1024,6 +1030,12 @@
     </ClInclude>
     <ClInclude Include="Source\Debug\Simulation\View\SimulationPage.h">
       <Filter>Source\Debug\Simulation\View</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Simulation\SimulationSnapshot.h">
+      <Filter>Source\AcsFramework_Core\Simulation</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Simulation\SimulationSnapshotFile.h">
+      <Filter>Source\AcsFramework_Core\Simulation</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

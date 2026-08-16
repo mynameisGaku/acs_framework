@@ -9,6 +9,7 @@
 #include "AcsFramework_Core/Simulation/IActionInputSource.h"
 #include "AcsFramework_Core/Simulation/ISimulationRule.h"
 #include "AcsFramework_Core/Simulation/SimulationEventQueue.h"
+#include "AcsFramework_Core/Simulation/SimulationSnapshot.h"
 
 using namespace acs;
 
@@ -133,6 +134,28 @@ public:
 	 * @return 実際に進めたステップ数。
 	 */
 	u32 AdvanceSteps( u32 StepCount ) noexcept;
+
+	/**
+	 * いまの様子 (盤面・時計・乱数) を写し取る。
+	 *
+	 * @details
+	 * 規則が盤面を差し出せる (ISimulationRule::TrySaveState を実装している) 必要がある。
+	 * 入力のテープは含まれない。途中から再生するときは、同じテープと組み合わせる。
+	 * @param OutSnapshot 写し先。
+	 * @return 写せたら true。
+	 */
+	bool TryCaptureSnapshot( CSimulationSnapshot& OutSnapshot ) const noexcept;
+
+	/**
+	 * 写し取った様子へ戻す。
+	 *
+	 * @details
+	 * 3 つのうち 1 つでも戻せなければ何も変えない。戻した後は、そのティックから続きを回せる。
+	 * 溜まっているイベントは捨てる (戻る前のフレームのものが残っていると二重に効く)。
+	 * @param Snapshot 戻す先の様子。
+	 * @return 戻せたら true。
+	 */
+	bool TryRestoreSnapshot( const CSimulationSnapshot& Snapshot ) noexcept;
 
 	/** 進める規則が差してあるかを返す。差していなければ回す意味がない。 */
 	bool HasRule() const noexcept { return static_cast<bool>( m_Rule ); }

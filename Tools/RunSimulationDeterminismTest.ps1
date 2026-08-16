@@ -49,6 +49,8 @@ $sources = @(
     (Join-Path $sim 'FixedStepDriver.cpp'),
     (Join-Path $sim 'SimulationEventQueue.cpp'),
     (Join-Path $sim 'ReplayFile.cpp'),
+    (Join-Path $sim 'SimulationSnapshot.cpp'),
+    (Join-Path $sim 'SimulationSnapshotFile.cpp'),
     (Join-Path $sim 'Input\ActionBindingTable.cpp'),
     (Join-Path $src 'AcsFramework_Core\Text\StringConvert.cpp'),
     (Join-Path $src 'Common\File\AcsArchiveFile.cpp')

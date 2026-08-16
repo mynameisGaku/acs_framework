@@ -109,6 +109,27 @@ u32 CSimulationSubsystem::AdvanceSteps( u32 StepCount ) noexcept
 }
 
 
+bool CSimulationSubsystem::TryCaptureSnapshot( CSimulationSnapshot& OutSnapshot ) const noexcept
+{
+	if ( !m_Rule ) return false;
+
+	return OutSnapshot.TryCaptureFrom( m_Driver, m_Random, *m_Rule );
+}
+
+
+bool CSimulationSubsystem::TryRestoreSnapshot( const CSimulationSnapshot& Snapshot ) noexcept
+{
+	if ( !m_Rule ) return false;
+
+	if ( !Snapshot.TryRestoreTo( m_Driver, m_Random, *m_Rule ) ) return false;
+
+	// 戻る前のフレームで溜まったものを持ち越すと、同じことが二度起きたように見える。
+	m_Events.Clear();
+
+	return true;
+}
+
+
 void CSimulationSubsystem::ResolveInput( u32 Tick, FActionInput& OutInput ) noexcept
 {
 	OutInput = FActionInput();

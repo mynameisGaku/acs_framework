@@ -2,6 +2,7 @@
 #include "Debug/Simulation/View/SimulationPage.h"
 
 #include "AcsFramework_Core/Simulation/ReplayFile.h"
+#include "AcsFramework_Core/Simulation/SimulationSnapshotFile.h"
 #include "AcsFramework_Core/Simulation/SimulationSubsystem.h"
 #include "Debug/DebugTop/Element/DebugTopElementAction.h"
 #include "Debug/DebugTop/Element/DebugTopElementNumber.h"
@@ -20,8 +21,11 @@ namespace
 	constexpr i32 kSeedMinimum = 0;
 	constexpr i32 kSeedMaximum = 2000000000;
 
-	/** 保存先の既定のパス。 */
+	/** テープの保存先の既定のパス。 */
 	constexpr const char* kDefaultPath = "Saved/Replay/last.acssave";
+
+	/** 様子の保存先の既定のパス。 */
+	constexpr const char* kDefaultSnapshotPath = "Saved/Replay/last_state.acssave";
 
 	/**
 	 * 回り方を読める名前にする。
@@ -57,6 +61,7 @@ void ASimulationPage::OnBuild() noexcept
 	BuildWatchRows();
 	BuildControlRows();
 	BuildFileRows();
+	BuildSnapshotRows();
 }
 
 
@@ -114,6 +119,89 @@ void ASimulationPage::BuildFileRows()
 
 	Group->Add<CDebugTopElementWatch>( FString( "LastResult" ), FDebugTopTextDelegate::CreateRaw<&ASimulationPage::MakeLastResultText>( this ) )
 		->SetDescription( FString( "直近の操作の結果" ) );
+}
+
+
+void ASimulationPage::BuildSnapshotRows()
+{
+	CDebugTopElement* const Group = Add<CDebugTopElement>( FString( "Snapshot" ), FString() );
+	Group->SetExpanded( true );
+
+	Group->Add<CDebugTopElementWatch>( FString( "State" ), FDebugTopTextDelegate::CreateRaw<&ASimulationPage::MakeSnapshotText>( this ) )
+		->SetDescription( FString( "写し取ってある様子 (ティック / 盤面のバイト数)" ) );
+
+	Group->Add<CDebugTopElementAction>( FString( "Capture" ), FString( "いまの盤面・時計・乱数を写す" ),
+		FSimpleDelegate::CreateRaw<&ASimulationPage::CaptureSnapshot>( this ) );
+
+	Group->Add<CDebugTopElementAction>( FString( "Restore" ), FString( "写した地点へ戻す" ),
+		FSimpleDelegate::CreateRaw<&ASimulationPage::RestoreSnapshot>( this ) );
+
+	m_SnapshotPathField = Group->Add<CDebugTopElementString>( FString( "StatePath" ), FString( kDefaultSnapshotPath ) );
+	m_SnapshotPathField->SetDescription( FString( "写した様子の置き場所" ) );
+
+	Group->Add<CDebugTopElementAction>( FString( "SaveState" ), FString( "写した様子をファイルへ書く" ),
+		FSimpleDelegate::CreateRaw<&ASimulationPage::SaveSnapshot>( this ) );
+
+	Group->Add<CDebugTopElementAction>( FString( "LoadState" ), FString( "ファイルから様子を読む" ),
+		FSimpleDelegate::CreateRaw<&ASimulationPage::LoadSnapshot>( this ) );
+}
+
+
+void ASimulationPage::CaptureSnapshot()
+{
+	if ( m_Simulation == nullptr ) return;
+
+	const bool bCaptured = m_Simulation->TryCaptureSnapshot( m_Snapshot );
+
+	m_LastResult = FString();
+	if ( bCaptured ) m_LastResult.AppendFormat( "写しました (tick %u)", m_Snapshot.GetTick() );
+	else             m_LastResult.AppendFormat( "写せません (規則が盤面を出せない)" );
+}
+
+
+void ASimulationPage::RestoreSnapshot()
+{
+	if ( m_Simulation == nullptr ) return;
+
+	const bool bRestored = m_Simulation->TryRestoreSnapshot( m_Snapshot );
+
+	m_LastResult = FString();
+	if ( bRestored ) m_LastResult.AppendFormat( "戻しました (tick %u)", m_Snapshot.GetTick() );
+	else             m_LastResult.AppendFormat( "戻せません (写していないか、形が合わない)" );
+}
+
+
+void ASimulationPage::SaveSnapshot()
+{
+	if ( m_SnapshotPathField == nullptr ) return;
+
+	const bool bSaved = CSimulationSnapshotFile::Save( m_Snapshot, m_SnapshotPathField->GetValue() );
+
+	m_LastResult = FString();
+	m_LastResult.AppendFormat( "%s: %s", bSaved ? "保存しました" : "保存できません", m_SnapshotPathField->GetValue().Data() );
+}
+
+
+void ASimulationPage::LoadSnapshot()
+{
+	if ( m_SnapshotPathField == nullptr ) return;
+
+	const bool bLoaded = CSimulationSnapshotFile::Load( m_SnapshotPathField->GetValue(), m_Snapshot );
+
+	m_LastResult = FString();
+	m_LastResult.AppendFormat( "%s: %s", bLoaded ? "読み込みました" : "読み込めません", m_SnapshotPathField->GetValue().Data() );
+}
+
+
+FString ASimulationPage::MakeSnapshotText() const
+{
+	FString Text;
+
+	if ( !m_Snapshot.IsValid() ) return FString( "なし" );
+
+	Text.AppendFormat( "tick %u / %zu bytes", m_Snapshot.GetTick(), m_Snapshot.GetRuleByteCount() );
+
+	return Text;
 }
 
 

@@ -52,4 +52,41 @@ public:
 	 * @details 再生を始めるとき、記録を取り直すときに呼ばれる。既定では何もしない。
 	 */
 	virtual void ResetState() noexcept {}
+
+	/**
+	 * いまの盤面をバイト列として差し出す。
+	 *
+	 * @details
+	 * 実装すると「ここから始める」ができるようになる。バグの出た瞬間を保存して後から
+	 * そこへ戻る、長い記録の途中から再生する、1 フレーム戻して見る、が可能になる。
+	 *
+	 * **結果に影響する値を漏らさず入れること。** 1 つでも欠けると、戻した後の盤面が
+	 * 元と違う道を進む。時計と乱数は枠組みが別に写すので、ここへ入れなくてよい。
+	 *
+	 * 既定では false を返す (この規則は途中保存に対応しない、の意)。
+	 * @param OutBytes 書き出し先。呼ばれた時点で空とは限らないので、必要なら空にしてから積む。
+	 * @return 差し出せたら true。
+	 */
+	virtual bool TrySaveState( TArray<u8>& OutBytes ) const noexcept
+	{
+		(void)OutBytes;
+		return false;
+	}
+
+	/**
+	 * バイト列から盤面を戻す。
+	 *
+	 * @details
+	 * TrySaveState が書いたものがそのまま渡る。形が違う (版が古いなど) 場合は false を返すこと。
+	 * false を返すと枠組みは復元をやめるので、中途半端な盤面のまま進むことはない。
+	 * @param Bytes 読み元の先頭。
+	 * @param Size 読み元の大きさ。
+	 * @return 戻せたら true。
+	 */
+	virtual bool TryRestoreState( const u8* Bytes, usize Size ) noexcept
+	{
+		(void)Bytes;
+		(void)Size;
+		return false;
+	}
 };

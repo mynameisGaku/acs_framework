@@ -36,6 +36,8 @@ Debug/Simulation/View  ──▶  Core/Simulation
 | StartReplay | いま持っているテープを最初から流す |
 | StartLive | 記録も再生もしない状態へ戻す |
 | SaveTape / LoadTape | **バグが出た直後に保存する。** 後から読んで再生する |
+| Capture / Restore | いまの盤面・時計・乱数を写し、後でそこへ戻る (1 フレーム戻して見る) |
+| SaveState / LoadState | 写した様子をファイルへ置く。テープと 2 つ揃うと «その瞬間から» を再現できる |
 
 「バグが出た後にコードを書き足してビルドし直す」では間に合わない。出た瞬間に画面から
 保存できることが要る、という一点のためにこのページがある。
@@ -70,3 +72,5 @@ Overlay->GetHUD().AddEntity( NewObject<ASimulationPage>( FString( "Simulation" )
 - パスは実行ディレクトリからの相対でよい。**掘っていないフォルダを指すと保存に失敗する**
   (実際に踏んだ)。`Saved/Replay/` を先に作っておくこと。
 - 規則が差さっていないと Mode の右に「規則なし」と出る。その状態では回しても何も起きない。
+- Capture は**規則が盤面を差し出せる場合だけ**成功する (`ISimulationRule::TrySaveState` の実装が要る)。
+  実装していない規則では State に「なし」と出たままになる。

@@ -281,6 +281,8 @@
     <ClInclude Include="Source\Common\File\AcsArchiveFile.h" />
     <ClInclude Include="Source\Debug\Simulation\View\SimulationPage.h" />
     <None Include="Source\Debug\Simulation\README.md" />
+    <ClInclude Include="Source\AcsFramework_Core\Simulation\SimulationSnapshot.h" />
+    <ClInclude Include="Source\AcsFramework_Core\Simulation\SimulationSnapshotFile.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Common\Pch.cpp">
@@ -415,6 +417,8 @@
     <ClCompile Include="Source\AcsFramework_Core\Simulation\ReplayFile.cpp" />
     <ClCompile Include="Source\Common\File\AcsArchiveFile.cpp" />
     <ClCompile Include="Source\Debug\Simulation\View\SimulationPage.cpp" />
+    <ClCompile Include="Source\AcsFramework_Core\Simulation\SimulationSnapshot.cpp" />
+    <ClCompile Include="Source\AcsFramework_Core\Simulation\SimulationSnapshotFile.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

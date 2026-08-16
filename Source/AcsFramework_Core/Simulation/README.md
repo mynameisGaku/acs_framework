@@ -72,6 +72,7 @@ CSimulationEventQueue → 読む側 (Actor / Audio / VFX)
 | 直下 | 値型 | `FActionInput`、`FSimulationEvent`、`FSimulationContext` |
 | 直下 | 差込口 | `IActionInputSource`、`ISimulationRule` |
 | 直下 | 部品 | `CFixedStepDriver`、`CDeterministicRandom`、`CActionInputTape`、`CSimulationEventQueue`、`CReplayFile` |
+| 直下 | 途中から始める | `CSimulationSnapshot`、`CSimulationSnapshotFile` |
 | 直下 | 所有と順番 | `CSimulationSubsystem` |
 | `Input/` | 装置 → アクションの変換 | `IActionDeviceReader`、`CActionBindingTable`、`CDeviceActionReader`、`CBoundActionSource` |
 | `Test/` | ゲーム抜きで回す自己テスト | `SimulationDeterminismTest.cpp` |
@@ -79,6 +80,34 @@ CSimulationEventQueue → 読む側 (Actor / Audio / VFX)
 **ゲームのルールはここへ置かない。** `ISimulationRule` を実装するのはゲーム側。
 
 ---
+
+## 途中から始める
+
+最初から流し直すのでは足りない場面がある（長い記録の後半だけ見たい、バグの瞬間へ戻りたい、
+1 フレーム戻して確かめたい）。続きから同じ道を進むには 3 つが要る。**1 つでも欠けると別の道になる。**
+
+| 写すもの | 欠けるとどうなるか |
+|---|---|
+| 盤面 (`ISimulationRule::TrySaveState`) | そもそも別の局面から始まる |
+| 時計 (`CFixedStepDriver`) | ティックがずれ、テープの読み出し位置が合わない |
+| 乱数 (`CDeterministicRandom`) | 同じ入力でも違う出目になる |
+
+`CSimulationSnapshot` がこの 3 つを 1 つに束ねる。テープは含めない（テープは「どう操作したか」、
+スナップショットは「どうなっていたか」）。途中から再生するときは 2 つを組み合わせる。
+
+```cpp
+CSimulationSnapshot Snapshot;
+Simulation->TryCaptureSnapshot( Snapshot );      // ここまでを覚える
+...
+Simulation->TryRestoreSnapshot( Snapshot );      // ここへ戻る (溜まったイベントは捨てられる)
+CSimulationSnapshotFile::Save( Snapshot, FString( "Saved/Replay/bug.acssave" ) );
+```
+
+**規則が `TrySaveState` を実装していないと写せない**（既定は false）。実装するときは、
+結果に影響する値を漏らさず入れること。時計と乱数は枠組みが別に写すので入れなくてよい。
+
+戻す処理は「3 つとも戻せるか」を先に確かめてから実際に戻す。途中で失敗して一部だけ戻った
+状態から進むと、原因の分からないずれ方をするため。
 
 ## ルールを書くときの約束
 
@@ -131,14 +160,18 @@ AI に差し替えるときは `SetInputSource` へ別の実装を渡すだけ�
 ```
 
 Simulation の .cpp と `Test/SimulationDeterminismTest.cpp` だけをコンパイルして走らせる。
-見ているのは 4 つ。
+見ているのは 7 つ。
 
 1. 記録 → バイト列へ保存 → 読み込み → 再生で、位置・発射回数・乱数を引いた回数・イベント列が完全に一致する
 2. 種を変えると結果が変わる（テストが常に通るだけの形になっていないことの確認）
 3. 割り当て表が、装置なしで解決できる（偽の装置を差す。両押しは打ち消して 0）
 4. 記録 → **ファイル**へ保存 → 読み込み → 再生でも完全に一致する
+5. 途中で写して戻すと、そこから先が 1 回目とまったく同じ道を進む
+6. 通しで回した結果と、途中から回した結果の盤面が一致する
+7. 写したものを**ファイル**へ置いて戻しても、同じ続きになる
 
-2026-08-16 時点の結果: 600 ステップ / テープ 337 件・8,112 バイト / 4 項目とも PASS。
+2026-08-16 時点の結果: 600 ステップ / テープ 337 件・8,112 バイト /
+スナップショット tick 300・盤面 8 バイト / 7 項目とも PASS。
 
 ---
 
