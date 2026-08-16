@@ -47,7 +47,6 @@ ACS のモジュールは **438 個**ある。この枠組みが窓口を用意�
 | **エフェクト** | `EffectSystem`、`ParticleEffectSystem`、`render/Particles`、同梱の Effekseer |
 | **アニメーション** | `AnimationGraph`、`AnimationCurve`、`SkinnedShader`、`asset/SkinnedMesh` |
 | **3D の当たり判定** | `collision/MeshCollider`、`collision/ConvexHull3`、`math/Collision3D` |
-| カメラの演出 | `CameraStack`、`CameraShakePresets` |
 | 水面・天候 | `WaterSurface3D`、`WaterSurface3DComponent`、`WeatherSystem` |
 
 ### 覆えていないもの (v1.0.0 の範囲外と宣言する)
@@ -66,7 +65,9 @@ Steam (`SteamworksBridge`)、スクリプト (`ScriptHost`)、機械学習 (`MlR
 複数形・性別・右から書く言語、エディタ。
 
 **3D の剛体物理は ACS にも無い。** 在るのは当たり判定の材料 (`MeshCollider` / `Collision3D`) と
-2D 専用の `RigidWorld2D` だけ。キャラの移動は判定の上に自前で組むことになる。
+2D 専用の `RigidWorld2D` だけ。**これは ACS 側へ入れる** (2026-08-17 判断)。2D の剛体物理が
+既に ACS に在るので、同じ役目のものを枠組み側に置くと、どちらを使うか分からなくなるため。
+提案は `acs_temp_doc/0003-rigid-body-3d.md`。
 
 ---
 
@@ -77,10 +78,14 @@ Steam (`SteamworksBridge`)、スクリプト (`ScriptHost`)、機械学習 (`MlR
 **判定基準: 何も設定せずに数十行で、モデルが綺麗に映って動く。**
 
 - 3D シーンの窓口 — モデルを置く / 動かす / 消す
-- カメラの窓口 — 追従・注視・シェイク (`CameraStack`、`CameraShakePresets`)
+- ~~カメラ~~ → **ACS 側へ実装済み** (`FCamera3D`、`acs_temp_doc/0004`)。
+  `CCameraStack` は 2D 専用だったので使えず、`FCamera2D` の 3D 版を ACS に足した。
+  枠組みからは配布物の再生成後に使える
 - ライティングの既定 — 何もしなくても «それなりに綺麗» に映る (太陽光 + IBL + 影 + トーンマップ)
 - アニメーション再生の窓口 (`AnimationGraph`)
-- 3D の当たり判定とキャラ移動 (`MeshCollider`、`Collision3D`)
+- 3D の当たり判定の窓口 (`MeshCollider`、`Collision3D` のレイ判定・重なり判定)
+  ※ **剛体物理とキャラ移動は ACS 側に入れる** (2026-08-17 判断、`acs_temp_doc/0003`)。
+  枠組みには書かない。ACS に入った後で窓口だけを足す。
 
 ### v0.3 — 見た目と手触り
 
@@ -125,4 +130,6 @@ Steam (`SteamworksBridge`)、スクリプト (`ScriptHost`)、機械学習 (`MlR
 | 設計思想 | ACS 独自のものに従う (DXLib を真似るのは手数だけ) | 2026-08-17 |
 | v1.0.0 の意味 | 他人が使える形で配れる | 2026-08-17 |
 | ACS 配布物 | GitHub Releases + 取得スクリプト | 2026-08-17 |
+| 3D の剛体物理 | ACS 側へ入れる (枠組みには書かない) | 2026-08-17 |
+| 3D カメラ (追従・揺れ) | ACS 側へ実装済み (`FCamera3D`) | 2026-08-17 |
 | 対応する配布物 | 2026-08-03 生成でビルド可 (世代差は `Source/Common/Compat/` が吸収) | 2026-08-16 |
