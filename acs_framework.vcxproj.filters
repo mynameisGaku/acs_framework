@@ -142,6 +142,9 @@
     <Filter Include="Tools">
       <UniqueIdentifier>{f90cee88-2195-5fbe-a805-f77c58b4293c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\AcsFramework_Core\Simulation\Input">
+      <UniqueIdentifier>{791ab8b2-3a56-526f-8036-1a747fd58fe8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\AcsFramework_Core\App\AcsFrameworkApp.cpp">
@@ -514,6 +517,18 @@
       <Filter>Source\AcsFramework_Core\Simulation</Filter>
     </ClCompile>
     <ClCompile Include="Source\AcsFramework_Core\Simulation\SimulationSubsystem.cpp">
+      <Filter>Source\AcsFramework_Core\Simulation</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Simulation\Input\ActionBindingTable.cpp">
+      <Filter>Source\AcsFramework_Core\Simulation\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Simulation\Input\DeviceActionReader.cpp">
+      <Filter>Source\AcsFramework_Core\Simulation\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Simulation\Input\BoundActionSource.cpp">
+      <Filter>Source\AcsFramework_Core\Simulation\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Simulation\ReplayFile.cpp">
       <Filter>Source\AcsFramework_Core\Simulation</Filter>
     </ClCompile>
   </ItemGroup>
@@ -969,6 +984,24 @@
       <Filter>Source\AcsFramework_Core\Simulation</Filter>
     </ClInclude>
     <ClInclude Include="Source\AcsFramework_Core\Simulation\SimulationSubsystem.h">
+      <Filter>Source\AcsFramework_Core\Simulation</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Simulation\Input\IActionDeviceReader.h">
+      <Filter>Source\AcsFramework_Core\Simulation\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Simulation\Input\ActionBinding.h">
+      <Filter>Source\AcsFramework_Core\Simulation\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Simulation\Input\ActionBindingTable.h">
+      <Filter>Source\AcsFramework_Core\Simulation\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Simulation\Input\DeviceActionReader.h">
+      <Filter>Source\AcsFramework_Core\Simulation\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Simulation\Input\BoundActionSource.h">
+      <Filter>Source\AcsFramework_Core\Simulation\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Simulation\ReplayFile.h">
       <Filter>Source\AcsFramework_Core\Simulation</Filter>
     </ClInclude>
   </ItemGroup>

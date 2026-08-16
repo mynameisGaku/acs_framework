@@ -15,10 +15,41 @@
 #include "AcsFramework_Core/Simulation/FixedStepDriver.h"
 #include "AcsFramework_Core/Simulation/IActionInputSource.h"
 #include "AcsFramework_Core/Simulation/ISimulationRule.h"
+#include "AcsFramework_Core/Simulation/Input/ActionBindingTable.h"
+#include "AcsFramework_Core/Simulation/ReplayFile.h"
 #include "AcsFramework_Core/Simulation/SimulationEventQueue.h"
 
 namespace
 {
+	/** 押されていることにするキーを直接指定できる、装置の代わり。 */
+	class CFakeDevice final : public IActionDeviceReader
+	{
+	public:
+		void SetKeyDown( EKey Key, bool bDown ) noexcept
+		{
+			if ( bDown ) { if ( !IsKeyDown( Key ) ) m_DownKeys.TryAdd( Key ); }
+			else         { m_DownKeys.RemoveSingleSwap( Key ); }
+		}
+
+		void SetAxis( f32 Value ) noexcept { m_AxisValue = Value; }
+
+		bool IsKeyDown( EKey Key ) const noexcept override
+		{
+			for ( usize Index = 0u; Index < m_DownKeys.Num(); ++Index )
+			{
+				if ( m_DownKeys[Index] == Key ) return true;
+			}
+			return false;
+		}
+
+		bool IsGamepadButtonDown( u32, EGamepadButton ) const noexcept override { return false; }
+
+		f32 GetGamepadAxis( u32, EGamepadAxis ) const noexcept override { return m_AxisValue; }
+
+	private:
+		TArray<EKey> m_DownKeys;
+		f32 m_AxisValue = 0.0f;
+	};
 	constexpr u32 kActionMove = 0u;
 	constexpr u32 kActionFire = 1u;
 	constexpr u32 kEventFired = 100u;
@@ -230,6 +261,60 @@ int main()
 	else
 	{
 		std::printf( "  [OK] 種を変えると結果が変わる (x=%.6f)\n", RunC.PositionX );
+	}
+
+	// 5. 割り当て表を、装置なしで確かめる。偽の装置を差せることがここで効く。
+	{
+		CFakeDevice Device;
+		CActionBindingTable Table;
+		Table.BindKey( kActionFire, EKey::Space );
+		Table.BindAxisKeys( 0u, EKey::A, EKey::D );
+
+		const FActionInput Neutral = Table.Resolve( Device );
+
+		Device.SetKeyDown( EKey::D, true );
+		Device.SetKeyDown( EKey::Space, true );
+		const FActionInput Pressed = Table.Resolve( Device );
+
+		Device.SetKeyDown( EKey::A, true );
+		const FActionInput Both = Table.Resolve( Device );
+
+		const bool bBindingOk = Neutral.IsNeutral()
+			&& Pressed.IsDown( kActionFire ) && Pressed.GetAxis( 0u ) == 1.0f
+			&& Both.GetAxis( 0u ) == 0.0f;
+
+		if ( bBindingOk ) std::printf( "  [OK] 割り当て表: 装置なしで解決できる (両押しは 0)\n" );
+		else
+		{
+			std::printf( "  [NG] 割り当て表: neutral=%d fire=%d axis=%.1f both=%.1f\n",
+				Neutral.IsNeutral() ? 1 : 0, Pressed.IsDown( kActionFire ) ? 1 : 0,
+				Pressed.GetAxis( 0u ), Both.GetAxis( 0u ) );
+			bAllOk = false;
+		}
+	}
+
+	// 6. テープをファイルへ置いて戻す。再現の «保存» が実際に効くかを見る。
+	{
+		// 実行ディレクトリへ置く。掘っていないフォルダを指すと書き込みが失敗する。
+		const FString Path( "replay_roundtrip.acssave" );
+
+		CActionInputTape FromFile;
+		const bool bSaved = CReplayFile::Save( RecordedTape, Path );
+		const bool bLoaded = bSaved && CReplayFile::Load( Path, FromFile );
+
+		if ( !bSaved || !bLoaded )
+		{
+			std::printf( "  [NG] リプレイファイル: save=%d load=%d\n", bSaved ? 1 : 0, bLoaded ? 1 : 0 );
+			bAllOk = false;
+		}
+		else
+		{
+			CTestRule RuleD;
+			FRunResult RunD;
+			RunSteps( RuleD, nullptr, FromFile, false, FromFile.GetSeed(), RunD );
+
+			bAllOk &= CheckEqual( RunA, RunD, "record -> file -> load -> replay" );
+		}
 	}
 
 	std::printf( "== %s ==\n", bAllOk ? "PASS" : "FAIL" );

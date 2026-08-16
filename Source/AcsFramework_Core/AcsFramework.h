@@ -30,6 +30,8 @@
 #include "AcsFramework_Core/Simulation/ActionInput.h"
 #include "AcsFramework_Core/Simulation/IActionInputSource.h"
 #include "AcsFramework_Core/Simulation/ISimulationRule.h"
+#include "AcsFramework_Core/Simulation/Input/BoundActionSource.h"
+#include "AcsFramework_Core/Simulation/ReplayFile.h"
 #include "AcsFramework_Core/Simulation/SimulationSubsystem.h"
 #include "AcsFramework_Core/State/AppStateSubsystem.h"
 #include "AcsFramework_Core/Text/StringConvert.h"

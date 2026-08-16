@@ -29,18 +29,31 @@
 | `acs::timing::CFixedStepClock` | 実時間 → 固定ステップの割り直し、snapshot / restore |
 | `acs::game::FRandom` + `FRandomSnapshot` | 乱数と、その内部状態の写し取り |
 
-`acs::game::CInputRecorder` は**使っていない**。あちらはキーとマウスの状態を記録するもので層が違う
-(キー割り当てを変えると再生が壊れる)。ここではアクションを記録する。
+`acs::game::CSaveArchive` はテープをファイルへ置くのに使う (一時ファイル → 差し替え + CRC)。
+
+**使っていない ACS の部品と、その理由**
+
+| ACS | 使わない理由 |
+|---|---|
+| `CInputRecorder` | キーとマウスの状態を記録するもので層が違う。キー割り当てを変えると再生が壊れる |
+| `FInputMap` | 内部で `acs::CInput` を直接 poll する作りで**差し替えができない**。装置の無い場所で試せず、1 ティックぶんの値としても取り出せない。またシーンのサービス (`ESvc::Input`) なのでシーンを起動しないと触れない |
+
+代わりに `Input/` が同じ役目を、**読む相手を引数で渡す**形で持つ。実機では `CDeviceActionReader`
+(`acs::CInput` を呼ぶのはこのクラスだけ)、テストでは偽の装置を差せる。
 
 ---
 
 ## 流れ
 
 ```
+装置 (キー / パッド)
+        ↓ IActionDeviceReader     ← ここだけが acs::CInput を知る。テストでは偽物を差せる
+CActionBindingTable               ← 「この操作はこのアクション」の対応表
+        ↓
 IActionInputSource (Player / AI / 台本)
         ↓ FActionInput            ← 装置ではなくアクション。だから Player と AI が同じ口を通る
 CActionInputTape (記録 / 再生)     ← 種 + 入力列。これがあればバグを再現できる
-        ↓
+        ↓ CReplayFile で保存・読込
 CSimulationSubsystem ── CFixedStepDriver (ACS CFixedStepClock)
         ↓ FSimulationContext     └ CDeterministicRandom (ACS FRandom + 種と引いた回数)
    ISimulationRule (ゲーム側が実装)
@@ -58,8 +71,9 @@ CSimulationEventQueue → 読む側 (Actor / Audio / VFX)
 |---|---|---|
 | 直下 | 値型 | `FActionInput`、`FSimulationEvent`、`FSimulationContext` |
 | 直下 | 差込口 | `IActionInputSource`、`ISimulationRule` |
-| 直下 | 部品 | `CFixedStepDriver`、`CDeterministicRandom`、`CActionInputTape`、`CSimulationEventQueue` |
+| 直下 | 部品 | `CFixedStepDriver`、`CDeterministicRandom`、`CActionInputTape`、`CSimulationEventQueue`、`CReplayFile` |
 | 直下 | 所有と順番 | `CSimulationSubsystem` |
+| `Input/` | 装置 → アクションの変換 | `IActionDeviceReader`、`CActionBindingTable`、`CDeviceActionReader`、`CBoundActionSource` |
 | `Test/` | ゲーム抜きで回す自己テスト | `SimulationDeterminismTest.cpp` |
 
 **ゲームのルールはここへ置かない。** `ISimulationRule` を実装するのはゲーム側。
@@ -84,7 +98,13 @@ CSimulationEventQueue → 読む側 (Actor / Audio / VFX)
 ```cpp
 Simulation->Configure( 1.0 / 60.0 );
 Simulation->SetRule( MakeUnique<CMyRule>() );
-Simulation->SetInputSource( MakeUnique<CPlayerActions>() );
+
+TUniquePtr<CBoundActionSource> Source = MakeUnique<CBoundActionSource>();
+Source->GetTable().BindAxisKeys( 0u, EKey::A, EKey::D );
+Source->GetTable().BindKey( kActionFire, EKey::Space );
+Source->GetTable().BindGamepadButton( kActionFire, EGamepadButton::A );
+Simulation->SetInputSource( Move( Source ) );
+
 Simulation->StartRecording( 20260816u );
 
 // 毎フレーム
@@ -111,11 +131,14 @@ AI に差し替えるときは `SetInputSource` へ別の実装を渡すだけ�
 ```
 
 Simulation の .cpp と `Test/SimulationDeterminismTest.cpp` だけをコンパイルして走らせる。
-記録 → バイト列へ保存 → 読み込み → 再生 で、位置・発射回数・乱数を引いた回数・イベント列が
-**完全に一致する**ことを見る。種を変えると結果が変わることも併せて見る（テストが常に通るだけの
-形になっていないことの確認）。
+見ているのは 4 つ。
 
-2026-08-16 時点の結果: 600 ステップ / テープ 337 件・8,112 バイト / PASS。
+1. 記録 → バイト列へ保存 → 読み込み → 再生で、位置・発射回数・乱数を引いた回数・イベント列が完全に一致する
+2. 種を変えると結果が変わる（テストが常に通るだけの形になっていないことの確認）
+3. 割り当て表が、装置なしで解決できる（偽の装置を差す。両押しは打ち消して 0）
+4. 記録 → **ファイル**へ保存 → 読み込み → 再生でも完全に一致する
+
+2026-08-16 時点の結果: 600 ステップ / テープ 337 件・8,112 バイト / 4 項目とも PASS。
 
 ---
 

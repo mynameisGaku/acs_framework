@@ -47,7 +47,10 @@ $sources = @(
     (Join-Path $sim 'ActionInputTape.cpp'),
     (Join-Path $sim 'DeterministicRandom.cpp'),
     (Join-Path $sim 'FixedStepDriver.cpp'),
-    (Join-Path $sim 'SimulationEventQueue.cpp')
+    (Join-Path $sim 'SimulationEventQueue.cpp'),
+    (Join-Path $sim 'ReplayFile.cpp'),
+    (Join-Path $sim 'Input\ActionBindingTable.cpp'),
+    (Join-Path $src 'AcsFramework_Core\Text\StringConvert.cpp')
 )
 
 $code = 1
