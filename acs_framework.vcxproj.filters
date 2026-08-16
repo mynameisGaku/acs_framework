@@ -600,6 +600,12 @@
     <ClCompile Include="Source\AcsFramework_Core\Text\Localization\LocalizationSubsystem.cpp">
       <Filter>Source\AcsFramework_Core\Text\Localization</Filter>
     </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Scene\Model3D\Model3DSpawnParams.cpp">
+      <Filter>Source\AcsFramework_Core\Scene\Model3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Scene\Model3D\Model3DSpawner.cpp">
+      <Filter>Source\AcsFramework_Core\Scene\Model3D</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\AcsFramework_Core\AcsFramework.h">
@@ -1124,6 +1130,12 @@
     <ClInclude Include="Source\AcsFramework_Core\Text\Localization\LocalizationSubsystem.h">
       <Filter>Source\AcsFramework_Core\Text\Localization</Filter>
     </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Model3D\Model3DSpawnParams.h">
+      <Filter>Source\AcsFramework_Core\Scene\Model3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Model3D\Model3DSpawner.h">
+      <Filter>Source\AcsFramework_Core\Scene\Model3D</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Source\AcsFramework_Core\README.md">
@@ -1236,6 +1248,12 @@
     </None>
     <None Include="Docs\ROADMAP.md">
       <Filter>Docs</Filter>
+    </None>
+    <None Include="Source\AcsFramework_Core\Scene\Model3D\README.md">
+      <Filter>Source\AcsFramework_Core\Scene\Model3D</Filter>
+    </None>
+    <None Include="Source\AcsFramework_Core\Scene\Model3D\Test\Model3DSpawnerTest.cpp">
+      <Filter>Source\AcsFramework_Core\Scene\Model3D\Test</Filter>
     </None>
   </ItemGroup>
 </Project>

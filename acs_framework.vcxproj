@@ -326,6 +326,10 @@
     <None Include="Source\AcsFramework_Core\Text\Localization\README.md" />
     <None Include="Source\AcsFramework_Core\Text\Localization\Test\LocalizationTest.cpp" />
     <None Include="Docs\ROADMAP.md" />
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Model3D\Model3DSpawnParams.h" />
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Model3D\Model3DSpawner.h" />
+    <None Include="Source\AcsFramework_Core\Scene\Model3D\README.md" />
+    <None Include="Source\AcsFramework_Core\Scene\Model3D\Test\Model3DSpawnerTest.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Common\Pch.cpp">
@@ -470,6 +474,8 @@
     <ClCompile Include="Source\AcsFramework_Core\Text\Localization\LocalizationTableParser.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Text\Localization\LocaleChangeBroadcaster.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Text\Localization\LocalizationSubsystem.cpp" />
+    <ClCompile Include="Source\AcsFramework_Core\Scene\Model3D\Model3DSpawnParams.cpp" />
+    <ClCompile Include="Source\AcsFramework_Core\Scene\Model3D\Model3DSpawner.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

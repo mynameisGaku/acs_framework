@@ -71,6 +71,7 @@ void RunXxxTests( CTestHarness& Harness )
 - 処理落ち時の歯止めと巻き戻し (`CFixedStepDriver`、`CDeterministicRandom`)
 - 列挙子の名前引き (`AcsFw::EnumToString` ほか。コンパイラ依存なので毎回確かめる)
 - 訳文の寿命・表の読み取り・`{0}` の差し込み (`Text/Localization`)
+- 3D を置くときの «見えない» 指定弾き・度の扱い (`Scene/Model3D`)
 
 DebugTop のページや描画は入れない。**外の世界を読むものは、読む相手を差し替えられる形にしてから
 入れる** (`IActionDeviceReader`、`IHotReloadEventSource`)。差し替えられないまま入れようとすると、
@@ -86,4 +87,4 @@ DebugTop のページや描画は入れない。**外の世界を読むものは
   期待どおりに動いていない場合は、逆にここが静かになる。
 - 小数は既定で完全一致で見る。再現性を確かめる場所で «だいたい同じ» を許すと意味が無い。
   近似で足りるところだけ `CheckNearF32` を使う。
-- 2026-08-17 時点: 446 件・0 失敗。
+- 2026-08-17 時点: 477 件・0 失敗。
