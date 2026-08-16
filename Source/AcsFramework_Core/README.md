@@ -69,6 +69,7 @@ Core はACSの部品を再実装しない。たとえば設定の値と検証付
 | `CSpatialAudioSubsystem` | 場所のある効果音と聴取位置 | `CSpatialAudio` + `CAudioSubsystem` / 実時間 `Update()` |
 | `CPrefabSubsystem` | 名前からのANode生成 | `CPrefabSystem` / 呼出し時 |
 | `CSceneSnapshotSubsystem` | ANodeツリーの保存と復元 | `TrySaveNodeTree` / `CSaveArchive` / 呼出し時 |
+| `CLocalizationSubsystem` | 言語ごとの文、`{0}`の差し込み、表の読み込み | `CLocalizationDirector` / 呼出し時 |
 
 開発中だけ使うものは `Source/Debug/` 側に置く。`CPerfBudgetSubsystem`はフレーム予算の計測、
 `CDevConsoleSubsystem`は打ち込みコマンド、`CHotReloadSubsystem`はファイル差し替えの監視を担う。

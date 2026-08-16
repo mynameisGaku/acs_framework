@@ -315,6 +315,16 @@
     <ClInclude Include="Source\Common\Compat\AcsAnnotations.h" />
     <None Include="Source\Common\Compat\README.md" />
     <None Include="Source\Common\Test\EnumReflectionTest.cpp" />
+    <ClInclude Include="Source\AcsFramework_Core\Text\Localization\TextArgument.h" />
+    <ClInclude Include="Source\AcsFramework_Core\Text\Localization\TextFormatter.h" />
+    <ClInclude Include="Source\AcsFramework_Core\Text\Localization\LocaleCatalog.h" />
+    <ClInclude Include="Source\AcsFramework_Core\Text\Localization\LocaleName.h" />
+    <ClInclude Include="Source\AcsFramework_Core\Text\Localization\LocalizationTableParser.h" />
+    <ClInclude Include="Source\AcsFramework_Core\Text\Localization\LocaleChangeBroadcaster.h" />
+    <ClInclude Include="Source\AcsFramework_Core\Text\Localization\ILocaleChangeListener.h" />
+    <ClInclude Include="Source\AcsFramework_Core\Text\Localization\LocalizationSubsystem.h" />
+    <None Include="Source\AcsFramework_Core\Text\Localization\README.md" />
+    <None Include="Source\AcsFramework_Core\Text\Localization\Test\LocalizationTest.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Common\Pch.cpp">
@@ -452,6 +462,13 @@
     <ClCompile Include="Source\AcsFramework_Core\Simulation\SimulationSnapshot.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Simulation\SimulationSnapshotFile.cpp" />
     <ClCompile Include="Source\Debug\HotReload\WatcherEventSource.cpp" />
+    <ClCompile Include="Source\AcsFramework_Core\Text\Localization\TextArgument.cpp" />
+    <ClCompile Include="Source\AcsFramework_Core\Text\Localization\TextFormatter.cpp" />
+    <ClCompile Include="Source\AcsFramework_Core\Text\Localization\LocaleCatalog.cpp" />
+    <ClCompile Include="Source\AcsFramework_Core\Text\Localization\LocaleName.cpp" />
+    <ClCompile Include="Source\AcsFramework_Core\Text\Localization\LocalizationTableParser.cpp" />
+    <ClCompile Include="Source\AcsFramework_Core\Text\Localization\LocaleChangeBroadcaster.cpp" />
+    <ClCompile Include="Source\AcsFramework_Core\Text\Localization\LocalizationSubsystem.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

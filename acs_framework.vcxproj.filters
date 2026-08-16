@@ -579,6 +579,27 @@
     <ClCompile Include="Source\Debug\HotReload\WatcherEventSource.cpp">
       <Filter>Source\Debug\HotReload</Filter>
     </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Text\Localization\TextArgument.cpp">
+      <Filter>Source\AcsFramework_Core\Text\Localization</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Text\Localization\TextFormatter.cpp">
+      <Filter>Source\AcsFramework_Core\Text\Localization</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Text\Localization\LocaleCatalog.cpp">
+      <Filter>Source\AcsFramework_Core\Text\Localization</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Text\Localization\LocaleName.cpp">
+      <Filter>Source\AcsFramework_Core\Text\Localization</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Text\Localization\LocalizationTableParser.cpp">
+      <Filter>Source\AcsFramework_Core\Text\Localization</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Text\Localization\LocaleChangeBroadcaster.cpp">
+      <Filter>Source\AcsFramework_Core\Text\Localization</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Text\Localization\LocalizationSubsystem.cpp">
+      <Filter>Source\AcsFramework_Core\Text\Localization</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\AcsFramework_Core\AcsFramework.h">
@@ -1079,6 +1100,30 @@
     <ClInclude Include="Source\Common\Compat\AcsAnnotations.h">
       <Filter>Source\Common\Compat</Filter>
     </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Text\Localization\TextArgument.h">
+      <Filter>Source\AcsFramework_Core\Text\Localization</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Text\Localization\TextFormatter.h">
+      <Filter>Source\AcsFramework_Core\Text\Localization</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Text\Localization\LocaleCatalog.h">
+      <Filter>Source\AcsFramework_Core\Text\Localization</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Text\Localization\LocaleName.h">
+      <Filter>Source\AcsFramework_Core\Text\Localization</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Text\Localization\LocalizationTableParser.h">
+      <Filter>Source\AcsFramework_Core\Text\Localization</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Text\Localization\LocaleChangeBroadcaster.h">
+      <Filter>Source\AcsFramework_Core\Text\Localization</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Text\Localization\ILocaleChangeListener.h">
+      <Filter>Source\AcsFramework_Core\Text\Localization</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Text\Localization\LocalizationSubsystem.h">
+      <Filter>Source\AcsFramework_Core\Text\Localization</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Source\AcsFramework_Core\README.md">
@@ -1182,6 +1227,12 @@
     </None>
     <None Include="Source\Common\Test\EnumReflectionTest.cpp">
       <Filter>Source\Common\Test</Filter>
+    </None>
+    <None Include="Source\AcsFramework_Core\Text\Localization\README.md">
+      <Filter>Source\AcsFramework_Core\Text\Localization</Filter>
+    </None>
+    <None Include="Source\AcsFramework_Core\Text\Localization\Test\LocalizationTest.cpp">
+      <Filter>Source\AcsFramework_Core\Text\Localization\Test</Filter>
     </None>
   </ItemGroup>
 </Project>
