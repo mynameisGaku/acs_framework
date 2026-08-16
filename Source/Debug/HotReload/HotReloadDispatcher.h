@@ -3,6 +3,7 @@
 
 #include <acs.h>
 
+#include "Debug/HotReload/IHotReloadEventSource.h"
 #include "Debug/HotReload/IHotReloadHandler.h"
 
 using namespace acs;
@@ -32,11 +33,11 @@ public:
 	/**
 	 * 溜まった変更を取り出して配る。
 	 *
-	 * @param Watcher 取り出し元。
+	 * @param Source 取り出し元。
 	 * @param MaxEvents 1 回で取り出す上限。
 	 * @return 配った件数。
 	 */
-	usize DispatchPending( CHotReloadWatcher& Watcher, usize MaxEvents ) noexcept;
+	usize DispatchPending( IHotReloadEventSource& Source, usize MaxEvents ) noexcept;
 
 	/** これまでに配った件数を返す。 */
 	u64 GetDispatchedCount() const noexcept { return m_DispatchedCount; }

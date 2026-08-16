@@ -18,6 +18,11 @@
 
 エンジンには上限がある (パス 256、フォルダ 64、溜められる変更 1024)。
 
+`CHotReloadWatcher` を直に呼ぶのは `CWatcherEventSource` だけにする。配る側
+(`CHotReloadDispatcher`) は `IHotReloadEventSource` 越しに取り出すので、**配り方だけを
+単体で確かめられる**。ここを具象のまま握っていると、配り方を確かめるのに本物の見張りを
+動かす (＝ファイルを実際に書き換えて OS の通知を待つ) 必要が出てしまう。
+
 ---
 
 ## 3 つに分けてある
@@ -46,7 +51,8 @@
 |---|---|---|
 | 直下 | 見張りに関わる型 | `CHotReloadSubsystem`、`CHotReloadWatchPlan`、`CHotReloadDispatcher` |
 | 直下 | 値型 | `FHotReloadWatchEntry` |
-| 直下 | 差込口 | `IHotReloadHandler` |
+| 直下 | 差込口 | `IHotReloadHandler`、`IHotReloadEventSource` |
+| 直下 | Engine への橋渡し | `CWatcherEventSource` |
 | `Builtin/` | 同梱の引き受け手 | `CHotReloadLogHandler` |
 | `View/` | デバッグメニューへの見せ方 | `AHotReloadPage` |
 

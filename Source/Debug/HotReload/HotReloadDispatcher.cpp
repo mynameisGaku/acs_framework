@@ -8,14 +8,14 @@ bool CHotReloadDispatcher::AddHandler( IHotReloadHandler& Handler ) noexcept
 }
 
 
-usize CHotReloadDispatcher::DispatchPending( CHotReloadWatcher& Watcher, usize MaxEvents ) noexcept
+usize CHotReloadDispatcher::DispatchPending( IHotReloadEventSource& Source, usize MaxEvents ) noexcept
 {
 	usize Delivered = 0u;
 
 	for ( usize Index = 0u; Index < MaxEvents; ++Index )
 	{
 		FHotReloadEvent Event;
-		if ( !Watcher.ConsumeNextEvent( Event ) ) break;
+		if ( !Source.ConsumeNextEvent( Event ) ) break;
 
 		if ( DeliverOne( Event ) ) ++m_DispatchedCount;
 		else                       ++m_UnhandledCount;

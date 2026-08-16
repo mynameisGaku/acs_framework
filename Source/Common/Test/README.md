@@ -65,9 +65,12 @@ void RunXxxTests( CTestHarness& Harness )
 - 上限と、そこに達したときの振る舞い (`CSimulationEventQueue`)
 - 結果の分類 (`CSceneSnapshotStatus`)
 - ファイルへの往復と、版違い・欠損の扱い (`CAcsArchiveFile`、`CSimulationSnapshot`)
+- 所有の行き先 (`CPrefabSpawner` の Attached / Detached)
+- 誰に配るかの判断と上限 (`CHotReloadDispatcher`)
 
-DebugTop のページや描画は入れない。装置を読むものは、読む相手を差し替えられる形
-(`IActionDeviceReader`) にしてから入れる。
+DebugTop のページや描画は入れない。**外の世界を読むものは、読む相手を差し替えられる形にしてから
+入れる** (`IActionDeviceReader`、`IHotReloadEventSource`)。差し替えられないまま入れようとすると、
+テストのために本物の装置やファイル変更が要るようになり、結局動かせない。
 
 ---
 
@@ -79,4 +82,4 @@ DebugTop のページや描画は入れない。装置を読むものは、読�
   期待どおりに動いていない場合は、逆にここが静かになる。
 - 小数は既定で完全一致で見る。再現性を確かめる場所で «だいたい同じ» を許すと意味が無い。
   近似で足りるところだけ `CheckNearF32` を使う。
-- 2026-08-16 時点: 215 件・0 失敗。
+- 2026-08-16 時点: 271 件・0 失敗。

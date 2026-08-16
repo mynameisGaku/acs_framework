@@ -304,6 +304,10 @@
     <None Include="Tools\RunUnitTests.ps1" />
     <None Include="Source\Common\Test\AcsArchiveFileTest.cpp" />
     <None Include="Source\AcsFramework_Core\Simulation\Test\SimulationSnapshotTest.cpp" />
+    <ClInclude Include="Source\Debug\HotReload\IHotReloadEventSource.h" />
+    <ClInclude Include="Source\Debug\HotReload\WatcherEventSource.h" />
+    <None Include="Source\AcsFramework_Core\Scene\Prefab\Test\PrefabSpawnerTest.cpp" />
+    <None Include="Source\Debug\HotReload\Test\HotReloadDispatcherTest.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Common\Pch.cpp">
@@ -440,6 +444,7 @@
     <ClCompile Include="Source\Debug\Simulation\View\SimulationPage.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Simulation\SimulationSnapshot.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Simulation\SimulationSnapshotFile.cpp" />
+    <ClCompile Include="Source\Debug\HotReload\WatcherEventSource.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

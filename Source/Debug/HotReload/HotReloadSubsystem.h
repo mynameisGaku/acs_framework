@@ -6,6 +6,7 @@
 #include "Debug/HotReload/HotReloadDispatcher.h"
 #include "Debug/HotReload/HotReloadWatchPlan.h"
 #include "Debug/HotReload/IHotReloadHandler.h"
+#include "Debug/HotReload/WatcherEventSource.h"
 
 using namespace acs;
 using namespace acs::game;
@@ -37,6 +38,9 @@ class CHotReloadSubsystem : public ASubsystem
 public:
 	/** サブシステムの型 ID と診断名を実装する。 */
 	ACS_SUBSYSTEM_KIND( CHotReloadSubsystem )
+
+	/** 見張りと、そこから取り出す橋渡しを繋いで構築する。 */
+	CHotReloadSubsystem() noexcept;
 
 	/** 見張るのをやめ、エンジン側を畳む。 */
 	~CHotReloadSubsystem() noexcept override;
@@ -110,6 +114,9 @@ private:
 
 	/** 決めた見る場所。 */
 	CHotReloadWatchPlan m_Plan;
+
+	/** 見張りから取り出す橋渡し。 */
+	CWatcherEventSource m_EventSource;
 
 	/** 配る係。 */
 	CHotReloadDispatcher m_Dispatcher;

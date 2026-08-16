@@ -172,6 +172,12 @@
     <Filter Include="Source\Debug\Perf\Test">
       <UniqueIdentifier>{bbc42a73-21ec-59a6-8b89-2ecc877c2486}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\AcsFramework_Core\Scene\Prefab\Test">
+      <UniqueIdentifier>{f7eff7e4-7544-5ba1-84a3-a468e44e4ee9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Debug\HotReload\Test">
+      <UniqueIdentifier>{c49a9c10-515e-5aae-82d1-6cde91decc89}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\AcsFramework_Core\App\AcsFrameworkApp.cpp">
@@ -569,6 +575,9 @@
     </ClCompile>
     <ClCompile Include="Source\AcsFramework_Core\Simulation\SimulationSnapshotFile.cpp">
       <Filter>Source\AcsFramework_Core\Simulation</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Debug\HotReload\WatcherEventSource.cpp">
+      <Filter>Source\Debug\HotReload</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1055,6 +1064,12 @@
     <ClInclude Include="Source\AcsFramework_Core\Simulation\SimulationSnapshotFile.h">
       <Filter>Source\AcsFramework_Core\Simulation</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Debug\HotReload\IHotReloadEventSource.h">
+      <Filter>Source\Debug\HotReload</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Debug\HotReload\WatcherEventSource.h">
+      <Filter>Source\Debug\HotReload</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Source\AcsFramework_Core\README.md">
@@ -1140,6 +1155,12 @@
     </None>
     <None Include="Source\AcsFramework_Core\Simulation\Test\SimulationSnapshotTest.cpp">
       <Filter>Source\AcsFramework_Core\Simulation\Test</Filter>
+    </None>
+    <None Include="Source\AcsFramework_Core\Scene\Prefab\Test\PrefabSpawnerTest.cpp">
+      <Filter>Source\AcsFramework_Core\Scene\Prefab\Test</Filter>
+    </None>
+    <None Include="Source\Debug\HotReload\Test\HotReloadDispatcherTest.cpp">
+      <Filter>Source\Debug\HotReload\Test</Filter>
     </None>
   </ItemGroup>
 </Project>

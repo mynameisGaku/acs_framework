@@ -48,6 +48,8 @@ void RunSpatialSourceRegistryTests( CTestHarness& Harness );
 void RunPerfBudgetTests( CTestHarness& Harness );
 void RunSimulationEventQueueTests( CTestHarness& Harness );
 void RunSceneSnapshotStatusTests( CTestHarness& Harness );
+void RunPrefabTests( CTestHarness& Harness );
+void RunHotReloadDispatcherTests( CTestHarness& Harness );
 
 int main()
 {
@@ -67,6 +69,8 @@ int main()
 	RunPerfBudgetTests( Harness );
 	RunSimulationEventQueueTests( Harness );
 	RunSceneSnapshotStatusTests( Harness );
+	RunPrefabTests( Harness );
+	RunHotReloadDispatcherTests( Harness );
 
 	Harness.Report();
 

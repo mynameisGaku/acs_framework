@@ -11,6 +11,12 @@ namespace
 }
 
 
+CHotReloadSubsystem::CHotReloadSubsystem() noexcept
+	: m_EventSource( m_Watcher )
+{
+}
+
+
 CHotReloadSubsystem::~CHotReloadSubsystem() noexcept
 {
 	OnDeinitialize();
@@ -63,7 +69,7 @@ void CHotReloadSubsystem::Update( f32 UnscaledDeltaSeconds ) noexcept
 	if ( !m_bWatching ) return;
 
 	m_Watcher.Tick( UnscaledDeltaSeconds );
-	m_Dispatcher.DispatchPending( m_Watcher, kMaxEventsPerFrame );
+	m_Dispatcher.DispatchPending( m_EventSource, kMaxEventsPerFrame );
 }
 
 
