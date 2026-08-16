@@ -154,6 +154,24 @@
     <Filter Include="Source\Debug\Simulation\View">
       <UniqueIdentifier>{280b50bc-1604-51f2-9d5b-4a28ccc52555}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Common\Test">
+      <UniqueIdentifier>{14a78228-f7fd-5a59-9e97-25600c5664b5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\AcsFramework_Core\Audio\Music\Test">
+      <UniqueIdentifier>{ac4c0dad-1294-5dda-984f-aeaa13f7e86f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\AcsFramework_Core\Audio\Spatial\Test">
+      <UniqueIdentifier>{b874881c-f5be-5e1d-a84e-b4341b7d499b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\AcsFramework_Core\Scene\Snapshot\Test">
+      <UniqueIdentifier>{37058ff1-369f-5831-9a78-e55bb24db45b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Debug\DevConsole\Test">
+      <UniqueIdentifier>{14f2da3d-b2a3-5330-b9ea-1e83bf00506e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Debug\Perf\Test">
+      <UniqueIdentifier>{bbc42a73-21ec-59a6-8b89-2ecc877c2486}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\AcsFramework_Core\App\AcsFrameworkApp.cpp">
@@ -1074,6 +1092,48 @@
     </None>
     <None Include="Source\Debug\Simulation\README.md">
       <Filter>Source\Debug\Simulation</Filter>
+    </None>
+    <None Include="Source\Common\Test\TestHarness.h">
+      <Filter>Source\Common\Test</Filter>
+    </None>
+    <None Include="Source\Common\Test\TestHarness.cpp">
+      <Filter>Source\Common\Test</Filter>
+    </None>
+    <None Include="Source\Common\Test\UnitTestMain.cpp">
+      <Filter>Source\Common\Test</Filter>
+    </None>
+    <None Include="Source\Common\Test\InternedNamePoolTest.cpp">
+      <Filter>Source\Common\Test</Filter>
+    </None>
+    <None Include="Source\Common\Test\README.md">
+      <Filter>Source\Common\Test</Filter>
+    </None>
+    <None Include="Source\AcsFramework_Core\Simulation\Test\ActionInputTapeTest.cpp">
+      <Filter>Source\AcsFramework_Core\Simulation\Test</Filter>
+    </None>
+    <None Include="Source\AcsFramework_Core\Simulation\Test\ActionBindingTableTest.cpp">
+      <Filter>Source\AcsFramework_Core\Simulation\Test</Filter>
+    </None>
+    <None Include="Source\AcsFramework_Core\Simulation\Test\SimulationEventQueueTest.cpp">
+      <Filter>Source\AcsFramework_Core\Simulation\Test</Filter>
+    </None>
+    <None Include="Source\AcsFramework_Core\Audio\Music\Test\MusicStateArbiterTest.cpp">
+      <Filter>Source\AcsFramework_Core\Audio\Music\Test</Filter>
+    </None>
+    <None Include="Source\AcsFramework_Core\Audio\Spatial\Test\SpatialSourceRegistryTest.cpp">
+      <Filter>Source\AcsFramework_Core\Audio\Spatial\Test</Filter>
+    </None>
+    <None Include="Source\AcsFramework_Core\Scene\Snapshot\Test\SceneSnapshotStatusTest.cpp">
+      <Filter>Source\AcsFramework_Core\Scene\Snapshot\Test</Filter>
+    </None>
+    <None Include="Source\Debug\DevConsole\Test\ConsoleArgumentReaderTest.cpp">
+      <Filter>Source\Debug\DevConsole\Test</Filter>
+    </None>
+    <None Include="Source\Debug\Perf\Test\PerfBudgetTest.cpp">
+      <Filter>Source\Debug\Perf\Test</Filter>
+    </None>
+    <None Include="Tools\RunUnitTests.ps1">
+      <Filter>Tools</Filter>
     </None>
   </ItemGroup>
 </Project>

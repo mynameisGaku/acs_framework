@@ -283,6 +283,20 @@
     <None Include="Source\Debug\Simulation\README.md" />
     <ClInclude Include="Source\AcsFramework_Core\Simulation\SimulationSnapshot.h" />
     <ClInclude Include="Source\AcsFramework_Core\Simulation\SimulationSnapshotFile.h" />
+    <None Include="Source\Common\Test\TestHarness.h" />
+    <None Include="Source\Common\Test\TestHarness.cpp" />
+    <None Include="Source\Common\Test\UnitTestMain.cpp" />
+    <None Include="Source\Common\Test\InternedNamePoolTest.cpp" />
+    <None Include="Source\Common\Test\README.md" />
+    <None Include="Source\AcsFramework_Core\Simulation\Test\ActionInputTapeTest.cpp" />
+    <None Include="Source\AcsFramework_Core\Simulation\Test\ActionBindingTableTest.cpp" />
+    <None Include="Source\AcsFramework_Core\Simulation\Test\SimulationEventQueueTest.cpp" />
+    <None Include="Source\AcsFramework_Core\Audio\Music\Test\MusicStateArbiterTest.cpp" />
+    <None Include="Source\AcsFramework_Core\Audio\Spatial\Test\SpatialSourceRegistryTest.cpp" />
+    <None Include="Source\AcsFramework_Core\Scene\Snapshot\Test\SceneSnapshotStatusTest.cpp" />
+    <None Include="Source\Debug\DevConsole\Test\ConsoleArgumentReaderTest.cpp" />
+    <None Include="Source\Debug\Perf\Test\PerfBudgetTest.cpp" />
+    <None Include="Tools\RunUnitTests.ps1" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Common\Pch.cpp">
