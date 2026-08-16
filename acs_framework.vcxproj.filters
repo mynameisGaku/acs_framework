@@ -1255,5 +1255,8 @@
     <None Include="Source\AcsFramework_Core\Scene\Model3D\Test\Model3DSpawnerTest.cpp">
       <Filter>Source\AcsFramework_Core\Scene\Model3D\Test</Filter>
     </None>
+    <None Include="Tools\UpdateAcsDist.ps1">
+      <Filter>Tools</Filter>
+    </None>
   </ItemGroup>
 </Project>

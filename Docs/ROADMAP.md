@@ -132,4 +132,6 @@ Steam (`SteamworksBridge`)、スクリプト (`ScriptHost`)、機械学習 (`MlR
 | ACS 配布物 | GitHub Releases + 取得スクリプト | 2026-08-17 |
 | 3D の剛体物理 | ACS 側へ入れる (枠組みには書かない) | 2026-08-17 |
 | 3D カメラ (追従・揺れ) | ACS 側へ実装済み (`FCamera3D`) | 2026-08-17 |
-| 対応する配布物 | 2026-08-03 生成でビルド可 (世代差は `Source/Common/Compat/` が吸収) | 2026-08-16 |
+| 追う ACS のブランチ | **`dev`** (main は ABI ガードが逆で使えない) | 2026-08-17 |
+| 配布物の作り方 | `.\Tools\UpdateAcsDist.ps1` で dev の worktree からビルドして配置 | 2026-08-17 |
+| 対応する配布物 | dev から生成したもの (`C:\acs_dev`)。世代差は `Source/Common/Compat/` が吸収 | 2026-08-17 |

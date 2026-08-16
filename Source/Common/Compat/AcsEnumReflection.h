@@ -25,10 +25,15 @@ using namespace acs;
 /**
  * エンジン側のコンパイル時 enum 反映を使うかどうか。
  *
- * @details 0 = このヘッダが自前で解決する (2026-08-03 配布物)。1 = `acs::` のものへ委ねる。
+ * @details
+ * **1 が既定。** 追っている配布物 (ACS の `dev`) には `foundation/EnumTraits.h` が在るので、
+ * エンジンの実装を使う。根本の機能はエンジンの持ち物で、こちらは名前を揃えるだけ。
+ *
+ * 0 にすると、このヘッダが `__FUNCSIG__` から自前で引く。`EnumTraits.h` を持たない
+ * 古い配布物 (2026-08-03 生成など) を使うときの逃げ道。
  */
 #if !defined( ACSFW_USE_ACS_ENUM_REFLECTION )
-	#define ACSFW_USE_ACS_ENUM_REFLECTION 0
+	#define ACSFW_USE_ACS_ENUM_REFLECTION 1
 #endif
 
 namespace AcsFw
@@ -49,22 +54,38 @@ namespace AcsFw
 		/** 名前が入っていなければ true。 */
 		constexpr bool IsEmpty() const noexcept { return Data == nullptr || Size == 0u; }
 	};
+
+	/**
+	 * 位置が引けなかったことを表す値。
+	 *
+	 * @details
+	 * `EnumToIndex` が返す。0 ではないのは、0 だと «先頭が選ばれている» と区別が付かず、
+	 * 壊れた値が黙って通ってしまうから。エンジン側の実装もこの値を返す。
+	 */
+	constexpr usize kInvalidEnumIndex = static_cast<usize>( -1 );
 }
 
 
 #if ACSFW_USE_ACS_ENUM_REFLECTION
 
-// エンジン側へ委ねる形。呼び出しの形は `dev` に残っていた使用箇所から起こしたもので、
-// 対応する配布物が手に入るまで**一度もコンパイルされていない**。切り替えたら真っ先にここを疑うこと。
+// エンジン側 (`foundation/EnumTraits.h`) へ委ねる形。
 namespace AcsFw
 {
 	template<typename TEnum> inline const FEnumNameView* EnumNames() noexcept
 	{
-		return reinterpret_cast<const FEnumNameView*>( acs::EnumNames<TEnum>().Items );
+		// `acs::EnumNames<T>()` は表を**値で返す**。受けずにそのまま `.Items` を指すと、
+		// 一時オブジェクトの中を指したまま消える。列挙型ごとに 1 つ置いて、そこを指す。
+		static constexpr auto Table = acs::EnumNames<TEnum>();
+
+		static_assert( sizeof( acs::FEnumName ) == sizeof( FEnumNameView ),
+			"acs::FEnumName と FEnumNameView の形が違う。読み替えを見直すこと。" );
+
+		return reinterpret_cast<const FEnumNameView*>( Table.Items );
 	}
 
 	template<typename TEnum> inline usize EnumCount() noexcept { return acs::EnumCount<TEnum>; }
 	template<typename TEnum> inline bool IsValidEnum( TEnum Value ) noexcept { return acs::IsValidEnum( Value ); }
+	/** 見つからなければ `kInvalidEnumIndex` が返る (エンジン側の決めごと)。 */
 	template<typename TEnum> inline usize EnumToIndex( TEnum Value ) noexcept { return acs::EnumToIndex( Value ); }
 	template<typename TEnum> inline TEnum EnumFromIndex( usize Index ) noexcept { return acs::EnumFromIndex<TEnum>( Index ); }
 
@@ -250,7 +271,10 @@ namespace AcsFw
 	/**
 	 * 列挙子を名前表の中の位置へ直す。
 	 *
-	 * @return 見つかった位置。列挙子でなければ 0。
+	 * @details
+	 * **見つからなければ `kInvalidEnumIndex` を返す。** 0 を返すと «先頭が選ばれている» と
+	 * 区別が付かず、壊れた値が黙って通ってしまう。エンジン側の実装もこの値を返す。
+	 * @return 見つかった位置。列挙子でなければ `kInvalidEnumIndex`。
 	 */
 	template<typename TEnum>
 	constexpr usize EnumToIndex( TEnum Value ) noexcept
@@ -261,7 +285,7 @@ namespace AcsFw
 			if ( Table.Values[Index] == static_cast<i64>( Value ) ) return Index;
 		}
 
-		return 0u;
+		return kInvalidEnumIndex;
 	}
 
 	/**

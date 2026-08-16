@@ -41,15 +41,21 @@
 
 切り替えは**スイッチ 1 つずつ**。使う側の変更は要らない。
 
-| スイッチ | 1 にすると |
-|---|---|
-| `ACSFW_USE_ACS_ENUM_REFLECTION` | 列挙の反映をエンジン側 (`acs::EnumNames` など) へ委ねる |
-| `ACSFW_USE_ACS_UI_FONT_DEFAULTS` | フォント読み込みを `UiFontDefaults::TryLoad` へ向ける |
+| スイッチ | 既定 | 0 にすると |
+|---|---|---|
+| `ACSFW_USE_ACS_ENUM_REFLECTION` | **1** (エンジンの `foundation/EnumTraits.h`) | このヘッダが `__FUNCSIG__` から自前で引く |
+| `ACSFW_USE_ACS_UI_FONT_DEFAULTS` | **1** (`UiFontDefaults::TryLoad`) | `acs::FSample::TryLoadDefaultUIFont` を呼ぶ |
+
+**既定はどちらもエンジン側。** 追っている配布物 (ACS の `dev`) には両方在るので、根本の機能は
+エンジンに任せる。0 の側は、それらを持たない古い配布物 (2026-08-03 生成など) 用の逃げ道。
 
 `ACS_ENUM` は自動。エンジンが定義していればそちらが勝つ (`#if !defined` で守ってある)。
 
-エンジン側へ委ねる分岐は **`dev` に残っていた使用箇所から起こしたもので、まだ一度も
-コンパイルされていない**。切り替えたら真っ先にここを疑うこと。
+どちらの側も自己テストが通ることを確認してある (`Source/Common/Test/EnumReflectionTest.cpp`)。
+
+**見つからないときの値はエンジンに合わせてある。** `EnumToIndex` は `kInvalidEnumIndex`
+(= `SIZE_MAX`) を返す。0 を返すと «先頭が選ばれている» と区別が付かず、壊れた値が黙って
+先頭の選択肢として通ってしまう。自前実装も当初 0 を返していたが、テストが食い違いを捕まえた。
 
 ---
 

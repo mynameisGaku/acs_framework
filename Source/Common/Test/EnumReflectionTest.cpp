@@ -113,7 +113,11 @@ void RunEnumReflectionTests( CTestHarness& Harness )
 
 		// 範囲の外を渡されても落ちない (画面の選択位置は外から来る)。
 		Harness.Check( AcsFw::EnumFromIndex<ETestColor>( 99u ) == ETestColor::Red, "範囲外は先頭へ寄せる" );
-		Harness.CheckEqualU64( AcsFw::EnumToIndex( static_cast<ETestColor>( 7 ) ), 0u, "引けない値は 0 を返す" );
+
+		// 0 ではなく番兵を返すこと。0 だと «先頭が選ばれている» と区別が付かず、
+		// 壊れた値が黙って «先頭の選択肢» として通ってしまう。
+		Harness.CheckEqualU64( AcsFw::EnumToIndex( static_cast<ETestColor>( 7 ) ), AcsFw::kInvalidEnumIndex,
+			"引けない値は番兵を返す (0 ではない)" );
 	}
 
 	Harness.BeginSuite( "AcsFw 列挙反映 / 走査の上限" );

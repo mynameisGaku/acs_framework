@@ -23,10 +23,12 @@ using namespace acs;
 /**
  * 新しい側の名前 (`UiFontDefaults::TryLoad`) を使うかどうか。
  *
- * @details 0 = `acs::FSample::TryLoadDefaultUIFont` を呼ぶ (2026-08-03 配布物)。
+ * @details
+ * **1 が既定。** 追っている配布物 (ACS の `dev`) はこちらの名前で出している。
+ * 0 にすると `acs::FSample::TryLoadDefaultUIFont` を呼ぶ (2026-08-03 生成など、古い配布物用)。
  */
 #if !defined( ACSFW_USE_ACS_UI_FONT_DEFAULTS )
-	#define ACSFW_USE_ACS_UI_FONT_DEFAULTS 0
+	#define ACSFW_USE_ACS_UI_FONT_DEFAULTS 1
 #endif
 
 namespace AcsFw
