@@ -325,6 +325,7 @@
     <ClInclude Include="Source\AcsFramework_Core\Text\Localization\LocalizationSubsystem.h" />
     <None Include="Source\AcsFramework_Core\Text\Localization\README.md" />
     <None Include="Source\AcsFramework_Core\Text\Localization\Test\LocalizationTest.cpp" />
+    <None Include="Docs\ROADMAP.md" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Common\Pch.cpp">

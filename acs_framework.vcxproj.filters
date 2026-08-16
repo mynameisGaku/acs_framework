@@ -1234,5 +1234,8 @@
     <None Include="Source\AcsFramework_Core\Text\Localization\Test\LocalizationTest.cpp">
       <Filter>Source\AcsFramework_Core\Text\Localization\Test</Filter>
     </None>
+    <None Include="Docs\ROADMAP.md">
+      <Filter>Docs</Filter>
+    </None>
   </ItemGroup>
 </Project>
