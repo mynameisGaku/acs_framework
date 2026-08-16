@@ -40,6 +40,7 @@ namespace
 #include "Debug/HotReload/HotReloadSubsystem.h"
 #include "Debug/HotReload/View/HotReloadPage.h"
 #include "Debug/Perf/View/PerfBudgetPage.h"
+#include "Debug/Simulation/View/SimulationPage.h"
 
 namespace
 {
@@ -179,6 +180,15 @@ TUniquePtr<AScene> CAcsFrameworkApp::InitialScene() noexcept
 		if ( Overlay != nullptr )
 		{
 			Overlay->GetHUD().AddEntity( NewObject<ADevConsolePage>( FString( "Console" ), *Console ) );
+		}
+	}
+
+	// 記録と再生の操作盤。バグが出た瞬間に画面からテープを保存できるようにしておく。
+	if ( CSimulationSubsystem* const Simulation = GetSubsystem<CSimulationSubsystem>() )
+	{
+		if ( Overlay != nullptr )
+		{
+			Overlay->GetHUD().AddEntity( NewObject<ASimulationPage>( FString( "Simulation" ), *Simulation ) );
 		}
 	}
 

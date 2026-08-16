@@ -50,7 +50,8 @@ $sources = @(
     (Join-Path $sim 'SimulationEventQueue.cpp'),
     (Join-Path $sim 'ReplayFile.cpp'),
     (Join-Path $sim 'Input\ActionBindingTable.cpp'),
-    (Join-Path $src 'AcsFramework_Core\Text\StringConvert.cpp')
+    (Join-Path $src 'AcsFramework_Core\Text\StringConvert.cpp'),
+    (Join-Path $src 'Common\File\AcsArchiveFile.cpp')
 )
 
 $code = 1

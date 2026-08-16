@@ -145,6 +145,15 @@
     <Filter Include="Source\AcsFramework_Core\Simulation\Input">
       <UniqueIdentifier>{791ab8b2-3a56-526f-8036-1a747fd58fe8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Common\File">
+      <UniqueIdentifier>{848f4523-2f38-53e5-93c8-2314abf4c2c1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Debug\Simulation">
+      <UniqueIdentifier>{2f445bb0-7958-5588-b69e-1823dfd35922}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Debug\Simulation\View">
+      <UniqueIdentifier>{280b50bc-1604-51f2-9d5b-4a28ccc52555}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\AcsFramework_Core\App\AcsFrameworkApp.cpp">
@@ -530,6 +539,12 @@
     </ClCompile>
     <ClCompile Include="Source\AcsFramework_Core\Simulation\ReplayFile.cpp">
       <Filter>Source\AcsFramework_Core\Simulation</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Common\File\AcsArchiveFile.cpp">
+      <Filter>Source\Common\File</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Debug\Simulation\View\SimulationPage.cpp">
+      <Filter>Source\Debug\Simulation\View</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1004,6 +1019,12 @@
     <ClInclude Include="Source\AcsFramework_Core\Simulation\ReplayFile.h">
       <Filter>Source\AcsFramework_Core\Simulation</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Common\File\AcsArchiveFile.h">
+      <Filter>Source\Common\File</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Debug\Simulation\View\SimulationPage.h">
+      <Filter>Source\Debug\Simulation\View</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Source\AcsFramework_Core\README.md">
@@ -1038,6 +1059,9 @@
     </None>
     <None Include="Tools\RunSimulationDeterminismTest.ps1">
       <Filter>Tools</Filter>
+    </None>
+    <None Include="Source\Debug\Simulation\README.md">
+      <Filter>Source\Debug\Simulation</Filter>
     </None>
   </ItemGroup>
 </Project>

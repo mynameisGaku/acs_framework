@@ -40,14 +40,4 @@ public:
 	 * @return 読めたら true。
 	 */
 	static bool Load( const FString& Path, CActionInputTape& OutTape ) noexcept;
-
-private:
-	/**
-	 * ファイルに入っている大きさを問い合わせる。
-	 *
-	 * @param WidePath OS へ渡すパス。
-	 * @param OutSize 入っている大きさの入れ先。
-	 * @return 問い合わせられたら true。
-	 */
-	static bool TryQuerySize( const wchar_t* WidePath, u64& OutSize ) noexcept;
 };
