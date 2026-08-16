@@ -452,6 +452,12 @@
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
   <Target Name="WarnAcsDistRootFallback" BeforeTargets="ClCompile" Condition="'$(AcsDistRootIsFallback)'=='true'">
-    <Warning Text="ACS_DIST_ROOT が未設定のため既定の C:\acs を使います。対応する配布物を指すには ACS_DIST_ROOT を設定するか /p:AcsDistRoot=&lt;path&gt; を渡してください (ThirdParty/acs/README.md)。" />
+    <!-- 既定が実在するなら、それは «普通に動いている» 状態なので情報に留める。
+         毎回 warning を出すと、本当に見るべき warning が埋もれる。
+         実在しないときだけ warning にする (この後 acs.h が見つからず必ず失敗するため)。 -->
+    <Message Importance="high" Condition="Exists('$(AcsDistRoot)\acs.h')"
+             Text="ACS 配布物: $(AcsDistRoot) (既定)。別の版を使うなら ACS_DIST_ROOT か /p:AcsDistRoot を指定してください。" />
+    <Warning Condition="!Exists('$(AcsDistRoot)\acs.h')"
+             Text="ACS 配布物が見つかりません: $(AcsDistRoot)\acs.h。ACS_DIST_ROOT を設定するか /p:AcsDistRoot=&lt;path&gt; を渡してください (ThirdParty/acs/README.md)。" />
   </Target>
 </Project>
