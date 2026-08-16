@@ -310,6 +310,11 @@
     <None Include="Source\Debug\HotReload\Test\HotReloadDispatcherTest.cpp" />
     <None Include="Source\AcsFramework_Core\Scene\Snapshot\Test\SceneSnapshotTest.cpp" />
     <None Include="Source\AcsFramework_Core\Simulation\Test\FixedStepDriverTest.cpp" />
+    <ClInclude Include="Source\Common\Compat\AcsEnumReflection.h" />
+    <ClInclude Include="Source\Common\Compat\AcsUiFont.h" />
+    <ClInclude Include="Source\Common\Compat\AcsAnnotations.h" />
+    <None Include="Source\Common\Compat\README.md" />
+    <None Include="Source\Common\Test\EnumReflectionTest.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Common\Pch.cpp">

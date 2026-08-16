@@ -1070,6 +1070,15 @@
     <ClInclude Include="Source\Debug\HotReload\WatcherEventSource.h">
       <Filter>Source\Debug\HotReload</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Common\Compat\AcsEnumReflection.h">
+      <Filter>Source\Common\Compat</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Common\Compat\AcsUiFont.h">
+      <Filter>Source\Common\Compat</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Common\Compat\AcsAnnotations.h">
+      <Filter>Source\Common\Compat</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Source\AcsFramework_Core\README.md">
@@ -1167,6 +1176,12 @@
     </None>
     <None Include="Source\AcsFramework_Core\Simulation\Test\FixedStepDriverTest.cpp">
       <Filter>Source\AcsFramework_Core\Simulation\Test</Filter>
+    </None>
+    <None Include="Source\Common\Compat\README.md">
+      <Filter>Source\Common\Compat</Filter>
+    </None>
+    <None Include="Source\Common\Test\EnumReflectionTest.cpp">
+      <Filter>Source\Common\Test</Filter>
     </None>
   </ItemGroup>
 </Project>

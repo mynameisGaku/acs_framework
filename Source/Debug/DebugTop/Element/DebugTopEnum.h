@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include <acs.h>
+#include "Common/Compat/AcsAnnotations.h"
 
 using namespace acs;
 
@@ -323,4 +324,4 @@ TArray<FString> DebugTopMakeEnumOptions()
  * 名前と個数はコンパイラのシグネチャから自動で引くため、この印自体は何も展開しない。
  * 列挙の意図をコード上に残すための目印。
  */
-#define ACS_ENUM( ... )
+// ACS_ENUM の定義は Common/Compat/AcsAnnotations.h が持つ。

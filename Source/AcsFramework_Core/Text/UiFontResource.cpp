@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: Apache-2.0
 #include "UiFontResource.h"
+#include "Common/Compat/AcsUiFont.h"
 
 namespace
 {
@@ -46,7 +47,7 @@ FFont* FUiFontResource::Acquire( IRhiDevice& Device ) noexcept
 	// 読み込み時間を診断へ残すための開始時刻。
 	const f64 StartSeconds = CClock::SecondsSinceStartup();
 	// Engine既定候補からフォントを読み込んだ結果。
-	const auto Result = UiFontDefaults::TryLoad( m_Font, Device, m_SizePixels, AtlasSize, m_bIncludeCjk );
+	const auto Result = AcsFw::TryLoadDefaultUiFont( m_Font, Device, m_SizePixels, AtlasSize, m_bIncludeCjk );
 	// 読み込みに使ったミリ秒。
 	const f64 ElapsedMilliseconds = ( CClock::SecondsSinceStartup() - StartSeconds ) * 1000.0;
 

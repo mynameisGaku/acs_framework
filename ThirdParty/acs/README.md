@@ -16,26 +16,25 @@ IDE では全ファイルが «識別子 f32 が定義されていません» �
 
 ---
 
-## いまの状態: 対応版が確定していない
+## いまの状態: 2026-08-03 生成の配布物でビルドできる
 
-**2026-08-16 時点で、この repo をビルドできる配布物が手元で特定できていない。**
+**2026-08-16 に解決した。** `C:\acs` (2026-08-03 生成) で全体がビルドでき、起動も確認した。
 
-- `Source/Debug/DebugTop/Element/DebugTopElementEnum.h` が `acs::FEnumName` を使う。
-  これは 2026-08-03 生成の配布物には**無い**（`acs/src/foundation/EnumTraits.h` にはある）。
-- 一方、現行 main の source から生成したヘッダには **ABI ガード**が入っており、
-  例外と RTTI を無効にしていない TU を `#error` で弾く。この repo は
-  `ExceptionHandling=Sync` / `_HAS_EXCEPTIONS=1` なので、そのままでは 1 行も通らない。
+以前はここに「対応版が特定できていない」と書いてあった。原因は、枠組みが**別の世代の ACS に
+在った名前**を呼んでいたこと。調べたところ、無いのは機能ではなく名前だった。
 
-つまり必要なのは「`FEnumName` があり、まだ ABI ガードが入っていない世代」の配布物である。
+| 枠組みが呼んでいたもの | 8/3 配布物での実体 |
+|---|---|
+| `UiFontDefaults::TryLoad(...)` | `acs::FSample::TryLoadDefaultUIFont(...)` — 引数も戻り値も同一 |
+| `ACS_ENUM()` | 印だけのマクロ。知らない配布物では畳む |
+| `acs::EnumNames<T>` ほか列挙の反映 | 同等品なし (登録制の `ACS_REGISTER_ENUM` のみ) |
 
-調査の詳細は `C:\dev\acs_temp_doc\0002-dist-abi-guard-blocks-framework.md`。
+この差は `Source/Common/Compat/` が吸収する。**使う側は `AcsFw::` の口だけを見る**ので、
+配布物を替えても書き換えはそのフォルダの中だけで済む。詳細はそこの README。
 
-### 決める必要があること
-
-1. 該当世代の配布物を持ってきて、ここへ固定する（一番安い）
-2. この repo を `/EHs-c- /D_HAS_EXCEPTIONS=0 /GR-` へ移行する
-   （同じ exe で Effekseer と DiligentCore を使っているので、そちらの検証が先）
-3. `FEnumName` を使わない形へ戻し、8/3 世代の配布物で通るようにする
+なお ABI ガードの向きは配布物によって逆になる (8/3 は「例外**有効** + RTTI 無効」、
+現行 main から生成したものは「例外**無効** + RTTI 無効」)。この repo は 8/3 側に合わせてある。
+別世代へ移るときは、まずそこを確かめること。
 
 ---
 

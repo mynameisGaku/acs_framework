@@ -2,6 +2,8 @@
 #pragma once
 
 #include <acs.h>
+#include "Common/Compat/AcsAnnotations.h"
+#include "Common/Compat/AcsEnumReflection.h"
 
 #include "Debug/DebugTop/Settings/DebugTopSetting.h"
 
@@ -36,7 +38,7 @@ enum class EDebugTopSettingsFormat : u8
  */
 inline FString DebugTopSettingsFormatName( EDebugTopSettingsFormat Format )
 {
-	const acs::FEnumName Name = acs::ToString( Format );
+	const AcsFw::FEnumNameView Name = AcsFw::EnumToString( Format );
 	return FString( FStringView( Name.Data, Name.Size ) );
 }
 

@@ -50,6 +50,7 @@ void RunSimulationEventQueueTests( CTestHarness& Harness );
 void RunSceneSnapshotStatusTests( CTestHarness& Harness );
 void RunPrefabTests( CTestHarness& Harness );
 void RunHotReloadDispatcherTests( CTestHarness& Harness );
+void RunEnumReflectionTests( CTestHarness& Harness );
 void RunSceneSnapshotTests( CTestHarness& Harness );
 void RunFixedStepDriverTests( CTestHarness& Harness );
 
@@ -73,6 +74,7 @@ int main()
 	RunSceneSnapshotStatusTests( Harness );
 	RunPrefabTests( Harness );
 	RunHotReloadDispatcherTests( Harness );
+	RunEnumReflectionTests( Harness );
 	RunSceneSnapshotTests( Harness );
 	RunFixedStepDriverTests( Harness );
 

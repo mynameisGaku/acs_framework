@@ -2,6 +2,7 @@
 #pragma once
 
 #include <acs.h>
+#include "Common/Compat/AcsAnnotations.h"
 
 using namespace acs;
 

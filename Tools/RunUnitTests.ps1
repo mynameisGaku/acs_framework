@@ -47,6 +47,7 @@ $sources = @(
     'Common\Test\TestHarness.cpp',
     'Common\Test\InternedNamePoolTest.cpp',
     'Common\Test\AcsArchiveFileTest.cpp',
+    'Common\Test\EnumReflectionTest.cpp',
     'Common\Text\InternedNamePool.cpp',
     'Common\File\AcsArchiveFile.cpp',
     'AcsFramework_Core\Text\StringConvert.cpp',

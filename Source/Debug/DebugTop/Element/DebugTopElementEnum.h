@@ -4,6 +4,7 @@
 #include <acs.h>
 
 #include "Debug/DebugTop/Element/DebugTopElement.h"
+#include "Common/Compat/AcsEnumReflection.h"
 
 using namespace acs;
 
@@ -145,7 +146,7 @@ namespace DebugTopDetail
 	 * @param OutOptions 変換結果。失敗時は呼出し前の内容を保つ。
 	 * @return 個数一致と確保に成功すれば true。
 	 */
-	inline bool TryBuildEnumOptions( const acs::FEnumName* Names, usize NameCount, usize ExpectedCount, TArray<FString>& OutOptions )
+	inline bool TryBuildEnumOptions( const AcsFw::FEnumNameView* Names, usize NameCount, usize ExpectedCount, TArray<FString>& OutOptions )
 	{
 		if ( NameCount != ExpectedCount ) return false;
 		if ( Names == nullptr && NameCount != 0u ) return false;
@@ -155,7 +156,7 @@ namespace DebugTopDetail
 
 		for ( usize Index = 0; Index < NameCount; ++Index )
 		{
-			const acs::FEnumName& Name = Names[Index];
+			const AcsFw::FEnumNameView& Name = Names[Index];
 			if ( Name.Data == nullptr || Name.IsEmpty() ) return false;
 
 			FString Option( *OutOptions.GetAllocator() );
@@ -179,8 +180,7 @@ namespace DebugTopDetail
 template<typename TEnum>
 bool DebugTopMakeEnumOptions( TArray<FString>& OutOptions )
 {
-	const auto Names = acs::EnumNames<TEnum>();
-	return DebugTopDetail::TryBuildEnumOptions( Names.Items, Names.Size(), acs::EnumCount<TEnum>, OutOptions );
+	return DebugTopDetail::TryBuildEnumOptions( AcsFw::EnumNames<TEnum>(), AcsFw::EnumCount<TEnum>(), AcsFw::EnumCount<TEnum>(), OutOptions );
 }
 
 /**
@@ -215,7 +215,7 @@ CDebugTopElementEnum* DebugTopAddEnumRow( TParent& Parent, const FString& Label,
 {
 	TArray<FString> Options;
 	if ( !DebugTopMakeEnumOptions<TEnum>( Options ) ) return nullptr;
-	return Parent.template Add<CDebugTopElementEnum>( Label, Move( Options ), acs::EnumToIndex( Current ) );
+	return Parent.template Add<CDebugTopElementEnum>( Label, Move( Options ), static_cast<i32>( AcsFw::EnumToIndex( Current ) ) );
 }
 
 /**
@@ -228,5 +228,5 @@ CDebugTopElementEnum* DebugTopAddEnumRow( TParent& Parent, const FString& Label,
 template<typename TEnum>
 TEnum DebugTopGetEnumValue( const CDebugTopElementEnum& Element ) noexcept
 {
-	return acs::EnumFromIndex<TEnum>( Element.GetSelectedIndex() );
+	return AcsFw::EnumFromIndex<TEnum>( static_cast<usize>( Element.GetSelectedIndex() ) );
 }
