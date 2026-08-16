@@ -259,6 +259,19 @@
     <ClInclude Include="Source\Debug\Perf\ScopedPerfSample.h" />
     <ClInclude Include="Source\Debug\Perf\View\PerfBudgetPage.h" />
     <ClInclude Include="Source\Debug\Perf\View\PerfCategoryRow.h" />
+    <ClInclude Include="Source\AcsFramework_Core\Simulation\ActionInput.h" />
+    <ClInclude Include="Source\AcsFramework_Core\Simulation\IActionInputSource.h" />
+    <ClInclude Include="Source\AcsFramework_Core\Simulation\ActionInputTape.h" />
+    <ClInclude Include="Source\AcsFramework_Core\Simulation\DeterministicRandom.h" />
+    <ClInclude Include="Source\AcsFramework_Core\Simulation\FixedStepDriver.h" />
+    <ClInclude Include="Source\AcsFramework_Core\Simulation\SimulationEvent.h" />
+    <ClInclude Include="Source\AcsFramework_Core\Simulation\SimulationEventQueue.h" />
+    <ClInclude Include="Source\AcsFramework_Core\Simulation\SimulationContext.h" />
+    <ClInclude Include="Source\AcsFramework_Core\Simulation\ISimulationRule.h" />
+    <ClInclude Include="Source\AcsFramework_Core\Simulation\SimulationSubsystem.h" />
+    <None Include="Source\AcsFramework_Core\Simulation\README.md" />
+    <None Include="Source\AcsFramework_Core\Simulation\Test\SimulationDeterminismTest.cpp" />
+    <None Include="Tools\RunSimulationDeterminismTest.ps1" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Common\Pch.cpp">
@@ -382,6 +395,11 @@
     <ClCompile Include="Source\Debug\Perf\ScopedPerfSample.cpp" />
     <ClCompile Include="Source\Debug\Perf\View\PerfBudgetPage.cpp" />
     <ClCompile Include="Source\Debug\Perf\View\PerfCategoryRow.cpp" />
+    <ClCompile Include="Source\AcsFramework_Core\Simulation\ActionInputTape.cpp" />
+    <ClCompile Include="Source\AcsFramework_Core\Simulation\DeterministicRandom.cpp" />
+    <ClCompile Include="Source\AcsFramework_Core\Simulation\FixedStepDriver.cpp" />
+    <ClCompile Include="Source\AcsFramework_Core\Simulation\SimulationEventQueue.cpp" />
+    <ClCompile Include="Source\AcsFramework_Core\Simulation\SimulationSubsystem.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

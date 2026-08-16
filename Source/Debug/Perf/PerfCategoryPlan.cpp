@@ -14,6 +14,7 @@ namespace
 	{
 		{ "Scene/Update",   6.0f },
 		{ "Scene/Render",   6.0f },
+		{ "Sim/Update",     3.0f },
 		{ "Assets/Load",    2.0f },
 		{ "Audio/Update",   1.0f },
 		{ "Debug/Overlay",  1.0f },

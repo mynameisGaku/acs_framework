@@ -13,6 +13,7 @@
 #include "AcsFramework_Core/Save/SaveSubsystem.h"
 #include "AcsFramework_Core/Scene/SceneTravelSubsystem.h"
 #include "AcsFramework_Core/Settings/GameSettingsSubsystem.h"
+#include "AcsFramework_Core/Simulation/SimulationSubsystem.h"
 #include "AcsFramework_Core/State/AppStateSubsystem.h"
 #include "AcsFramework_Core/Screen/ScreenSubsystem.h"
 #include "AcsFramework_Core/Text/UiFontSubsystem.h"
@@ -246,6 +247,19 @@ void CAcsFrameworkApp::OnUpdate( f32 DeltaSeconds ) noexcept
 		const FScopedPerfSample Sample( Perf, "Scene/Update" );
 
 		CGame::OnUpdate( DeltaSeconds );
+	}
+
+	// ゲームロジックは固定ステップで進める。渡すのは倍率を掛けた «ゲームの時間» なので、
+	// 止めれば盤面も止まり、遅くすれば盤面も遅くなる。規則が差さっていなければ回さない。
+	if ( CSimulationSubsystem* const Simulation = GetSubsystem<CSimulationSubsystem>() )
+	{
+		if ( Simulation->HasRule() && ( Time == nullptr || Time->ShouldTickScenes() ) )
+		{
+			const FScopedPerfSample Sample( Perf, "Sim/Update" );
+
+			const f32 Scale = ( Time != nullptr ) ? Time->GetEffectiveScale() : 1.0f;
+			Simulation->Update( static_cast<f64>( DeltaSeconds * Scale ) );
+		}
 	}
 
 	// 読み込みはシーンに属さない (遷移を跨いで続く) ので、アプリの側で進める。

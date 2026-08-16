@@ -133,6 +133,15 @@
     <Filter Include="Source\Debug\Perf\View">
       <UniqueIdentifier>{48bf9a7d-223e-5655-a3fe-d26a56b947a2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\AcsFramework_Core\Simulation">
+      <UniqueIdentifier>{bf7024f6-6cd5-5779-80d2-8165d52c3c81}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\AcsFramework_Core\Simulation\Test">
+      <UniqueIdentifier>{94ff8a17-dc25-5b50-87bf-800c452176bb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Tools">
+      <UniqueIdentifier>{f90cee88-2195-5fbe-a805-f77c58b4293c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\AcsFramework_Core\App\AcsFrameworkApp.cpp">
@@ -491,6 +500,21 @@
     </ClCompile>
     <ClCompile Include="Source\Debug\Perf\View\PerfCategoryRow.cpp">
       <Filter>Source\Debug\Perf\View</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Simulation\ActionInputTape.cpp">
+      <Filter>Source\AcsFramework_Core\Simulation</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Simulation\DeterministicRandom.cpp">
+      <Filter>Source\AcsFramework_Core\Simulation</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Simulation\FixedStepDriver.cpp">
+      <Filter>Source\AcsFramework_Core\Simulation</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Simulation\SimulationEventQueue.cpp">
+      <Filter>Source\AcsFramework_Core\Simulation</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Simulation\SimulationSubsystem.cpp">
+      <Filter>Source\AcsFramework_Core\Simulation</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -917,6 +941,36 @@
     <ClInclude Include="Source\Debug\Perf\View\PerfCategoryRow.h">
       <Filter>Source\Debug\Perf\View</Filter>
     </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Simulation\ActionInput.h">
+      <Filter>Source\AcsFramework_Core\Simulation</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Simulation\IActionInputSource.h">
+      <Filter>Source\AcsFramework_Core\Simulation</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Simulation\ActionInputTape.h">
+      <Filter>Source\AcsFramework_Core\Simulation</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Simulation\DeterministicRandom.h">
+      <Filter>Source\AcsFramework_Core\Simulation</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Simulation\FixedStepDriver.h">
+      <Filter>Source\AcsFramework_Core\Simulation</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Simulation\SimulationEvent.h">
+      <Filter>Source\AcsFramework_Core\Simulation</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Simulation\SimulationEventQueue.h">
+      <Filter>Source\AcsFramework_Core\Simulation</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Simulation\SimulationContext.h">
+      <Filter>Source\AcsFramework_Core\Simulation</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Simulation\ISimulationRule.h">
+      <Filter>Source\AcsFramework_Core\Simulation</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Simulation\SimulationSubsystem.h">
+      <Filter>Source\AcsFramework_Core\Simulation</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Source\AcsFramework_Core\README.md">
@@ -942,6 +996,15 @@
     </None>
     <None Include="Source\Debug\Perf\README.md">
       <Filter>Source\Debug\Perf</Filter>
+    </None>
+    <None Include="Source\AcsFramework_Core\Simulation\README.md">
+      <Filter>Source\AcsFramework_Core\Simulation</Filter>
+    </None>
+    <None Include="Source\AcsFramework_Core\Simulation\Test\SimulationDeterminismTest.cpp">
+      <Filter>Source\AcsFramework_Core\Simulation\Test</Filter>
+    </None>
+    <None Include="Tools\RunSimulationDeterminismTest.ps1">
+      <Filter>Tools</Filter>
     </None>
   </ItemGroup>
 </Project>
