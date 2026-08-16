@@ -64,6 +64,7 @@ void RunXxxTests( CTestHarness& Harness )
 - 番号の配り直し (`CSpatialSourceRegistry`)
 - 上限と、そこに達したときの振る舞い (`CSimulationEventQueue`)
 - 結果の分類 (`CSceneSnapshotStatus`)
+- ファイルへの往復と、版違い・欠損の扱い (`CAcsArchiveFile`、`CSimulationSnapshot`)
 
 DebugTop のページや描画は入れない。装置を読むものは、読む相手を差し替えられる形
 (`IActionDeviceReader`) にしてから入れる。
@@ -78,4 +79,4 @@ DebugTop のページや描画は入れない。装置を読むものは、読�
   期待どおりに動いていない場合は、逆にここが静かになる。
 - 小数は既定で完全一致で見る。再現性を確かめる場所で «だいたい同じ» を許すと意味が無い。
   近似で足りるところだけ `CheckNearF32` を使う。
-- 2026-08-16 時点: 171 件・0 失敗。
+- 2026-08-16 時点: 215 件・0 失敗。

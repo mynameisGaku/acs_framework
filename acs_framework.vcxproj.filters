@@ -1135,5 +1135,11 @@
     <None Include="Tools\RunUnitTests.ps1">
       <Filter>Tools</Filter>
     </None>
+    <None Include="Source\Common\Test\AcsArchiveFileTest.cpp">
+      <Filter>Source\Common\Test</Filter>
+    </None>
+    <None Include="Source\AcsFramework_Core\Simulation\Test\SimulationSnapshotTest.cpp">
+      <Filter>Source\AcsFramework_Core\Simulation\Test</Filter>
+    </None>
   </ItemGroup>
 </Project>

@@ -44,6 +44,11 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros">
     <AcsDistRoot Condition="'$(AcsDistRoot)'==''">$(ACS_DIST_ROOT)</AcsDistRoot>
+    <!-- 指定が無いときの最後の拠り所。ここが空のままだと acs.h が 1 つも見つからず、
+         IDE では全ファイルが «識別子 f32 が定義されていません» で埋まる。
+         既定へ落ちたことは build 時に警告で知らせる (WarnAcsDistRootFallback)。 -->
+    <AcsDistRootIsFallback Condition="'$(AcsDistRoot)'==''">true</AcsDistRootIsFallback>
+    <AcsDistRoot Condition="'$(AcsDistRoot)'==''">C:\acs</AcsDistRoot>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -297,6 +302,8 @@
     <None Include="Source\Debug\DevConsole\Test\ConsoleArgumentReaderTest.cpp" />
     <None Include="Source\Debug\Perf\Test\PerfBudgetTest.cpp" />
     <None Include="Tools\RunUnitTests.ps1" />
+    <None Include="Source\Common\Test\AcsArchiveFileTest.cpp" />
+    <None Include="Source\AcsFramework_Core\Simulation\Test\SimulationSnapshotTest.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Common\Pch.cpp">
@@ -437,4 +444,7 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
+  <Target Name="WarnAcsDistRootFallback" BeforeTargets="ClCompile" Condition="'$(AcsDistRootIsFallback)'=='true'">
+    <Warning Text="ACS_DIST_ROOT が未設定のため既定の C:\acs を使います。対応する配布物を指すには ACS_DIST_ROOT を設定するか /p:AcsDistRoot=&lt;path&gt; を渡してください (ThirdParty/acs/README.md)。" />
+  </Target>
 </Project>

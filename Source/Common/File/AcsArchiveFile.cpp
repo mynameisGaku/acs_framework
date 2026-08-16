@@ -16,6 +16,58 @@ namespace
 	 * @param OutSize 入っている大きさの入れ先。
 	 * @return 問い合わせられたら true。
 	 */
+	/**
+	 * 置き先の親フォルダを、無ければ作る。
+	 *
+	 * @details
+	 * `Saved/Replay/last.acssave` のように、まだ掘っていない場所を指されることがある。
+	 * 作らずに書きに行くと失敗するだけで、呼んだ側には «保存できない» としか見えない。
+	 * 途中の階層もまとめて作る。
+	 * @param WidePath 置き先のパス。
+	 * @return 親フォルダが在る状態にできたら true。
+	 */
+	bool TryEnsureParentDirectory( const wchar_t* WidePath ) noexcept
+	{
+		if ( WidePath == nullptr ) return false;
+
+		usize Length = 0u;
+		while ( WidePath[Length] != L'\0' ) ++Length;
+
+		if ( Length == 0u ) return false;
+
+		TArray<wchar_t> Work;
+		if ( !Work.TryReserve( Length + 1u ) ) return false;
+		Work.SetNum( Length + 1u );
+
+		for ( usize Index = 0u; Index <= Length; ++Index ) Work[Index] = WidePath[Index];
+
+		for ( usize Index = 0u; Index < Length; ++Index )
+		{
+			const wchar_t Character = Work[Index];
+			if ( Character != L'/' && Character != L'\\' ) continue;
+
+			// 先頭の区切りと、ドライブ直後の区切り (C:\) は作る対象にしない。
+			if ( Index == 0u ) continue;
+			if ( Work[Index - 1u] == L':' ) continue;
+
+			Work[Index] = L'\0';
+
+			if ( !CFileSystem::DirectoryExists( Work.GetData() ) )
+			{
+				const auto Result = CFileSystem::CreateDirectory( Work.GetData() );
+				if ( Result.IsErr() )
+				{
+					Work[Index] = Character;
+					return false;
+				}
+			}
+
+			Work[Index] = Character;
+		}
+
+		return true;
+	}
+
 	bool TryQuerySize( const wchar_t* WidePath, u32 Version, u64& OutSize ) noexcept
 	{
 		OutSize = 0u;
@@ -42,6 +94,13 @@ bool CAcsArchiveFile::Write( const FString& Path, u32 Version, const u8* Data, u
 	{
 		ACS_LOG_WARN( "CAcsArchiveFile: パスを変換できません '%s'", Path.Data() );
 		return false;
+	}
+
+	// 掘っていない場所を指されても書けるようにする。作れなくても書き込みは試す
+	// (既に在るのに DirectoryExists が偽を返す、といった場合に諦めないため)。
+	if ( !TryEnsureParentDirectory( WidePath.GetData() ) )
+	{
+		ACS_LOG_WARN( "CAcsArchiveFile: 親フォルダを用意できません '%s'", Path.Data() );
 	}
 
 	const auto Result = CSaveArchive::WriteToFile( WidePath.GetData(), Version, Data, static_cast<u64>( Size ) );

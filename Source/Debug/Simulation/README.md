@@ -69,8 +69,8 @@ Overlay->GetHUD().AddEntity( NewObject<ASimulationPage>( FString( "Simulation" )
 
 - Seed は記録を始めるときにだけ使う。**再生はテープが覚えている種を使う** ので、
   ここの数字を変えても再生結果は変わらない。
-- パスは実行ディレクトリからの相対でよい。**掘っていないフォルダを指すと保存に失敗する**
-  (実際に踏んだ)。`Saved/Replay/` を先に作っておくこと。
+- パスは実行ディレクトリからの相対でよい。**途中のフォルダは自動で作られる**ので、
+  `Saved/Replay/` を先に掘っておく必要はない (`CAcsArchiveFile` が面倒を見る)。
 - 規則が差さっていないと Mode の右に「規則なし」と出る。その状態では回しても何も起きない。
 - Capture は**規則が盤面を差し出せる場合だけ**成功する (`ISimulationRule::TrySaveState` の実装が要る)。
   実装していない規則では State に「なし」と出たままになる。

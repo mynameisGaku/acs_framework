@@ -39,7 +39,9 @@ namespace
 
 void RunConsoleArgumentReaderTests( CTestHarness& Harness );
 void RunInternedNamePoolTests( CTestHarness& Harness );
+void RunAcsArchiveFileTests( CTestHarness& Harness );
 void RunActionInputTapeTests( CTestHarness& Harness );
+void RunSimulationSnapshotTests( CTestHarness& Harness );
 void RunActionBindingTableTests( CTestHarness& Harness );
 void RunMusicStateArbiterTests( CTestHarness& Harness );
 void RunSpatialSourceRegistryTests( CTestHarness& Harness );
@@ -56,7 +58,9 @@ int main()
 	RunHarnessSelfCheck( Harness );
 	RunConsoleArgumentReaderTests( Harness );
 	RunInternedNamePoolTests( Harness );
+	RunAcsArchiveFileTests( Harness );
 	RunActionInputTapeTests( Harness );
+	RunSimulationSnapshotTests( Harness );
 	RunActionBindingTableTests( Harness );
 	RunMusicStateArbiterTests( Harness );
 	RunSpatialSourceRegistryTests( Harness );
