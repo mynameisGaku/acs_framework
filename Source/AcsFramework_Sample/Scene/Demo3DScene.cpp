@@ -5,8 +5,8 @@
 
 namespace
 {
-	/** 床の広さ。 */
-	constexpr f32 kFloorSize = 12.0f;
+	/** 床の広さ。広げすぎると FrameScene がカメラを引きすぎ、物が豆粒になる。 */
+	constexpr f32 kFloorSize = 9.0f;
 
 	/** 並べる物の間隔。 */
 	constexpr f32 kSpacing = 2.4f;
@@ -79,15 +79,13 @@ void ADemo3DScene::OnEnter() noexcept
 	Fill.SetRange( 14.0f );
 	Root().AddChild( Move( FillNode ) );
 
-	// 空。雲を出し、時間で流す。太陽の向きと色は上で置いた光から毎フレーム同期されるので、
-	// ここでは触らない (触っても上書きされる)。
-	Sky().SetCloudsEnabled( true );
-	Sky().SetClouds( 0.45f, 1.5f );
-	Sky().SetCloudColor( FVec3{ 1.0f, 0.98f, 0.95f } );
-	Sky().SetCloudWind( 0.015f );
+	// 大気が描く «地面» の色を、置いた床に寄せる。ここがずれると、地平線から下だけ
+	// 別の場所の色になり、床の縁で色が切り替わって見える。
+	Atmosphere().ground_albedo = FVec3{ 0.06f, 0.07f, 0.06f };
 
 	// 全体が入る位置までカメラを引く。
 	FrameScene();
+
 }
 
 
