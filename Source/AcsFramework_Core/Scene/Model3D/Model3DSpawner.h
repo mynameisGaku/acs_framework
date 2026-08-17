@@ -51,4 +51,16 @@ private:
 	 * @param Params 付ける中身。
 	 */
 	static void ApplyMesh( ANode& Node, const FModel3DSpawnParams& Params ) noexcept;
+
+	/**
+	 * 材質を焼き込む。
+	 *
+	 * @details
+	 * 材質を置かないままだと、エンジンは metallic 0 / roughness 0.5 の決め打ちで描く。
+	 * 同じ既定を持たせた材質を必ず置いて、**あとから触れる状態にしておく**。
+	 *
+	 * @param Mesh 付ける先。
+	 * @param Params 付ける中身。
+	 */
+	static void ApplyMaterial( AMeshComponent3D& Mesh, const FModel3DSpawnParams& Params ) noexcept;
 };

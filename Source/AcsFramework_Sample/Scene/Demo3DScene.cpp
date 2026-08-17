@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: Apache-2.0
+﻿// SPDX-License-Identifier: Apache-2.0
 #include "AcsFramework_Sample/Scene/Demo3DScene.h"
 
 #include "AcsFramework_Core/Scene/Model3D/Model3DSpawner.h"
@@ -24,6 +24,7 @@ void ADemo3DScene::OnEnter() noexcept
 	FModel3DSpawnParams Floor = FModel3DSpawnParams::FromPrimitive( EMeshPrimitive3D::Plane, FVec3{ 0.0f, 0.0f, 0.0f } );
 	Floor.Scale = FVec3{ kFloorSize, 1.0f, kFloorSize };
 	Floor.Color = FVec4{ 0.55f, 0.56f, 0.58f, 1.0f };
+	Floor.Roughness = 0.14f;   // 磨いた床。低いほど反射 (SSR) が乗る
 	Floor.bCastsShadow = false;
 	Floor.Name = FStringView( "Floor" );
 	CModel3DSpawner::SpawnInto( Root(), Floor );
@@ -43,6 +44,8 @@ void ADemo3DScene::OnEnter() noexcept
 
 		FModel3DSpawnParams Ball = FModel3DSpawnParams::FromPrimitive( EMeshPrimitive3D::Sphere, FVec3{ X, 1.0f, 1.6f } );
 		Ball.Color = Colors[Index];
+		// 粗さを 3 つで振る。同じ色でも «艶» が違うと材質の違いとして読める。
+		Ball.Roughness = 0.12f + static_cast<f32>( Index ) * 0.34f;
 		CModel3DSpawner::SpawnInto( Root(), Ball );
 	}
 
@@ -50,6 +53,8 @@ void ADemo3DScene::OnEnter() noexcept
 	FModel3DSpawnParams Cube = FModel3DSpawnParams::FromPrimitive( EMeshPrimitive3D::Cube, FVec3{ 0.0f, 1.2f, -3.0f } );
 	Cube.Scale = FVec3{ 1.4f, 1.4f, 1.4f };
 	Cube.Color = FVec4{ 0.90f, 0.75f, 0.30f, 1.0f };
+	Cube.Metallic = 1.0f;      // 金属。拡散反射が消えるので、環境光と反射が要る
+	Cube.Roughness = 0.28f;
 	Cube.Name = FStringView( "Spinner" );
 	m_Spinner = CModel3DSpawner::SpawnInto( Root(), Cube );
 
@@ -108,6 +113,10 @@ void ADemo3DScene::OnEnter() noexcept
 	// (ここは球の直径が 1 前後なので 0.5)。
 	AmbientOcclusion().Intensity = 1.0f;
 	AmbientOcclusion().Radius = 0.5f;
+
+	// 反射。磨いた床と金属に、画面に映っているものを映す。
+	// **画面に映っていないものは映せない** ので、切っておく方が素直な場面もある。
+	Reflections().Intensity = 0.6f;
 
 	// 大気が描く «地面» の色を、置いた床に寄せる。ここがずれると、地平線から下だけ
 	// 別の場所の色になり、床の縁で色が切り替わって見える。

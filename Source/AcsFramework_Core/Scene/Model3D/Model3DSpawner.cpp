@@ -50,4 +50,20 @@ void CModel3DSpawner::ApplyMesh( ANode& Node, const FModel3DSpawnParams& Params 
 
 	Mesh.SetColor( Params.Color );
 	Mesh.SetCastsShadow( Params.bCastsShadow );
+	ApplyMaterial( Mesh, Params );
+}
+
+
+void CModel3DSpawner::ApplyMaterial( AMeshComponent3D& Mesh, const FModel3DSpawnParams& Params ) noexcept
+{
+	// 材質を «置いていない» ままだと、エンジンは metallic 0 / roughness 0.5 の
+	// 決め打ちで描く。同じ既定を持たせた材質を必ず置いて、**触れるようにしておく**。
+	//
+	// baseColor は 1 のまま。エンジン側が Color と掛け算するので、ここで色を入れると
+	// 二重に掛かる。
+	FMaterial2D Material{};
+	Material.pbr.metallic = Clamp( Params.Metallic, 0.0f, 1.0f );
+	Material.pbr.roughness = Clamp( Params.Roughness, 0.0f, 1.0f );
+
+	Mesh.SetMaterial( Material );
 }
