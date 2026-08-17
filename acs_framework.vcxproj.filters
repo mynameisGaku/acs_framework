@@ -61,6 +61,12 @@
     <Filter Include="Source\AcsFramework_Core\Scene\Model3D\Test">
       <UniqueIdentifier>{5bd1a830-88a7-ca66-6d13-4e065822d9b0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\AcsFramework_Core\Scene\Pick3D">
+      <UniqueIdentifier>{95c2034c-64f4-a947-a3b7-83c0b7cdde25}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\AcsFramework_Core\Scene\Pick3D\Test">
+      <UniqueIdentifier>{7ddde3ab-29ed-4dca-14a7-544355f66cef}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Source\AcsFramework_Core\Scene\Prefab">
       <UniqueIdentifier>{c28dd9de-8cef-59e1-9214-a19ffaa9a107}</UniqueIdentifier>
     </Filter>
@@ -299,6 +305,12 @@
     </ClCompile>
     <ClCompile Include="Source\AcsFramework_Core\Scene\Model3D\Model3DSpawnParams.cpp">
       <Filter>Source\AcsFramework_Core\Scene\Model3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Scene\Pick3D\ScenePicker.cpp">
+      <Filter>Source\AcsFramework_Core\Scene\Pick3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Scene\Pick3D\SceneRay.cpp">
+      <Filter>Source\AcsFramework_Core\Scene\Pick3D</Filter>
     </ClCompile>
     <ClCompile Include="Source\AcsFramework_Core\Scene\Prefab\PrefabRegistrar.cpp">
       <Filter>Source\AcsFramework_Core\Scene\Prefab</Filter>
@@ -751,6 +763,15 @@
     </ClInclude>
     <ClInclude Include="Source\AcsFramework_Core\Scene\Model3D\Model3DSpawnParams.h">
       <Filter>Source\AcsFramework_Core\Scene\Model3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Pick3D\ScenePicker.h">
+      <Filter>Source\AcsFramework_Core\Scene\Pick3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Pick3D\SceneRay.h">
+      <Filter>Source\AcsFramework_Core\Scene\Pick3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Pick3D\SceneRayHit.h">
+      <Filter>Source\AcsFramework_Core\Scene\Pick3D</Filter>
     </ClInclude>
     <ClInclude Include="Source\AcsFramework_Core\Scene\Prefab\IPrefabProvider.h">
       <Filter>Source\AcsFramework_Core\Scene\Prefab</Filter>
@@ -1206,6 +1227,12 @@
     </None>
     <None Include="Source\AcsFramework_Core\Scene\Model3D\Test\Model3DSpawnerTest.cpp">
       <Filter>Source\AcsFramework_Core\Scene\Model3D\Test</Filter>
+    </None>
+    <None Include="Source\AcsFramework_Core\Scene\Pick3D\README.md">
+      <Filter>Source\AcsFramework_Core\Scene\Pick3D</Filter>
+    </None>
+    <None Include="Source\AcsFramework_Core\Scene\Pick3D\Test\ScenePickerTest.cpp">
+      <Filter>Source\AcsFramework_Core\Scene\Pick3D\Test</Filter>
     </None>
     <None Include="Source\AcsFramework_Core\Scene\Prefab\README.md">
       <Filter>Source\AcsFramework_Core\Scene\Prefab</Filter>

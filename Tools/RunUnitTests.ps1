@@ -13,7 +13,10 @@ param(
 )
 $ErrorActionPreference = 'Stop'
 
-if ([string]::IsNullOrWhiteSpace($AcsDistRoot)) { $AcsDistRoot = 'C:\acs' }
+# C:\acs is the 2026-08-03 distribution and is missing most of the current API.
+# UpdateAcsDist.ps1 deploys to C:\acs_dev, so agree with it. Falling back to the
+# stale one produces "not a member of acs" errors that read like source bugs.
+if ([string]::IsNullOrWhiteSpace($AcsDistRoot)) { $AcsDistRoot = 'C:\acs_dev' }
 if (-not (Test-Path (Join-Path $AcsDistRoot 'acs.h'))) {
     throw "acs.h not found under '$AcsDistRoot'. Pass -AcsDistRoot or set ACS_DIST_ROOT."
 }
@@ -51,6 +54,9 @@ $sources = @(
     'AcsFramework_Core\Scene\Model3D\Model3DSpawnParams.cpp',
     'AcsFramework_Core\Scene\Model3D\Model3DSpawner.cpp',
     'AcsFramework_Core\Scene\Model3D\Test\Model3DSpawnerTest.cpp',
+    'AcsFramework_Core\Scene\Pick3D\SceneRay.cpp',
+    'AcsFramework_Core\Scene\Pick3D\ScenePicker.cpp',
+    'AcsFramework_Core\Scene\Pick3D\Test\ScenePickerTest.cpp',
     'AcsFramework_Core\Text\Localization\TextArgument.cpp',
     'AcsFramework_Core\Text\Localization\TextFormatter.cpp',
     'AcsFramework_Core\Text\Localization\LocaleCatalog.cpp',

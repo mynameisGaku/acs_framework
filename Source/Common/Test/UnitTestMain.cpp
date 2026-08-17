@@ -53,6 +53,7 @@ void RunHotReloadDispatcherTests( CTestHarness& Harness );
 void RunEnumReflectionTests( CTestHarness& Harness );
 void RunLocalizationTests( CTestHarness& Harness );
 void RunModel3DSpawnerTests( CTestHarness& Harness );
+void RunScenePickerTests( CTestHarness& Harness );
 void RunSceneSnapshotTests( CTestHarness& Harness );
 void RunFixedStepDriverTests( CTestHarness& Harness );
 
@@ -79,6 +80,7 @@ int main()
 	RunEnumReflectionTests( Harness );
 	RunLocalizationTests( Harness );
 	RunModel3DSpawnerTests( Harness );
+	RunScenePickerTests( Harness );
 	RunSceneSnapshotTests( Harness );
 	RunFixedStepDriverTests( Harness );
 

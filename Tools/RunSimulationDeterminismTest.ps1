@@ -14,7 +14,9 @@ param(
 )
 $ErrorActionPreference = 'Stop'
 
-if ([string]::IsNullOrWhiteSpace($AcsDistRoot)) { $AcsDistRoot = 'C:\acs' }
+# C:\acs is the 2026-08-03 distribution and is missing most of the current API.
+# UpdateAcsDist.ps1 deploys to C:\acs_dev, so agree with it.
+if ([string]::IsNullOrWhiteSpace($AcsDistRoot)) { $AcsDistRoot = 'C:\acs_dev' }
 if (-not (Test-Path (Join-Path $AcsDistRoot 'acs.h'))) {
     throw "acs.h not found under '$AcsDistRoot'. Pass -AcsDistRoot or set ACS_DIST_ROOT."
 }

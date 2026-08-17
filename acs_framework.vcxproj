@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|x64">
@@ -337,6 +337,11 @@
     <None Include="Tools\CaptureApp.ps1" />
     <None Include="Docs\demo3d-reference.png" />
     <None Include="Docs\demo3d-sunset.png" />
+      <ClInclude Include="Source\AcsFramework_Core\Scene\Pick3D\SceneRay.h" />
+      <ClInclude Include="Source\AcsFramework_Core\Scene\Pick3D\SceneRayHit.h" />
+      <ClInclude Include="Source\AcsFramework_Core\Scene\Pick3D\ScenePicker.h" />
+      <None Include="Source\AcsFramework_Core\Scene\Pick3D\README.md" />
+      <None Include="Source\AcsFramework_Core\Scene\Pick3D\Test\ScenePickerTest.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Common\Pch.cpp">
@@ -484,6 +489,8 @@
     <ClCompile Include="Source\AcsFramework_Core\Scene\Model3D\Model3DSpawnParams.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Scene\Model3D\Model3DSpawner.cpp" />
     <ClCompile Include="Source\AcsFramework_Sample\Scene\Demo3DScene.cpp" />
+      <ClCompile Include="Source\AcsFramework_Core\Scene\Pick3D\SceneRay.cpp" />
+      <ClCompile Include="Source\AcsFramework_Core\Scene\Pick3D\ScenePicker.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

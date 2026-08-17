@@ -100,7 +100,9 @@ Steam (`SteamworksBridge`)、スクリプト (`ScriptHost`)、機械学習 (`MlR
   木から集めて shader の配列にする層 (`CLightCollector3D`)。`acs_temp_doc/0005` `0006`。
   残りは描く側との接続と、«何もしなくても綺麗» な既定 (太陽 + IBL + 影 + トーンマップ)
 - アニメーション再生の窓口 (`AnimationGraph`)
-- 3D の当たり判定の窓口 (`MeshCollider`、`Collision3D` のレイ判定・重なり判定)
+- ~~3D の当たり判定の窓口~~ → **`Scene/Pick3D` として実装済み** (2026-08-18)。
+  線を飛ばして当たったノードを返す (`FSceneRay::FromScreen` でクリックした物を取れる)。
+  精度は境界の箱まで。三角形と厳密に判定したいときは ACS の `CMeshCollider` へ渡す。
   ※ **剛体物理とキャラ移動は ACS 側に入れる** (2026-08-17 判断、`acs_temp_doc/0003`)。
   枠組みには書かない。ACS に入った後で窓口だけを足す。
 
@@ -108,7 +110,10 @@ Steam (`SteamworksBridge`)、スクリプト (`ScriptHost`)、機械学習 (`MlR
 
 **判定基準: DXLib と並べて «明らかに綺麗» と言える。**
 
-- ポストプロセスの窓口 (bloom / AO / SSR / FXAA)。**既定で入っていること**が要
+- ~~ポストプロセスの窓口 (AO / SSR)~~ → **配線済み** (2026-08-18)。
+  `AmbientOcclusion()` (既定 ON) と `Reflections()` (既定 OFF、映すものが要る)。
+  材質も触れるようになった (`FModel3DSpawnParams::Metallic` / `Roughness`)。
+  残りは bloom / FXAA の窓口と、`CSsgi` の配線
 - エフェクトの配線 (`ParticleEffectSystem` と Effekseer)
 - 遊ぶ人向け UI の土台 (`UiLayer`、`Widget`)
 - 3D 素材の置き場と取り込み手順
