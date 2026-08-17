@@ -92,6 +92,11 @@ void ADemo3DScene::OnEnter() noexcept
 	// 全体が入る位置までカメラを引く。
 	FrameScene();
 
+	// カメラを固定する。自由カメラを入れたままだと矢印キーで画角が変わり、
+	// 撮り比べたときに «何が変わったのか» が分からなくなる。
+	SetFreeCameraEnabled( false );
+	SetOrbit( FVec3{ 0.0f, 1.0f, 0.0f }, 0.0f, 0.32f, 14.0f );
+
 }
 
 

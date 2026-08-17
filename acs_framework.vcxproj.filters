@@ -1269,6 +1269,39 @@
     </None>
     <None Include="Tools\CaptureApp.ps1">
       <Filter>Tools</Filter>
+    <Filter Include="Docs">
+      <UniqueIdentifier>{84e6ff18-ab1d-5309-be2e-6a9b232492e6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\AcsFramework_Core\Scene\Model3D">
+      <UniqueIdentifier>{4d1942c7-143d-5727-806c-e8551792a9a4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\AcsFramework_Core\Scene\Model3D\Test">
+      <UniqueIdentifier>{acd4dd93-3d5b-5475-8087-3bac53669060}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\AcsFramework_Core\Text\Localization">
+      <UniqueIdentifier>{42c2991f-022b-5388-9ef6-001a3217a12f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\AcsFramework_Core\Text\Localization\Test">
+      <UniqueIdentifier>{0302984d-bb53-5f83-9bd3-f88b9afc99ef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\AcsFramework_Sample">
+      <UniqueIdentifier>{3e95f745-4e93-511a-ae9e-cf58ea401ebf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\AcsFramework_Sample\Scene">
+      <UniqueIdentifier>{b004a2b3-1b6d-5913-8d01-51acd573e30d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Common\Compat">
+      <UniqueIdentifier>{7d08126e-f0d5-52b0-a64a-a90e597905d3}</UniqueIdentifier>
+    </Filter>
+    </None>
+    <None Include="Docs\demo3d.png">
+      <Filter>Docs</Filter>
+    </None>
+    <None Include="Docs\demo3d-reference.png">
+      <Filter>Docs</Filter>
+    </None>
+    <None Include="Docs\demo3d-sunset.png">
+      <Filter>Docs</Filter>
     </None>
   </ItemGroup>
 </Project>
