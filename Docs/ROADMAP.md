@@ -81,9 +81,9 @@ Steam (`SteamworksBridge`)、スクリプト (`ScriptHost`)、機械学習 (`MlR
 - ~~カメラ~~ → **ACS 側へ実装済み** (`FCamera3D`、`acs_temp_doc/0004`)。
   `CCameraStack` は 2D 専用だったので使えず、`FCamera2D` の 3D 版を ACS に足した。
   枠組みからは配布物の再生成後に使える
-- ライティング — **光のコンポーネントは ACS 側へ実装済み** (`ALightComponent3D`、
-  `acs_temp_doc/0005`)。次は木から光を集めて `CPbrShader` へ渡す層。
-  そのうえで «何もしなくても綺麗» な既定 (太陽 + IBL + 影 + トーンマップ) を枠組みが持つ
+- ライティング — **ACS 側へ実装済み**: 光のコンポーネント (`ALightComponent3D`) と、
+  木から集めて shader の配列にする層 (`CLightCollector3D`)。`acs_temp_doc/0005` `0006`。
+  残りは描く側との接続と、«何もしなくても綺麗» な既定 (太陽 + IBL + 影 + トーンマップ)
 - アニメーション再生の窓口 (`AnimationGraph`)
 - 3D の当たり判定の窓口 (`MeshCollider`、`Collision3D` のレイ判定・重なり判定)
   ※ **剛体物理とキャラ移動は ACS 側に入れる** (2026-08-17 判断、`acs_temp_doc/0003`)。
@@ -135,6 +135,7 @@ Steam (`SteamworksBridge`)、スクリプト (`ScriptHost`)、機械学習 (`MlR
 | 3D の剛体物理 | ACS 側へ入れる (枠組みには書かない) | 2026-08-17 |
 | 3D カメラ (追従・揺れ) | ACS 側へ実装済み (`FCamera3D`) | 2026-08-17 |
 | 3D の光 | ACS 側へ実装済み (`ALightComponent3D`) | 2026-08-17 |
+| 光を集める層 | ACS 側へ実装済み (`CLightCollector3D`) | 2026-08-17 |
 | 追う ACS のブランチ | **`dev`** (main は ABI ガードが逆で使えない) | 2026-08-17 |
 | 配布物の作り方 | `.\Tools\UpdateAcsDist.ps1` で dev の worktree からビルドして配置 | 2026-08-17 |
 | 対応する配布物 | dev から生成したもの (`C:\acs_dev`)。世代差は `Source/Common/Compat/` が吸収 | 2026-08-17 |

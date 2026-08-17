@@ -1258,5 +1258,8 @@
     <None Include="Tools\UpdateAcsDist.ps1">
       <Filter>Tools</Filter>
     </None>
+    <None Include="Tools\RunAcsTests.ps1">
+      <Filter>Tools</Filter>
+    </None>
   </ItemGroup>
 </Project>

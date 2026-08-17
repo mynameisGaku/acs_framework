@@ -331,6 +331,7 @@
     <None Include="Source\AcsFramework_Core\Scene\Model3D\README.md" />
     <None Include="Source\AcsFramework_Core\Scene\Model3D\Test\Model3DSpawnerTest.cpp" />
     <None Include="Tools\UpdateAcsDist.ps1" />
+    <None Include="Tools\RunAcsTests.ps1" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Common\Pch.cpp">
