@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
+    <Filter Include="Docs">
+      <UniqueIdentifier>{422bb446-cd29-397a-c564-e780bb665a8b}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Source">
       <UniqueIdentifier>{3204a5fc-503f-459f-9dc1-1441a634da9c}</UniqueIdentifier>
     </Filter>
@@ -15,6 +18,18 @@
     </Filter>
     <Filter Include="Source\AcsFramework_Core\Audio">
       <UniqueIdentifier>{c9205f2d-0948-48eb-5288-fa2e81ee35dd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\AcsFramework_Core\Audio\Music">
+      <UniqueIdentifier>{b86af834-180f-5c80-b670-4a225cce99ac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\AcsFramework_Core\Audio\Music\Test">
+      <UniqueIdentifier>{ac4c0dad-1294-5dda-984f-aeaa13f7e86f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\AcsFramework_Core\Audio\Spatial">
+      <UniqueIdentifier>{0fcb8e65-1390-5dd0-9035-7d24378d63c0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\AcsFramework_Core\Audio\Spatial\Test">
+      <UniqueIdentifier>{b874881c-f5be-5e1d-a84e-b4341b7d499b}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source\AcsFramework_Core\Boot">
       <UniqueIdentifier>{571aa2f2-8b43-1714-b981-355e92a6406c}</UniqueIdentifier>
@@ -40,11 +55,38 @@
     <Filter Include="Source\AcsFramework_Core\Scene">
       <UniqueIdentifier>{67c1841a-b13b-7209-39b4-8393eb5073d6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\AcsFramework_Core\Scene\Model3D">
+      <UniqueIdentifier>{79cdabc9-6138-da84-dcb5-971d07edd6b0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\AcsFramework_Core\Scene\Model3D\Test">
+      <UniqueIdentifier>{5bd1a830-88a7-ca66-6d13-4e065822d9b0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\AcsFramework_Core\Scene\Prefab">
+      <UniqueIdentifier>{c28dd9de-8cef-59e1-9214-a19ffaa9a107}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\AcsFramework_Core\Scene\Prefab\Test">
+      <UniqueIdentifier>{f7eff7e4-7544-5ba1-84a3-a468e44e4ee9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\AcsFramework_Core\Scene\Snapshot">
+      <UniqueIdentifier>{76e4ecac-d86f-575c-a2cc-c13f48bb814c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\AcsFramework_Core\Scene\Snapshot\Test">
+      <UniqueIdentifier>{37058ff1-369f-5831-9a78-e55bb24db45b}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Source\AcsFramework_Core\Screen">
       <UniqueIdentifier>{baf65697-257d-0cf3-e822-e17c15909ac1}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source\AcsFramework_Core\Settings">
       <UniqueIdentifier>{6101c26c-1126-a64e-e5ac-bcd6f630cdfc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\AcsFramework_Core\Simulation">
+      <UniqueIdentifier>{bf7024f6-6cd5-5779-80d2-8165d52c3c81}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\AcsFramework_Core\Simulation\Input">
+      <UniqueIdentifier>{791ab8b2-3a56-526f-8036-1a747fd58fe8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\AcsFramework_Core\Simulation\Test">
+      <UniqueIdentifier>{94ff8a17-dc25-5b50-87bf-800c452176bb}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source\AcsFramework_Core\State">
       <UniqueIdentifier>{e5bf6216-ce8b-cf76-ac7a-8852ab71ae9d}</UniqueIdentifier>
@@ -52,20 +94,50 @@
     <Filter Include="Source\AcsFramework_Core\Text">
       <UniqueIdentifier>{5dfdb26a-8201-9452-3974-b3161e229a93}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\AcsFramework_Core\Text\Localization">
+      <UniqueIdentifier>{f19ce6d8-124a-dc45-e818-6900cc319637}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\AcsFramework_Core\Text\Localization\Test">
+      <UniqueIdentifier>{f3529740-0897-a0b4-6686-9b665ef9ae8c}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Source\AcsFramework_Core\Time">
       <UniqueIdentifier>{5a2dd199-e48e-8d78-a182-b8679f301882}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source\AcsFramework_Core\Timer">
       <UniqueIdentifier>{1a0bf668-8aba-a2f0-141e-19da0ecf4793}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\AcsFramework_Sample">
+      <UniqueIdentifier>{c6ca8f33-14b7-d32b-63a8-8b39066ed096}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\AcsFramework_Sample\Scene">
+      <UniqueIdentifier>{80300694-7f9f-57b1-6c1b-b3b0ae0437cb}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Source\Common">
       <UniqueIdentifier>{0d9f2c6e-6a7b-4a1e-9f2d-5c1b8a7e4d30}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Common\Compat">
+      <UniqueIdentifier>{49aeb1a2-6e73-e1bd-4590-ebd9cae52b61}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Common\File">
+      <UniqueIdentifier>{848f4523-2f38-53e5-93c8-2314abf4c2c1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Common\Test">
+      <UniqueIdentifier>{14a78228-f7fd-5a59-9e97-25600c5664b5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Common\Text">
+      <UniqueIdentifier>{310ad817-f7d7-5521-8134-5da319faf2cc}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source\Debug">
       <UniqueIdentifier>{074c9bd0-6ce5-1e05-ec87-3c23be35bff5}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source\Debug\DebugTop">
       <UniqueIdentifier>{5affac60-4ca5-6091-7653-c6f0d33a876b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Debug\DebugTopSample">
+      <UniqueIdentifier>{69521ce9-8112-d19f-0cf6-1bd294361bb4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Debug\DebugTopSample\Pages">
+      <UniqueIdentifier>{e22da821-a2bd-5f84-fdbe-62fd2a584152}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source\Debug\DebugTop\Builtin">
       <UniqueIdentifier>{43a270f2-8657-1674-b44b-de7bf7d70a06}</UniqueIdentifier>
@@ -91,29 +163,14 @@
     <Filter Include="Source\Debug\DebugTop\Widget">
       <UniqueIdentifier>{70734b3b-65c1-cb75-4eb0-e8a70a106a5d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\EntryPoint">
-      <UniqueIdentifier>{5a8c13f7-90e2-4b46-8d71-af6290c4b3d5}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source\AcsFramework_Core\Audio\Music">
-      <UniqueIdentifier>{b86af834-180f-5c80-b670-4a225cce99ac}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source\AcsFramework_Core\Audio\Spatial">
-      <UniqueIdentifier>{0fcb8e65-1390-5dd0-9035-7d24378d63c0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source\AcsFramework_Core\Scene\Prefab">
-      <UniqueIdentifier>{c28dd9de-8cef-59e1-9214-a19ffaa9a107}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source\AcsFramework_Core\Scene\Snapshot">
-      <UniqueIdentifier>{76e4ecac-d86f-575c-a2cc-c13f48bb814c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source\Common\Text">
-      <UniqueIdentifier>{310ad817-f7d7-5521-8134-5da319faf2cc}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source\Debug\DevConsole">
       <UniqueIdentifier>{1b38d356-a071-5b20-afe9-f0e14dfbbabc}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source\Debug\DevConsole\Builtin">
       <UniqueIdentifier>{8f784911-b79d-51c4-8342-76f95e1632c4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Debug\DevConsole\Test">
+      <UniqueIdentifier>{14f2da3d-b2a3-5330-b9ea-1e83bf00506e}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source\Debug\DevConsole\View">
       <UniqueIdentifier>{2f34a94e-56ab-5178-a1f7-5b2fc1b86f5f}</UniqueIdentifier>
@@ -124,29 +181,20 @@
     <Filter Include="Source\Debug\HotReload\Builtin">
       <UniqueIdentifier>{3db0c90d-5889-5a2c-b1db-25dfe8e23ccf}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Debug\HotReload\Test">
+      <UniqueIdentifier>{c49a9c10-515e-5aae-82d1-6cde91decc89}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Source\Debug\HotReload\View">
       <UniqueIdentifier>{6599b5d5-ba26-5156-bd05-04f61ffcaa48}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source\Debug\Perf">
       <UniqueIdentifier>{1bd12cac-7065-59bf-bbc8-d53dffee00e1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Debug\Perf\Test">
+      <UniqueIdentifier>{bbc42a73-21ec-59a6-8b89-2ecc877c2486}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Source\Debug\Perf\View">
       <UniqueIdentifier>{48bf9a7d-223e-5655-a3fe-d26a56b947a2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source\AcsFramework_Core\Simulation">
-      <UniqueIdentifier>{bf7024f6-6cd5-5779-80d2-8165d52c3c81}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source\AcsFramework_Core\Simulation\Test">
-      <UniqueIdentifier>{94ff8a17-dc25-5b50-87bf-800c452176bb}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Tools">
-      <UniqueIdentifier>{f90cee88-2195-5fbe-a805-f77c58b4293c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source\AcsFramework_Core\Simulation\Input">
-      <UniqueIdentifier>{791ab8b2-3a56-526f-8036-1a747fd58fe8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source\Common\File">
-      <UniqueIdentifier>{848f4523-2f38-53e5-93c8-2314abf4c2c1}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source\Debug\Simulation">
       <UniqueIdentifier>{2f445bb0-7958-5588-b69e-1823dfd35922}</UniqueIdentifier>
@@ -154,29 +202,11 @@
     <Filter Include="Source\Debug\Simulation\View">
       <UniqueIdentifier>{280b50bc-1604-51f2-9d5b-4a28ccc52555}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\Common\Test">
-      <UniqueIdentifier>{14a78228-f7fd-5a59-9e97-25600c5664b5}</UniqueIdentifier>
+    <Filter Include="Source\EntryPoint">
+      <UniqueIdentifier>{5a8c13f7-90e2-4b46-8d71-af6290c4b3d5}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\AcsFramework_Core\Audio\Music\Test">
-      <UniqueIdentifier>{ac4c0dad-1294-5dda-984f-aeaa13f7e86f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source\AcsFramework_Core\Audio\Spatial\Test">
-      <UniqueIdentifier>{b874881c-f5be-5e1d-a84e-b4341b7d499b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source\AcsFramework_Core\Scene\Snapshot\Test">
-      <UniqueIdentifier>{37058ff1-369f-5831-9a78-e55bb24db45b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source\Debug\DevConsole\Test">
-      <UniqueIdentifier>{14f2da3d-b2a3-5330-b9ea-1e83bf00506e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source\Debug\Perf\Test">
-      <UniqueIdentifier>{bbc42a73-21ec-59a6-8b89-2ecc877c2486}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source\AcsFramework_Core\Scene\Prefab\Test">
-      <UniqueIdentifier>{f7eff7e4-7544-5ba1-84a3-a468e44e4ee9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source\Debug\HotReload\Test">
-      <UniqueIdentifier>{c49a9c10-515e-5aae-82d1-6cde91decc89}</UniqueIdentifier>
+    <Filter Include="Tools">
+      <UniqueIdentifier>{f90cee88-2195-5fbe-a805-f77c58b4293c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -197,6 +227,30 @@
     </ClCompile>
     <ClCompile Include="Source\AcsFramework_Core\Audio\AudioSubsystem.cpp">
       <Filter>Source\AcsFramework_Core\Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Audio\Music\MusicStateArbiter.cpp">
+      <Filter>Source\AcsFramework_Core\Audio\Music</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Audio\Music\MusicStingerPump.cpp">
+      <Filter>Source\AcsFramework_Core\Audio\Music</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Audio\Music\MusicSubsystem.cpp">
+      <Filter>Source\AcsFramework_Core\Audio\Music</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Audio\Music\MusicTrackCatalog.cpp">
+      <Filter>Source\AcsFramework_Core\Audio\Music</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Audio\Spatial\SpatialAudioSubsystem.cpp">
+      <Filter>Source\AcsFramework_Core\Audio\Spatial</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Audio\Spatial\SpatialListenerBinder.cpp">
+      <Filter>Source\AcsFramework_Core\Audio\Spatial</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Audio\Spatial\SpatialSfxRouter.cpp">
+      <Filter>Source\AcsFramework_Core\Audio\Spatial</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Audio\Spatial\SpatialSourceRegistry.cpp">
+      <Filter>Source\AcsFramework_Core\Audio\Spatial</Filter>
     </ClCompile>
     <ClCompile Include="Source\AcsFramework_Core\Boot\BootScene.cpp">
       <Filter>Source\AcsFramework_Core\Boot</Filter>
@@ -240,11 +294,44 @@
     <ClCompile Include="Source\AcsFramework_Core\Save\SaveSubsystem.cpp">
       <Filter>Source\AcsFramework_Core\Save</Filter>
     </ClCompile>
-    <ClCompile Include="Source\AcsFramework_Core\Scene\SceneTravelSubsystem.cpp">
-      <Filter>Source\AcsFramework_Core\Scene</Filter>
+    <ClCompile Include="Source\AcsFramework_Core\Scene\Model3D\Model3DSpawner.cpp">
+      <Filter>Source\AcsFramework_Core\Scene\Model3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Scene\Model3D\Model3DSpawnParams.cpp">
+      <Filter>Source\AcsFramework_Core\Scene\Model3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Scene\Prefab\PrefabRegistrar.cpp">
+      <Filter>Source\AcsFramework_Core\Scene\Prefab</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Scene\Prefab\PrefabSpawner.cpp">
+      <Filter>Source\AcsFramework_Core\Scene\Prefab</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Scene\Prefab\PrefabSubsystem.cpp">
+      <Filter>Source\AcsFramework_Core\Scene\Prefab</Filter>
     </ClCompile>
     <ClCompile Include="Source\AcsFramework_Core\Scene\SceneTravelController.cpp">
       <Filter>Source\AcsFramework_Core\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Scene\SceneTravelSubsystem.cpp">
+      <Filter>Source\AcsFramework_Core\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Scene\Snapshot\SceneSnapshotBuffer.cpp">
+      <Filter>Source\AcsFramework_Core\Scene\Snapshot</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Scene\Snapshot\SceneSnapshotFile.cpp">
+      <Filter>Source\AcsFramework_Core\Scene\Snapshot</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Scene\Snapshot\SceneSnapshotReader.cpp">
+      <Filter>Source\AcsFramework_Core\Scene\Snapshot</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Scene\Snapshot\SceneSnapshotStatus.cpp">
+      <Filter>Source\AcsFramework_Core\Scene\Snapshot</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Scene\Snapshot\SceneSnapshotSubsystem.cpp">
+      <Filter>Source\AcsFramework_Core\Scene\Snapshot</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Scene\Snapshot\SceneSnapshotWriter.cpp">
+      <Filter>Source\AcsFramework_Core\Scene\Snapshot</Filter>
     </ClCompile>
     <ClCompile Include="Source\AcsFramework_Core\Screen\ScreenSubsystem.cpp">
       <Filter>Source\AcsFramework_Core\Screen</Filter>
@@ -255,8 +342,62 @@
     <ClCompile Include="Source\AcsFramework_Core\Settings\GameSettingsSubsystem.cpp">
       <Filter>Source\AcsFramework_Core\Settings</Filter>
     </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Simulation\ActionInputTape.cpp">
+      <Filter>Source\AcsFramework_Core\Simulation</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Simulation\DeterministicRandom.cpp">
+      <Filter>Source\AcsFramework_Core\Simulation</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Simulation\FixedStepDriver.cpp">
+      <Filter>Source\AcsFramework_Core\Simulation</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Simulation\Input\ActionBindingTable.cpp">
+      <Filter>Source\AcsFramework_Core\Simulation\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Simulation\Input\BoundActionSource.cpp">
+      <Filter>Source\AcsFramework_Core\Simulation\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Simulation\Input\DeviceActionReader.cpp">
+      <Filter>Source\AcsFramework_Core\Simulation\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Simulation\ReplayFile.cpp">
+      <Filter>Source\AcsFramework_Core\Simulation</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Simulation\SimulationEventQueue.cpp">
+      <Filter>Source\AcsFramework_Core\Simulation</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Simulation\SimulationSnapshot.cpp">
+      <Filter>Source\AcsFramework_Core\Simulation</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Simulation\SimulationSnapshotFile.cpp">
+      <Filter>Source\AcsFramework_Core\Simulation</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Simulation\SimulationSubsystem.cpp">
+      <Filter>Source\AcsFramework_Core\Simulation</Filter>
+    </ClCompile>
     <ClCompile Include="Source\AcsFramework_Core\State\AppStateSubsystem.cpp">
       <Filter>Source\AcsFramework_Core\State</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Text\Localization\LocaleCatalog.cpp">
+      <Filter>Source\AcsFramework_Core\Text\Localization</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Text\Localization\LocaleChangeBroadcaster.cpp">
+      <Filter>Source\AcsFramework_Core\Text\Localization</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Text\Localization\LocaleName.cpp">
+      <Filter>Source\AcsFramework_Core\Text\Localization</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Text\Localization\LocalizationSubsystem.cpp">
+      <Filter>Source\AcsFramework_Core\Text\Localization</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Text\Localization\LocalizationTableParser.cpp">
+      <Filter>Source\AcsFramework_Core\Text\Localization</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Text\Localization\TextArgument.cpp">
+      <Filter>Source\AcsFramework_Core\Text\Localization</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Text\Localization\TextFormatter.cpp">
+      <Filter>Source\AcsFramework_Core\Text\Localization</Filter>
     </ClCompile>
     <ClCompile Include="Source\AcsFramework_Core\Text\StringConvert.cpp">
       <Filter>Source\AcsFramework_Core\Text</Filter>
@@ -279,8 +420,17 @@
     <ClCompile Include="Source\AcsFramework_Core\Time\TimeSubsystem.cpp">
       <Filter>Source\AcsFramework_Core\Time</Filter>
     </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Sample\Scene\Demo3DScene.cpp">
+      <Filter>Source\AcsFramework_Sample\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Common\File\AcsArchiveFile.cpp">
+      <Filter>Source\Common\File</Filter>
+    </ClCompile>
     <ClCompile Include="Source\Common\Pch.cpp">
       <Filter>Source\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Common\Text\InternedNamePool.cpp">
+      <Filter>Source\Common\Text</Filter>
     </ClCompile>
     <ClCompile Include="Source\Debug\DebugTop\Builtin\DebugTopAppearance.cpp">
       <Filter>Source\Debug\DebugTop\Builtin</Filter>
@@ -420,63 +570,6 @@
     <ClCompile Include="Source\Debug\DebugTop\Widget\DebugTopTooltip.cpp">
       <Filter>Source\Debug\DebugTop\Widget</Filter>
     </ClCompile>
-    <ClCompile Include="Source\EntryPoint\EntryPoint.cpp">
-      <Filter>Source\EntryPoint</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\AcsFramework_Core\Audio\Music\MusicStateArbiter.cpp">
-      <Filter>Source\AcsFramework_Core\Audio\Music</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\AcsFramework_Core\Audio\Music\MusicStingerPump.cpp">
-      <Filter>Source\AcsFramework_Core\Audio\Music</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\AcsFramework_Core\Audio\Music\MusicSubsystem.cpp">
-      <Filter>Source\AcsFramework_Core\Audio\Music</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\AcsFramework_Core\Audio\Music\MusicTrackCatalog.cpp">
-      <Filter>Source\AcsFramework_Core\Audio\Music</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\AcsFramework_Core\Audio\Spatial\SpatialAudioSubsystem.cpp">
-      <Filter>Source\AcsFramework_Core\Audio\Spatial</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\AcsFramework_Core\Audio\Spatial\SpatialListenerBinder.cpp">
-      <Filter>Source\AcsFramework_Core\Audio\Spatial</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\AcsFramework_Core\Audio\Spatial\SpatialSfxRouter.cpp">
-      <Filter>Source\AcsFramework_Core\Audio\Spatial</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\AcsFramework_Core\Audio\Spatial\SpatialSourceRegistry.cpp">
-      <Filter>Source\AcsFramework_Core\Audio\Spatial</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\AcsFramework_Core\Scene\Prefab\PrefabRegistrar.cpp">
-      <Filter>Source\AcsFramework_Core\Scene\Prefab</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\AcsFramework_Core\Scene\Prefab\PrefabSpawner.cpp">
-      <Filter>Source\AcsFramework_Core\Scene\Prefab</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\AcsFramework_Core\Scene\Prefab\PrefabSubsystem.cpp">
-      <Filter>Source\AcsFramework_Core\Scene\Prefab</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\AcsFramework_Core\Scene\Snapshot\SceneSnapshotBuffer.cpp">
-      <Filter>Source\AcsFramework_Core\Scene\Snapshot</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\AcsFramework_Core\Scene\Snapshot\SceneSnapshotFile.cpp">
-      <Filter>Source\AcsFramework_Core\Scene\Snapshot</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\AcsFramework_Core\Scene\Snapshot\SceneSnapshotReader.cpp">
-      <Filter>Source\AcsFramework_Core\Scene\Snapshot</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\AcsFramework_Core\Scene\Snapshot\SceneSnapshotStatus.cpp">
-      <Filter>Source\AcsFramework_Core\Scene\Snapshot</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\AcsFramework_Core\Scene\Snapshot\SceneSnapshotSubsystem.cpp">
-      <Filter>Source\AcsFramework_Core\Scene\Snapshot</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\AcsFramework_Core\Scene\Snapshot\SceneSnapshotWriter.cpp">
-      <Filter>Source\AcsFramework_Core\Scene\Snapshot</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Common\Text\InternedNamePool.cpp">
-      <Filter>Source\Common\Text</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Debug\DevConsole\Builtin\ConsoleCommandsApp.cpp">
       <Filter>Source\Debug\DevConsole\Builtin</Filter>
     </ClCompile>
@@ -519,6 +612,9 @@
     <ClCompile Include="Source\Debug\HotReload\View\HotReloadPage.cpp">
       <Filter>Source\Debug\HotReload\View</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Debug\HotReload\WatcherEventSource.cpp">
+      <Filter>Source\Debug\HotReload</Filter>
+    </ClCompile>
     <ClCompile Include="Source\Debug\Perf\PerfBudgetSnapshot.cpp">
       <Filter>Source\Debug\Perf</Filter>
     </ClCompile>
@@ -537,77 +633,11 @@
     <ClCompile Include="Source\Debug\Perf\View\PerfCategoryRow.cpp">
       <Filter>Source\Debug\Perf\View</Filter>
     </ClCompile>
-    <ClCompile Include="Source\AcsFramework_Core\Simulation\ActionInputTape.cpp">
-      <Filter>Source\AcsFramework_Core\Simulation</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\AcsFramework_Core\Simulation\DeterministicRandom.cpp">
-      <Filter>Source\AcsFramework_Core\Simulation</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\AcsFramework_Core\Simulation\FixedStepDriver.cpp">
-      <Filter>Source\AcsFramework_Core\Simulation</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\AcsFramework_Core\Simulation\SimulationEventQueue.cpp">
-      <Filter>Source\AcsFramework_Core\Simulation</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\AcsFramework_Core\Simulation\SimulationSubsystem.cpp">
-      <Filter>Source\AcsFramework_Core\Simulation</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\AcsFramework_Core\Simulation\Input\ActionBindingTable.cpp">
-      <Filter>Source\AcsFramework_Core\Simulation\Input</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\AcsFramework_Core\Simulation\Input\DeviceActionReader.cpp">
-      <Filter>Source\AcsFramework_Core\Simulation\Input</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\AcsFramework_Core\Simulation\Input\BoundActionSource.cpp">
-      <Filter>Source\AcsFramework_Core\Simulation\Input</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\AcsFramework_Core\Simulation\ReplayFile.cpp">
-      <Filter>Source\AcsFramework_Core\Simulation</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Common\File\AcsArchiveFile.cpp">
-      <Filter>Source\Common\File</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Debug\Simulation\View\SimulationPage.cpp">
       <Filter>Source\Debug\Simulation\View</Filter>
     </ClCompile>
-    <ClCompile Include="Source\AcsFramework_Core\Simulation\SimulationSnapshot.cpp">
-      <Filter>Source\AcsFramework_Core\Simulation</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\AcsFramework_Core\Simulation\SimulationSnapshotFile.cpp">
-      <Filter>Source\AcsFramework_Core\Simulation</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Debug\HotReload\WatcherEventSource.cpp">
-      <Filter>Source\Debug\HotReload</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\AcsFramework_Core\Text\Localization\TextArgument.cpp">
-      <Filter>Source\AcsFramework_Core\Text\Localization</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\AcsFramework_Core\Text\Localization\TextFormatter.cpp">
-      <Filter>Source\AcsFramework_Core\Text\Localization</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\AcsFramework_Core\Text\Localization\LocaleCatalog.cpp">
-      <Filter>Source\AcsFramework_Core\Text\Localization</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\AcsFramework_Core\Text\Localization\LocaleName.cpp">
-      <Filter>Source\AcsFramework_Core\Text\Localization</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\AcsFramework_Core\Text\Localization\LocalizationTableParser.cpp">
-      <Filter>Source\AcsFramework_Core\Text\Localization</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\AcsFramework_Core\Text\Localization\LocaleChangeBroadcaster.cpp">
-      <Filter>Source\AcsFramework_Core\Text\Localization</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\AcsFramework_Core\Text\Localization\LocalizationSubsystem.cpp">
-      <Filter>Source\AcsFramework_Core\Text\Localization</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\AcsFramework_Core\Scene\Model3D\Model3DSpawnParams.cpp">
-      <Filter>Source\AcsFramework_Core\Scene\Model3D</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\AcsFramework_Core\Scene\Model3D\Model3DSpawner.cpp">
-      <Filter>Source\AcsFramework_Core\Scene\Model3D</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\AcsFramework_Sample\Scene\Demo3DScene.cpp">
-      <Filter>Source\AcsFramework_Sample\Scene</Filter>
+    <ClCompile Include="Source\EntryPoint\EntryPoint.cpp">
+      <Filter>Source\EntryPoint</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -634,6 +664,42 @@
     </ClInclude>
     <ClInclude Include="Source\AcsFramework_Core\Audio\AudioSubsystem.h">
       <Filter>Source\AcsFramework_Core\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Audio\Music\IMusicStateSource.h">
+      <Filter>Source\AcsFramework_Core\Audio\Music</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Audio\Music\MusicPriority.h">
+      <Filter>Source\AcsFramework_Core\Audio\Music</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Audio\Music\MusicStateArbiter.h">
+      <Filter>Source\AcsFramework_Core\Audio\Music</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Audio\Music\MusicStateRequest.h">
+      <Filter>Source\AcsFramework_Core\Audio\Music</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Audio\Music\MusicStingerPump.h">
+      <Filter>Source\AcsFramework_Core\Audio\Music</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Audio\Music\MusicSubsystem.h">
+      <Filter>Source\AcsFramework_Core\Audio\Music</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Audio\Music\MusicTrackCatalog.h">
+      <Filter>Source\AcsFramework_Core\Audio\Music</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Audio\Spatial\SpatialAudioSubsystem.h">
+      <Filter>Source\AcsFramework_Core\Audio\Spatial</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Audio\Spatial\SpatialListenerBinder.h">
+      <Filter>Source\AcsFramework_Core\Audio\Spatial</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Audio\Spatial\SpatialPlayRequest.h">
+      <Filter>Source\AcsFramework_Core\Audio\Spatial</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Audio\Spatial\SpatialSfxRouter.h">
+      <Filter>Source\AcsFramework_Core\Audio\Spatial</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Audio\Spatial\SpatialSourceRegistry.h">
+      <Filter>Source\AcsFramework_Core\Audio\Spatial</Filter>
     </ClInclude>
     <ClInclude Include="Source\AcsFramework_Core\Boot\BootScene.h">
       <Filter>Source\AcsFramework_Core\Boot</Filter>
@@ -680,6 +746,27 @@
     <ClInclude Include="Source\AcsFramework_Core\Save\SaveSubsystem.h">
       <Filter>Source\AcsFramework_Core\Save</Filter>
     </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Model3D\Model3DSpawner.h">
+      <Filter>Source\AcsFramework_Core\Scene\Model3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Model3D\Model3DSpawnParams.h">
+      <Filter>Source\AcsFramework_Core\Scene\Model3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Prefab\IPrefabProvider.h">
+      <Filter>Source\AcsFramework_Core\Scene\Prefab</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Prefab\PrefabRegistrar.h">
+      <Filter>Source\AcsFramework_Core\Scene\Prefab</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Prefab\PrefabSpawner.h">
+      <Filter>Source\AcsFramework_Core\Scene\Prefab</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Prefab\PrefabSpawnParams.h">
+      <Filter>Source\AcsFramework_Core\Scene\Prefab</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Prefab\PrefabSubsystem.h">
+      <Filter>Source\AcsFramework_Core\Scene\Prefab</Filter>
+    </ClInclude>
     <ClInclude Include="Source\AcsFramework_Core\Scene\SceneTransition.h">
       <Filter>Source\AcsFramework_Core\Scene</Filter>
     </ClInclude>
@@ -688,6 +775,24 @@
     </ClInclude>
     <ClInclude Include="Source\AcsFramework_Core\Scene\SceneTravelSubsystem.h">
       <Filter>Source\AcsFramework_Core\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Snapshot\SceneSnapshotBuffer.h">
+      <Filter>Source\AcsFramework_Core\Scene\Snapshot</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Snapshot\SceneSnapshotFile.h">
+      <Filter>Source\AcsFramework_Core\Scene\Snapshot</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Snapshot\SceneSnapshotReader.h">
+      <Filter>Source\AcsFramework_Core\Scene\Snapshot</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Snapshot\SceneSnapshotStatus.h">
+      <Filter>Source\AcsFramework_Core\Scene\Snapshot</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Snapshot\SceneSnapshotSubsystem.h">
+      <Filter>Source\AcsFramework_Core\Scene\Snapshot</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Snapshot\SceneSnapshotWriter.h">
+      <Filter>Source\AcsFramework_Core\Scene\Snapshot</Filter>
     </ClInclude>
     <ClInclude Include="Source\AcsFramework_Core\Screen\ScreenSubsystem.h">
       <Filter>Source\AcsFramework_Core\Screen</Filter>
@@ -698,8 +803,86 @@
     <ClInclude Include="Source\AcsFramework_Core\Settings\GameSettingsSubsystem.h">
       <Filter>Source\AcsFramework_Core\Settings</Filter>
     </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Simulation\ActionInput.h">
+      <Filter>Source\AcsFramework_Core\Simulation</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Simulation\ActionInputTape.h">
+      <Filter>Source\AcsFramework_Core\Simulation</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Simulation\DeterministicRandom.h">
+      <Filter>Source\AcsFramework_Core\Simulation</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Simulation\FixedStepDriver.h">
+      <Filter>Source\AcsFramework_Core\Simulation</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Simulation\IActionInputSource.h">
+      <Filter>Source\AcsFramework_Core\Simulation</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Simulation\Input\ActionBinding.h">
+      <Filter>Source\AcsFramework_Core\Simulation\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Simulation\Input\ActionBindingTable.h">
+      <Filter>Source\AcsFramework_Core\Simulation\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Simulation\Input\BoundActionSource.h">
+      <Filter>Source\AcsFramework_Core\Simulation\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Simulation\Input\DeviceActionReader.h">
+      <Filter>Source\AcsFramework_Core\Simulation\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Simulation\Input\IActionDeviceReader.h">
+      <Filter>Source\AcsFramework_Core\Simulation\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Simulation\ISimulationRule.h">
+      <Filter>Source\AcsFramework_Core\Simulation</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Simulation\ReplayFile.h">
+      <Filter>Source\AcsFramework_Core\Simulation</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Simulation\SimulationContext.h">
+      <Filter>Source\AcsFramework_Core\Simulation</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Simulation\SimulationEvent.h">
+      <Filter>Source\AcsFramework_Core\Simulation</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Simulation\SimulationEventQueue.h">
+      <Filter>Source\AcsFramework_Core\Simulation</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Simulation\SimulationSnapshot.h">
+      <Filter>Source\AcsFramework_Core\Simulation</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Simulation\SimulationSnapshotFile.h">
+      <Filter>Source\AcsFramework_Core\Simulation</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Simulation\SimulationSubsystem.h">
+      <Filter>Source\AcsFramework_Core\Simulation</Filter>
+    </ClInclude>
     <ClInclude Include="Source\AcsFramework_Core\State\AppStateSubsystem.h">
       <Filter>Source\AcsFramework_Core\State</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Text\Localization\ILocaleChangeListener.h">
+      <Filter>Source\AcsFramework_Core\Text\Localization</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Text\Localization\LocaleCatalog.h">
+      <Filter>Source\AcsFramework_Core\Text\Localization</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Text\Localization\LocaleChangeBroadcaster.h">
+      <Filter>Source\AcsFramework_Core\Text\Localization</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Text\Localization\LocaleName.h">
+      <Filter>Source\AcsFramework_Core\Text\Localization</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Text\Localization\LocalizationSubsystem.h">
+      <Filter>Source\AcsFramework_Core\Text\Localization</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Text\Localization\LocalizationTableParser.h">
+      <Filter>Source\AcsFramework_Core\Text\Localization</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Text\Localization\TextArgument.h">
+      <Filter>Source\AcsFramework_Core\Text\Localization</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Text\Localization\TextFormatter.h">
+      <Filter>Source\AcsFramework_Core\Text\Localization</Filter>
     </ClInclude>
     <ClInclude Include="Source\AcsFramework_Core\Text\StringConvert.h">
       <Filter>Source\AcsFramework_Core\Text</Filter>
@@ -725,8 +908,26 @@
     <ClInclude Include="Source\AcsFramework_Core\Time\TimeSubsystem.h">
       <Filter>Source\AcsFramework_Core\Time</Filter>
     </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Sample\Scene\Demo3DScene.h">
+      <Filter>Source\AcsFramework_Sample\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Common\Compat\AcsAnnotations.h">
+      <Filter>Source\Common\Compat</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Common\Compat\AcsEnumReflection.h">
+      <Filter>Source\Common\Compat</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Common\Compat\AcsUiFont.h">
+      <Filter>Source\Common\Compat</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Common\File\AcsArchiveFile.h">
+      <Filter>Source\Common\File</Filter>
+    </ClInclude>
     <ClInclude Include="Source\Common\Pch.h">
       <Filter>Source\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Common\Text\InternedNamePool.h">
+      <Filter>Source\Common\Text</Filter>
     </ClInclude>
     <ClInclude Include="Source\Debug\DebugTop\Builtin\DebugTopAppearance.h">
       <Filter>Source\Debug\DebugTop\Builtin</Filter>
@@ -884,81 +1085,6 @@
     <ClInclude Include="Source\Debug\DebugTop\Widget\DebugTopTooltip.h">
       <Filter>Source\Debug\DebugTop\Widget</Filter>
     </ClInclude>
-    <ClInclude Include="Source\EntryPoint\EntryPoint.h">
-      <Filter>Source\EntryPoint</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\AcsFramework_Core\Audio\Music\IMusicStateSource.h">
-      <Filter>Source\AcsFramework_Core\Audio\Music</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\AcsFramework_Core\Audio\Music\MusicPriority.h">
-      <Filter>Source\AcsFramework_Core\Audio\Music</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\AcsFramework_Core\Audio\Music\MusicStateArbiter.h">
-      <Filter>Source\AcsFramework_Core\Audio\Music</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\AcsFramework_Core\Audio\Music\MusicStateRequest.h">
-      <Filter>Source\AcsFramework_Core\Audio\Music</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\AcsFramework_Core\Audio\Music\MusicStingerPump.h">
-      <Filter>Source\AcsFramework_Core\Audio\Music</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\AcsFramework_Core\Audio\Music\MusicSubsystem.h">
-      <Filter>Source\AcsFramework_Core\Audio\Music</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\AcsFramework_Core\Audio\Music\MusicTrackCatalog.h">
-      <Filter>Source\AcsFramework_Core\Audio\Music</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\AcsFramework_Core\Audio\Spatial\SpatialAudioSubsystem.h">
-      <Filter>Source\AcsFramework_Core\Audio\Spatial</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\AcsFramework_Core\Audio\Spatial\SpatialListenerBinder.h">
-      <Filter>Source\AcsFramework_Core\Audio\Spatial</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\AcsFramework_Core\Audio\Spatial\SpatialPlayRequest.h">
-      <Filter>Source\AcsFramework_Core\Audio\Spatial</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\AcsFramework_Core\Audio\Spatial\SpatialSfxRouter.h">
-      <Filter>Source\AcsFramework_Core\Audio\Spatial</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\AcsFramework_Core\Audio\Spatial\SpatialSourceRegistry.h">
-      <Filter>Source\AcsFramework_Core\Audio\Spatial</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\AcsFramework_Core\Scene\Prefab\IPrefabProvider.h">
-      <Filter>Source\AcsFramework_Core\Scene\Prefab</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\AcsFramework_Core\Scene\Prefab\PrefabRegistrar.h">
-      <Filter>Source\AcsFramework_Core\Scene\Prefab</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\AcsFramework_Core\Scene\Prefab\PrefabSpawnParams.h">
-      <Filter>Source\AcsFramework_Core\Scene\Prefab</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\AcsFramework_Core\Scene\Prefab\PrefabSpawner.h">
-      <Filter>Source\AcsFramework_Core\Scene\Prefab</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\AcsFramework_Core\Scene\Prefab\PrefabSubsystem.h">
-      <Filter>Source\AcsFramework_Core\Scene\Prefab</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\AcsFramework_Core\Scene\Snapshot\SceneSnapshotBuffer.h">
-      <Filter>Source\AcsFramework_Core\Scene\Snapshot</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\AcsFramework_Core\Scene\Snapshot\SceneSnapshotFile.h">
-      <Filter>Source\AcsFramework_Core\Scene\Snapshot</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\AcsFramework_Core\Scene\Snapshot\SceneSnapshotReader.h">
-      <Filter>Source\AcsFramework_Core\Scene\Snapshot</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\AcsFramework_Core\Scene\Snapshot\SceneSnapshotStatus.h">
-      <Filter>Source\AcsFramework_Core\Scene\Snapshot</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\AcsFramework_Core\Scene\Snapshot\SceneSnapshotSubsystem.h">
-      <Filter>Source\AcsFramework_Core\Scene\Snapshot</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\AcsFramework_Core\Scene\Snapshot\SceneSnapshotWriter.h">
-      <Filter>Source\AcsFramework_Core\Scene\Snapshot</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Common\Text\InternedNamePool.h">
-      <Filter>Source\Common\Text</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Debug\DevConsole\Builtin\ConsoleCommandsApp.h">
       <Filter>Source\Debug\DevConsole\Builtin</Filter>
     </ClInclude>
@@ -1004,11 +1130,17 @@
     <ClInclude Include="Source\Debug\HotReload\HotReloadWatchPlan.h">
       <Filter>Source\Debug\HotReload</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Debug\HotReload\IHotReloadEventSource.h">
+      <Filter>Source\Debug\HotReload</Filter>
+    </ClInclude>
     <ClInclude Include="Source\Debug\HotReload\IHotReloadHandler.h">
       <Filter>Source\Debug\HotReload</Filter>
     </ClInclude>
     <ClInclude Include="Source\Debug\HotReload\View\HotReloadPage.h">
       <Filter>Source\Debug\HotReload\View</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Debug\HotReload\WatcherEventSource.h">
+      <Filter>Source\Debug\HotReload</Filter>
     </ClInclude>
     <ClInclude Include="Source\Debug\Perf\PerfBudgetRow.h">
       <Filter>Source\Debug\Perf</Filter>
@@ -1034,159 +1166,96 @@
     <ClInclude Include="Source\Debug\Perf\View\PerfCategoryRow.h">
       <Filter>Source\Debug\Perf\View</Filter>
     </ClInclude>
-    <ClInclude Include="Source\AcsFramework_Core\Simulation\ActionInput.h">
-      <Filter>Source\AcsFramework_Core\Simulation</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\AcsFramework_Core\Simulation\IActionInputSource.h">
-      <Filter>Source\AcsFramework_Core\Simulation</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\AcsFramework_Core\Simulation\ActionInputTape.h">
-      <Filter>Source\AcsFramework_Core\Simulation</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\AcsFramework_Core\Simulation\DeterministicRandom.h">
-      <Filter>Source\AcsFramework_Core\Simulation</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\AcsFramework_Core\Simulation\FixedStepDriver.h">
-      <Filter>Source\AcsFramework_Core\Simulation</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\AcsFramework_Core\Simulation\SimulationEvent.h">
-      <Filter>Source\AcsFramework_Core\Simulation</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\AcsFramework_Core\Simulation\SimulationEventQueue.h">
-      <Filter>Source\AcsFramework_Core\Simulation</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\AcsFramework_Core\Simulation\SimulationContext.h">
-      <Filter>Source\AcsFramework_Core\Simulation</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\AcsFramework_Core\Simulation\ISimulationRule.h">
-      <Filter>Source\AcsFramework_Core\Simulation</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\AcsFramework_Core\Simulation\SimulationSubsystem.h">
-      <Filter>Source\AcsFramework_Core\Simulation</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\AcsFramework_Core\Simulation\Input\IActionDeviceReader.h">
-      <Filter>Source\AcsFramework_Core\Simulation\Input</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\AcsFramework_Core\Simulation\Input\ActionBinding.h">
-      <Filter>Source\AcsFramework_Core\Simulation\Input</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\AcsFramework_Core\Simulation\Input\ActionBindingTable.h">
-      <Filter>Source\AcsFramework_Core\Simulation\Input</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\AcsFramework_Core\Simulation\Input\DeviceActionReader.h">
-      <Filter>Source\AcsFramework_Core\Simulation\Input</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\AcsFramework_Core\Simulation\Input\BoundActionSource.h">
-      <Filter>Source\AcsFramework_Core\Simulation\Input</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\AcsFramework_Core\Simulation\ReplayFile.h">
-      <Filter>Source\AcsFramework_Core\Simulation</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Common\File\AcsArchiveFile.h">
-      <Filter>Source\Common\File</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Debug\Simulation\View\SimulationPage.h">
       <Filter>Source\Debug\Simulation\View</Filter>
     </ClInclude>
-    <ClInclude Include="Source\AcsFramework_Core\Simulation\SimulationSnapshot.h">
-      <Filter>Source\AcsFramework_Core\Simulation</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\AcsFramework_Core\Simulation\SimulationSnapshotFile.h">
-      <Filter>Source\AcsFramework_Core\Simulation</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Debug\HotReload\IHotReloadEventSource.h">
-      <Filter>Source\Debug\HotReload</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Debug\HotReload\WatcherEventSource.h">
-      <Filter>Source\Debug\HotReload</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Common\Compat\AcsEnumReflection.h">
-      <Filter>Source\Common\Compat</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Common\Compat\AcsUiFont.h">
-      <Filter>Source\Common\Compat</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Common\Compat\AcsAnnotations.h">
-      <Filter>Source\Common\Compat</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\AcsFramework_Core\Text\Localization\TextArgument.h">
-      <Filter>Source\AcsFramework_Core\Text\Localization</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\AcsFramework_Core\Text\Localization\TextFormatter.h">
-      <Filter>Source\AcsFramework_Core\Text\Localization</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\AcsFramework_Core\Text\Localization\LocaleCatalog.h">
-      <Filter>Source\AcsFramework_Core\Text\Localization</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\AcsFramework_Core\Text\Localization\LocaleName.h">
-      <Filter>Source\AcsFramework_Core\Text\Localization</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\AcsFramework_Core\Text\Localization\LocalizationTableParser.h">
-      <Filter>Source\AcsFramework_Core\Text\Localization</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\AcsFramework_Core\Text\Localization\LocaleChangeBroadcaster.h">
-      <Filter>Source\AcsFramework_Core\Text\Localization</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\AcsFramework_Core\Text\Localization\ILocaleChangeListener.h">
-      <Filter>Source\AcsFramework_Core\Text\Localization</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\AcsFramework_Core\Text\Localization\LocalizationSubsystem.h">
-      <Filter>Source\AcsFramework_Core\Text\Localization</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\AcsFramework_Core\Scene\Model3D\Model3DSpawnParams.h">
-      <Filter>Source\AcsFramework_Core\Scene\Model3D</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\AcsFramework_Core\Scene\Model3D\Model3DSpawner.h">
-      <Filter>Source\AcsFramework_Core\Scene\Model3D</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\AcsFramework_Sample\Scene\Demo3DScene.h">
-      <Filter>Source\AcsFramework_Sample\Scene</Filter>
+    <ClInclude Include="Source\EntryPoint\EntryPoint.h">
+      <Filter>Source\EntryPoint</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Source\AcsFramework_Core\README.md">
-      <Filter>Source\AcsFramework_Core</Filter>
+    <None Include="Docs\demo3d-reference.png">
+      <Filter>Docs</Filter>
+    </None>
+    <None Include="Docs\demo3d-sunset.png">
+      <Filter>Docs</Filter>
+    </None>
+    <None Include="Docs\demo3d.png">
+      <Filter>Docs</Filter>
+    </None>
+    <None Include="Docs\ROADMAP.md">
+      <Filter>Docs</Filter>
     </None>
     <None Include="Source\AcsFramework_Core\Audio\Music\README.md">
       <Filter>Source\AcsFramework_Core\Audio\Music</Filter>
     </None>
+    <None Include="Source\AcsFramework_Core\Audio\Music\Test\MusicStateArbiterTest.cpp">
+      <Filter>Source\AcsFramework_Core\Audio\Music\Test</Filter>
+    </None>
     <None Include="Source\AcsFramework_Core\Audio\Spatial\README.md">
       <Filter>Source\AcsFramework_Core\Audio\Spatial</Filter>
+    </None>
+    <None Include="Source\AcsFramework_Core\Audio\Spatial\Test\SpatialSourceRegistryTest.cpp">
+      <Filter>Source\AcsFramework_Core\Audio\Spatial\Test</Filter>
+    </None>
+    <None Include="Source\AcsFramework_Core\README.md">
+      <Filter>Source\AcsFramework_Core</Filter>
+    </None>
+    <None Include="Source\AcsFramework_Core\Scene\Model3D\README.md">
+      <Filter>Source\AcsFramework_Core\Scene\Model3D</Filter>
+    </None>
+    <None Include="Source\AcsFramework_Core\Scene\Model3D\Test\Model3DSpawnerTest.cpp">
+      <Filter>Source\AcsFramework_Core\Scene\Model3D\Test</Filter>
     </None>
     <None Include="Source\AcsFramework_Core\Scene\Prefab\README.md">
       <Filter>Source\AcsFramework_Core\Scene\Prefab</Filter>
     </None>
+    <None Include="Source\AcsFramework_Core\Scene\Prefab\Test\PrefabSpawnerTest.cpp">
+      <Filter>Source\AcsFramework_Core\Scene\Prefab\Test</Filter>
+    </None>
     <None Include="Source\AcsFramework_Core\Scene\Snapshot\README.md">
       <Filter>Source\AcsFramework_Core\Scene\Snapshot</Filter>
     </None>
-    <None Include="Source\Debug\DevConsole\README.md">
-      <Filter>Source\Debug\DevConsole</Filter>
+    <None Include="Source\AcsFramework_Core\Scene\Snapshot\Test\SceneSnapshotStatusTest.cpp">
+      <Filter>Source\AcsFramework_Core\Scene\Snapshot\Test</Filter>
     </None>
-    <None Include="Source\Debug\HotReload\README.md">
-      <Filter>Source\Debug\HotReload</Filter>
-    </None>
-    <None Include="Source\Debug\Perf\README.md">
-      <Filter>Source\Debug\Perf</Filter>
+    <None Include="Source\AcsFramework_Core\Scene\Snapshot\Test\SceneSnapshotTest.cpp">
+      <Filter>Source\AcsFramework_Core\Scene\Snapshot\Test</Filter>
     </None>
     <None Include="Source\AcsFramework_Core\Simulation\README.md">
       <Filter>Source\AcsFramework_Core\Simulation</Filter>
     </None>
+    <None Include="Source\AcsFramework_Core\Simulation\Test\ActionBindingTableTest.cpp">
+      <Filter>Source\AcsFramework_Core\Simulation\Test</Filter>
+    </None>
+    <None Include="Source\AcsFramework_Core\Simulation\Test\ActionInputTapeTest.cpp">
+      <Filter>Source\AcsFramework_Core\Simulation\Test</Filter>
+    </None>
+    <None Include="Source\AcsFramework_Core\Simulation\Test\FixedStepDriverTest.cpp">
+      <Filter>Source\AcsFramework_Core\Simulation\Test</Filter>
+    </None>
     <None Include="Source\AcsFramework_Core\Simulation\Test\SimulationDeterminismTest.cpp">
       <Filter>Source\AcsFramework_Core\Simulation\Test</Filter>
     </None>
-    <None Include="Tools\RunSimulationDeterminismTest.ps1">
-      <Filter>Tools</Filter>
+    <None Include="Source\AcsFramework_Core\Simulation\Test\SimulationEventQueueTest.cpp">
+      <Filter>Source\AcsFramework_Core\Simulation\Test</Filter>
     </None>
-    <None Include="Source\Debug\Simulation\README.md">
-      <Filter>Source\Debug\Simulation</Filter>
+    <None Include="Source\AcsFramework_Core\Simulation\Test\SimulationSnapshotTest.cpp">
+      <Filter>Source\AcsFramework_Core\Simulation\Test</Filter>
     </None>
-    <None Include="Source\Common\Test\TestHarness.h">
+    <None Include="Source\AcsFramework_Core\Text\Localization\README.md">
+      <Filter>Source\AcsFramework_Core\Text\Localization</Filter>
+    </None>
+    <None Include="Source\AcsFramework_Core\Text\Localization\Test\LocalizationTest.cpp">
+      <Filter>Source\AcsFramework_Core\Text\Localization\Test</Filter>
+    </None>
+    <None Include="Source\Common\Compat\README.md">
+      <Filter>Source\Common\Compat</Filter>
+    </None>
+    <None Include="Source\Common\Test\AcsArchiveFileTest.cpp">
       <Filter>Source\Common\Test</Filter>
     </None>
-    <None Include="Source\Common\Test\TestHarness.cpp">
-      <Filter>Source\Common\Test</Filter>
-    </None>
-    <None Include="Source\Common\Test\UnitTestMain.cpp">
+    <None Include="Source\Common\Test\EnumReflectionTest.cpp">
       <Filter>Source\Common\Test</Filter>
     </None>
     <None Include="Source\Common\Test\InternedNamePoolTest.cpp">
@@ -1195,113 +1264,50 @@
     <None Include="Source\Common\Test\README.md">
       <Filter>Source\Common\Test</Filter>
     </None>
-    <None Include="Source\AcsFramework_Core\Simulation\Test\ActionInputTapeTest.cpp">
-      <Filter>Source\AcsFramework_Core\Simulation\Test</Filter>
+    <None Include="Source\Common\Test\TestHarness.cpp">
+      <Filter>Source\Common\Test</Filter>
     </None>
-    <None Include="Source\AcsFramework_Core\Simulation\Test\ActionBindingTableTest.cpp">
-      <Filter>Source\AcsFramework_Core\Simulation\Test</Filter>
+    <None Include="Source\Common\Test\TestHarness.h">
+      <Filter>Source\Common\Test</Filter>
     </None>
-    <None Include="Source\AcsFramework_Core\Simulation\Test\SimulationEventQueueTest.cpp">
-      <Filter>Source\AcsFramework_Core\Simulation\Test</Filter>
+    <None Include="Source\Common\Test\UnitTestMain.cpp">
+      <Filter>Source\Common\Test</Filter>
     </None>
-    <None Include="Source\AcsFramework_Core\Audio\Music\Test\MusicStateArbiterTest.cpp">
-      <Filter>Source\AcsFramework_Core\Audio\Music\Test</Filter>
-    </None>
-    <None Include="Source\AcsFramework_Core\Audio\Spatial\Test\SpatialSourceRegistryTest.cpp">
-      <Filter>Source\AcsFramework_Core\Audio\Spatial\Test</Filter>
-    </None>
-    <None Include="Source\AcsFramework_Core\Scene\Snapshot\Test\SceneSnapshotStatusTest.cpp">
-      <Filter>Source\AcsFramework_Core\Scene\Snapshot\Test</Filter>
+    <None Include="Source\Debug\DevConsole\README.md">
+      <Filter>Source\Debug\DevConsole</Filter>
     </None>
     <None Include="Source\Debug\DevConsole\Test\ConsoleArgumentReaderTest.cpp">
       <Filter>Source\Debug\DevConsole\Test</Filter>
     </None>
-    <None Include="Source\Debug\Perf\Test\PerfBudgetTest.cpp">
-      <Filter>Source\Debug\Perf\Test</Filter>
-    </None>
-    <None Include="Tools\RunUnitTests.ps1">
-      <Filter>Tools</Filter>
-    </None>
-    <None Include="Source\Common\Test\AcsArchiveFileTest.cpp">
-      <Filter>Source\Common\Test</Filter>
-    </None>
-    <None Include="Source\AcsFramework_Core\Simulation\Test\SimulationSnapshotTest.cpp">
-      <Filter>Source\AcsFramework_Core\Simulation\Test</Filter>
-    </None>
-    <None Include="Source\AcsFramework_Core\Scene\Prefab\Test\PrefabSpawnerTest.cpp">
-      <Filter>Source\AcsFramework_Core\Scene\Prefab\Test</Filter>
+    <None Include="Source\Debug\HotReload\README.md">
+      <Filter>Source\Debug\HotReload</Filter>
     </None>
     <None Include="Source\Debug\HotReload\Test\HotReloadDispatcherTest.cpp">
       <Filter>Source\Debug\HotReload\Test</Filter>
     </None>
-    <None Include="Source\AcsFramework_Core\Scene\Snapshot\Test\SceneSnapshotTest.cpp">
-      <Filter>Source\AcsFramework_Core\Scene\Snapshot\Test</Filter>
+    <None Include="Source\Debug\Perf\README.md">
+      <Filter>Source\Debug\Perf</Filter>
     </None>
-    <None Include="Source\AcsFramework_Core\Simulation\Test\FixedStepDriverTest.cpp">
-      <Filter>Source\AcsFramework_Core\Simulation\Test</Filter>
+    <None Include="Source\Debug\Perf\Test\PerfBudgetTest.cpp">
+      <Filter>Source\Debug\Perf\Test</Filter>
     </None>
-    <None Include="Source\Common\Compat\README.md">
-      <Filter>Source\Common\Compat</Filter>
+    <None Include="Source\Debug\Simulation\README.md">
+      <Filter>Source\Debug\Simulation</Filter>
     </None>
-    <None Include="Source\Common\Test\EnumReflectionTest.cpp">
-      <Filter>Source\Common\Test</Filter>
-    </None>
-    <None Include="Source\AcsFramework_Core\Text\Localization\README.md">
-      <Filter>Source\AcsFramework_Core\Text\Localization</Filter>
-    </None>
-    <None Include="Source\AcsFramework_Core\Text\Localization\Test\LocalizationTest.cpp">
-      <Filter>Source\AcsFramework_Core\Text\Localization\Test</Filter>
-    </None>
-    <None Include="Docs\ROADMAP.md">
-      <Filter>Docs</Filter>
-    </None>
-    <None Include="Source\AcsFramework_Core\Scene\Model3D\README.md">
-      <Filter>Source\AcsFramework_Core\Scene\Model3D</Filter>
-    </None>
-    <None Include="Source\AcsFramework_Core\Scene\Model3D\Test\Model3DSpawnerTest.cpp">
-      <Filter>Source\AcsFramework_Core\Scene\Model3D\Test</Filter>
-    </None>
-    <None Include="Tools\UpdateAcsDist.ps1">
+    <None Include="Tools\CaptureApp.ps1">
       <Filter>Tools</Filter>
     </None>
     <None Include="Tools\RunAcsTests.ps1">
       <Filter>Tools</Filter>
     </None>
-    <None Include="Tools\CaptureApp.ps1">
+    <None Include="Tools\RunSimulationDeterminismTest.ps1">
       <Filter>Tools</Filter>
-    <Filter Include="Docs">
-      <UniqueIdentifier>{84e6ff18-ab1d-5309-be2e-6a9b232492e6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source\AcsFramework_Core\Scene\Model3D">
-      <UniqueIdentifier>{4d1942c7-143d-5727-806c-e8551792a9a4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source\AcsFramework_Core\Scene\Model3D\Test">
-      <UniqueIdentifier>{acd4dd93-3d5b-5475-8087-3bac53669060}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source\AcsFramework_Core\Text\Localization">
-      <UniqueIdentifier>{42c2991f-022b-5388-9ef6-001a3217a12f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source\AcsFramework_Core\Text\Localization\Test">
-      <UniqueIdentifier>{0302984d-bb53-5f83-9bd3-f88b9afc99ef}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source\AcsFramework_Sample">
-      <UniqueIdentifier>{3e95f745-4e93-511a-ae9e-cf58ea401ebf}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source\AcsFramework_Sample\Scene">
-      <UniqueIdentifier>{b004a2b3-1b6d-5913-8d01-51acd573e30d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source\Common\Compat">
-      <UniqueIdentifier>{7d08126e-f0d5-52b0-a64a-a90e597905d3}</UniqueIdentifier>
-    </Filter>
     </None>
-    <None Include="Docs\demo3d.png">
-      <Filter>Docs</Filter>
+    <None Include="Tools\RunUnitTests.ps1">
+      <Filter>Tools</Filter>
     </None>
-    <None Include="Docs\demo3d-reference.png">
-      <Filter>Docs</Filter>
-    </None>
-    <None Include="Docs\demo3d-sunset.png">
-      <Filter>Docs</Filter>
+    <None Include="Tools\UpdateAcsDist.ps1">
+      <Filter>Tools</Filter>
     </None>
   </ItemGroup>
 </Project>
