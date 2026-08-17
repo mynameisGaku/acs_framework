@@ -104,6 +104,11 @@ void ADemo3DScene::OnEnter() noexcept
 	// 粗く描いて誤魔化す話ではない。3.0 のまま置く。
 	Clouds().RenderScale = 3.0f;
 
+	// 遮蔽。物と床の接するところを締める。半径は場面の大きさに合わせる
+	// (ここは球の直径が 1 前後なので 0.5)。
+	AmbientOcclusion().Intensity = 1.0f;
+	AmbientOcclusion().Radius = 0.5f;
+
 	// 大気が描く «地面» の色を、置いた床に寄せる。ここがずれると、地平線から下だけ
 	// 別の場所の色になり、床の縁で色が切り替わって見える。
 	Atmosphere().ground_albedo = FVec3{ 0.06f, 0.07f, 0.06f };
