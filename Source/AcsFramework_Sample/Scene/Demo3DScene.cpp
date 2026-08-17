@@ -85,9 +85,24 @@ void ADemo3DScene::OnEnter() noexcept
 	// 効く相手が無く、**灰色の靄にしかならない**。厚みがあって初めて上面と底面に差が出る。
 	Clouds().Coverage = 0.68f;
 	Clouds().Density = 2.8f;
-	Clouds().RenderScale = 3.0f;   // 画面の 3/4 の寸法でトレースする (1.0 は 1/4)
 	Clouds().BaseAltitude = 2600.0f;  // 低いと地平線を真横から貫いて、そこだけ粗く見える
 	Clouds().TopAltitude = 5200.0f;
+
+	// 上に薄い高い雲を敷く。1 枚だけだと空の «高さ» が読めない。
+	// 同じレイで両方を通るので、2 倍にはならない。
+	Clouds().UpperLayer.BaseAltitude = 7400.0f;
+	Clouds().UpperLayer.TopAltitude = 9200.0f;
+
+	// トレースの解像度。**雲の値段はほぼここで決まる。**
+	//
+	// 上を向いて画面全部が雲になる最悪の構図を Release で測ると (1296x759):
+	//
+	//   雲なし  3.4 ms   /  1/4 (1.0)  13.7 ms
+	//   1/2 (2.0) 30.0 ms  /  3/4 (3.0)  40.6 ms
+	//
+	// ここは**見え方の摘みであって、速さの摘みではない**。重いなら描き方を速くする話で、
+	// 粗く描いて誤魔化す話ではない。3.0 のまま置く。
+	Clouds().RenderScale = 3.0f;
 
 	// 大気が描く «地面» の色を、置いた床に寄せる。ここがずれると、地平線から下だけ
 	// 別の場所の色になり、床の縁で色が切り替わって見える。
@@ -96,17 +111,35 @@ void ADemo3DScene::OnEnter() noexcept
 	// 全体が入る位置までカメラを引く。
 	FrameScene();
 
-	// カメラを固定する。自由カメラを入れたままだと矢印キーで画角が変わり、
-	// 撮り比べたときに «何が変わったのか» が分からなくなる。
-	SetFreeCameraEnabled( false );
+	// 見回せるようにしておく。矢印キーで回り、WASD で寄る。
+	//
+	// 切ると画角が動かなくなる。**撮り比べるときは切ること。** 入れたままだと撮影中の
+	// キー入力で画角が変わり、«何が変わったのか» が分からない画が並ぶ。
+	SetFreeCameraEnabled( true );
 	SetOrbit( FVec3{ 0.0f, 1.0f, 0.0f }, 0.0f, 0.32f, 14.0f );
+}
 
+
+void ADemo3DScene::ReportFrameTime( f32 DeltaSeconds ) noexcept
+{
+	m_FrameTimeAccum += DeltaSeconds;
+	++m_FrameCount;
+
+	if ( m_FrameTimeAccum < 1.0f ) return;
+
+	const f32 Milliseconds = m_FrameTimeAccum * 1000.0f / static_cast<f32>( m_FrameCount );
+	ACS_LOG_INFO( "Demo3D: %.2f ms/frame (%u fps)",
+		static_cast<f64>( Milliseconds ), m_FrameCount );
+
+	m_FrameTimeAccum = 0.0f;
+	m_FrameCount = 0u;
 }
 
 
 void ADemo3DScene::OnUpdate( f32 DeltaSeconds ) noexcept
 {
 	ALegacyScene3DAdapter::OnUpdate( DeltaSeconds );
+	ReportFrameTime( DeltaSeconds );
 
 	if ( m_Spinner == nullptr ) return;
 

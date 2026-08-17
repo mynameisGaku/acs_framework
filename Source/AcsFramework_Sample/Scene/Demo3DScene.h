@@ -33,9 +33,26 @@ public:
 	void OnUpdate( f32 DeltaSeconds ) noexcept override;
 
 private:
+	/**
+	 * 1 秒ぶんためて、平均のフレーム時間を 1 行だけ出す。
+	 *
+	 * @details
+	 * **雲は «どこを向いているか» で値段が変わる。** 上を向けば画面全部が雲になり、
+	 * 地平線を見れば 1 本のレイが数十 km を貫く。重さの話をするには数字が要る。
+	 *
+	 * @param DeltaSeconds 経過秒。
+	 */
+	void ReportFrameTime( f32 DeltaSeconds ) noexcept;
+
 	/** 回す対象。所有はしない (木が持っている)。 */
 	ANode* m_Spinner = nullptr;
 
 	/** 回した量 (度)。 */
 	f32 m_SpinDegrees = 0.0f;
+
+	/** 直近 1 秒ぶんの経過秒の合計。 */
+	f32 m_FrameTimeAccum = 0.0f;
+
+	/** 直近 1 秒ぶんのフレーム数。 */
+	u32 m_FrameCount = 0u;
 };
