@@ -28,6 +28,24 @@ ANode* CModel3DSpawner::SpawnInto( ANode& Parent, const FModel3DSpawnParams& Par
 }
 
 
+ANode* CModel3DSpawner::SpawnInto( ANode& Parent, const FModel3DSpawnParams& Params,
+	CModelLibrary& Library ) noexcept
+{
+	// プリミティブなら読むものが無い。そのまま置く。
+	if ( Params.MeshPath.Data() == nullptr || Params.MeshPath.Size() == 0u )
+		return SpawnInto( Parent, Params );
+
+	FModel3DSpawnParams Loaded = Params;
+	Loaded.MeshAsset = Library.Load( Params.MeshPath );
+
+	// 読めなかったら置かない。**置いてから «出ない» と悩むより、置かない方が早く気付ける。**
+	// 理由は Library が 1 行残している。
+	if ( !Loaded.MeshAsset ) return nullptr;
+
+	return SpawnInto( Parent, Loaded );
+}
+
+
 void CModel3DSpawner::ApplyTransform( ANode& Node, const FModel3DSpawnParams& Params ) noexcept
 {
 	FTransform3D& Local = Node.Local();
@@ -47,6 +65,10 @@ void CModel3DSpawner::ApplyMesh( ANode& Node, const FModel3DSpawnParams& Params 
 	// モデルの場所を入れると、形は自動で Mesh になる (エンジン側の決まり)。
 	if ( Params.MeshPath.Data() != nullptr && Params.MeshPath.Size() != 0u ) Mesh.SetMeshPath( Params.MeshPath );
 	else Mesh.SetPrimitive( Params.Primitive );
+
+	// **パスを入れただけでは映らない。** 部品はパスを覚えるだけで、読むのは別の仕事。
+	// 読み込み済みのものが渡っていれば、ここで結び付ける。
+	if ( Params.MeshAsset ) Mesh.SetMeshAsset( Params.MeshAsset );
 
 	Mesh.SetColor( Params.Color );
 	Mesh.SetCastsShadow( Params.bCastsShadow );

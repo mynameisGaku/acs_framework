@@ -3,6 +3,7 @@
 
 #include <acs.h>
 
+#include "AcsFramework_Core/Assets/Model3D/ModelLibrary.h"
 #include "AcsFramework_Core/Scene/Model3D/Model3DSpawnParams.h"
 
 using namespace acs;
@@ -34,6 +35,24 @@ public:
 	 * @return 置いたノード。置けなかったら nullptr (**親には何も足さない**)。
 	 */
 	static ANode* SpawnInto( ANode& Parent, const FModel3DSpawnParams& Params ) noexcept;
+
+	/**
+	 * 置き場から読んでから置く。
+	 *
+	 * @details
+	 * `MeshPath` が入っていれば `Library` に読ませ、結果を `MeshAsset` に入れてから置く。
+	 * **これを使わないと、パスだけ持った «見えないノード» ができる。**
+	 *
+	 * `MeshPath` が空 (プリミティブ) なら読み込みは起きない。読めなかったときは
+	 * 置かずに nullptr を返す。置いた後で «出ない» と悩むより、置かない方が早く気付ける。
+	 *
+	 * @param Parent 置く先。
+	 * @param Params 置く中身。
+	 * @param Library 読み込みを頼む先。
+	 * @return 置いたノード。読めなければ nullptr。
+	 */
+	static ANode* SpawnInto( ANode& Parent, const FModel3DSpawnParams& Params,
+		CModelLibrary& Library ) noexcept;
 
 private:
 	/**

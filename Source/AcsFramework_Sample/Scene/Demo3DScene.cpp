@@ -3,6 +3,8 @@
 
 #include "AcsFramework_Core/Scene/Model3D/Model3DSpawner.h"
 
+#include "AcsFramework_Core/Assets/AssetLoaderSubsystem.h"
+
 namespace
 {
 	/** 床の広さ。広げすぎると FrameScene がカメラを引きすぎ、物が豆粒になる。 */
@@ -57,6 +59,20 @@ void ADemo3DScene::OnEnter() noexcept
 	Cube.Roughness = 0.28f;
 	Cube.Name = FStringView( "Spinner" );
 	m_Spinner = CModel3DSpawner::SpawnInto( Root(), Cube );
+
+	// Assets に置いた FBX。**置き場からモデルを読む道が通っていることの確認**でもある。
+	// 読めなければ置かずに nullptr が返り、理由が 1 行出る (黙って消えない)。
+	if ( CAssetLoaderSubsystem* const Assets = GetSubsystem<CAssetLoaderSubsystem>() )
+	{
+		FModel3DSpawnParams Model =
+			FModel3DSpawnParams::FromMesh( FStringView( "Models/MergedSphere.fbx" ), FVec3{ -3.4f, 1.0f, 2.4f } );
+		Model.Scale = FVec3{ 1.4f, 1.4f, 1.4f };
+		Model.RotationDeg = FVec3{ 0.0f, -35.0f, 0.0f };
+		Model.Color = FVec4{ 0.92f, 0.62f, 0.28f, 1.0f };
+		Model.Roughness = 0.40f;
+		Model.Name = FStringView( "ImportedModel" );
+		CModel3DSpawner::SpawnInto( Root(), Model, Assets->Models() );
+	}
 
 	// 太陽。斜め上から差す。ここを消すとエンジン既定の太陽に落ちる。
 	//

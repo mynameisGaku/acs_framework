@@ -1,6 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
+    <Filter Include="Assets">
+      <UniqueIdentifier>{ff29f78b-74e0-eeca-622c-02928173467e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets\Effects">
+      <UniqueIdentifier>{94954a26-6d5a-e1e0-8e37-d0c32aefec92}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets\Models">
+      <UniqueIdentifier>{d0c68ae6-fdb9-be67-9e91-57aadcbcfa32}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Docs">
       <UniqueIdentifier>{422bb446-cd29-397a-c564-e780bb665a8b}</UniqueIdentifier>
     </Filter>
@@ -15,6 +24,12 @@
     </Filter>
     <Filter Include="Source\AcsFramework_Core\Assets">
       <UniqueIdentifier>{e03abc72-4d81-b01f-8a6f-64022d98d25f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\AcsFramework_Core\Assets\Model3D">
+      <UniqueIdentifier>{db8c8ef9-7bae-1287-6a8c-282199630be9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\AcsFramework_Core\Assets\Model3D\Test">
+      <UniqueIdentifier>{629855ae-6349-6504-06fc-52aca936ca06}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source\AcsFramework_Core\Audio">
       <UniqueIdentifier>{c9205f2d-0948-48eb-5288-fa2e81ee35dd}</UniqueIdentifier>
@@ -230,6 +245,12 @@
     </ClCompile>
     <ClCompile Include="Source\AcsFramework_Core\Assets\AssetLoadScope.cpp">
       <Filter>Source\AcsFramework_Core\Assets</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Assets\Model3D\AssetRoot.cpp">
+      <Filter>Source\AcsFramework_Core\Assets\Model3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Assets\Model3D\ModelLibrary.cpp">
+      <Filter>Source\AcsFramework_Core\Assets\Model3D</Filter>
     </ClCompile>
     <ClCompile Include="Source\AcsFramework_Core\Audio\AudioSubsystem.cpp">
       <Filter>Source\AcsFramework_Core\Audio</Filter>
@@ -673,6 +694,12 @@
     </ClInclude>
     <ClInclude Include="Source\AcsFramework_Core\Assets\AssetLoadScope.h">
       <Filter>Source\AcsFramework_Core\Assets</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Assets\Model3D\AssetRoot.h">
+      <Filter>Source\AcsFramework_Core\Assets\Model3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Assets\Model3D\ModelLibrary.h">
+      <Filter>Source\AcsFramework_Core\Assets\Model3D</Filter>
     </ClInclude>
     <ClInclude Include="Source\AcsFramework_Core\Audio\AudioSubsystem.h">
       <Filter>Source\AcsFramework_Core\Audio</Filter>
@@ -1195,6 +1222,12 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Assets\Models\README.md">
+      <Filter>Assets\Models</Filter>
+    </None>
+    <None Include="Assets\README.md">
+      <Filter>Assets</Filter>
+    </None>
     <None Include="Docs\demo3d-reference.png">
       <Filter>Docs</Filter>
     </None>
@@ -1206,6 +1239,12 @@
     </None>
     <None Include="Docs\ROADMAP.md">
       <Filter>Docs</Filter>
+    </None>
+    <None Include="Source\AcsFramework_Core\Assets\Model3D\README.md">
+      <Filter>Source\AcsFramework_Core\Assets\Model3D</Filter>
+    </None>
+    <None Include="Source\AcsFramework_Core\Assets\Model3D\Test\ModelLibraryTest.cpp">
+      <Filter>Source\AcsFramework_Core\Assets\Model3D\Test</Filter>
     </None>
     <None Include="Source\AcsFramework_Core\Audio\Music\README.md">
       <Filter>Source\AcsFramework_Core\Audio\Music</Filter>

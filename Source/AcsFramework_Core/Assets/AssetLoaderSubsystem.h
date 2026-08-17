@@ -5,6 +5,7 @@
 
 #include "AcsFramework_Core/Assets/AssetLoadBatch.h"
 #include "AcsFramework_Core/Assets/AssetLoadRequest.h"
+#include "AcsFramework_Core/Assets/Model3D/ModelLibrary.h"
 
 using namespace acs;
 
@@ -16,7 +17,26 @@ public:
 	ACS_SUBSYSTEM_KIND( CAssetLoaderSubsystem )
 
 	/** 読み込みに使うレジストリを設定する。レジストリはこのサブシステムより長く生存する。 */
-	void Bind( CAssetRegistry& Registry ) noexcept { m_Registry = &Registry; }
+	void Bind( CAssetRegistry& Registry ) noexcept
+	{
+		m_Registry = &Registry;
+		m_Models.Bind( Registry );
+	}
+
+	/**
+	 * `Assets` からモデルを読む窓口。
+	 *
+	 * @details
+	 * ```cpp
+	 * CAssetLoaderSubsystem* const Assets = GetSubsystem<CAssetLoaderSubsystem>();
+	 * CModel3DSpawner::SpawnInto( Root(), Params, Assets->Models() );
+	 * ```
+	 *
+	 * こちらは**その場で読む**。`Begin` の一括読み込みは、ロード画面を出して待つ場面向け。
+	 *
+	 * @return モデルの読み込み口。
+	 */
+	CModelLibrary& Models() noexcept { return m_Models; }
 
 	/** Pathsを入力順で受け付け、全入力完了時にOnCompleteを1回呼び出す。失敗入力も件数を保つ。 */
 	void Begin( const TArray<FString>& Paths, FSimpleDelegate OnComplete = FSimpleDelegate() );
@@ -79,6 +99,9 @@ private:
 
 	/** エンジンのレジストリを所有せず参照する。 */
 	CAssetRegistry* m_Registry = nullptr;
+
+	/** Assets からモデルを読む窓口。登録簿は Bind で渡す。 */
+	CModelLibrary m_Models;
 
 	/** 現在観測している1件のbatch。 */
 	FAssetLoadBatch m_Batch;

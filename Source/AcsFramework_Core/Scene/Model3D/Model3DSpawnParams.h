@@ -73,6 +73,16 @@ struct FModel3DSpawnParams
 	 */
 	f32 Roughness = 0.5f;
 
+	/**
+	 * 読み込み済みのモデル。
+	 *
+	 * @details
+	 * **`MeshPath` だけでは映らない。** 部品はパスを覚えるだけで、読み込みは別の仕事だから。
+	 * `CModelLibrary::Load` の結果をここへ入れるか、置き場を渡す `SpawnInto` の
+	 * 多重定義を使う (そちらは中で読む)。
+	 */
+	TSharedPtr<AAsset> MeshAsset;
+
 	/** 影を落とすか。 */
 	bool bCastsShadow = true;
 

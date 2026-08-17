@@ -116,7 +116,11 @@ Steam (`SteamworksBridge`)、スクリプト (`ScriptHost`)、機械学習 (`MlR
   残りは bloom / FXAA の窓口と、`CSsgi` の配線
 - エフェクトの配線 (`ParticleEffectSystem` と Effekseer)
 - 遊ぶ人向け UI の土台 (`UiLayer`、`Widget`)
-- 3D 素材の置き場と取り込み手順
+- ~~3D 素材の置き場と取り込み手順~~ → **決定・実装済み** (2026-08-18)。
+  置き場は `Assets`、形式は **FBX** (`.gltf` `.glb` `.obj` も通る)。
+  `CModelLibrary` が置き場を探して読み、`CModel3DSpawner::SpawnInto(..., Library)` が置く。
+  実行ファイルから上へ辿って `Assets` を探すので、**素材をコピーせずに IDE からも
+  出来上がりからも動く**。`Assets/README.md` と `Assets/Models/README.md` に規約
 
 ### v0.4 — 残りと品質
 

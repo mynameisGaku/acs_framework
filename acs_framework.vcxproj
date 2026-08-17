@@ -342,6 +342,12 @@
       <ClInclude Include="Source\AcsFramework_Core\Scene\Pick3D\ScenePicker.h" />
       <None Include="Source\AcsFramework_Core\Scene\Pick3D\README.md" />
       <None Include="Source\AcsFramework_Core\Scene\Pick3D\Test\ScenePickerTest.cpp" />
+      <ClInclude Include="Source\AcsFramework_Core\Assets\Model3D\AssetRoot.h" />
+      <ClInclude Include="Source\AcsFramework_Core\Assets\Model3D\ModelLibrary.h" />
+      <None Include="Source\AcsFramework_Core\Assets\Model3D\README.md" />
+      <None Include="Source\AcsFramework_Core\Assets\Model3D\Test\ModelLibraryTest.cpp" />
+      <None Include="Assets\README.md" />
+      <None Include="Assets\Models\README.md" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Common\Pch.cpp">
@@ -491,6 +497,8 @@
     <ClCompile Include="Source\AcsFramework_Sample\Scene\Demo3DScene.cpp" />
       <ClCompile Include="Source\AcsFramework_Core\Scene\Pick3D\SceneRay.cpp" />
       <ClCompile Include="Source\AcsFramework_Core\Scene\Pick3D\ScenePicker.cpp" />
+      <ClCompile Include="Source\AcsFramework_Core\Assets\Model3D\AssetRoot.cpp" />
+      <ClCompile Include="Source\AcsFramework_Core\Assets\Model3D\ModelLibrary.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
