@@ -336,6 +336,7 @@
     <None Include="Docs\demo3d.png" />
     <None Include="Tools\CaptureApp.ps1" />
     <None Include="Docs\demo3d-reference.png" />
+    <None Include="Docs\demo3d-sunset.png" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Common\Pch.cpp">
