@@ -77,6 +77,12 @@ Steam (`SteamworksBridge`)、スクリプト (`ScriptHost`)、機械学習 (`MlR
 
 **判定基準: 何も設定せずに数十行で、モデルが綺麗に映って動く。**
 
+2026-08-17 時点でここまで映る (`Source/AcsFramework_Sample/Scene/Demo3DScene.cpp`、約 70 行)。
+
+![3D デモ](demo3d.png)
+
+出ていないもの: **影**。次はそこ。
+
 - 3D シーンの窓口 — モデルを置く / 動かす / 消す
 - ~~カメラ~~ → **ACS 側へ実装済み** (`FCamera3D`、`acs_temp_doc/0004`)。
   `CCameraStack` は 2D 専用だったので使えず、`FCamera2D` の 3D 版を ACS に足した。

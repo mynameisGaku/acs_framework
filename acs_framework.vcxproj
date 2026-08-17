@@ -332,6 +332,8 @@
     <None Include="Source\AcsFramework_Core\Scene\Model3D\Test\Model3DSpawnerTest.cpp" />
     <None Include="Tools\UpdateAcsDist.ps1" />
     <None Include="Tools\RunAcsTests.ps1" />
+    <ClInclude Include="Source\AcsFramework_Sample\Scene\Demo3DScene.h" />
+    <None Include="Docs\demo3d.png" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Common\Pch.cpp">
@@ -478,6 +480,7 @@
     <ClCompile Include="Source\AcsFramework_Core\Text\Localization\LocalizationSubsystem.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Scene\Model3D\Model3DSpawnParams.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Scene\Model3D\Model3DSpawner.cpp" />
+    <ClCompile Include="Source\AcsFramework_Sample\Scene\Demo3DScene.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

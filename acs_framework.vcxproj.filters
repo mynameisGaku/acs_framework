@@ -606,6 +606,9 @@
     <ClCompile Include="Source\AcsFramework_Core\Scene\Model3D\Model3DSpawner.cpp">
       <Filter>Source\AcsFramework_Core\Scene\Model3D</Filter>
     </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Sample\Scene\Demo3DScene.cpp">
+      <Filter>Source\AcsFramework_Sample\Scene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\AcsFramework_Core\AcsFramework.h">
@@ -1135,6 +1138,9 @@
     </ClInclude>
     <ClInclude Include="Source\AcsFramework_Core\Scene\Model3D\Model3DSpawner.h">
       <Filter>Source\AcsFramework_Core\Scene\Model3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Sample\Scene\Demo3DScene.h">
+      <Filter>Source\AcsFramework_Sample\Scene</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

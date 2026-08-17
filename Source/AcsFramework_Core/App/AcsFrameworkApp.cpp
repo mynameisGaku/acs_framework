@@ -12,6 +12,7 @@
 #include "AcsFramework_Core/Pause/PauseScreenSubsystem.h"
 #include "AcsFramework_Core/Save/SaveSubsystem.h"
 #include "AcsFramework_Core/Scene/SceneTravelSubsystem.h"
+#include "AcsFramework_Sample/Scene/Demo3DScene.h"
 #include "AcsFramework_Core/Settings/GameSettingsSubsystem.h"
 #include "AcsFramework_Core/Simulation/SimulationSubsystem.h"
 #include "AcsFramework_Core/State/AppStateSubsystem.h"
@@ -212,7 +213,10 @@ TUniquePtr<AScene> CAcsFrameworkApp::InitialScene() noexcept
 
 TUniquePtr<AScene> CAcsFrameworkApp::CreateInitialScene() noexcept
 {
-	return MakeUnique<ABootScene>();
+	// 既定は «何も映らない» ではなく «3D が映る» にしてある。この枠組みの目当てが 3D なので、
+	// 起動していきなり黒画面だと、動いているのかどうかも分からない。
+	// 自分のゲームを作るときは、この関数を override して差し替える (ABootScene は空の起動場面)。
+	return MakeUnique<ADemo3DScene>();
 }
 
 void CAcsFrameworkApp::OnStart() noexcept
