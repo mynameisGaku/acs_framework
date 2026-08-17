@@ -335,6 +335,7 @@
     <ClInclude Include="Source\AcsFramework_Sample\Scene\Demo3DScene.h" />
     <None Include="Docs\demo3d.png" />
     <None Include="Tools\CaptureApp.ps1" />
+    <None Include="Docs\demo3d-reference.png" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Common\Pch.cpp">

@@ -81,7 +81,7 @@ void ADemo3DScene::OnEnter() noexcept
 
 	// 本物の雲を出す。太陽の側が明るく、縁が光る。
 	Clouds().Coverage = 0.6f;
-	Clouds().RenderScale = 1.0f;    // 等倍でトレースする。下げるとドット感が出る
+	Clouds().RenderScale = 3.0f;   // 画面の 3/4 の寸法でトレースする (1.0 は 1/4)
 	Clouds().BaseAltitude = 2600.0f;  // 低いと地平線を真横から貫いて、そこだけ粗く見える
 	Clouds().TopAltitude = 5200.0f;
 

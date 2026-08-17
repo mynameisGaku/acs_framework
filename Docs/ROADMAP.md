@@ -85,7 +85,9 @@ Steam (`SteamworksBridge`)、スクリプト (`ScriptHost`)、機械学習 (`MlR
 それがそのまま環境光にもなる**ので、空と光が食い違わない。
 霧・仕上げ・大気・空は場面から触れる (`Fog()` / `PostParams()` / `Atmosphere()` / `Sky()`)。
 
-雲も本物 (`CVolumetricClouds`) が出る。
+雲も本物 (`CVolumetricClouds`) が出る。ライティングは名前付きの係数へ組み直した
+(`acs_temp_doc/0012`)。**参照描画** (`Clouds().bReferenceMode`) で «汚さの原因が
+ライティングか再構成か» を切り分けられる。
 
 残り: 雲を環境光と影へ反映 (いまは曇っても地面が暗くならない)、空気遠近、
 影の CSM 化 (いまは単一 cascade)。
