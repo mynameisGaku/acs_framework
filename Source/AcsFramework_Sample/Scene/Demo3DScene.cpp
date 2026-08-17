@@ -79,6 +79,12 @@ void ADemo3DScene::OnEnter() noexcept
 	Fill.SetRange( 14.0f );
 	Root().AddChild( Move( FillNode ) );
 
+	// 本物の雲を出す。太陽の側が明るく、縁が光る。
+	Clouds().Coverage = 0.6f;
+	Clouds().RenderScale = 1.0f;    // 等倍でトレースする。下げるとドット感が出る
+	Clouds().BaseAltitude = 2600.0f;  // 低いと地平線を真横から貫いて、そこだけ粗く見える
+	Clouds().TopAltitude = 5200.0f;
+
 	// 大気が描く «地面» の色を、置いた床に寄せる。ここがずれると、地平線から下だけ
 	// 別の場所の色になり、床の縁で色が切り替わって見える。
 	Atmosphere().ground_albedo = FVec3{ 0.06f, 0.07f, 0.06f };
