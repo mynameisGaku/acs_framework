@@ -79,6 +79,13 @@ void ADemo3DScene::OnEnter() noexcept
 	Fill.SetRange( 14.0f );
 	Root().AddChild( Move( FillNode ) );
 
+	// 空。雲を出し、時間で流す。太陽の向きと色は上で置いた光から毎フレーム同期されるので、
+	// ここでは触らない (触っても上書きされる)。
+	Sky().SetCloudsEnabled( true );
+	Sky().SetClouds( 0.45f, 1.5f );
+	Sky().SetCloudColor( FVec3{ 1.0f, 0.98f, 0.95f } );
+	Sky().SetCloudWind( 0.015f );
+
 	// 全体が入る位置までカメラを引く。
 	FrameScene();
 }
