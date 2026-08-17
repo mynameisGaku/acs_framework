@@ -80,7 +80,11 @@ void ADemo3DScene::OnEnter() noexcept
 	Root().AddChild( Move( FillNode ) );
 
 	// 本物の雲を出す。太陽の側が明るく、縁が光る。
-	Clouds().Coverage = 0.6f;
+	//
+	// 濃さは既定 (1.6) より上げてある。薄いと光が素通りするので、位相も消散も多重散乱も
+	// 効く相手が無く、**灰色の靄にしかならない**。厚みがあって初めて上面と底面に差が出る。
+	Clouds().Coverage = 0.68f;
+	Clouds().Density = 2.8f;
 	Clouds().RenderScale = 3.0f;   // 画面の 3/4 の寸法でトレースする (1.0 は 1/4)
 	Clouds().BaseAltitude = 2600.0f;  // 低いと地平線を真横から貫いて、そこだけ粗く見える
 	Clouds().TopAltitude = 5200.0f;
