@@ -74,6 +74,25 @@ void ADemo3DScene::OnEnter() noexcept
 		Model.Roughness = 0.40f;
 		Model.Name = FStringView( "ImportedModel" );
 		m_Mover = CModel3DSpawner::SpawnInto( Root(), Model, Assets->Models() );
+
+		// 骨で動くモデル。読み口が別なので、置き方も別 (部品を自分で付ける)。
+		// **骨の入っていない FBX を渡すと読めない。** そのときは 1 行出て、何も置かれない。
+		TSharedPtr<ASkinnedMeshAsset> Skinned =
+			Assets->Models().LoadSkinned( FStringView( "Models/SkinnedAnimated.fbx" ) );
+		if ( Skinned )
+		{
+			TObjectPtr<ANode> Node = NewObject<ANode>();
+			Node->SetName( FStringView( "Animated" ) );
+			Node->SetPosition( FVec3{ 3.6f, 0.2f, 1.4f } );
+			Node->SetScale( 0.02f );   // 書き出し単位がセンチメートル
+
+			ASkinnedMeshComponent3D& Skin = Node->AddComponent<ASkinnedMeshComponent3D>();
+			Skin.SetMeshAsset( Skinned );
+			Skin.SetColor( FVec3{ 0.72f, 0.78f, 0.86f } );
+			Skin.Play( 0u );
+
+			Root().AddChild( Move( Node ) );
+		}
 	}
 
 	// 太陽。斜め上から差す。ここを消すとエンジン既定の太陽に落ちる。

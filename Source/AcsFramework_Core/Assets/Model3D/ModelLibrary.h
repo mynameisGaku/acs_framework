@@ -61,6 +61,22 @@ public:
 	TSharedPtr<AAsset> Load( FStringView RelativePath ) noexcept;
 
 	/**
+	 * 骨付きモデルを読む。
+	 *
+	 * @details
+	 * **静的モデルとは別の口。** 同じ `.fbx` でも、骨の要る読み方と要らない読み方で
+	 * 欲しいものが違うため、拡張子で自動に選ばせない。
+	 *
+	 * 骨の入っていないファイルを渡すと失敗する (黙って «動かないモデル» にはしない)。
+	 * 読み込みは `CAssetRegistry` を通らないので、**同じファイルを 2 回渡すと 2 回読む**。
+	 * 何体も置くなら結果を持ち回すこと。
+	 *
+	 * @param RelativePath `Assets` からの相対名。
+	 * @return 読めた骨付きメッシュ。読めなければ空。
+	 */
+	TSharedPtr<ASkinnedMeshAsset> LoadSkinned( FStringView RelativePath ) noexcept;
+
+	/**
 	 * この拡張子を読めるか。
 	 *
 	 * @param RelativePath 調べる名前。

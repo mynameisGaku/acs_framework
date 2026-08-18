@@ -103,7 +103,10 @@ Steam (`SteamworksBridge`)、スクリプト (`ScriptHost`)、機械学習 (`MlR
   `ASkinnedMeshAsset` / `CAnimationPlayer` / `CSkinnedShader` は在ったのに、
   **FBX から骨付きメッシュを作るローダだけが無かった**。`LoadSkinnedMeshFromFbxMemory`
   として ufbx で実装 (骨・祖先・逆バインド・重み 4 本・クリップを 30Hz で焼く)。
-  残りは枠組み側の窓口 (置く / 再生する) と `CSkinnedShader` の配線
+  枠組み側の窓口 (`CModelLibrary::LoadSkinned`) と描画 (`ASkinnedMeshComponent3D` +
+  `DrawSkinnedScene`) も繋いだ。**デモで実際に骨が動いている。**
+  残り: `CSkinnedShader` が Blinn-Phong なので静的メッシュと質感が揃わない
+  (IBL / 遮蔽 / 反射 / 影が効かない)。揃えるなら `CPbrShader` 側にスキニングを足す
 - ~~3D の当たり判定の窓口~~ → **`Scene/Pick3D` として実装済み** (2026-08-18)。
   線を飛ばして当たったノードを返す (`FSceneRay::FromScreen` でクリックした物を取れる)。
   精度は境界の箱まで。三角形と厳密に判定したいときは ACS の `CMeshCollider` へ渡す。

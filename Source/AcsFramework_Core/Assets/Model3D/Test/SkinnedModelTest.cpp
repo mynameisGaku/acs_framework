@@ -173,6 +173,28 @@ void RunSkinnedModelTests( CTestHarness& Harness )
 		const u32 Written = Player.WritePalette( Palette.GetData(), static_cast<u32>( Palette.Num() ) );
 		Harness.CheckEqualU64( Written, Mesh->Bones().Num(), "骨の数だけ書かれる" );
 
+		// **バインド姿勢のパレットは単位行列に近いはず。**
+		// world_at_bind * inverse_bind = I が成り立つのが «正しく組めている» の定義で、
+		// ここが崩れていると、画面では «真っ黒» や «消える» としか分からない。
+		f32 WorstOffDiagonal = 0.0f;
+		f32 WorstDiagonal = 0.0f;
+		for ( usize Index = 0u; Index < Palette.Num(); ++Index )
+		{
+			for ( u32 Row = 0u; Row < 4u; ++Row )
+			{
+				for ( u32 Column = 0u; Column < 4u; ++Column )
+				{
+					const f32 Value = Palette[Index].m[Row][Column];
+					const f32 Expected = ( Row == Column ) ? 1.0f : 0.0f;
+					const f32 Difference = Value > Expected ? Value - Expected : Expected - Value;
+					if ( Row == Column ) { if ( Difference > WorstDiagonal ) WorstDiagonal = Difference; }
+					else if ( Difference > WorstOffDiagonal ) WorstOffDiagonal = Difference;
+				}
+			}
+		}
+		Harness.Check( WorstDiagonal < 0.01f, "バインド姿勢のパレットは対角が 1" );
+		Harness.Check( WorstOffDiagonal < 0.01f, "バインド姿勢のパレットは非対角が 0" );
+
 		bool bFinite = true;
 		for ( usize Index = 0u; Index < Palette.Num(); ++Index )
 		{

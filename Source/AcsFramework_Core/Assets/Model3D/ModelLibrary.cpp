@@ -116,3 +116,50 @@ TSharedPtr<AAsset> CModelLibrary::Load( FStringView RelativePath ) noexcept
 
 	return Loaded.Value();
 }
+
+
+TSharedPtr<ASkinnedMeshAsset> CModelLibrary::LoadSkinned( FStringView RelativePath ) noexcept
+{
+	if ( !IsSupported( RelativePath ) )
+	{
+		ACS_LOG_WARN( "ModelLibrary: 対応していない形式です: %.*s",
+			static_cast<int>( RelativePath.Size() ), RelativePath.Data() );
+		return TSharedPtr<ASkinnedMeshAsset>();
+	}
+
+	FString FullPath;
+	if ( !CAssetRoot::Resolve( RelativePath, FullPath ) )
+	{
+		ACS_LOG_WARN( "ModelLibrary: 置き場から辿れません: %.*s",
+			static_cast<int>( RelativePath.Size() ), RelativePath.Data() );
+		return TSharedPtr<ASkinnedMeshAsset>();
+	}
+
+	wchar_t Wide[kMaximumPathLength] = {};
+	if ( !AcsToWide( FullPath, Wide, kMaximumPathLength ) )
+	{
+		ACS_LOG_WARN( "ModelLibrary: パスが長すぎます: %s", FullPath.Data() );
+		return TSharedPtr<ASkinnedMeshAsset>();
+	}
+
+	// 骨付きは登録簿を通らない (`.fbx` は静的メッシュのローダが取っているため)。
+	// 自分で読んで、自分で渡す。
+	TResult<TArray<byte>> Bytes = CFileSystem::ReadAllBytes( Wide );
+	if ( Bytes.IsErr() )
+	{
+		ACS_LOG_WARN( "ModelLibrary: ファイルがありません: %s", FullPath.Data() );
+		return TSharedPtr<ASkinnedMeshAsset>();
+	}
+
+	TResult<TSharedPtr<ASkinnedMeshAsset>> Loaded =
+		LoadSkinnedMeshFromFbxMemory( Bytes.Value().GetData(), Bytes.Value().Num() );
+	if ( Loaded.IsErr() )
+	{
+		// いちばん多いのは «骨の入っていない FBX を骨付きとして読んだ»。
+		ACS_LOG_WARN( "ModelLibrary: 骨付きとして読めません (骨は入っていますか): %s",
+			FullPath.Data() );
+		return TSharedPtr<ASkinnedMeshAsset>();
+	}
+
+	return Loaded.Value();
+}
