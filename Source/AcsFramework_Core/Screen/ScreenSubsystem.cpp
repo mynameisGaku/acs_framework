@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 #include "ScreenSubsystem.h"
 
 // 窓の見出しは wchar_t で渡す決まり。直す口は 1 か所へ寄せてある。

@@ -1,4 +1,5 @@
-﻿#include "AcsFrameworkApp.h"
+﻿// SPDX-License-Identifier: Apache-2.0
+#include "AcsFrameworkApp.h"
 
 #include "AcsFramework_Core/App/AppSubsystem.h"
 #include "AcsFramework_Core/Assets/AssetLoaderSubsystem.h"

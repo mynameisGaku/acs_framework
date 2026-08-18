@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 #include "AppSubsystem.h"
 
 // GameInstance スコープへ登録する。シーンを切り替えても同じアプリを指す。

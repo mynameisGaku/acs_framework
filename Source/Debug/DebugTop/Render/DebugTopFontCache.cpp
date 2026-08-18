@@ -1,4 +1,5 @@
-﻿#include "DebugTopFontCache.h"
+﻿// SPDX-License-Identifier: Apache-2.0
+#include "DebugTopFontCache.h"
 
 namespace
 {

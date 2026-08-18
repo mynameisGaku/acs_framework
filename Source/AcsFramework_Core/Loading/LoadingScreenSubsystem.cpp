@@ -1,4 +1,5 @@
-﻿#include "LoadingScreenSubsystem.h"
+﻿// SPDX-License-Identifier: Apache-2.0
+#include "LoadingScreenSubsystem.h"
 
 // GameInstance スコープへ登録する。シーンを切り替えても出したままにできる。
 ACS_REGISTER_SUBSYSTEM( CLoadingScreenSubsystem, ESubsystemScope::GameInstance )

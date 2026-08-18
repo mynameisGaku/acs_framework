@@ -1,4 +1,5 @@
-﻿#include "EntryPoint.h"
+﻿// SPDX-License-Identifier: Apache-2.0
+#include "EntryPoint.h"
 
 #include "AcsFramework_Core/App/AcsFrameworkApp.h"
 

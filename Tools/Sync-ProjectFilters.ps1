@@ -2,7 +2,9 @@ param(
     # Target .vcxproj. Defaults to acs_framework.vcxproj next to the Tools folder.
     [string]$ProjectPath,
     # Folder trees that define the filter layout. Empty folders are kept.
-    [string[]]$FolderRoots = @('Source'),
+    # All four are listed so a plain invocation is the canonical one: if -Check
+    # and the regeneration disagree on this, -Check reports stale forever.
+    [string[]]$FolderRoots = @('Source', 'Docs', 'Tools', 'Assets'),
     # Only rewrite the .filters: leave the .vcxproj item list alone and just
     # report the files that are on disk without being part of the project.
     [switch]$FiltersOnly,

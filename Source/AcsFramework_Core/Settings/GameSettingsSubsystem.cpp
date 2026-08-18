@@ -1,4 +1,5 @@
-﻿#include "GameSettingsSubsystem.h"
+﻿// SPDX-License-Identifier: Apache-2.0
+#include "GameSettingsSubsystem.h"
 
 #include "AcsFramework_Core/Text/StringConvert.h"
 

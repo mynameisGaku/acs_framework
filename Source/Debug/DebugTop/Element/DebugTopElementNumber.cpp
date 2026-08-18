@@ -1,4 +1,5 @@
-﻿#include "DebugTopElementNumber.h"
+﻿// SPDX-License-Identifier: Apache-2.0
+#include "DebugTopElementNumber.h"
 
 #include <cstdlib>
 

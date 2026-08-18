@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 #include "AppStateSubsystem.h"
 
 // GameInstance スコープへ登録する。置いたものがシーンを跨いで残ることと足並みを揃える。

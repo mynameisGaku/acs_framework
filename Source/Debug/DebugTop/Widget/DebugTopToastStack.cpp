@@ -1,4 +1,5 @@
-﻿#include "DebugTopToastStack.h"
+﻿// SPDX-License-Identifier: Apache-2.0
+#include "DebugTopToastStack.h"
 
 namespace
 {

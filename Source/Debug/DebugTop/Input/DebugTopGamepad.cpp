@@ -1,4 +1,5 @@
-﻿#include "DebugTopGamepad.h"
+﻿// SPDX-License-Identifier: Apache-2.0
+#include "DebugTopGamepad.h"
 
 namespace
 {

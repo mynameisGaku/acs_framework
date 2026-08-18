@@ -1,4 +1,5 @@
-﻿#include "DebugTopDraw.h"
+﻿// SPDX-License-Identifier: Apache-2.0
+#include "DebugTopDraw.h"
 
 #include <cmath>
 

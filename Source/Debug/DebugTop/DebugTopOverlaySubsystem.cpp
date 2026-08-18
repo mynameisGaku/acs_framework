@@ -1,4 +1,5 @@
-﻿#include "DebugTopOverlaySubsystem.h"
+﻿// SPDX-License-Identifier: Apache-2.0
+#include "DebugTopOverlaySubsystem.h"
 
 // GameInstance スコープへ登録する。シーンを切り替えても同じメニューを持ち続ける。
 ACS_REGISTER_SUBSYSTEM( CDebugTopOverlaySubsystem, ESubsystemScope::GameInstance )

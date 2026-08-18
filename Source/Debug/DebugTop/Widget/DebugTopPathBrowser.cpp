@@ -1,4 +1,5 @@
-﻿#include "DebugTopPathBrowser.h"
+﻿// SPDX-License-Identifier: Apache-2.0
+#include "DebugTopPathBrowser.h"
 
 namespace
 {

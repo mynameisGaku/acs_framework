@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 #include "FadeSubsystem.h"
 
 // GameInstance スコープへ登録する。シーンを跨いでも同じ実体を指すので、遷移の前後で

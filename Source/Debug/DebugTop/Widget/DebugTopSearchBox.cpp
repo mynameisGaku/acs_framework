@@ -1,4 +1,5 @@
-﻿#include "DebugTopSearchBox.h"
+﻿// SPDX-License-Identifier: Apache-2.0
+#include "DebugTopSearchBox.h"
 
 #include "Debug/DebugTop/Input/DebugTopCursor.h"
 

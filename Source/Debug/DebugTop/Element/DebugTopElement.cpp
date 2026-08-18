@@ -1,4 +1,5 @@
-﻿#include "DebugTopElement.h"
+﻿// SPDX-License-Identifier: Apache-2.0
+#include "DebugTopElement.h"
 
 
 u32 CDebugTopElement::s_FavoriteVersion = 0;

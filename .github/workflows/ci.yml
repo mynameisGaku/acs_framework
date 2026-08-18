@@ -1,0 +1,79 @@
+name: CI
+
+# なぜ 2 段なのか
+#
+# ビルドには ACS の配布物が要るが、それは GitHub Releases に置く前提で、まだ publish
+# されていない。**配布物が要らない検査まで一緒に止めるのは損**なので分けてある。
+#
+# checks は常に走る。build は acs-version.json に sha256 が入った時点で自動的に走り出す。
+# 「CI を後で有効にする」作業を残さないための作りで、pin を入れれば勝手に本番になる。
+
+on:
+  push:
+    branches: [main, dev]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  checks:
+    name: repository checks
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # コンパイラも配布物も要らない検査。落ちるものはどれも
+      # 「レビューでは見えず、後で高くつく」たぐいのもの。
+      - name: run repo checks
+        shell: pwsh
+        run: .\Tools\RunRepoChecks.ps1
+
+  build:
+    name: build and test
+    runs-on: windows-latest
+    needs: checks
+    steps:
+      - uses: actions/checkout@v4
+
+      # sha256 が空 = 配布物がまだ publish されていない。**赤くせずに飛ばす。**
+      # 直せない理由で永久に赤い CI は、本当の失敗を見えなくする。
+      - name: is the engine distribution pinned?
+        id: pin
+        shell: pwsh
+        run: |
+          $pin = Get-Content Tools\acs-version.json -Raw | ConvertFrom-Json
+          $ready = -not [string]::IsNullOrWhiteSpace($pin.sha256)
+          "ready=$($ready.ToString().ToLower())" >> $env:GITHUB_OUTPUT
+          if (-not $ready) {
+            Write-Host "::notice::ACS の Release がまだ pin されていないので build を飛ばします。" `
+              "Tools/acs-version.json の sha256 を埋めると、この job が自動で走り始めます。"
+          }
+
+      - name: fetch ACS distribution
+        if: steps.pin.outputs.ready == 'true'
+        shell: pwsh
+        run: .\Tools\FetchAcs.ps1
+
+      - name: add msbuild
+        if: steps.pin.outputs.ready == 'true'
+        uses: microsoft/setup-msbuild@v2
+
+      - name: build
+        if: steps.pin.outputs.ready == 'true'
+        shell: pwsh
+        run: |
+          foreach ($c in @('Debug', 'Release')) {
+            msbuild acs_framework.vcxproj /p:Configuration=$c /p:Platform=x64 /m /nologo /v:minimal
+            if ($LASTEXITCODE -ne 0) { throw "build failed: $c" }
+          }
+
+      # 窓も音も GPU も要らないテスト。CI の走者に GPU は無いので、ここまでが限界。
+      # 画が正しいかは人が見るしかない (Tools\CaptureApp.ps1)。
+      - name: unit tests
+        if: steps.pin.outputs.ready == 'true'
+        shell: pwsh
+        run: .\Tools\RunUnitTests.ps1
+
+      - name: determinism test
+        if: steps.pin.outputs.ready == 'true'
+        shell: pwsh
+        run: .\Tools\RunSimulationDeterminismTest.ps1

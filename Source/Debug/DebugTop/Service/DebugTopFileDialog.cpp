@@ -1,4 +1,5 @@
-﻿#include "DebugTopFileDialog.h"
+﻿// SPDX-License-Identifier: Apache-2.0
+#include "DebugTopFileDialog.h"
 
 #include <windows.h>
 #include <shobjidl.h>

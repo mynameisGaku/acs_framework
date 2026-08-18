@@ -1,4 +1,5 @@
-﻿#include "DebugTopFavorites.h"
+﻿// SPDX-License-Identifier: Apache-2.0
+#include "DebugTopFavorites.h"
 
 #include "Debug/DebugTop/DebugTopHUD.h"
 

@@ -1,4 +1,5 @@
-﻿#include "DebugTopColorPicker.h"
+﻿// SPDX-License-Identifier: Apache-2.0
+#include "DebugTopColorPicker.h"
 
 #include "Debug/DebugTop/Render/DebugTopColorField.h"
 

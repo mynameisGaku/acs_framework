@@ -1,4 +1,5 @@
-﻿#include "DebugTopElementBool.h"
+﻿// SPDX-License-Identifier: Apache-2.0
+#include "DebugTopElementBool.h"
 
 
 CDebugTopElementBool::CDebugTopElementBool( const FString& Label, bool bValue )

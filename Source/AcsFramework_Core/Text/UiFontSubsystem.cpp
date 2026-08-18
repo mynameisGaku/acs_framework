@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 #include "UiFontSubsystem.h"
 
 // GameInstance スコープへ登録する。シーンを切り替えても焼き直さずに済む。

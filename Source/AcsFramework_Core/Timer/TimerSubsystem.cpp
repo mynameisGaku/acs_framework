@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 #include "TimerSubsystem.h"
 
 // GameInstance スコープへ登録する。シーンを跨いで仕掛けたままにできる。

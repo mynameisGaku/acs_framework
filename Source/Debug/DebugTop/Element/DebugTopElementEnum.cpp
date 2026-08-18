@@ -1,4 +1,5 @@
-﻿#include "DebugTopElementEnum.h"
+﻿// SPDX-License-Identifier: Apache-2.0
+#include "DebugTopElementEnum.h"
 
 
 CDebugTopElementEnum::CDebugTopElementEnum( const FString& Label, TArray<FString> Options, i32 SelectedIndex )

@@ -1,4 +1,5 @@
-﻿#include "TimeSubsystem.h"
+﻿// SPDX-License-Identifier: Apache-2.0
+#include "TimeSubsystem.h"
 
 // GameInstance が時間制御の実体を所有し、シーン遷移を跨いで
 // 同じ状態を保持する。

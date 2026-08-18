@@ -1,4 +1,5 @@
-﻿#include "DebugTopRowMouse.h"
+﻿// SPDX-License-Identifier: Apache-2.0
+#include "DebugTopRowMouse.h"
 
 #include "Debug/DebugTop/Input/DebugTopCursor.h"
 

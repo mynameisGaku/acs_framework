@@ -1,4 +1,5 @@
-﻿#include "DebugTopElementAction.h"
+﻿// SPDX-License-Identifier: Apache-2.0
+#include "DebugTopElementAction.h"
 
 
 CDebugTopElementAction::CDebugTopElementAction( const FString& Label, const FString& SubTitle, FSimpleDelegate Action )

@@ -1,4 +1,5 @@
-﻿#include "DebugTopColorField.h"
+﻿// SPDX-License-Identifier: Apache-2.0
+#include "DebugTopColorField.h"
 
 namespace
 {

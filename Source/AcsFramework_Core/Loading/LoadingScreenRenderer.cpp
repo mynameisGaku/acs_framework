@@ -1,4 +1,5 @@
-﻿#include "LoadingScreenRenderer.h"
+﻿// SPDX-License-Identifier: Apache-2.0
+#include "LoadingScreenRenderer.h"
 
 #include <cmath>
 

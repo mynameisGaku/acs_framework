@@ -1,4 +1,5 @@
-﻿#include "DebugTopSearchIndex.h"
+﻿// SPDX-License-Identifier: Apache-2.0
+#include "DebugTopSearchIndex.h"
 
 #include "Debug/DebugTop/Page/DebugTopEntity.h"
 #include "Debug/DebugTop/DebugTopHUD.h"

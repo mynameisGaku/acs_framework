@@ -1,4 +1,5 @@
-﻿#include "DebugTopElementText.h"
+﻿// SPDX-License-Identifier: Apache-2.0
+#include "DebugTopElementText.h"
 
 #include "Debug/DebugTop/Widget/DebugTopPathBrowser.h"
 
