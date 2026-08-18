@@ -47,8 +47,11 @@ private:
 	/** 回す対象。所有はしない (木が持っている)。 */
 	ANode* m_Spinner = nullptr;
 
-	/** 回した量 (度)。 */
-	f32 m_SpinDegrees = 0.0f;
+	/** 往復させる取り込みモデル。所有はしない (木が持っている)。 */
+	ANode* m_Mover = nullptr;
+
+	/** いま向かっている先。着いたら z の符号を反転して折り返す。 */
+	FVec3 m_MoveTarget{ -3.4f, 1.0f, -2.4f };
 
 	/** 直近 1 秒ぶんの経過秒の合計。 */
 	f32 m_FrameTimeAccum = 0.0f;

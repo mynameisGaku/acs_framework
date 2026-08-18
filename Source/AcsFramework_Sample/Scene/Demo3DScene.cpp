@@ -15,6 +15,9 @@ namespace
 
 	/** 回す速さ (度 / 秒)。 */
 	constexpr f32 kSpinSpeed = 30.0f;
+
+	/** 往復させる速さ (world 単位 / 秒)。 */
+	constexpr f32 kMoveSpeed = 1.8f;
 }
 
 
@@ -67,11 +70,10 @@ void ADemo3DScene::OnEnter() noexcept
 		FModel3DSpawnParams Model =
 			FModel3DSpawnParams::FromMesh( FStringView( "Models/MergedSphere.fbx" ), FVec3{ -3.4f, 1.0f, 2.4f } );
 		Model.Scale = FVec3{ 1.4f, 1.4f, 1.4f };
-		Model.RotationDeg = FVec3{ 0.0f, -35.0f, 0.0f };
 		Model.Color = FVec4{ 0.92f, 0.62f, 0.28f, 1.0f };
 		Model.Roughness = 0.40f;
 		Model.Name = FStringView( "ImportedModel" );
-		CModel3DSpawner::SpawnInto( Root(), Model, Assets->Models() );
+		m_Mover = CModel3DSpawner::SpawnInto( Root(), Model, Assets->Models() );
 	}
 
 	// 太陽。斜め上から差す。ここを消すとエンジン既定の太陽に落ちる。
@@ -171,10 +173,16 @@ void ADemo3DScene::OnUpdate( f32 DeltaSeconds ) noexcept
 	ALegacyScene3DAdapter::OnUpdate( DeltaSeconds );
 	ReportFrameTime( DeltaSeconds );
 
-	if ( m_Spinner == nullptr ) return;
+	// 回す。度のまま足せる (ラジアンへ直す必要は無い)。
+	if ( m_Spinner != nullptr ) m_Spinner->RotateDeg( FVec3{ 0.0f, kSpinSpeed * DeltaSeconds, 0.0f } );
 
-	m_SpinDegrees += kSpinSpeed * DeltaSeconds;
-	if ( m_SpinDegrees >= 360.0f ) m_SpinDegrees -= 360.0f;
+	// 取り込んだモデルを 2 点のあいだで往復させ、進む先を向かせる。
+	// **«動かす» のに要るのはこれだけ**、というのを見せるための最小の動き。
+	if ( m_Mover == nullptr ) return;
 
-	m_Spinner->Local().rotation = FQuat::Euler( 0.0f, m_SpinDegrees * 0.01745329252f, 0.0f );
+	if ( m_Mover->MoveToward( m_MoveTarget, kMoveSpeed * DeltaSeconds ) )
+	{
+		m_MoveTarget.z = -m_MoveTarget.z;
+	}
+	m_Mover->LookAt( m_MoveTarget );
 }
