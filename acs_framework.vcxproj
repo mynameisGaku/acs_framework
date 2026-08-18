@@ -352,6 +352,7 @@
       <None Include="Assets\README.md" />
       <None Include="Assets\Models\README.md" />
       <None Include="Source\AcsFramework_Core\Assets\Model3D\Test\SkinnedModelTest.cpp" />
+      <ClInclude Include="Source\AcsFramework_Sample\Scene\MinimalScene.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Common\Pch.cpp">
@@ -503,6 +504,7 @@
       <ClCompile Include="Source\AcsFramework_Core\Scene\Pick3D\ScenePicker.cpp" />
       <ClCompile Include="Source\AcsFramework_Core\Assets\Model3D\AssetRoot.cpp" />
       <ClCompile Include="Source\AcsFramework_Core\Assets\Model3D\ModelLibrary.cpp" />
+      <ClCompile Include="Source\AcsFramework_Sample\Scene\MinimalScene.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

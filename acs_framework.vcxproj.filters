@@ -456,6 +456,9 @@
     <ClCompile Include="Source\AcsFramework_Sample\Scene\Demo3DScene.cpp">
       <Filter>Source\AcsFramework_Sample\Scene</Filter>
     </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Sample\Scene\MinimalScene.cpp">
+      <Filter>Source\AcsFramework_Sample\Scene</Filter>
+    </ClCompile>
     <ClCompile Include="Source\Common\File\AcsArchiveFile.cpp">
       <Filter>Source\Common\File</Filter>
     </ClCompile>
@@ -957,6 +960,9 @@
       <Filter>Source\AcsFramework_Core\Time</Filter>
     </ClInclude>
     <ClInclude Include="Source\AcsFramework_Sample\Scene\Demo3DScene.h">
+      <Filter>Source\AcsFramework_Sample\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Sample\Scene\MinimalScene.h">
       <Filter>Source\AcsFramework_Sample\Scene</Filter>
     </ClInclude>
     <ClInclude Include="Source\Common\Compat\AcsAnnotations.h">
