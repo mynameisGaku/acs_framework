@@ -1,4 +1,4 @@
-﻿// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: Apache-2.0
 #include "DebugTopOverlayRenderer.h"
 
 #include "Debug/DebugTop/DebugTopHUD.h"
@@ -39,8 +39,8 @@ void FDebugTopOverlayRenderer::Draw( CRenderer& Renderer, ADebugTopHUD& HUD, FFo
 
 	// HUD がこのフレームだけ使う描画文脈。
 	FRenderContext Context;
-	Context._BeginFrame( Renderer, *CommandList, Swapchain->Width(), Swapchain->Height() );
-	Context._SetFont( SharedFont );
+	Context.BeginFrame_Internal( Renderer, *CommandList, Swapchain->Width(), Swapchain->Height() );
+	Context.SetFont_Internal( SharedFont );
 
 	m_Overlay.Begin( *CommandList, Swapchain->Width(), Swapchain->Height() );
 	if ( BackdropOpacity > 0.0f )
@@ -53,5 +53,5 @@ void FDebugTopOverlayRenderer::Draw( CRenderer& Renderer, ADebugTopHUD& HUD, FFo
 
 	HUD.Draw( Context, m_Overlay );
 	m_Overlay.End();
-	Context._EndFrame();
+	Context.EndFrame_Internal();
 }
