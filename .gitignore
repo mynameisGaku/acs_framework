@@ -28,4 +28,7 @@ ThirdParty/Effekseer/ResourceData/
 !ThirdParty/Effekseer/build/**/Release/*.lib
 
 # 対応する ACS 配布物の lib (巨大なので置くだけ。ヘッダはリポジトリへ入れている)
-ThirdParty/acs/lib/
+# 取得した ACS 配布物。**中身は commit しない** (500MB 近くある)。
+# Tools/FetchAcs.ps1 が入れ直せるので、repo に持つ意味が無い。
+ThirdParty/acs/*
+!ThirdParty/acs/README.md

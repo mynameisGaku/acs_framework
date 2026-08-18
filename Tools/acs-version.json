@@ -1,0 +1,7 @@
+{
+  "_comment": "Pinned ACS distribution. Tools/FetchAcs.ps1 reads this. Bump tag + sha256 together, never one alone.",
+  "repository": "mynameisGaku/ArtsCommonSystem",
+  "tag": "dist-2026.08.18",
+  "asset": "acs-dist-win-x64.zip",
+  "sha256": ""
+}

@@ -142,11 +142,16 @@ Steam (`SteamworksBridge`)、スクリプト (`ScriptHost`)、機械学習 (`MlR
 
 **判定基準: 別マシンで clone → 1 コマンド → ビルド → サンプルが動く。**
 
-- `LICENSE` (Apache-2.0) と、トップの `README.md`
-- ACS 配布物を GitHub Releases へ置き、取得スクリプトと sha256 の照合を用意する
-- CI (Windows x64: 取得 → ビルド → テスト)
-- 入門ドキュメントと、3D の最小サンプル 1 本
-- 対応プラットフォームの宣言 (Windows x64 のみ)
+- ~~`LICENSE` (Apache-2.0) と、トップの `README.md`~~ **済** (2026-08-18)
+- ~~取得スクリプトと sha256 の照合~~ **済**: `Tools\FetchAcs.ps1` + `Toolscs-version.json`。
+  配布物は `ThirdPartycs` へ入り、**環境変数も /p: も無しでビルドが通る**ことを確認済み
+  (Debug/Release、単体テスト 538 件、サンプル起動)
+- ~~入門ドキュメントと 3D の最小サンプル~~ **済**: トップ README とデモ 1 本
+- **残り: ACS 側の GitHub Release を実際に publish する。** いまは `-FromLocal` で
+  ローカルビルドから持ってくる道しか通っていない。`acs-version.json` の `sha256` が空なのは
+  そのため (資産が無いので照合対象が無い)
+- 残り: CI (Windows x64: 取得 → ビルド → テスト)
+- 残り: 対応プラットフォームの宣言 (Windows x64 のみ)
 
 ### v1.0.0 — 凍結
 

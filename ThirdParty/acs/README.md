@@ -3,10 +3,27 @@
 この framework は ACS を**単一ヘッダ + lib の配布物**として使う。ビルドするには配布物の場所を
 指定する必要がある。
 
-| やり方 | 指定 |
+**いちばん簡単なのは、このフォルダへ置くこと。** `Tools\FetchAcs.ps1` がそれをする。
+
+```powershell
+.\Tools\FetchAcs.ps1                        # 固定した版を取得して、ここへ展開する
+.\Tools\FetchAcs.ps1 -FromLocal C:\acs_dev   # 自分でビルドしたものを持ってくる
+```
+
+探す順番は次のとおりで、**ここに `acs.h` が在れば何も指定しなくても通る**。
+
+| 順 | やり方 |
 |---|---|
-| 環境変数 | `ACS_DIST_ROOT=<配布物のルート>` |
-| ビルド時に指定 | `msbuild ... /p:AcsDistRoot=<配布物のルート>` |
+| 1 | ビルド時に指定 `msbuild ... /p:AcsDistRoot=<配布物のルート>` |
+| 2 | 環境変数 `ACS_DIST_ROOT=<配布物のルート>` |
+| 3 | **このフォルダ (`ThirdParty\acs`)** |
+| 4 | `C:\acs` (古い版の名残。落ちるとビルド時に警告が出る) |
+
+固定している版は `Tools\acs-version.json`。**tag と sha256 は必ず一緒に変える。**
+片方だけ変えると「取得できたのに中身が違う」という一番分かりにくい壊れ方をする。
+
+**中身は commit しない。** 1 GB 近くあり、取り直せるものを repo に持つ意味が無いので、
+`.gitignore` がこの README 以外を無視している。
 
 `<配布物のルート>` の下に `acs.h` と `lib/x64/{Debug,Release}/` がある構成を想定する。
 

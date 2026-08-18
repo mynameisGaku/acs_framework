@@ -47,6 +47,9 @@
     <!-- 指定が無いときの最後の拠り所。ここが空のままだと acs.h が 1 つも見つからず、
          IDE では全ファイルが «識別子 f32 が定義されていません» で埋まる。
          既定へ落ちたことは build 時に警告で知らせる (WarnAcsDistRootFallback)。 -->
+    <!-- clone しただけの機械が通る道。Tools\FetchAcs.ps1 がここへ展開する。
+         在るときは «普通の状態» なので fallback 扱いにしない。 -->
+    <AcsDistRoot Condition="'$(AcsDistRoot)'=='' AND Exists('$(ProjectDir)ThirdParty\acs\acs.h')">$(ProjectDir)ThirdParty\acs</AcsDistRoot>
     <AcsDistRootIsFallback Condition="'$(AcsDistRoot)'==''">true</AcsDistRootIsFallback>
     <AcsDistRoot Condition="'$(AcsDistRoot)'==''">C:\acs</AcsDistRoot>
   </PropertyGroup>
