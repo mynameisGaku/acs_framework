@@ -29,7 +29,7 @@ void ADemo3DScene::OnEnter() noexcept
 	FModel3DSpawnParams Floor = FModel3DSpawnParams::FromPrimitive( EMeshPrimitive3D::Plane, FVec3{ 0.0f, 0.0f, 0.0f } );
 	Floor.Scale = FVec3{ kFloorSize, 1.0f, kFloorSize };
 	Floor.Color = FVec4{ 0.55f, 0.56f, 0.58f, 1.0f };
-	Floor.Roughness = 0.14f;   // 磨いた床。低いほど反射 (SSR) が乗る
+	Floor.Roughness = 0.10f;   // 磨いた床。低いほど反射 (SSR) が乗る
 	Floor.bCastsShadow = false;
 	Floor.Name = FStringView( "Floor" );
 	CModel3DSpawner::SpawnInto( Root(), Floor );
@@ -95,13 +95,24 @@ void ADemo3DScene::OnEnter() noexcept
 		}
 	}
 
-	// 太陽。斜め上から差す。ここを消すとエンジン既定の太陽に落ちる。
+	// 太陽。
 	//
-	// 向きは «面から光源へ向かう» 側なので、無回転だと真上に太陽がある。そのままだと
-	// 陰影が平坦なので、X まわりに -35 度・Y まわりに -30 度だけ倒して斜めから差させる。
+	// 向きは «面から光源へ向かう» 側で、無回転だと真上。**第 1 引数は «真上から何ラジアン
+	// 倒すか»** であって仰角ではない。0.95 で真上から 54 度、つまり仰角 36 度。
+	//
+	// 角度を選んだ理由は 2 つあって、どちらも «床に何が映るか» で決まる。
+	//
+	// - **高い太陽は床に映らない。** 見下ろしている床の鏡像は «水平よりやや上» を向くので、
+	//   仰角 60 度の太陽の像は画面の外へ行く。低くするほど像が手前へ降りてくる
+	// - **方位が合っていないと映らない。** カメラの正面と太陽の方位がずれていると、
+	//   像は床の左右どちらかの外へ外れる。-0.62 は、手前左に glare が来て
+	//   白飛びしない程度に外した位置
+	//
+	// 以前は真上に近い位置に置いていたので «床に太陽が映らない» ように見えていた。
+	// 描けていなかったのではなく、映る場所が画面の外だった。
 	TObjectPtr<ANode> SunNode = NewObject<ANode>();
 	SunNode->SetName( FStringView( "Sun" ) );
-	SunNode->Local().rotation = FQuat::Euler( -0.611f, -0.524f, 0.0f );
+	SunNode->Local().rotation = FQuat::Euler( 0.95f, -0.62f, 0.0f );
 
 	ALightComponent3D& Sun = SunNode->AddComponent<ALightComponent3D>();
 	Sun.SetLightKind( ELight3DKind::Directional );
@@ -109,17 +120,12 @@ void ADemo3DScene::OnEnter() noexcept
 	Sun.SetIntensity( 1.6f );
 	Root().AddChild( Move( SunNode ) );
 
-	// 手前を持ち上げる点光源。平行光源だけだと陰が硬いので、差が出るように 1 灯足す。
-	TObjectPtr<ANode> FillNode = NewObject<ANode>();
-	FillNode->SetName( FStringView( "Fill" ) );
-	FillNode->Local().position = FVec3{ 2.5f, 2.0f, 3.5f };
-
-	ALightComponent3D& Fill = FillNode->AddComponent<ALightComponent3D>();
-	Fill.SetLightKind( ELight3DKind::Point );
-	Fill.SetColor( FVec3{ 0.55f, 0.70f, 1.0f } );
-	Fill.SetIntensity( 2.0f );
-	Fill.SetRange( 14.0f );
-	Root().AddChild( Move( FillNode ) );
+	// 点光源は置かない。
+	//
+	// 以前は «平行光源だけだと陰が硬い» ので 1 灯足していたが、いまは空を焼いた環境光 (IBL)
+	// が陰の側を持ち上げている。**役目が重なったうえ、害の方が大きかった。**
+	// 磨いた床に点光源の鏡像が «見えない電球» の白い点として写り込み、太陽とも反射とも
+	// 辻褄の合わない光として見えていた。
 
 	// 本物の雲を出す。太陽の側が明るく、縁が光る。
 	//
@@ -153,7 +159,7 @@ void ADemo3DScene::OnEnter() noexcept
 
 	// 反射。磨いた床と金属に、画面に映っているものを映す。
 	// **画面に映っていないものは映せない** ので、切っておく方が素直な場面もある。
-	Reflections().Intensity = 0.6f;
+	Reflections().Intensity = 0.9f;
 
 	// 大気が描く «地面» の色を、置いた床に寄せる。ここがずれると、地平線から下だけ
 	// 別の場所の色になり、床の縁で色が切り替わって見える。
