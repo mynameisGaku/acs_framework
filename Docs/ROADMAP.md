@@ -105,8 +105,9 @@ Steam (`SteamworksBridge`)、スクリプト (`ScriptHost`)、機械学習 (`MlR
   として ufbx で実装 (骨・祖先・逆バインド・重み 4 本・クリップを 30Hz で焼く)。
   枠組み側の窓口 (`CModelLibrary::LoadSkinned`) と描画 (`ASkinnedMeshComponent3D` +
   `DrawSkinnedScene`) も繋いだ。**デモで実際に骨が動いている。**
-  残り: `CSkinnedShader` が Blinn-Phong なので静的メッシュと質感が揃わない
-  (IBL / 遮蔽 / 反射 / 影が効かない)。揃えるなら `CPbrShader` 側にスキニングを足す
+  **質感も揃えた**: CPU で変形して普通のメッシュとして PBR の経路へ流すので、
+  IBL・影・遮蔽・反射・霧が静的メッシュとまったく同じに効く (`acs_temp_doc/0022`)。
+  何十体も出すなら `CPbrShader` へ GPU スキニングを足すのが次
 - ~~3D の当たり判定の窓口~~ → **`Scene/Pick3D` として実装済み** (2026-08-18)。
   線を飛ばして当たったノードを返す (`FSceneRay::FromScreen` でクリックした物を取れる)。
   精度は境界の箱まで。三角形と厳密に判定したいときは ACS の `CMeshCollider` へ渡す。
