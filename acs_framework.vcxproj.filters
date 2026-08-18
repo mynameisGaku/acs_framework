@@ -1246,6 +1246,9 @@
     <None Include="Source\AcsFramework_Core\Assets\Model3D\Test\ModelLibraryTest.cpp">
       <Filter>Source\AcsFramework_Core\Assets\Model3D\Test</Filter>
     </None>
+    <None Include="Source\AcsFramework_Core\Assets\Model3D\Test\SkinnedModelTest.cpp">
+      <Filter>Source\AcsFramework_Core\Assets\Model3D\Test</Filter>
+    </None>
     <None Include="Source\AcsFramework_Core\Audio\Music\README.md">
       <Filter>Source\AcsFramework_Core\Audio\Music</Filter>
     </None>

@@ -23,7 +23,9 @@
 
 | | 出どころ |
 |---|---|
-| `MergedSphere.fbx` | Effekseer 同梱のサンプル (`ThirdParty/Effekseer/ResourceData/samples/00_MaterialBasic/Models`)。**取り込みが通ることを確かめるためだけ**に置いてある |
+| `MergedSphere.fbx` | Effekseer 同梱のサンプル。**静的メッシュの取り込みを確かめるため**に置いてある |
+| `SkinnedCube.fbx` | ufbx のテストデータ (`blender_293_half_skinned`)。骨付きの取り込み用 |
+| `SkinnedAnimated.fbx` | ufbx のテストデータ (`max_transformed_skin`)。クリップ付き |
 
 ## 真っ黒になったら法線を疑う
 
@@ -35,3 +37,22 @@
 
 最初この置き場には Effekseer の `Arrow.fbx` を入れていたが、片面の薄い扇形なので
 このデモの画角では裏面しか見えず、何を置いても暗いままだった。閉じた形に差し替えてある。
+
+## 骨付きは読み口が別
+
+同じ `.fbx` でも、**骨の要る読み方と要らない読み方で欲しいものが違う**ので、拡張子で
+自動には選ばない。
+
+| | |
+|---|---|
+| 静的 | `CModelLibrary::Load` (`CFbxAssetLoader` 経由) |
+| 骨付き | `LoadSkinnedMeshFromFbxMemory` (ACS の関数を直に呼ぶ) |
+
+骨付きで取り込むもの:
+
+- 最初に見つかったスキン付きメッシュ **1 つだけ**
+- その骨と、**そこから根までの祖先ノード全部**
+- アニメーションは **30 回 / 秒で焼く**。曲線をそのまま持たない
+- 1 頂点あたり **4 本**まで (重みの大きい順、合計 1 に正規化)
+
+骨は **256 本**まで。

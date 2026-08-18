@@ -60,6 +60,7 @@ $sources = @(
     'AcsFramework_Core\Assets\Model3D\AssetRoot.cpp',
     'AcsFramework_Core\Assets\Model3D\ModelLibrary.cpp',
     'AcsFramework_Core\Assets\Model3D\Test\ModelLibraryTest.cpp',
+    'AcsFramework_Core\Assets\Model3D\Test\SkinnedModelTest.cpp',
     'AcsFramework_Core\Text\Localization\TextArgument.cpp',
     'AcsFramework_Core\Text\Localization\TextFormatter.cpp',
     'AcsFramework_Core\Text\Localization\LocaleCatalog.cpp',

@@ -348,6 +348,7 @@
       <None Include="Source\AcsFramework_Core\Assets\Model3D\Test\ModelLibraryTest.cpp" />
       <None Include="Assets\README.md" />
       <None Include="Assets\Models\README.md" />
+      <None Include="Source\AcsFramework_Core\Assets\Model3D\Test\SkinnedModelTest.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Common\Pch.cpp">

@@ -55,6 +55,7 @@ void RunLocalizationTests( CTestHarness& Harness );
 void RunModel3DSpawnerTests( CTestHarness& Harness );
 void RunScenePickerTests( CTestHarness& Harness );
 void RunModelLibraryTests( CTestHarness& Harness );
+void RunSkinnedModelTests( CTestHarness& Harness );
 void RunSceneSnapshotTests( CTestHarness& Harness );
 void RunFixedStepDriverTests( CTestHarness& Harness );
 
@@ -83,6 +84,7 @@ int main()
 	RunModel3DSpawnerTests( Harness );
 	RunScenePickerTests( Harness );
 	RunModelLibraryTests( Harness );
+	RunSkinnedModelTests( Harness );
 	RunSceneSnapshotTests( Harness );
 	RunFixedStepDriverTests( Harness );
 

@@ -99,7 +99,11 @@ Steam (`SteamworksBridge`)、スクリプト (`ScriptHost`)、機械学習 (`MlR
 - ライティング — **ACS 側へ実装済み**: 光のコンポーネント (`ALightComponent3D`) と、
   木から集めて shader の配列にする層 (`CLightCollector3D`)。`acs_temp_doc/0005` `0006`。
   残りは描く側との接続と、«何もしなくても綺麗» な既定 (太陽 + IBL + 影 + トーンマップ)
-- アニメーション再生の窓口 (`AnimationGraph`)
+- アニメーション再生 — **ACS 側の穴を埋めた** (2026-08-18)。
+  `ASkinnedMeshAsset` / `CAnimationPlayer` / `CSkinnedShader` は在ったのに、
+  **FBX から骨付きメッシュを作るローダだけが無かった**。`LoadSkinnedMeshFromFbxMemory`
+  として ufbx で実装 (骨・祖先・逆バインド・重み 4 本・クリップを 30Hz で焼く)。
+  残りは枠組み側の窓口 (置く / 再生する) と `CSkinnedShader` の配線
 - ~~3D の当たり判定の窓口~~ → **`Scene/Pick3D` として実装済み** (2026-08-18)。
   線を飛ばして当たったノードを返す (`FSceneRay::FromScreen` でクリックした物を取れる)。
   精度は境界の箱まで。三角形と厳密に判定したいときは ACS の `CMeshCollider` へ渡す。
