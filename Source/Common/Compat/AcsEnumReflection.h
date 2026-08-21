@@ -87,7 +87,12 @@ namespace AcsFw
 	template<typename TEnum> inline bool IsValidEnum( TEnum Value ) noexcept { return acs::IsValidEnum( Value ); }
 	/** 見つからなければ `kInvalidEnumIndex` が返る (エンジン側の決めごと)。 */
 	template<typename TEnum> inline usize EnumToIndex( TEnum Value ) noexcept { return acs::EnumToIndex( Value ); }
-	template<typename TEnum> inline TEnum EnumFromIndex( usize Index ) noexcept { return acs::EnumFromIndex<TEnum>( Index ); }
+	template<typename TEnum> inline TEnum EnumFromIndex( usize Index ) noexcept
+	{
+		// Engineの入力はi32なので、狭める前に列挙数で弾いて範囲外の先頭戻しへ渡す。
+		if ( Index >= acs::EnumCount<TEnum> ) return acs::EnumFromIndex<TEnum>( -1 );
+		return acs::EnumFromIndex<TEnum>( static_cast<i32>( Index ) );
+	}
 
 	template<typename TEnum> inline FEnumNameView EnumToString( TEnum Value ) noexcept
 	{

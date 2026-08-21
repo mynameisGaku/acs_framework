@@ -2,6 +2,8 @@
 #include "Common/Compat/AcsEnumReflection.h"
 #include "Common/Test/TestHarness.h"
 
+#include <limits>
+
 namespace
 {
 	/** 0 から連番の、いちばん普通の形。 */
@@ -113,6 +115,8 @@ void RunEnumReflectionTests( CTestHarness& Harness )
 
 		// 範囲の外を渡されても落ちない (画面の選択位置は外から来る)。
 		Harness.Check( AcsFw::EnumFromIndex<ETestColor>( 99u ) == ETestColor::Red, "範囲外は先頭へ寄せる" );
+		Harness.Check( AcsFw::EnumFromIndex<ETestColor>( std::numeric_limits<usize>::max() ) == ETestColor::Red,
+			"i32へ入らない位置も先頭へ寄せる" );
 
 		// 0 ではなく番兵を返すこと。0 だと «先頭が選ばれている» と区別が付かず、
 		// 壊れた値が黙って «先頭の選択肢» として通ってしまう。
