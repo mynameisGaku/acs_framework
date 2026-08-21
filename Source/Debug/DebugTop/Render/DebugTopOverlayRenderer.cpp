@@ -39,8 +39,9 @@ void FDebugTopOverlayRenderer::Draw( CRenderer& Renderer, ADebugTopHUD& HUD, FFo
 
 	// HUD がこのフレームだけ使う描画文脈。
 	FRenderContext Context;
-	Context.BeginFrame_Internal( Renderer, *CommandList, Swapchain->Width(), Swapchain->Height() );
-	Context.SetFont_Internal( SharedFont );
+	auto Wiring = Context.WiringAccess();
+	Wiring.BeginFrame( Renderer, *CommandList, Swapchain->Width(), Swapchain->Height() );
+	Wiring.SetFont( SharedFont );
 
 	m_Overlay.Begin( *CommandList, Swapchain->Width(), Swapchain->Height() );
 	if ( BackdropOpacity > 0.0f )
@@ -53,5 +54,5 @@ void FDebugTopOverlayRenderer::Draw( CRenderer& Renderer, ADebugTopHUD& HUD, FFo
 
 	HUD.Draw( Context, m_Overlay );
 	m_Overlay.End();
-	Context.EndFrame_Internal();
+	Wiring.EndFrame();
 }
