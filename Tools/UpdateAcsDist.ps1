@@ -28,8 +28,49 @@ $ErrorActionPreference = 'Stop'
 
 function Write-Step([string]$Text) { Write-Host "==> $Text" -ForegroundColor Cyan }
 
+# repoまたはworktree自身の正規化済みrootを返す。
+function Get-GitRoot([string]$Repository) {
+    $root = (& git -C $Repository rev-parse --show-toplevel 2>$null)
+    if ($LASTEXITCODE -ne 0 -or [string]::IsNullOrWhiteSpace($root)) {
+        throw "Gitのworktree rootを特定できません: $Repository"
+    }
+    return (Resolve-Path -LiteralPath $root.Trim()).Path.TrimEnd('\', '/')
+}
+
+# 複数worktreeが共有するGit管理directoryの正規化済みpathを返す。
+function Get-GitCommonDirectory([string]$Repository) {
+    $common = (& git -C $Repository rev-parse --git-common-dir 2>$null)
+    if ($LASTEXITCODE -ne 0 -or [string]::IsNullOrWhiteSpace($common)) {
+        throw "Gitの共通管理directoryを特定できません: $Repository"
+    }
+
+    $path = $common.Trim()
+    if (-not [System.IO.Path]::IsPathRooted($path)) { $path = Join-Path $Repository $path }
+    return (Resolve-Path -LiteralPath $path).Path.TrimEnd('\', '/')
+}
+
 if (-not (Test-Path (Join-Path $AcsRepo '.git'))) {
     throw "ACS repository not found: $AcsRepo"
+}
+
+# 同名の古いworktreeが別cloneに属していると、指定したrefではなく別cloneのrefをcheckoutして
+# headerとlibraryを生成してしまう。取得やbuildの前に所有元を固定し、古い配布の公開を防ぐ。
+if (Test-Path -LiteralPath $Worktree) {
+    if (-not (Test-Path -LiteralPath (Join-Path $Worktree '.git'))) {
+        throw "既存のworktree指定先がGit worktreeではありません: $Worktree"
+    }
+
+    $repoRoot = Get-GitRoot $AcsRepo
+    $worktreeRoot = Get-GitRoot $Worktree
+    if ([string]::Equals($repoRoot, $worktreeRoot, [System.StringComparison]::OrdinalIgnoreCase)) {
+        throw "worktreeにはACS repo本体とは別の場所を指定してください: $Worktree"
+    }
+
+    $repoCommon = Get-GitCommonDirectory $AcsRepo
+    $worktreeCommon = Get-GitCommonDirectory $Worktree
+    if (-not [string]::Equals($repoCommon, $worktreeCommon, [System.StringComparison]::OrdinalIgnoreCase)) {
+        throw "worktreeが別のGit repoに属しています。repo='$AcsRepo' worktree='$Worktree'"
+    }
 }
 
 # 1) Refresh the remote refs. This only writes to .git, never to a working tree.
