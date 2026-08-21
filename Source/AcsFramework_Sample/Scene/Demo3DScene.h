@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 #pragma once
 
-#include <acs.h>
+#include "AcsFramework_Core/Effects/Effect3D/Effect3DScene.h"
 
 using namespace acs;
 using namespace acs::game;
@@ -19,7 +19,7 @@ using namespace acs::game;
  * ここに置く物は「既定のままどう見えるか」を見るためのものなので、
  * **素材ファイルを要らない形 (立方体・球・板) だけで組む**。素材が無い環境でも必ず映る。
  */
-class ADemo3DScene : public ALegacyScene3DAdapter
+class ADemo3DScene : public AEffect3DScene
 {
 public:
 	/** 物と光を置き、カメラを引く。 */
@@ -58,4 +58,7 @@ private:
 
 	/** 直近 1 秒ぶんのフレーム数。 */
 	u32 m_FrameCount = 0u;
+
+	/** 次の3Dエフェクトまでに経過した秒。 */
+	f32 m_EffectElapsedSeconds = 0.0f;
 };

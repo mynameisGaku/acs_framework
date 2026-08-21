@@ -27,10 +27,18 @@ $out  = Join-Path $repo "x64\UnitTest\$Configuration"
 
 New-Item -ItemType Directory -Force -Path $out | Out-Null
 
-# Load the developer shell, otherwise cl.exe cannot find the standard library.
-$devShell = 'C:\Program Files\Microsoft Visual Studio\18\Community\Common7\Tools\Launch-VsDevShell.ps1'
-if (Test-Path $devShell) {
-    & $devShell -Arch amd64 -HostArch amd64 -SkipAutomaticLocation 2>$null | Out-Null
+# Visual Studio 2026 の launcher は日本語の vswhere JSON を誤解析することがあるため、
+# install pathを直接選び、VsDevCmdが作るx64 compiler環境を現在processへ取り込む (VS 2026対応).
+& "$PSScriptRoot\Get-MsvcEnvironment.ps1" | ForEach-Object {
+    $line = $_
+    $separator = $line.IndexOf('=')
+    if ($separator -gt 0) {
+        Set-Item -LiteralPath ("Env:" + $line.Substring(0, $separator)) -Value $line.Substring($separator + 1)
+    }
+}
+$compilerPath = Join-Path $env:VCToolsInstallDir 'bin\HostX64\x64\cl.exe'
+if (-not (Test-Path -LiteralPath $compilerPath -PathType Leaf)) {
+    throw 'x64 MSVC compiler environment could not be initialized.'
 }
 
 # Must match the ABI the project uses; acs.h rejects a mismatch at line 14.
@@ -61,6 +69,8 @@ $sources = @(
     'AcsFramework_Core\Assets\Model3D\ModelLibrary.cpp',
     'AcsFramework_Core\Assets\Model3D\Test\ModelLibraryTest.cpp',
     'AcsFramework_Core\Assets\Model3D\Test\SkinnedModelTest.cpp',
+    'AcsFramework_Core\Effects\Effect3D\Effect3DPlayParams.cpp',
+    'AcsFramework_Core\Effects\Effect3D\Test\Effect3DPlayParamsTest.cpp',
     'AcsFramework_Core\Text\Localization\TextArgument.cpp',
     'AcsFramework_Core\Text\Localization\TextFormatter.cpp',
     'AcsFramework_Core\Text\Localization\LocaleCatalog.cpp',
@@ -113,7 +123,7 @@ try {
     $clArgs = $flags + @('/I', $AcsDistRoot, '/I', $src) + $sources +
               @('/FeUnitTests.exe', '/link', "/LIBPATH:$libPath", '/SUBSYSTEM:CONSOLE')
 
-    $buildLog = & cl @clArgs 2>&1 | Out-String
+    $buildLog = & $compilerPath @clArgs 2>&1 | Out-String
     if ($LASTEXITCODE -ne 0) {
         Write-Host $buildLog
         throw "build failed"

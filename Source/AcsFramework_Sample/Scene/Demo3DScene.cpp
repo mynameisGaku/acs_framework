@@ -18,12 +18,29 @@ namespace
 
 	/** 往復させる速さ (world 単位 / 秒)。 */
 	constexpr f32 kMoveSpeed = 1.8f;
+
+	/** screenshotでも見つけやすいようにhit effectを繰り返す間隔。 */
+	constexpr f32 kEffectRepeatSeconds = 1.25f;
+
+	/** 回転するcubeの中心付近に置くeffect位置。 */
+	constexpr FVec3 kEffectPosition{ 0.0f, 1.4f, -3.0f };
+
+	/** Effekseer sampleの広さをACSのmeter尺度へ合わせる倍率。 */
+	constexpr f32 kEffectScale = 0.35f;
+
+	/** screenshot用hit effectの位置と倍率を揃える。 */
+	FEffect3DPlayParams MakeDemoEffectParams() noexcept
+	{
+		FEffect3DPlayParams Params = FEffect3DPlayParams::At( kEffectPosition );
+		Params.Scale = FVec3{ kEffectScale, kEffectScale, kEffectScale };
+		return Params;
+	}
 }
 
 
 void ADemo3DScene::OnEnter() noexcept
 {
-	ALegacyScene3DAdapter::OnEnter();
+	AEffect3DScene::OnEnter();
 
 	// 床。大きく平たい板 1 枚。影の落ち方が見えるように置く。
 	FModel3DSpawnParams Floor = FModel3DSpawnParams::FromPrimitive( EMeshPrimitive3D::Plane, FVec3{ 0.0f, 0.0f, 0.0f } );
@@ -174,6 +191,10 @@ void ADemo3DScene::OnEnter() noexcept
 	// キー入力で画角が変わり、«何が変わったのか» が分からない画が並ぶ。
 	SetFreeCameraEnabled( true );
 	SetOrbit( FVec3{ 0.0f, 1.0f, 0.0f }, 0.0f, 0.32f, 14.0f );
+
+	// 素材名と明示した置き方だけで3D effectを出す。renderer準備前なら基底が開始まで保持する。
+	m_EffectElapsedSeconds = 0.0f;
+	PlayEffect3D( FStringView( "Effects/hit.efkefc" ), MakeDemoEffectParams() );
 }
 
 
@@ -195,8 +216,19 @@ void ADemo3DScene::ReportFrameTime( f32 DeltaSeconds ) noexcept
 
 void ADemo3DScene::OnUpdate( f32 DeltaSeconds ) noexcept
 {
-	ALegacyScene3DAdapter::OnUpdate( DeltaSeconds );
+	AEffect3DScene::OnUpdate( DeltaSeconds );
 	ReportFrameTime( DeltaSeconds );
+
+	// 準備中に再生要求を溜めず、短いhit素材を1つずつ確認できる間隔で繰り返す。
+	if ( Effects3D().IsReady() )
+	{
+		m_EffectElapsedSeconds += DeltaSeconds;
+		if ( m_EffectElapsedSeconds >= kEffectRepeatSeconds )
+		{
+			m_EffectElapsedSeconds -= kEffectRepeatSeconds;
+			PlayEffect3D( FStringView( "Effects/hit.efkefc" ), MakeDemoEffectParams() );
+		}
+	}
 
 	// 回す。度のまま足せる (ラジアンへ直す必要は無い)。
 	if ( m_Spinner != nullptr ) m_Spinner->RotateDeg( FVec3{ 0.0f, kSpinSpeed * DeltaSeconds, 0.0f } );

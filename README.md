@@ -35,6 +35,7 @@ msbuild acs_framework.vcxproj /p:Configuration=Release /p:Platform=x64
 | 3D を置く | `CModel3DSpawner`、FBX の取り込み、材質 (metallic / roughness) |
 | 動かす | `SetPosition` / `RotateDeg` / `LookAt` / `MoveToward`、骨アニメーション |
 | 見た目 | 物理大気・ボリューム雲・影・IBL・遮蔽 (SSAO)・反射 (SSR)・霧・トーンマップ |
+| 3D 演出 | `AEffect3DScene`、Effekseer、depth 遮蔽、HDR・bloom への自動合成 |
 | 当てる | 線を飛ばして当たったノードを返す (`CScenePicker`) |
 | 土台 | 起動・場面遷移・アセット・音・セーブ・設定・入力・多言語・決定性・開発支援 |
 
@@ -59,6 +60,9 @@ Node->LookAt( Target );
 
 // 当てる
 const FSceneRayHit Hit = CScenePicker::Raycast( Root(), FSceneRay::FromScreen( Camera, MouseX, MouseY, W, H ) );
+
+// 3D effectを出す (classの基底はAEffect3DScene)
+PlayEffect3D( FStringView( "Effects/hit.efkefc" ), FVec3{ 0, 1, 0 } );
 ```
 
 ## 素材

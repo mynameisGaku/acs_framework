@@ -5,6 +5,7 @@
 ```
 Assets/
   Models/     モデル (.fbx を薦める)
+  Effects/    3D エフェクト (.efkefc)
   Textures/   画像
   Audio/      音
 ```
@@ -22,6 +23,17 @@ CModel3DSpawner::SpawnInto( Root(), Params, Models );
 
 `.gltf` `.glb` `.obj` も読める。ACS 側にローダが在るので通しているだけで、
 **この枠組みが薦めるのは FBX**。
+
+## 3D エフェクトは efkefc
+
+Effekseerで書き出した`.efkefc`を`Effects/`へ置く。`AEffect3DScene`を継承した場面なら、
+素材名と位置だけでHDRの3D演出として再生できる。
+
+```cpp
+PlayEffect3D( FStringView( "Effects/hit.efkefc" ), FVec3{ 0, 1, 0 } );
+```
+
+同梱sampleと参照fileの配置は[`Effects/README.md`](Effects/README.md)を参照。
 
 ## 置き場の見つけ方
 

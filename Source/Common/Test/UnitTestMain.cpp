@@ -58,6 +58,7 @@ void RunModelLibraryTests( CTestHarness& Harness );
 void RunSkinnedModelTests( CTestHarness& Harness );
 void RunSceneSnapshotTests( CTestHarness& Harness );
 void RunFixedStepDriverTests( CTestHarness& Harness );
+void RunEffect3DPlayParamsTests( CTestHarness& Harness );
 
 int main()
 {
@@ -87,6 +88,7 @@ int main()
 	RunSkinnedModelTests( Harness );
 	RunSceneSnapshotTests( Harness );
 	RunFixedStepDriverTests( Harness );
+	RunEffect3DPlayParamsTests( Harness );
 
 	Harness.Report();
 

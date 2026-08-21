@@ -7,6 +7,9 @@
     <Filter Include="Assets\Effects">
       <UniqueIdentifier>{94954a26-6d5a-e1e0-8e37-d0c32aefec92}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Assets\Effects\Parts">
+      <UniqueIdentifier>{252c61ff-0d23-5f38-3d77-ff30db817ff8}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Assets\Models">
       <UniqueIdentifier>{d0c68ae6-fdb9-be67-9e91-57aadcbcfa32}</UniqueIdentifier>
     </Filter>
@@ -48,6 +51,15 @@
     </Filter>
     <Filter Include="Source\AcsFramework_Core\Boot">
       <UniqueIdentifier>{571aa2f2-8b43-1714-b981-355e92a6406c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\AcsFramework_Core\Effects">
+      <UniqueIdentifier>{7d8b8c99-3941-61b2-9bf0-f9ff5030b2e4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\AcsFramework_Core\Effects\Effect3D">
+      <UniqueIdentifier>{6f14acd1-7fe3-f53a-1527-daea5c5306c5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\AcsFramework_Core\Effects\Effect3D\Test">
+      <UniqueIdentifier>{4a4a040e-3364-6039-3201-346ca877066a}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source\AcsFramework_Core\Event">
       <UniqueIdentifier>{4deac0f5-3ece-d63e-e4eb-349b2ddcd50e}</UniqueIdentifier>
@@ -153,12 +165,6 @@
     </Filter>
     <Filter Include="Source\Debug\DebugTop">
       <UniqueIdentifier>{5affac60-4ca5-6091-7653-c6f0d33a876b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source\Debug\DebugTopSample">
-      <UniqueIdentifier>{69521ce9-8112-d19f-0cf6-1bd294361bb4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source\Debug\DebugTopSample\Pages">
-      <UniqueIdentifier>{e22da821-a2bd-5f84-fdbe-62fd2a584152}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source\Debug\DebugTop\Builtin">
       <UniqueIdentifier>{43a270f2-8657-1674-b44b-de7bf7d70a06}</UniqueIdentifier>
@@ -281,6 +287,15 @@
     </ClCompile>
     <ClCompile Include="Source\AcsFramework_Core\Boot\BootScene.cpp">
       <Filter>Source\AcsFramework_Core\Boot</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Effects\Effect3D\Effect3DPlayer.cpp">
+      <Filter>Source\AcsFramework_Core\Effects\Effect3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Effects\Effect3D\Effect3DPlayParams.cpp">
+      <Filter>Source\AcsFramework_Core\Effects\Effect3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Effects\Effect3D\Effect3DScene.cpp">
+      <Filter>Source\AcsFramework_Core\Effects\Effect3D</Filter>
     </ClCompile>
     <ClCompile Include="Source\AcsFramework_Core\Event\EventSubscription.cpp">
       <Filter>Source\AcsFramework_Core\Event</Filter>
@@ -745,6 +760,18 @@
     </ClInclude>
     <ClInclude Include="Source\AcsFramework_Core\Boot\BootScene.h">
       <Filter>Source\AcsFramework_Core\Boot</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Effects\Effect3D\Effect3DHandle.h">
+      <Filter>Source\AcsFramework_Core\Effects\Effect3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Effects\Effect3D\Effect3DPlayer.h">
+      <Filter>Source\AcsFramework_Core\Effects\Effect3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Effects\Effect3D\Effect3DPlayParams.h">
+      <Filter>Source\AcsFramework_Core\Effects\Effect3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Effects\Effect3D\Effect3DScene.h">
+      <Filter>Source\AcsFramework_Core\Effects\Effect3D</Filter>
     </ClInclude>
     <ClInclude Include="Source\AcsFramework_Core\Event\EventSubscription.h">
       <Filter>Source\AcsFramework_Core\Event</Filter>
@@ -1266,6 +1293,12 @@
     </None>
     <None Include="Source\AcsFramework_Core\Audio\Spatial\Test\SpatialSourceRegistryTest.cpp">
       <Filter>Source\AcsFramework_Core\Audio\Spatial\Test</Filter>
+    </None>
+    <None Include="Source\AcsFramework_Core\Effects\Effect3D\README.md">
+      <Filter>Source\AcsFramework_Core\Effects\Effect3D</Filter>
+    </None>
+    <None Include="Source\AcsFramework_Core\Effects\Effect3D\Test\Effect3DPlayParamsTest.cpp">
+      <Filter>Source\AcsFramework_Core\Effects\Effect3D\Test</Filter>
     </None>
     <None Include="Source\AcsFramework_Core\README.md">
       <Filter>Source\AcsFramework_Core</Filter>

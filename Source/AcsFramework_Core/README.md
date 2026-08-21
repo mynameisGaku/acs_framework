@@ -36,6 +36,11 @@ Core はACSの部品を再実装しない。たとえば設定の値と検証付
 同じ理由で音声は`CAudioDirector`とXAudio2 backendを所有・配線するが、音声のミキシングや
 アセット解決を複製しない。
 
+3Dエフェクトはscene固有のカメラ・HDR描画先・depth・終了順へ結び付くため、GameInstanceの
+Subsystemにはしない。`AEffect3DScene`がscene単位で`CEffect3DPlayer`を所有し、ACSは外部描画を
+挿入できる透明3DパスとD3D12借用契約だけを持つ。Effekseer固有の読込・再生・描画はframework
+側の非公開実装へ閉じる。
+
 ### Text変換の契約
 
 `AcsToWide`の配列版は変換成功時だけ出力を更新し、確保・入力長・変換数の失敗時は既存内容を保つ。

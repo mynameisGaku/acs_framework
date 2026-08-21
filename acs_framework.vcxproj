@@ -333,6 +333,12 @@
     <ClInclude Include="Source\AcsFramework_Core\Scene\Model3D\Model3DSpawner.h" />
     <None Include="Source\AcsFramework_Core\Scene\Model3D\README.md" />
     <None Include="Source\AcsFramework_Core\Scene\Model3D\Test\Model3DSpawnerTest.cpp" />
+    <ClInclude Include="Source\AcsFramework_Core\Effects\Effect3D\Effect3DHandle.h" />
+    <ClInclude Include="Source\AcsFramework_Core\Effects\Effect3D\Effect3DPlayParams.h" />
+    <ClInclude Include="Source\AcsFramework_Core\Effects\Effect3D\Effect3DPlayer.h" />
+    <ClInclude Include="Source\AcsFramework_Core\Effects\Effect3D\Effect3DScene.h" />
+    <None Include="Source\AcsFramework_Core\Effects\Effect3D\README.md" />
+    <None Include="Source\AcsFramework_Core\Effects\Effect3D\Test\Effect3DPlayParamsTest.cpp" />
     <None Include="Tools\UpdateAcsDist.ps1" />
     <None Include="Tools\RunAcsTests.ps1" />
     <ClInclude Include="Source\AcsFramework_Sample\Scene\Demo3DScene.h" />
@@ -499,6 +505,9 @@
     <ClCompile Include="Source\AcsFramework_Core\Text\Localization\LocalizationSubsystem.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Scene\Model3D\Model3DSpawnParams.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Scene\Model3D\Model3DSpawner.cpp" />
+    <ClCompile Include="Source\AcsFramework_Core\Effects\Effect3D\Effect3DPlayParams.cpp" />
+    <ClCompile Include="Source\AcsFramework_Core\Effects\Effect3D\Effect3DPlayer.cpp" />
+    <ClCompile Include="Source\AcsFramework_Core\Effects\Effect3D\Effect3DScene.cpp" />
     <ClCompile Include="Source\AcsFramework_Sample\Scene\Demo3DScene.cpp" />
       <ClCompile Include="Source\AcsFramework_Core\Scene\Pick3D\SceneRay.cpp" />
       <ClCompile Include="Source\AcsFramework_Core\Scene\Pick3D\ScenePicker.cpp" />
