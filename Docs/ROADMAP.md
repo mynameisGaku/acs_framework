@@ -98,9 +98,10 @@ IBLへ反映する。残りは空を焼くIBLへ雲の形そのものを含め�
 - ~~カメラ~~ → **ACS 側へ実装済み** (`FCamera3D`、`acs_temp_doc/0004`)。
   `CCameraStack` は 2D 専用だったので使えず、`FCamera2D` の 3D 版を ACS に足した。
   枠組みからは配布物の再生成後に使える
-- ライティング — **ACS 側へ実装済み**: 光のコンポーネント (`ALightComponent3D`) と、
-  木から集めて shader の配列にする層 (`CLightCollector3D`)。`acs_temp_doc/0005` `0006`。
-  残りは描く側との接続と、«何もしなくても綺麗» な既定 (太陽 + IBL + 影 + トーンマップ)
+- ライティング — **ACS側とFramework側へ実装済み**: 光のコンポーネント
+  (`ALightComponent3D`) と木から集める層 (`CLightCollector3D`) を描画へ接続し、Frameworkでは
+  `CLight3DSpawner`へ方向または位置を渡すだけで置ける。光が無い場面も既定の太陽 + IBL + 影 +
+  トーンマップを維持する。`acs_temp_doc/0005` `0006`。
 - アニメーション再生 — **ACS側の穴とFramework側の配置手数を埋めた** (2026-08-18、
   簡単配置は2026-08-22)。
   `ASkinnedMeshAsset` / `CAnimationPlayer` / `CSkinnedShader` は在ったのに、
@@ -205,6 +206,7 @@ IBLへ反映する。残りは空を焼くIBLへ雲の形そのものを含め�
 | 3D カメラ (追従・揺れ) | ACS 側へ実装済み (`FCamera3D`) | 2026-08-17 |
 | 3D の光 | ACS 側へ実装済み (`ALightComponent3D`) | 2026-08-17 |
 | 光を集める層 | ACS 側へ実装済み (`CLightCollector3D`) | 2026-08-17 |
+| 3D の光を置く窓口 | Framework側へ実装済み (`CLight3DSpawner`) | 2026-08-22 |
 | 追う ACS のブランチ | **`dev`** (main は ABI ガードが逆で使えない) | 2026-08-17 |
 | 配布物の作り方 | `.\Tools\UpdateAcsDist.ps1` で dev の worktree からビルドして配置 | 2026-08-17 |
 | 対応する配布物 | dev から生成したもの (`C:\acs_dev`)。世代差は `Source/Common/Compat/` が吸収 | 2026-08-17 |

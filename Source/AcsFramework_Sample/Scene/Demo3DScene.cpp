@@ -2,6 +2,7 @@
 #include "AcsFramework_Sample/Scene/Demo3DScene.h"
 
 #include "AcsFramework_Core/Scene/Animation3D/AnimatedModel3DSpawner.h"
+#include "AcsFramework_Core/Scene/Light3D/Light3DSpawner.h"
 #include "AcsFramework_Core/Scene/Model3D/Model3DSpawner.h"
 #include "AcsFramework_Core/Scene/Pick3D/ScenePicker.h"
 #include "AcsFramework_Core/Scene/Water3D/Water3DSpawner.h"
@@ -279,28 +280,20 @@ void ADemo3DScene::OnEnter() noexcept
 
 	// 太陽。
 	//
-	// 向きは «面から光源へ向かう» 側で、無回転だと真上。**第 1 引数は «真上から何ラジアン
-	// 倒すか»** であって仰角ではない。0.95 で真上から 54 度、つまり仰角 36 度。
+	// 向きは «面から光源へ向かう» 側。正規化したY成分0.58は仰角約36度を表す。
 	//
-	// 角度を選んだ理由は 2 つあって、どちらも «床に何が映るか» で決まる。
+	// 方向を選んだ理由は2つあって、どちらも «床に何が映るか» で決まる。
 	//
 	// - **高い太陽は床に映らない。** 見下ろしている床の鏡像は «水平よりやや上» を向くので、
 	//   仰角 60 度の太陽の像は画面の外へ行く。低くするほど像が手前へ降りてくる
-	// - **方位が合っていないと映らない。** カメラの正面と太陽の方位がずれていると、
-	//   像は床の左右どちらかの外へ外れる。-0.62 は、手前左に glare が来て
-	//   白飛びしない程度に外した位置
+	// - **方位が合っていないと映らない。** X/Zの比は、手前左にglareが来て白飛びしない程度に
+	//   カメラ正面から外してある
 	//
 	// 以前は真上に近い位置に置いていたので «床に太陽が映らない» ように見えていた。
 	// 描けていなかったのではなく、映る場所が画面の外だった。
-	TObjectPtr<ANode> SunNode = NewObject<ANode>();
-	SunNode->SetName( FStringView( "Sun" ) );
-	SunNode->Local().rotation = FQuat::Euler( 0.95f, -0.62f, 0.0f );
-
-	ALightComponent3D& Sun = SunNode->AddComponent<ALightComponent3D>();
-	Sun.SetLightKind( ELight3DKind::Directional );
-	Sun.SetColor( FVec3{ 1.0f, 0.96f, 0.90f } );
-	Sun.SetIntensity( 1.6f );
-	Root().AddChild( Move( SunNode ) );
+	// 以前のEuler角と同じ方向を、光の意味に合う「面から太陽へ向かう方向」で直接渡す。
+	// ノード作成、回転への変換、部品の追加は配置窓口がまとめる。
+	CLight3DSpawner::SpawnInto( Graph(), FLight3DSpawnParams::Sun( FVec3{ -0.472623f, 0.581683f, 0.662021f } ) );
 
 	// 点光源は置かない。
 	//

@@ -97,6 +97,12 @@
     <Filter Include="Source\AcsFramework_Core\Scene\Collision3D\Test">
       <UniqueIdentifier>{eb51a720-5b1a-13b8-90bc-d964302b1ffb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\AcsFramework_Core\Scene\Light3D">
+      <UniqueIdentifier>{8b1a5568-e0a0-83ba-9b5c-33efac1dff22}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\AcsFramework_Core\Scene\Light3D\Test">
+      <UniqueIdentifier>{73e97d9d-fe36-7fa2-451e-64e85b82e177}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Source\AcsFramework_Core\Scene\Model3D">
       <UniqueIdentifier>{79cdabc9-6138-da84-dcb5-971d07edd6b0}</UniqueIdentifier>
     </Filter>
@@ -389,6 +395,12 @@
     </ClCompile>
     <ClCompile Include="Source\AcsFramework_Core\Scene\Collision3D\SceneCollision3D.cpp">
       <Filter>Source\AcsFramework_Core\Scene\Collision3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Scene\Light3D\Light3DSpawner.cpp">
+      <Filter>Source\AcsFramework_Core\Scene\Light3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Scene\Light3D\Light3DSpawnParams.cpp">
+      <Filter>Source\AcsFramework_Core\Scene\Light3D</Filter>
     </ClCompile>
     <ClCompile Include="Source\AcsFramework_Core\Scene\Model3D\Model3DSpawner.cpp">
       <Filter>Source\AcsFramework_Core\Scene\Model3D</Filter>
@@ -910,6 +922,12 @@
     </ClInclude>
     <ClInclude Include="Source\AcsFramework_Core\Scene\Collision3D\SceneSweepHit3D.h">
       <Filter>Source\AcsFramework_Core\Scene\Collision3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Light3D\Light3DSpawner.h">
+      <Filter>Source\AcsFramework_Core\Scene\Light3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Light3D\Light3DSpawnParams.h">
+      <Filter>Source\AcsFramework_Core\Scene\Light3D</Filter>
     </ClInclude>
     <ClInclude Include="Source\AcsFramework_Core\Scene\Model3D\Model3DSpawner.h">
       <Filter>Source\AcsFramework_Core\Scene\Model3D</Filter>
@@ -1446,6 +1464,12 @@
     </None>
     <None Include="Source\AcsFramework_Core\Scene\Collision3D\Test\SceneCollision3DTest.cpp">
       <Filter>Source\AcsFramework_Core\Scene\Collision3D\Test</Filter>
+    </None>
+    <None Include="Source\AcsFramework_Core\Scene\Light3D\README.md">
+      <Filter>Source\AcsFramework_Core\Scene\Light3D</Filter>
+    </None>
+    <None Include="Source\AcsFramework_Core\Scene\Light3D\Test\Light3DSpawnerTest.cpp">
+      <Filter>Source\AcsFramework_Core\Scene\Light3D\Test</Filter>
     </None>
     <None Include="Source\AcsFramework_Core\Scene\Model3D\README.md">
       <Filter>Source\AcsFramework_Core\Scene\Model3D</Filter>

@@ -58,6 +58,10 @@ Subsystemにはしない。`AEffect3DScene`がscene単位で`CEffect3DPlayer`を
 ノードとローカル形状を登録し、問い合わせ時に現在Transformへ同期して、結果をノードポインタへ
 戻す。速度、剛体、押し戻しは所有せず、場面ごとの短い寿命なのでsubsystemにはしない。
 
+3Dライト配置は`FLight3DSpawnParams`を検証可能な値、`CLight3DSpawner`を状態なしの接続層とする。
+位置または光源方向、色、強さ、到達距離から、識別子付きノードと`ALightComponent3D`を作るだけに
+留める。光の収集、上限選択、PBR描画、影はACSへ任せ、Framework側へ照明計算を複製しない。
+
 3Dアニメーション配置は`FAnimatedModel3DSpawnParams`を検証可能な値、
 `CAnimatedModel3DSpawner`を状態なしの接続層とする。骨付きFBXの読み込み、識別子付きノード、
 `ASkinnedMeshComponent3D`、初期クリップ再生だけをまとめ、姿勢計算と描画はACSへ任せる。

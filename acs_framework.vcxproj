@@ -348,6 +348,10 @@
     <None Include="Source\AcsFramework_Core\Scene\Animation3D\Test\AnimatedModel3DSpawnerTest.cpp" />
     <None Include="Source\AcsFramework_Core\Scene\Animation3D\Test\CharacterAnimation3DProfileTest.cpp" />
     <None Include="Source\AcsFramework_Core\Scene\Animation3D\Test\CharacterAnimator3DTest.cpp" />
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Light3D\Light3DSpawnParams.h" />
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Light3D\Light3DSpawner.h" />
+    <None Include="Source\AcsFramework_Core\Scene\Light3D\README.md" />
+    <None Include="Source\AcsFramework_Core\Scene\Light3D\Test\Light3DSpawnerTest.cpp" />
     <ClInclude Include="Source\AcsFramework_Core\Scene\Water3D\Water3DSpawnParams.h" />
     <ClInclude Include="Source\AcsFramework_Core\Scene\Water3D\Water3DSpawner.h" />
     <None Include="Source\AcsFramework_Core\Scene\Water3D\README.md" />
@@ -544,6 +548,8 @@
     <ClCompile Include="Source\AcsFramework_Core\Scene\Animation3D\CharacterAnimation3DInput.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Scene\Animation3D\CharacterAnimation3DProfile.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Scene\Animation3D\CharacterAnimator3D.cpp" />
+    <ClCompile Include="Source\AcsFramework_Core\Scene\Light3D\Light3DSpawnParams.cpp" />
+    <ClCompile Include="Source\AcsFramework_Core\Scene\Light3D\Light3DSpawner.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Scene\Water3D\Water3DSpawnParams.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Scene\Water3D\Water3DSpawner.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Scene\Weather3D\Weather3DAppearance.cpp" />
