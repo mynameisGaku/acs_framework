@@ -60,6 +60,7 @@ void RunModel3DSpawnerTests( CTestHarness& Harness );
 void RunAnimatedModel3DSpawnerTests( CTestHarness& Harness );
 void RunCharacterAnimation3DProfileTests( CTestHarness& Harness );
 void RunCharacterAnimator3DTests( CTestHarness& Harness );
+void RunSceneCollision3DTests( CTestHarness& Harness );
 void RunWater3DSpawnerTests( CTestHarness& Harness );
 void RunWeather3DAppearanceTests( CTestHarness& Harness );
 void RunScenePickerTests( CTestHarness& Harness );
@@ -99,6 +100,7 @@ int main()
 	RunAnimatedModel3DSpawnerTests( Harness );
 	RunCharacterAnimation3DProfileTests( Harness );
 	RunCharacterAnimator3DTests( Harness );
+	RunSceneCollision3DTests( Harness );
 	RunWater3DSpawnerTests( Harness );
 	RunWeather3DAppearanceTests( Harness );
 	RunScenePickerTests( Harness );

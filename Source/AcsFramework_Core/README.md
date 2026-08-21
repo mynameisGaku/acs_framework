@@ -54,6 +54,10 @@ Subsystemにはしない。`AEffect3DScene`がscene単位で`CEffect3DPlayer`を
 `CSceneNodeGraph`が持つ実形状判定を再実装せず、世代付き識別子を使いやすいノードポインタと
 世界座標の命中情報へ変換する。高速な境界箱判定は別用途として互換維持する。
 
+3Dの重なりと移動判定は、場面側が`CSceneCollision3D`を所有する。ACSの`CCollisionWorld3D`へ
+ノードとローカル形状を登録し、問い合わせ時に現在Transformへ同期して、結果をノードポインタへ
+戻す。速度、剛体、押し戻しは所有せず、場面ごとの短い寿命なのでsubsystemにはしない。
+
 3Dアニメーション配置は`FAnimatedModel3DSpawnParams`を検証可能な値、
 `CAnimatedModel3DSpawner`を状態なしの接続層とする。骨付きFBXの読み込み、識別子付きノード、
 `ASkinnedMeshComponent3D`、初期クリップ再生だけをまとめ、姿勢計算と描画はACSへ任せる。

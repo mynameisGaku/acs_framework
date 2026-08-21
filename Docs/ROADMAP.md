@@ -36,6 +36,7 @@ ACS のモジュールは **438 個**ある。この枠組みが窓口を用意�
 | 3D 水面 | `CWater3DSpawner`、`FWater3DSpawnParams`、ACSの動的波紋 |
 | 3D 天候 | `AWeather3DScene`、`FWeather3DAppearance`、ACSの`CWeatherSystem` |
 | 3D エフェクト | `AEffect3DScene`、`CEffect3DPlayer`、同梱の Effekseer |
+| 3D の形状重なり | `CSceneCollision3D`、ACSの`CCollisionWorld3D` |
 | 遊ぶ人向け UI | `AUi3DScene`、`CUiLayer`、ACSの `AWidget` 群 |
 | 多言語 | `CLocalizationSubsystem` |
 | 決定性 (記録と再生) | `CSimulationSubsystem` |
@@ -48,7 +49,6 @@ ACS のモジュールは **438 個**ある。この枠組みが窓口を用意�
 | **3D 描画** | `MeshComponent3D`、`CameraComponent3D`、`Transform3D`、`PbrShader`、`StandardShader`、`ShadowMap`、`Ibl`、`Sky`、`Atmosphere`、`SceneRenderResources` |
 | **ポストプロセス** | `PostProcess`、`Ssao`、`Ssgi`、`Ssr`、`Fxaa`、`SubsurfaceScattering`、`MotionVector`、`TemporalHistory`、`HiZ` |
 | **アニメーション** | `AnimationGraph`、`AnimationCurve`、`SkinnedShader`、`asset/SkinnedMesh` |
-| **3D の形状重なり** | `collision/MeshCollider`、`collision/ConvexHull3`、`math/Collision3D` |
 
 ### 覆えていないもの (v1.0.0 の範囲外と宣言する)
 
@@ -120,6 +120,10 @@ IBLへ反映する。残りは空を焼くIBLへ雲の形そのものを含め�
   従来の境界箱`Raycast`と、全候補を返す`RaycastAll`も用途別に残す。
   ※ **剛体物理とキャラ移動は ACS 側に入れる** (2026-08-17 判断、`acs_temp_doc/0003`)。
   枠組みには書かない。ACS に入った後で窓口だけを足す。
+- ~~3Dの形状重なりと移動判定~~ → **`Scene/Collision3D`として実装済み** (2026-08-22)。
+  ノードへ球、箱、描画境界を1回登録すれば、現在Transformへの同期、レイヤー、自身除外、
+  球・箱の重なり列挙、球スイープを`CSceneCollision3D`がまとめる。判定計算と世代付き形状番号は
+  ACSの`CCollisionWorld3D`を使い、Frameworkはノード寿命との接続だけを受け持つ。
 
 ### v0.3 — 見た目と手触り (完了)
 

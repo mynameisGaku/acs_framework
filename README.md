@@ -41,6 +41,7 @@ msbuild acs_framework.vcxproj /p:Configuration=Release /p:Platform=x64
 | 3D 音響 | `CSpatialAudioSubsystem`、距離減衰、モノラル効果音の左右定位 |
 | 遊ぶ人向け UI | `AUi3DScene`、文字・ボタン・入力、ポスト処理後の鮮明なHUD合成 |
 | 当てる | 画面から線を飛ばし、球面や読み込みメッシュの三角形へ正確に当てる (`CScenePicker`) |
+| 重なりと移動判定 | `CSceneCollision3D`、ノード追従、球・箱の重なり、球スイープ、レイヤー |
 | 土台 | 起動・場面遷移・アセット・音・セーブ・設定・入力再割り当て・多言語・決定性・開発支援 |
 
 詳しくは [`Docs/ROADMAP.md`](Docs/ROADMAP.md)。**v1.0.0 で何を入れて何を入れないか**もそこに書いてある。
@@ -76,6 +77,15 @@ Node->LookAt( Target );
 // 画面上の位置から、実際の3D表面へ当てる
 const FSceneRayHit Hit = CScenePicker::RaycastGeometry(
     *this, FSceneRay::FromScreen( Camera, MouseX, MouseY, W, H ) );
+
+// ノードへ衝突形状を結び、現在位置へ自動追従させる
+CSceneCollision3D Collision{ Graph() };
+const FCollisionShapeId3D PlayerShape = Collision.TryAddSphere(
+    *HeroNode, FVec3{ 0.0f, 0.9f, 0.0f }, 0.45f, 0x1u );
+Collision.TryAddBounds( *WallNode, 0x2u );
+TArray<ANode*> Nearby;
+Collision.TryOverlapSphere(
+    FSphere{ HeroNode->World().position, 2.0f }, Nearby, PlayerShape, 0x2u );
 
 // 反射・屈折・泡を持つ水面を置き、波紋を起こす
 FWater3DSpawnParams Water;

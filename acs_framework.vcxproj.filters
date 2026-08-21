@@ -91,6 +91,12 @@
     <Filter Include="Source\AcsFramework_Core\Scene\Animation3D\Test">
       <UniqueIdentifier>{661f937f-df28-6ba6-450d-50e31a62ec29}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\AcsFramework_Core\Scene\Collision3D">
+      <UniqueIdentifier>{d7c19ade-cb1f-56eb-2521-623ab6eb7f9b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\AcsFramework_Core\Scene\Collision3D\Test">
+      <UniqueIdentifier>{eb51a720-5b1a-13b8-90bc-d964302b1ffb}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Source\AcsFramework_Core\Scene\Model3D">
       <UniqueIdentifier>{79cdabc9-6138-da84-dcb5-971d07edd6b0}</UniqueIdentifier>
     </Filter>
@@ -380,6 +386,9 @@
     </ClCompile>
     <ClCompile Include="Source\AcsFramework_Core\Scene\Animation3D\CharacterAnimator3D.cpp">
       <Filter>Source\AcsFramework_Core\Scene\Animation3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Scene\Collision3D\SceneCollision3D.cpp">
+      <Filter>Source\AcsFramework_Core\Scene\Collision3D</Filter>
     </ClCompile>
     <ClCompile Include="Source\AcsFramework_Core\Scene\Model3D\Model3DSpawner.cpp">
       <Filter>Source\AcsFramework_Core\Scene\Model3D</Filter>
@@ -895,6 +904,12 @@
     </ClInclude>
     <ClInclude Include="Source\AcsFramework_Core\Scene\Animation3D\CharacterAnimator3D.h">
       <Filter>Source\AcsFramework_Core\Scene\Animation3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Collision3D\SceneCollision3D.h">
+      <Filter>Source\AcsFramework_Core\Scene\Collision3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Collision3D\SceneSweepHit3D.h">
+      <Filter>Source\AcsFramework_Core\Scene\Collision3D</Filter>
     </ClInclude>
     <ClInclude Include="Source\AcsFramework_Core\Scene\Model3D\Model3DSpawner.h">
       <Filter>Source\AcsFramework_Core\Scene\Model3D</Filter>
@@ -1425,6 +1440,12 @@
     </None>
     <None Include="Source\AcsFramework_Core\Scene\Animation3D\Test\CharacterAnimator3DTest.cpp">
       <Filter>Source\AcsFramework_Core\Scene\Animation3D\Test</Filter>
+    </None>
+    <None Include="Source\AcsFramework_Core\Scene\Collision3D\README.md">
+      <Filter>Source\AcsFramework_Core\Scene\Collision3D</Filter>
+    </None>
+    <None Include="Source\AcsFramework_Core\Scene\Collision3D\Test\SceneCollision3DTest.cpp">
+      <Filter>Source\AcsFramework_Core\Scene\Collision3D\Test</Filter>
     </None>
     <None Include="Source\AcsFramework_Core\Scene\Model3D\README.md">
       <Filter>Source\AcsFramework_Core\Scene\Model3D</Filter>
