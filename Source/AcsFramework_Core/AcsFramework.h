@@ -33,6 +33,8 @@
 #include "AcsFramework_Core/Scene/Snapshot/SceneSnapshotSubsystem.h"
 #include "AcsFramework_Core/Scene/Model3D/Model3DSpawner.h"
 #include "AcsFramework_Core/Scene/Water3D/Water3DSpawner.h"
+#include "AcsFramework_Core/Scene/Weather3D/Weather3DAppearance.h"
+#include "AcsFramework_Core/Scene/Weather3D/Weather3DScene.h"
 #include "AcsFramework_Core/Screen/ScreenSubsystem.h"
 #include "AcsFramework_Core/Settings/GameSettingsSubsystem.h"
 #include "AcsFramework_Core/Simulation/ActionInput.h"

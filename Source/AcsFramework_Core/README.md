@@ -45,6 +45,11 @@ Subsystemにはしない。`AEffect3DScene`がscene単位で`CEffect3DPlayer`を
 `FWater3DSpawnParams`は描画器なしで検証できる値、`CWater3DSpawner`はACSの平面メッシュと
 `AWaterSurface3DComponent`を識別子付きノードへ接続する状態なしのアダプターとする。
 
+3D天候もsceneごとの空、雲、霧、環境光を変えるためSubsystemにはしない。
+`FWeather3DAppearance`は`CWeatherSystem`の状態だけから決まる検証可能な値、
+`AWeather3DScene`は派生場面が設定した晴天時の環境を基準として記録し、相対値を毎フレーム
+適用する薄いアダプターとする。雨雪の素材は固定せず、粒子密度と風向きを公開する。
+
 ### Text変換の契約
 
 `AcsToWide`の配列版は変換成功時だけ出力を更新し、確保・入力長・変換数の失敗時は既存内容を保つ。

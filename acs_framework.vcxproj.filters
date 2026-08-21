@@ -115,6 +115,12 @@
     <Filter Include="Source\AcsFramework_Core\Scene\Water3D\Test">
       <UniqueIdentifier>{90135e1d-ac03-4281-833a-28937151e1c9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\AcsFramework_Core\Scene\Weather3D">
+      <UniqueIdentifier>{80d9056c-f5ea-3ee2-68aa-ac559440aa12}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\AcsFramework_Core\Scene\Weather3D\Test">
+      <UniqueIdentifier>{c0721197-67d6-a447-3a40-194db51c7583}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Source\AcsFramework_Core\Screen">
       <UniqueIdentifier>{baf65697-257d-0cf3-e822-e17c15909ac1}</UniqueIdentifier>
     </Filter>
@@ -404,6 +410,12 @@
     </ClCompile>
     <ClCompile Include="Source\AcsFramework_Core\Scene\Water3D\Water3DSpawnParams.cpp">
       <Filter>Source\AcsFramework_Core\Scene\Water3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Scene\Weather3D\Weather3DAppearance.cpp">
+      <Filter>Source\AcsFramework_Core\Scene\Weather3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Scene\Weather3D\Weather3DScene.cpp">
+      <Filter>Source\AcsFramework_Core\Scene\Weather3D</Filter>
     </ClCompile>
     <ClCompile Include="Source\AcsFramework_Core\Screen\ScreenSubsystem.cpp">
       <Filter>Source\AcsFramework_Core\Screen</Filter>
@@ -911,6 +923,12 @@
     <ClInclude Include="Source\AcsFramework_Core\Scene\Water3D\Water3DSpawnParams.h">
       <Filter>Source\AcsFramework_Core\Scene\Water3D</Filter>
     </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Weather3D\Weather3DAppearance.h">
+      <Filter>Source\AcsFramework_Core\Scene\Weather3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Weather3D\Weather3DScene.h">
+      <Filter>Source\AcsFramework_Core\Scene\Weather3D</Filter>
+    </ClInclude>
     <ClInclude Include="Source\AcsFramework_Core\Screen\ScreenSubsystem.h">
       <Filter>Source\AcsFramework_Core\Screen</Filter>
     </ClInclude>
@@ -1392,6 +1410,12 @@
     </None>
     <None Include="Source\AcsFramework_Core\Scene\Water3D\Test\Water3DSpawnerTest.cpp">
       <Filter>Source\AcsFramework_Core\Scene\Water3D\Test</Filter>
+    </None>
+    <None Include="Source\AcsFramework_Core\Scene\Weather3D\README.md">
+      <Filter>Source\AcsFramework_Core\Scene\Weather3D</Filter>
+    </None>
+    <None Include="Source\AcsFramework_Core\Scene\Weather3D\Test\Weather3DAppearanceTest.cpp">
+      <Filter>Source\AcsFramework_Core\Scene\Weather3D\Test</Filter>
     </None>
     <None Include="Source\AcsFramework_Core\Settings\Test\GameSettingsStoreTest.cpp">
       <Filter>Source\AcsFramework_Core\Settings\Test</Filter>

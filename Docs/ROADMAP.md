@@ -34,6 +34,7 @@ ACS のモジュールは **438 個**ある。この枠組みが窓口を用意�
 | 画面・フェード・ロード中・ポーズ | `CScreenSubsystem`、`CFadeSubsystem`、`CLoadingScreenSubsystem`、`CPauseScreenSubsystem` |
 | ノード生成・シーン保存 | `CPrefabSubsystem`、`CSceneSnapshotSubsystem` |
 | 3D 水面 | `CWater3DSpawner`、`FWater3DSpawnParams`、ACSの動的波紋 |
+| 3D 天候 | `AWeather3DScene`、`FWeather3DAppearance`、ACSの`CWeatherSystem` |
 | 3D エフェクト | `AEffect3DScene`、`CEffect3DPlayer`、同梱の Effekseer |
 | 遊ぶ人向け UI | `AUi3DScene`、`CUiLayer`、ACSの `AWidget` 群 |
 | 多言語 | `CLocalizationSubsystem` |
@@ -48,7 +49,6 @@ ACS のモジュールは **438 個**ある。この枠組みが窓口を用意�
 | **ポストプロセス** | `PostProcess`、`Ssao`、`Ssgi`、`Ssr`、`Fxaa`、`SubsurfaceScattering`、`MotionVector`、`TemporalHistory`、`HiZ` |
 | **アニメーション** | `AnimationGraph`、`AnimationCurve`、`SkinnedShader`、`asset/SkinnedMesh` |
 | **3D の当たり判定** | `collision/MeshCollider`、`collision/ConvexHull3`、`math/Collision3D` |
-| 天候 | `WeatherSystem` |
 
 ### 覆えていないもの (v1.0.0 の範囲外と宣言する)
 
@@ -90,7 +90,8 @@ Steam (`SteamworksBridge`)、スクリプト (`ScriptHost`)、機械学習 (`MlR
 (`acs_temp_doc/0012`)。**参照描画** (`Clouds().bReferenceMode`) で «汚さの原因が
 ライティングか再構成か» を切り分けられる。
 
-残り: 雲を環境光と影へ反映 (いまは曇っても地面が暗くならない)、空気遠近、
+雲影はACSのワールド影へ接続済みで、天候による環境光の暗化も`AWeather3DScene`から
+IBLへ反映する。残りは空を焼くIBLへ雲の形そのものを含めることと、空気遠近。
 ~~影の CSM 化~~ **済** (2026-08-18、既定 4 枚)。
 
 - 3D シーンの窓口 — モデルを置く / 動かす / 消す
@@ -153,6 +154,10 @@ Steam (`SteamworksBridge`)、スクリプト (`ScriptHost`)、機械学習 (`MlR
 - ~~対話できる3D水面の配置~~ → **実装済み** (2026-08-22)。`CWater3DSpawner`へ位置と広さを
   渡すだけで、ACSの屈折、反射、泡、波紋を使う識別子付き水面を置ける。高度な描画実装を
   複製せず、値の検証とシーンへの接続だけをFrameworkが受け持つ
+- ~~3D天候の遷移と描画接続~~ → **実装済み** (2026-08-22)。`AWeather3DScene`で
+  `SetWeather( EWeatherKind::Storm, 2.5f )`と書くだけで、ACSの天候状態を雲量、雲影、霧、
+  空色、IBL環境光へ同じ遷移率で反映する。雨雪の素材は作品ごとに選べるよう、降水密度と
+  風向きだけを公開する
 - シーン保存でノード名を残す ※ACS の形式 v4 に名前欄が無い
 - エラーとログの方針統一、スレッド安全性の明示、セーブ互換性の方針
 

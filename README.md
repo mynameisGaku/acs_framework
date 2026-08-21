@@ -7,7 +7,7 @@
 
 ![3D デモ](Docs/demo3d.png)
 
-上の絵はサンプル 1 本 (`Source/AcsFramework_Sample/Scene/Demo3DScene.cpp`、約 250 行) の
+上の絵はサンプル 1 本 (`Source/AcsFramework_Sample/Scene/Demo3DScene.cpp`) の
 出力。**空・太陽・影・環境光・雲がすべて 1 つの太陽から繋がっている。** 空は物理ベースの
 大気を焼いたもので、それがそのまま環境光にもなるので、空と光が食い違わない。
 
@@ -35,6 +35,7 @@ msbuild acs_framework.vcxproj /p:Configuration=Release /p:Platform=x64
 | 3D を置く | `CModel3DSpawner`、FBX の取り込み、材質 (metallic / roughness) |
 | 動かす | `SetPosition` / `RotateDeg` / `LookAt` / `MoveToward`、骨アニメーション |
 | 見た目 | 物理大気・ボリューム雲・影・IBL・遮蔽 (SSAO)・間接光 (SSGI)・反射 (SSR)・霧・トーンマップ・輪郭補正 (FXAA) |
+| 3D 天候 | `AWeather3DScene`、晴天・曇天・雨・雪・嵐・霧・砂嵐の滑らかな遷移 |
 | 3D 水面 | `CWater3DSpawner`、屈折・反射・泡・動的な波紋 |
 | 3D 演出 | `AEffect3DScene`、Effekseer、depth 遮蔽、HDR・bloom への自動合成 |
 | 3D 音響 | `CSpatialAudioSubsystem`、距離減衰、モノラル効果音の左右定位 |
@@ -76,7 +77,10 @@ GlobalIllumination().Intensity = 0.75f;
 // TAAを使わない場面の斜め線を滑らかにする
 PostParams().fxaa_enabled = true;
 
-// 3D effectを出す (classの基底はAEffect3DScene)
+// 雲、雲影、霧、空色、環境光を2.5秒で嵐へ揃える (classの基底はAWeather3DScene)
+SetWeather( EWeatherKind::Storm, 2.5f );
+
+// 3D effectを出す (AWeather3DSceneにもAEffect3DSceneが含まれる)
 PlayEffect3D( FStringView( "Effects/hit.efkefc" ), FVec3{ 0, 1, 0 } );
 
 // カメラの左から3D効果音を鳴らす

@@ -42,7 +42,7 @@ namespace
 	constexpr f32 kUiWidth = 260.0f;
 
 	/** プレイヤーUIのカード高さ。 */
-	constexpr f32 kUiHeight = 336.0f;
+	constexpr f32 kUiHeight = 420.0f;
 
 	/** FXAA切り替えに使うアクション番号。 */
 	constexpr u32 kFxaaActionIndex = 0u;
@@ -83,6 +83,20 @@ namespace
 	/** 聴く位置から音源を左右へ離す距離。 */
 	constexpr f32 kSpatialSoundSideDistance = 4.0f;
 
+	/** デモの天候が次の状態へ移り切るまでの秒数。 */
+	constexpr f32 kWeatherTransitionSeconds = 2.5f;
+
+	/** 見た目の差が読みやすい順に巡回する天候。 */
+	constexpr EWeatherKind kDemoWeatherCycle[] =
+	{
+		EWeatherKind::Storm,
+		EWeatherKind::Fog,
+		EWeatherKind::Clear,
+	};
+
+	/** 巡回する天候の数。 */
+	constexpr usize kDemoWeatherCount = sizeof( kDemoWeatherCycle ) / sizeof( kDemoWeatherCycle[0] );
+
 	/**
 	 * デモのFXAA操作へ使えるキーかを返す。
 	 *
@@ -121,6 +135,23 @@ namespace
 		return Params;
 	}
 
+	/** 天候種別をプレイヤーUI用の短い名前へ変える。 */
+	const char* WeatherLabel( EWeatherKind Kind ) noexcept
+	{
+		switch ( Kind )
+		{
+		case EWeatherKind::Clear: return "CLEAR";
+		case EWeatherKind::Cloudy: return "CLOUDY";
+		case EWeatherKind::Rain: return "RAIN";
+		case EWeatherKind::HeavyRain: return "HEAVY RAIN";
+		case EWeatherKind::Snow: return "SNOW";
+		case EWeatherKind::Storm: return "STORM";
+		case EWeatherKind::Fog: return "FOG";
+		case EWeatherKind::Sandstorm: return "SANDSTORM";
+		default: return "UNKNOWN";
+		}
+	}
+
 	/**
 	 * デモ用の平面を識別子付きで置く。
 	 *
@@ -147,7 +178,7 @@ namespace
 
 void ADemo3DScene::OnEnter() noexcept
 {
-	AEffect3DScene::OnEnter();
+	AWeather3DScene::OnEnter();
 
 	// 磨いた床。水面の直下だけ穴を空け、屈折が極浅い床を拾って白くならないようにする。
 	constexpr FVec4 FloorColor{ 0.55f, 0.56f, 0.58f, 1.0f };
@@ -328,14 +359,20 @@ void ADemo3DScene::OnEnter() noexcept
 	// 遊ぶ人向けUI。初期化、入力、更新、終了、ポスト処理後の描画はAUi3DSceneが受け持つ。
 	// ここでは表示物を置き、あとでボタンの結果を読むだけにする。
 	Ui().AddText( "ACS 3D", FVec2{ kUiLeft + 16.0f, kUiTop + 14.0f } );
-	Ui().AddText( "PLAYER UI / POST PROCESS", FVec2{ kUiLeft + 16.0f, kUiTop + 42.0f } );
+	Ui().AddText( "PLAYER UI / 3D WEATHER", FVec2{ kUiLeft + 16.0f, kUiTop + 42.0f } );
 	m_FxaaToggleButton = Ui().AddButton( "TOGGLE FXAA", FVec2{ kUiLeft + 16.0f, kUiTop + 76.0f }, FVec2{ kUiWidth - 32.0f, 44.0f } );
 	m_FxaaStatusText = Ui().AddText( "FXAA: ON", FVec2{ kUiLeft + 16.0f, kUiTop + 132.0f } );
 	m_FxaaRebindButton = Ui().AddButton( "CHANGE FXAA KEY", FVec2{ kUiLeft + 16.0f, kUiTop + 158.0f }, FVec2{ kUiWidth - 32.0f, 44.0f } );
 	m_FxaaKeyText = Ui().AddText( "KEYBOARD: F", FVec2{ kUiLeft + 16.0f, kUiTop + 216.0f } );
 	m_SpatialSoundButton = Ui().AddButton( "PLAY 3D SOUND: LEFT", FVec2{ kUiLeft + 16.0f, kUiTop + 246.0f }, FVec2{ kUiWidth - 32.0f, 44.0f } );
 	m_SpatialSoundStatusText = Ui().AddText( "HEADPHONES RECOMMENDED", FVec2{ kUiLeft + 16.0f, kUiTop + 304.0f } );
+	m_WeatherButton = Ui().AddButton( "SET WEATHER: STORM", FVec2{ kUiLeft + 16.0f, kUiTop + 330.0f }, FVec2{ kUiWidth - 32.0f, 44.0f } );
+	m_WeatherStatusText = Ui().AddText( "WEATHER: CLEAR", FVec2{ kUiLeft + 16.0f, kUiTop + 388.0f } );
 	m_bNextSpatialSoundRight = false;
+	m_NextWeatherIndex = 0u;
+	SetWeather( EWeatherKind::Clear, 0.0f );
+	SetWeatherWindDirection( FVec2{ 0.92f, 0.38f } );
+	RefreshWeatherText();
 
 	// 設定は整数として保存し、EKeyの実キー範囲へ戻せる値だけを採用する。
 	CGameSettingsSubsystem* const Settings = GetSubsystem<CGameSettingsSubsystem>();
@@ -408,9 +445,10 @@ void ADemo3DScene::ReportFrameTime( f32 DeltaSeconds ) noexcept
 
 void ADemo3DScene::OnUpdate( f32 DeltaSeconds ) noexcept
 {
-	AEffect3DScene::OnUpdate( DeltaSeconds );
+	AWeather3DScene::OnUpdate( DeltaSeconds );
 	ReportFrameTime( DeltaSeconds );
 	RefreshSpatialAudioListener();
+	RefreshWeatherText();
 
 	// Escapeの押下フレームを基底場面が処理し終えてから、入力待ち前の自由カメラ状態へ戻す。
 	if ( m_bRestoreFreeCameraAfterUpdate )
@@ -447,6 +485,7 @@ void ADemo3DScene::OnUpdate( f32 DeltaSeconds ) noexcept
 	}
 
 	if ( Ui().ConsumeButtonPress( m_SpatialSoundButton ) ) PlaySpatialDemoSound();
+	if ( Ui().ConsumeButtonPress( m_WeatherButton ) ) AdvanceDemoWeather();
 
 	if ( m_WaterSurfaceId.IsValid() )
 	{
@@ -622,6 +661,38 @@ void ADemo3DScene::AddDemoWaterRipple() noexcept
 	m_WaterRippleIndex = ( m_WaterRippleIndex + 1u ) % kWaterRipplePointCount;
 	const FVec3 Point{ kWaterPosition.x + Offset.x, kWaterPosition.y, kWaterPosition.z + Offset.y };
 	AddWaterDisturbance( m_WaterSurfaceId, Point, 0.24f, 0.30f );
+}
+
+
+void ADemo3DScene::AdvanceDemoWeather() noexcept
+{
+	const EWeatherKind NextWeather = kDemoWeatherCycle[m_NextWeatherIndex % kDemoWeatherCount];
+	if ( !SetWeather( NextWeather, kWeatherTransitionSeconds ) ) return;
+
+	m_NextWeatherIndex = ( m_NextWeatherIndex + 1u ) % kDemoWeatherCount;
+	RefreshWeatherText();
+}
+
+
+void ADemo3DScene::RefreshWeatherText() noexcept
+{
+	const EWeatherKind NextWeather = kDemoWeatherCycle[m_NextWeatherIndex % kDemoWeatherCount];
+	FString ButtonText( "SET WEATHER: " );
+	ButtonText.TryAppend( FStringView( WeatherLabel( NextWeather ) ) );
+	Ui().SetText( m_WeatherButton, ButtonText.Data() );
+
+	FString StatusText( "WEATHER: " );
+	if ( Weather().TransitionT() < 1.0f )
+	{
+		StatusText.TryAppend( FStringView( WeatherLabel( Weather().CurrentWeather() ) ) );
+		StatusText.TryAppend( FStringView( " -> " ) );
+		StatusText.TryAppend( FStringView( WeatherLabel( Weather().TargetWeather() ) ) );
+	}
+	else
+	{
+		StatusText.TryAppend( FStringView( WeatherLabel( Weather().CurrentWeather() ) ) );
+	}
+	Ui().SetText( m_WeatherStatusText, StatusText.Data() );
 }
 
 

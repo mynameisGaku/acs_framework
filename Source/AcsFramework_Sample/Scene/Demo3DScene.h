@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 #pragma once
 
-#include "AcsFramework_Core/Effects/Effect3D/Effect3DScene.h"
+#include "AcsFramework_Core/Scene/Weather3D/Weather3DScene.h"
 #include "AcsFramework_Core/Simulation/Input/ActionBindingTable.h"
 #include "AcsFramework_Core/Simulation/Input/ActionKeyRebindState.h"
 #include "AcsFramework_Core/Simulation/Input/DeviceActionReader.h"
@@ -22,7 +22,7 @@ using namespace acs::game;
  * ここに置く物は「既定のままどう見えるか」を見るためのものなので、
  * **素材ファイルを要らない形 (立方体・球・板) だけで組む**。素材が無い環境でも必ず映る。
  */
-class ADemo3DScene : public AEffect3DScene
+class ADemo3DScene : public AWeather3DScene
 {
 public:
 	/** 物と光を置き、カメラを引く。 */
@@ -90,6 +90,12 @@ private:
 	/** 固定された次の位置へ、ACSの動的な水面波紋を1つ追加する。 */
 	void AddDemoWaterRipple() noexcept;
 
+	/** デモ用の次天候へ遷移し、ボタンの行き先を進める。 */
+	void AdvanceDemoWeather() noexcept;
+
+	/** 現在と次の天候をプレイヤーUIへ反映する。 */
+	void RefreshWeatherText() noexcept;
+
 	/** 回す対象。所有はしない (木が持っている)。 */
 	ANode* m_Spinner = nullptr;
 
@@ -134,6 +140,15 @@ private:
 
 	/** 直前に鳴らした側または失敗理由を示す文字。 */
 	u32 m_SpatialSoundStatusText = 0u;
+
+	/** 嵐、霧、晴天を順に試すボタン。 */
+	u32 m_WeatherButton = 0u;
+
+	/** 現在または遷移中の天候を示す文字。 */
+	u32 m_WeatherStatusText = 0u;
+
+	/** 次に適用するデモ天候の番号。 */
+	usize m_NextWeatherIndex = 0u;
 
 	/** 実機キーをFXAA操作へ変換する割り当て表。 */
 	CActionBindingTable m_ActionBindings;
