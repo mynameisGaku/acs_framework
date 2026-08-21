@@ -174,6 +174,11 @@ void ADemo3DScene::OnEnter() noexcept
 	AmbientOcclusion().Intensity = 1.0f;
 	AmbientOcclusion().Radius = 0.5f;
 
+	// 間接光。赤い球や黄色い立方体で跳ね返った色を、近くの床や物へ薄く回す。
+	// 画面外は探せないので、広げすぎずこの場面の物同士が届く距離に留める。
+	GlobalIllumination().Intensity = 0.75f;
+	GlobalIllumination().MaxDistance = 5.0f;
+
 	// 反射。磨いた床と金属に、画面に映っているものを映す。
 	// **画面に映っていないものは映せない** ので、切っておく方が素直な場面もある。
 	Reflections().Intensity = 0.9f;

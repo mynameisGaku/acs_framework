@@ -118,10 +118,11 @@ Steam (`SteamworksBridge`)、スクリプト (`ScriptHost`)、機械学習 (`MlR
 
 **判定基準: DXLib と並べて «明らかに綺麗» と言える。**
 
-- ~~ポストプロセスの窓口 (AO / SSR)~~ → **配線済み** (2026-08-18)。
-  `AmbientOcclusion()` (既定 ON) と `Reflections()` (既定 OFF、映すものが要る)。
-  材質も触れるようになった (`FModel3DSpawnParams::Metallic` / `Roughness`)。
-  残りは bloom / FXAA の窓口と、`CSsgi` の配線
+- ~~ポストプロセスの窓口 (AO / SSR / SSGI)~~ → **配線済み** (2026-08-22)。
+  `AmbientOcclusion()` (既定 ON)、`Reflections()` (既定 OFF、映すものが要る)、
+  `GlobalIllumination()` (既定 OFF、近くの色の回り込み) を場面から触れる。
+  bloom は `PostParams()` から調整でき、材質も
+  `FModel3DSpawnParams::Metallic` / `Roughness` で触れる。残りは FXAA の窓口
 - ~~3D エフェクトの配線 (Effekseer)~~ → **実装済み** (2026-08-21)。
   `AEffect3DScene` を継承し、`PlayEffect3D( 素材名, 位置 )` で再生する。最初の描画前でも
   指定でき、D3D12 の準備後に自動開始する。ACS の HDR 透明3Dパス内で描くため、scene depthで
