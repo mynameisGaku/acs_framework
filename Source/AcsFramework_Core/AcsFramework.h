@@ -48,3 +48,4 @@
 #include "AcsFramework_Core/Timer/GameTimer.h"
 #include "AcsFramework_Core/Timer/GameTimerScope.h"
 #include "AcsFramework_Core/Timer/TimerSubsystem.h"
+#include "AcsFramework_Core/UI/Ui3DScene.h"

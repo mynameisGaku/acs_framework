@@ -2,6 +2,7 @@
 #pragma once
 
 #include "AcsFramework_Core/Effects/Effect3D/Effect3DPlayer.h"
+#include "AcsFramework_Core/UI/Ui3DScene.h"
 
 #include <acs.h>
 
@@ -13,8 +14,9 @@ using namespace acs::game;
  *
  * @details 派生側は `PlayEffect3D( "Effects/hit.efkefc", Position )` のように再生するだけでよい。
  * playerの更新、透明3Dパスへの描画、GPUより先に行う終了処理はこの基底が受け持つ。
+ * `AUi3DScene`も含むため、同じ場面で`Ui()`からプレイヤーUIを追加できる。
  */
-class AEffect3DScene : public ALegacyScene3DAdapter
+class AEffect3DScene : public AUi3DScene
 {
 public:
 	/** 空の3Dエフェクトplayerを持つ場面を作る。 */

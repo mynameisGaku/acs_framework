@@ -34,6 +34,7 @@ ACS のモジュールは **438 個**ある。この枠組みが窓口を用意�
 | 画面・フェード・ロード中・ポーズ | `CScreenSubsystem`、`CFadeSubsystem`、`CLoadingScreenSubsystem`、`CPauseScreenSubsystem` |
 | ノード生成・シーン保存 | `CPrefabSubsystem`、`CSceneSnapshotSubsystem` |
 | 3D エフェクト | `AEffect3DScene`、`CEffect3DPlayer`、同梱の Effekseer |
+| 遊ぶ人向け UI | `AUi3DScene`、`CUiLayer`、ACSの `AWidget` 群 |
 | 多言語 | `CLocalizationSubsystem` |
 | 決定性 (記録と再生) | `CSimulationSubsystem` |
 | 開発支援 | `CPerfBudgetSubsystem`、`CDevConsoleSubsystem`、`CHotReloadSubsystem`、`DebugTop` |
@@ -44,7 +45,6 @@ ACS のモジュールは **438 個**ある。この枠組みが窓口を用意�
 |---|---|
 | **3D 描画** | `MeshComponent3D`、`CameraComponent3D`、`Transform3D`、`PbrShader`、`StandardShader`、`ShadowMap`、`Ibl`、`Sky`、`Atmosphere`、`SceneRenderResources` |
 | **ポストプロセス** | `PostProcess`、`Ssao`、`Ssgi`、`Ssr`、`Fxaa`、`SubsurfaceScattering`、`MotionVector`、`TemporalHistory`、`HiZ` |
-| **UI (遊ぶ人向け)** | `ui/UiRenderer`、`ui/Widget`、`ui/Widgets`、`gameframework/UiLayer` |
 | **アニメーション** | `AnimationGraph`、`AnimationCurve`、`SkinnedShader`、`asset/SkinnedMesh` |
 | **3D の当たり判定** | `collision/MeshCollider`、`collision/ConvexHull3`、`math/Collision3D` |
 | 水面・天候 | `WaterSurface3D`、`WaterSurface3DComponent`、`WeatherSystem` |
@@ -114,7 +114,7 @@ Steam (`SteamworksBridge`)、スクリプト (`ScriptHost`)、機械学習 (`MlR
   ※ **剛体物理とキャラ移動は ACS 側に入れる** (2026-08-17 判断、`acs_temp_doc/0003`)。
   枠組みには書かない。ACS に入った後で窓口だけを足す。
 
-### v0.3 — 見た目と手触り (いまここ)
+### v0.3 — 見た目と手触り (完了)
 
 **判定基準: DXLib と並べて «明らかに綺麗» と言える。**
 
@@ -127,7 +127,11 @@ Steam (`SteamworksBridge`)、スクリプト (`ScriptHost`)、機械学習 (`MlR
   `AEffect3DScene` を継承し、`PlayEffect3D( 素材名, 位置 )` で再生する。最初の描画前でも
   指定でき、D3D12 の準備後に自動開始する。ACS の HDR 透明3Dパス内で描くため、scene depthで
   隠れ、露出・bloom・tonemapも同じ経路を通る。backend固有型は`CEffect3DPlayer`の実装へ隠した
-- 遊ぶ人向け UI の土台 (`UiLayer`、`Widget`)
+- ~~遊ぶ人向け UI の土台 (`UiLayer`、`Widget`)~~ → **配線済み** (2026-08-22)。
+  `AUi3DScene` を継承し、`Ui().AddText` / `Ui().AddButton` で置く。UIの初期化、入力、更新、
+  終了は場面寿命へまとまり、HDR、tonemap、TAAまたはFXAAが終わった後のLDR画面へ描く。
+  そのため文字はbloomで光らずFXAAでぼけない。`AEffect3DScene`もこの基底を含むので、3D演出と
+  UIを同じ場面で使える。複雑な画面はACSの`AWidget` / `AAnchorPanel` / 標準widget群を直接使う
 - ~~3D 素材の置き場と取り込み手順~~ → **決定・実装済み** (2026-08-18)。
   置き場は `Assets`、形式は **FBX** (`.gltf` `.glb` `.obj` も通る)。
   `CModelLibrary` が置き場を探して読み、`CModel3DSpawner::SpawnInto(..., Library)` が置く。

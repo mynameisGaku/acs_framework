@@ -22,5 +22,8 @@ public:
 位置を追従させる場合は、戻り値を保持して `Effects3D().SetPosition()` を呼びます。時間は
 `OnUpdate` の `DeltaSeconds` だけで進み、隠れた時計や別threadには依存しません。
 
+`AEffect3DScene` は `AUi3DScene` も含みます。同じ場面で `Ui().AddButton` / `Ui().AddText` を
+呼べば、3DエフェクトはHDR内、プレイヤーUIはポスト処理後という適切な順で自動合成されます。
+
 現時点の描画backendは D3D12 です。D3D12を借りられないbackendでは安全に描画を省略し、
 理由をlogへ1回残します。

@@ -32,6 +32,15 @@ public:
 	 */
 	void OnUpdate( f32 DeltaSeconds ) noexcept override;
 
+protected:
+	/**
+	 * 3Dの仕上げ後へ、操作できるプレイヤーUIの見本を重ねる。
+	 *
+	 * @param Context 現フレームの描画先と共有フォント。
+	 * @param Sprites 開かれているHUD用スプライトバッチ。
+	 */
+	void OnDrawHud( FRenderContext& Context, CSpriteBatch& Sprites ) noexcept override;
+
 private:
 	/**
 	 * 1 秒ぶんためて、平均のフレーム時間を 1 行だけ出す。
@@ -61,4 +70,10 @@ private:
 
 	/** 次の3Dエフェクトまでに経過した秒。 */
 	f32 m_EffectElapsedSeconds = 0.0f;
+
+	/** FXAAの切り替えを受け付けるボタン。 */
+	u32 m_FxaaToggleButton = 0u;
+
+	/** 現在のFXAA状態を表示し、切り替え時に安全に差し替える文字。 */
+	u32 m_FxaaStatusText = 0u;
 };

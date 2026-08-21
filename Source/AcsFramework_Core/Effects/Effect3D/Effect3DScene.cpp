@@ -15,7 +15,7 @@ FEffect3DHandle AEffect3DScene::PlayEffect3D( FStringView AssetPath, const FEffe
 
 void AEffect3DScene::OnUpdate( f32 DeltaSeconds ) noexcept
 {
-	ALegacyScene3DAdapter::OnUpdate( DeltaSeconds );
+	AUi3DScene::OnUpdate( DeltaSeconds );
 	m_Effects.Update( DeltaSeconds );
 }
 
@@ -23,7 +23,7 @@ void AEffect3DScene::OnUpdate( f32 DeltaSeconds ) noexcept
 void AEffect3DScene::OnExit() noexcept
 {
 	m_Effects.Shutdown();
-	ALegacyScene3DAdapter::OnExit();
+	AUi3DScene::OnExit();
 }
 
 

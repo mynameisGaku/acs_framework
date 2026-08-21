@@ -1,0 +1,74 @@
+// SPDX-License-Identifier: Apache-2.0
+#pragma once
+
+#include <acs.h>
+
+using namespace acs;
+using namespace acs::game;
+
+/**
+ * 遊ぶ人向けUIを3D場面の寿命と描画順へ自動で接続する基底場面。
+ *
+ * @details
+ * 派生側は `Ui().AddButton(...)` や `Ui().AddText(...)` を呼ぶだけでよい。UIの初期化、
+ * 入力配送、毎フレーム更新、終了処理、ポスト処理後のHUD描画はこの基底が受け持つ。
+ * より複雑な画面ではACSの`AWidget`ツリーを直接利用できる。
+ */
+class AUi3DScene : public ALegacyScene3DAdapter
+{
+public:
+	/** 空のUI層を持つ3D場面を作る。 */
+	AUi3DScene() noexcept = default;
+
+	/** UI層と3D場面を破棄する。実際の終了処理はOnExitで行う。 */
+	~AUi3DScene() noexcept override = default;
+
+	/** 場面固有のUI状態を重複所有しないためコピーを禁止する。 */
+	AUi3DScene( const AUi3DScene& ) = delete;
+
+	/** 場面固有のUI状態を重複所有しないためコピー代入を禁止する。 */
+	AUi3DScene& operator=( const AUi3DScene& ) = delete;
+
+	/**
+	 * ボタンや文字を追加するUI層を返す。
+	 *
+	 * @return この場面が所有するUI層。
+	 */
+	CUiLayer& Ui() noexcept { return m_Ui; }
+
+	/**
+	 * 読み取り専用のUI層を返す。
+	 *
+	 * @return この場面が所有するUI層。
+	 */
+	const CUiLayer& Ui() const noexcept { return m_Ui; }
+
+	/** 通常の3D場面を開始してからUI層を初期化する。 */
+	void OnEnter() noexcept override;
+
+	/** UI層を終了してから通常の3D場面を終了する。 */
+	void OnExit() noexcept override;
+
+	/** 通常の3D場面とUI層を同じ明示秒で更新する。 */
+	void OnUpdate( f32 DeltaSeconds ) noexcept override;
+
+	/**
+	 * ウィンドウ入力をUI層と通常の場面へ配送する。
+	 *
+	 * @param Event 配送された入力イベント。
+	 */
+	void OnEvent( const FEvent& Event ) noexcept override;
+
+protected:
+	/**
+	 * ポスト処理後のHUDパスへUI層を描く。
+	 *
+	 * @param Context 現フレームの描画先と共有フォント。
+	 * @param Sprites 開かれているHUD用スプライトバッチ。
+	 */
+	void OnDrawHud( FRenderContext& Context, CSpriteBatch& Sprites ) noexcept override;
+
+private:
+	/** この場面だけが所有する遊ぶ人向けUI層。 */
+	CUiLayer m_Ui;
+};

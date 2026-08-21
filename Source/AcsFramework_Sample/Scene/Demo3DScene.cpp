@@ -28,6 +28,18 @@ namespace
 	/** Effekseer sampleの広さをACSのmeter尺度へ合わせる倍率。 */
 	constexpr f32 kEffectScale = 0.35f;
 
+	/** プレイヤーUIの左端。 */
+	constexpr f32 kUiLeft = 24.0f;
+
+	/** プレイヤーUIの上端。 */
+	constexpr f32 kUiTop = 24.0f;
+
+	/** プレイヤーUIのカード幅。 */
+	constexpr f32 kUiWidth = 240.0f;
+
+	/** プレイヤーUIのカード高さ。 */
+	constexpr f32 kUiHeight = 170.0f;
+
 	/** screenshot用hit effectの位置と倍率を揃える。 */
 	FEffect3DPlayParams MakeDemoEffectParams() noexcept
 	{
@@ -183,6 +195,14 @@ void ADemo3DScene::OnEnter() noexcept
 	// このデモはTAAを使わないため、時間方向の履歴を持たないFXAAを仕上げに使う。
 	PostParams().fxaa_enabled = true;
 
+	// 遊ぶ人向けUI。初期化、入力、更新、終了、ポスト処理後の描画はAUi3DSceneが受け持つ。
+	// ここでは表示物を置き、あとでボタンの結果を読むだけにする。
+	Ui().AddText( "ACS 3D", FVec2{ kUiLeft + 16.0f, kUiTop + 14.0f } );
+	Ui().AddText( "PLAYER UI / POST PROCESS", FVec2{ kUiLeft + 16.0f, kUiTop + 42.0f } );
+	m_FxaaToggleButton = Ui().AddButton(
+		"TOGGLE FXAA", FVec2{ kUiLeft + 16.0f, kUiTop + 76.0f }, FVec2{ kUiWidth - 32.0f, 44.0f } );
+	m_FxaaStatusText = Ui().AddText( "FXAA: ON", FVec2{ kUiLeft + 16.0f, kUiTop + 136.0f } );
+
 	// 反射。磨いた床と金属に、画面に映っているものを映す。
 	// **画面に映っていないものは映せない** ので、切っておく方が素直な場面もある。
 	Reflections().Intensity = 0.9f;
@@ -228,6 +248,13 @@ void ADemo3DScene::OnUpdate( f32 DeltaSeconds ) noexcept
 	AEffect3DScene::OnUpdate( DeltaSeconds );
 	ReportFrameTime( DeltaSeconds );
 
+	// ボタンのクリックは1回だけ消費される。状態と表示を同じ場所で確定させる。
+	if ( Ui().ConsumeButtonPress( m_FxaaToggleButton ) )
+	{
+		PostParams().fxaa_enabled = !PostParams().fxaa_enabled;
+		Ui().SetText( m_FxaaStatusText, PostParams().fxaa_enabled ? "FXAA: ON" : "FXAA: OFF" );
+	}
+
 	// 準備中に再生要求を溜めず、短いhit素材を1つずつ確認できる間隔で繰り返す。
 	if ( Effects3D().IsReady() )
 	{
@@ -251,4 +278,15 @@ void ADemo3DScene::OnUpdate( f32 DeltaSeconds ) noexcept
 		m_MoveTarget.z = -m_MoveTarget.z;
 	}
 	m_Mover->LookAt( m_MoveTarget );
+}
+
+
+void ADemo3DScene::OnDrawHud( FRenderContext& Context, CSpriteBatch& Sprites ) noexcept
+{
+	// 薄い影、半透明の面、アクセント線の3枚だけで、3Dから読み分けられるカードにする。
+	Sprites.DrawRect( kUiLeft + 4.0f, kUiTop + 6.0f, kUiWidth, kUiHeight, FVec4{ 0.0f, 0.0f, 0.0f, 0.32f } );
+	Sprites.DrawRect( kUiLeft, kUiTop, kUiWidth, kUiHeight, FVec4{ 0.035f, 0.055f, 0.09f, 0.90f } );
+	Sprites.DrawRect( kUiLeft, kUiTop, 4.0f, kUiHeight, FVec4{ 0.22f, 0.58f, 1.0f, 1.0f } );
+
+	AUi3DScene::OnDrawHud( Context, Sprites );
 }
