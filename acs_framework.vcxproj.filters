@@ -372,6 +372,15 @@
     <ClCompile Include="Source\AcsFramework_Core\Scene\Animation3D\AnimatedModel3DSpawnParams.cpp">
       <Filter>Source\AcsFramework_Core\Scene\Animation3D</Filter>
     </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Scene\Animation3D\CharacterAnimation3DInput.cpp">
+      <Filter>Source\AcsFramework_Core\Scene\Animation3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Scene\Animation3D\CharacterAnimation3DProfile.cpp">
+      <Filter>Source\AcsFramework_Core\Scene\Animation3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Scene\Animation3D\CharacterAnimator3D.cpp">
+      <Filter>Source\AcsFramework_Core\Scene\Animation3D</Filter>
+    </ClCompile>
     <ClCompile Include="Source\AcsFramework_Core\Scene\Model3D\Model3DSpawner.cpp">
       <Filter>Source\AcsFramework_Core\Scene\Model3D</Filter>
     </ClCompile>
@@ -876,6 +885,15 @@
       <Filter>Source\AcsFramework_Core\Scene\Animation3D</Filter>
     </ClInclude>
     <ClInclude Include="Source\AcsFramework_Core\Scene\Animation3D\AnimatedModel3DSpawnParams.h">
+      <Filter>Source\AcsFramework_Core\Scene\Animation3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Animation3D\CharacterAnimation3DInput.h">
+      <Filter>Source\AcsFramework_Core\Scene\Animation3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Animation3D\CharacterAnimation3DProfile.h">
+      <Filter>Source\AcsFramework_Core\Scene\Animation3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Animation3D\CharacterAnimator3D.h">
       <Filter>Source\AcsFramework_Core\Scene\Animation3D</Filter>
     </ClInclude>
     <ClInclude Include="Source\AcsFramework_Core\Scene\Model3D\Model3DSpawner.h">
@@ -1400,6 +1418,12 @@
       <Filter>Source\AcsFramework_Core\Scene\Animation3D</Filter>
     </None>
     <None Include="Source\AcsFramework_Core\Scene\Animation3D\Test\AnimatedModel3DSpawnerTest.cpp">
+      <Filter>Source\AcsFramework_Core\Scene\Animation3D\Test</Filter>
+    </None>
+    <None Include="Source\AcsFramework_Core\Scene\Animation3D\Test\CharacterAnimation3DProfileTest.cpp">
+      <Filter>Source\AcsFramework_Core\Scene\Animation3D\Test</Filter>
+    </None>
+    <None Include="Source\AcsFramework_Core\Scene\Animation3D\Test\CharacterAnimator3DTest.cpp">
       <Filter>Source\AcsFramework_Core\Scene\Animation3D\Test</Filter>
     </None>
     <None Include="Source\AcsFramework_Core\Scene\Model3D\README.md">

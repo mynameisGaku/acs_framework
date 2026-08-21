@@ -57,6 +57,9 @@ Subsystemにはしない。`AEffect3DScene`がscene単位で`CEffect3DPlayer`を
 3Dアニメーション配置は`FAnimatedModel3DSpawnParams`を検証可能な値、
 `CAnimatedModel3DSpawner`を状態なしの接続層とする。骨付きFBXの読み込み、識別子付きノード、
 `ASkinnedMeshComponent3D`、初期クリップ再生だけをまとめ、姿勢計算と描画はACSへ任せる。
+移動連動は`FCharacterAnimation3DInput`と`FCharacterAnimation3DProfile`で次状態を純粋に選び、
+`CCharacterAnimator3D`が待機・歩き・走り・ジャンプの姿勢遷移へ接続する。部品を所有せず、
+キャラクターごとの短い寿命だけを持つため、これもsubsystemにはしない。
 
 ### Text変換の契約
 

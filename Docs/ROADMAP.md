@@ -107,7 +107,9 @@ IBLへ反映する。残りは空を焼くIBLへ雲の形そのものを含め�
   **FBX から骨付きメッシュを作るローダだけが無かった**。`LoadSkinnedMeshFromFbxMemory`
   として ufbx で実装 (骨・祖先・逆バインド・重み 4 本・クリップを 30Hz で焼く)。
   枠組み側は`CAnimatedModel3DSpawner`へパス、位置、初期クリップを渡すだけで、読み込み、
-  識別子付きノード、部品追加、再生まで行う。描画 (`ASkinnedMeshComponent3D` +
+  識別子付きノード、部品追加、再生まで行う。`CCharacterAnimator3D`へ速度と接地状態を渡せば、
+  待機・歩き・走り・ジャンプを速度境界の揺れに強い規則で選び、ローカル骨姿勢を滑らかに繋ぐ。
+  描画 (`ASkinnedMeshComponent3D` +
   `DrawSkinnedScene`) も繋がり、**デモで実際に骨が動いている。**
   **質感も揃えた**: CPU で変形して普通のメッシュとして PBR の経路へ流すので、
   IBL・影・遮蔽・反射・霧が静的メッシュとまったく同じに効く (`acs_temp_doc/0022`)。
