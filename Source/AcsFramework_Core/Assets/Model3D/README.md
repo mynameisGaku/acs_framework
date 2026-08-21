@@ -8,7 +8,7 @@ Models.Bind( Application.GetAssets() );
 
 FModel3DSpawnParams Params =
     FModel3DSpawnParams::FromMesh( FStringView( "Models/Robot.fbx" ), FVec3{ 0, 0, 0 } );
-CModel3DSpawner::SpawnInto( Root(), Params, Models );
+CModel3DSpawner::SpawnInto( Graph(), Params, Models );
 ```
 
 パスは **`Assets` からの相対**。

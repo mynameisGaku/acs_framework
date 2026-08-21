@@ -2,6 +2,7 @@
 #include "AcsFramework_Sample/Scene/Demo3DScene.h"
 
 #include "AcsFramework_Core/Scene/Model3D/Model3DSpawner.h"
+#include "AcsFramework_Core/Scene/Water3D/Water3DSpawner.h"
 
 #include "AcsFramework_Core/Assets/AssetLoaderSubsystem.h"
 #include "AcsFramework_Core/Audio/Spatial/SpatialAudioSubsystem.h"
@@ -55,6 +56,27 @@ namespace
 	/** 左右定位デモで鳴らす、短いモノラル効果音。 */
 	constexpr const char* kSpatialSoundAsset = "Audio/SpatialPulse.wav";
 
+	/** 水面の中心。床より少し上げ、同一面のちらつきを避ける。 */
+	constexpr FVec3 kWaterPosition{ 2.7f, 0.04f, -1.35f };
+
+	/** 水面のX/Z方向の広さ。 */
+	constexpr FVec2 kWaterSize{ 3.4f, 2.8f };
+
+	/** 水面に次の波紋を作る間隔。 */
+	constexpr f32 kWaterRippleRepeatSeconds = 1.8f;
+
+	/** 毎回同じ順序で使う、水面中心からの波紋位置。 */
+	constexpr FVec2 kWaterRippleOffsets[] =
+	{
+		FVec2{ -0.82f, -0.46f },
+		FVec2{ 0.68f, 0.34f },
+		FVec2{ -0.18f, 0.70f },
+		FVec2{ 0.76f, -0.62f },
+	};
+
+	/** 波紋位置の数。 */
+	constexpr usize kWaterRipplePointCount = sizeof( kWaterRippleOffsets ) / sizeof( kWaterRippleOffsets[0] );
+
 	/** 聴く位置から音源を前へ離す距離。 */
 	constexpr f32 kSpatialSoundForwardDistance = 4.0f;
 
@@ -98,6 +120,28 @@ namespace
 		Params.Scale = FVec3{ kEffectScale, kEffectScale, kEffectScale };
 		return Params;
 	}
+
+	/**
+	 * デモ用の平面を識別子付きで置く。
+	 *
+	 * @param Graph 置くシーン。
+	 * @param Position 平面の中心。
+	 * @param Scale X/Z方向の広さ。
+	 * @param Color 表面色。
+	 * @param Roughness 表面の粗さ。
+	 * @param Name ノード名。
+	 */
+	void SpawnDemoPlane( CSceneNodeGraph& Graph, FVec3 Position, FVec3 Scale, FVec4 Color,
+		f32 Roughness, FStringView Name ) noexcept
+	{
+		FModel3DSpawnParams Plane = FModel3DSpawnParams::FromPrimitive( EMeshPrimitive3D::Plane, Position );
+		Plane.Scale = Scale;
+		Plane.Color = Color;
+		Plane.Roughness = Roughness;
+		Plane.bCastsShadow = false;
+		Plane.Name = Name;
+		CModel3DSpawner::SpawnInto( Graph, Plane );
+	}
 }
 
 
@@ -105,14 +149,49 @@ void ADemo3DScene::OnEnter() noexcept
 {
 	AEffect3DScene::OnEnter();
 
-	// 床。大きく平たい板 1 枚。影の落ち方が見えるように置く。
-	FModel3DSpawnParams Floor = FModel3DSpawnParams::FromPrimitive( EMeshPrimitive3D::Plane, FVec3{ 0.0f, 0.0f, 0.0f } );
-	Floor.Scale = FVec3{ kFloorSize, 1.0f, kFloorSize };
-	Floor.Color = FVec4{ 0.55f, 0.56f, 0.58f, 1.0f };
-	Floor.Roughness = 0.10f;   // 磨いた床。低いほど反射 (SSR) が乗る
-	Floor.bCastsShadow = false;
-	Floor.Name = FStringView( "Floor" );
-	CModel3DSpawner::SpawnInto( Root(), Floor );
+	// 磨いた床。水面の直下だけ穴を空け、屈折が極浅い床を拾って白くならないようにする。
+	constexpr FVec4 FloorColor{ 0.55f, 0.56f, 0.58f, 1.0f };
+	SpawnDemoPlane( Graph(), FVec3{ -1.75f, 0.0f, 0.0f }, FVec3{ 5.5f, 1.0f, kFloorSize },
+		FloorColor, 0.10f, FStringView( "FloorLeft" ) );
+	SpawnDemoPlane( Graph(), FVec3{ 2.7f, 0.0f, -3.625f }, FVec3{ 3.4f, 1.0f, 1.75f },
+		FloorColor, 0.10f, FStringView( "FloorFront" ) );
+	SpawnDemoPlane( Graph(), FVec3{ 2.7f, 0.0f, 2.275f }, FVec3{ 3.4f, 1.0f, 4.45f },
+		FloorColor, 0.10f, FStringView( "FloorBack" ) );
+	SpawnDemoPlane( Graph(), FVec3{ 4.45f, 0.0f, 0.0f }, FVec3{ 0.10f, 1.0f, kFloorSize },
+		FloorColor, 0.10f, FStringView( "FloorRight" ) );
+
+	// 水底。水面から十分離し、ACSの吸収と散乱が色として現れる深さを作る。
+	SpawnDemoPlane( Graph(), FVec3{ kWaterPosition.x, -0.76f, kWaterPosition.z },
+		FVec3{ kWaterSize.x, 1.0f, kWaterSize.y }, FVec4{ 0.08f, 0.16f, 0.20f, 1.0f },
+		0.82f, FStringView( "PoolBottom" ) );
+
+	// ACSの屈折、反射、泡、動的波紋を使う水面。位置と広さを決めるだけで置ける。
+	FWater3DSpawnParams Water;
+	Water.Position = kWaterPosition;
+	Water.Size = kWaterSize;
+	Water.ShallowColor = FVec3{ 0.035f, 0.42f, 0.58f };
+	Water.DeepColor = FVec3{ 0.006f, 0.045f, 0.14f };
+	Water.Roughness = 0.18f;
+	Water.NormalStrength = 0.70f;
+	Water.WaveAmplitude = 0.075f;
+	Water.WaveScale = 1.05f;
+	Water.RefractionStrength = 0.45f;
+	Water.FoamIntensity = 0.32f;
+	Water.Name = FStringView( "DemoWater" );
+	m_WaterSurfaceId = FNodeId{};
+	if ( ANode* const WaterSurface = CWater3DSpawner::SpawnInto( Graph(), Water ) )
+	{
+		m_WaterSurfaceId = WaterSurface->Id();
+	}
+
+	// 水面を横切る形を置き、接触部の泡と前後関係を見えるようにする。
+	FModel3DSpawnParams WaterStone = FModel3DSpawnParams::FromPrimitive( EMeshPrimitive3D::Sphere,
+		FVec3{ kWaterPosition.x, 0.34f, kWaterPosition.z } );
+	WaterStone.Scale = FVec3{ 0.82f, 0.82f, 0.82f };
+	WaterStone.Color = FVec4{ 0.32f, 0.36f, 0.39f, 1.0f };
+	WaterStone.Roughness = 0.72f;
+	WaterStone.Name = FStringView( "WaterStone" );
+	CModel3DSpawner::SpawnInto( Graph(), WaterStone );
 
 	// 並べた球。色違いで陰りの出方を見比べられるようにする。
 	// 立方体より手前 (z = +1.6) へ置く。同じ列だと真ん中の球が立方体に隠れる。
@@ -131,7 +210,7 @@ void ADemo3DScene::OnEnter() noexcept
 		Ball.Color = Colors[Index];
 		// 粗さを 3 つで振る。同じ色でも «艶» が違うと材質の違いとして読める。
 		Ball.Roughness = 0.12f + static_cast<f32>( Index ) * 0.34f;
-		CModel3DSpawner::SpawnInto( Root(), Ball );
+		CModel3DSpawner::SpawnInto( Graph(), Ball );
 	}
 
 	// 回す立方体。動いていることと、面ごとの陰りの差が分かる。
@@ -141,7 +220,7 @@ void ADemo3DScene::OnEnter() noexcept
 	Cube.Metallic = 1.0f;      // 金属。拡散反射が消えるので、環境光と反射が要る
 	Cube.Roughness = 0.28f;
 	Cube.Name = FStringView( "Spinner" );
-	m_Spinner = CModel3DSpawner::SpawnInto( Root(), Cube );
+	m_Spinner = CModel3DSpawner::SpawnInto( Graph(), Cube );
 
 	// Assets に置いた FBX。**置き場からモデルを読む道が通っていることの確認**でもある。
 	// 読めなければ置かずに nullptr が返り、理由が 1 行出る (黙って消えない)。
@@ -153,7 +232,7 @@ void ADemo3DScene::OnEnter() noexcept
 		Model.Color = FVec4{ 0.92f, 0.62f, 0.28f, 1.0f };
 		Model.Roughness = 0.40f;
 		Model.Name = FStringView( "ImportedModel" );
-		m_Mover = CModel3DSpawner::SpawnInto( Root(), Model, Assets->Models() );
+		m_Mover = CModel3DSpawner::SpawnInto( Graph(), Model, Assets->Models() );
 
 		// 骨で動くモデル。読み口が別なので、置き方も別 (部品を自分で付ける)。
 		// **骨の入っていない FBX を渡すと読めない。** そのときは 1 行出て、何も置かれない。
@@ -303,6 +382,11 @@ void ADemo3DScene::OnEnter() noexcept
 	// 素材名と明示した置き方だけで3D effectを出す。renderer準備前なら基底が開始まで保持する。
 	m_EffectElapsedSeconds = 0.0f;
 	PlayEffect3D( FStringView( "Effects/hit.efkefc" ), MakeDemoEffectParams() );
+
+	// 最初の画面から波紋が見えるように1つ作り、その後は明示秒で同じ列を繰り返す。
+	m_WaterRippleElapsedSeconds = 0.0f;
+	m_WaterRippleIndex = 0u;
+	AddDemoWaterRipple();
 }
 
 
@@ -363,6 +447,16 @@ void ADemo3DScene::OnUpdate( f32 DeltaSeconds ) noexcept
 	}
 
 	if ( Ui().ConsumeButtonPress( m_SpatialSoundButton ) ) PlaySpatialDemoSound();
+
+	if ( m_WaterSurfaceId.IsValid() )
+	{
+		m_WaterRippleElapsedSeconds += DeltaSeconds;
+		if ( m_WaterRippleElapsedSeconds >= kWaterRippleRepeatSeconds )
+		{
+			m_WaterRippleElapsedSeconds -= kWaterRippleRepeatSeconds;
+			AddDemoWaterRipple();
+		}
+	}
 
 	// 準備中に再生要求を溜めず、短いhit素材を1つずつ確認できる間隔で繰り返す。
 	if ( Effects3D().IsReady() )
@@ -517,6 +611,17 @@ void ADemo3DScene::PlaySpatialDemoSound() noexcept
 	Ui().SetText( m_SpatialSoundStatusText, m_bNextSpatialSoundRight ? "PLAYED: RIGHT" : "PLAYED: LEFT" );
 	m_bNextSpatialSoundRight = !m_bNextSpatialSoundRight;
 	Ui().SetText( m_SpatialSoundButton, m_bNextSpatialSoundRight ? "PLAY 3D SOUND: RIGHT" : "PLAY 3D SOUND: LEFT" );
+}
+
+
+void ADemo3DScene::AddDemoWaterRipple() noexcept
+{
+	if ( !m_WaterSurfaceId.IsValid() ) return;
+
+	const FVec2 Offset = kWaterRippleOffsets[m_WaterRippleIndex % kWaterRipplePointCount];
+	m_WaterRippleIndex = ( m_WaterRippleIndex + 1u ) % kWaterRipplePointCount;
+	const FVec3 Point{ kWaterPosition.x + Offset.x, kWaterPosition.y, kWaterPosition.z + Offset.y };
+	AddWaterDisturbance( m_WaterSurfaceId, Point, 0.24f, 0.30f );
 }
 
 

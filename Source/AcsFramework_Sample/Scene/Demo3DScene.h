@@ -87,11 +87,17 @@ private:
 	/** UIに表示中の左右どちらかから、短い3D効果音を鳴らす。 */
 	void PlaySpatialDemoSound() noexcept;
 
+	/** 固定された次の位置へ、ACSの動的な水面波紋を1つ追加する。 */
+	void AddDemoWaterRipple() noexcept;
+
 	/** 回す対象。所有はしない (木が持っている)。 */
 	ANode* m_Spinner = nullptr;
 
 	/** 往復させる取り込みモデル。所有はしない (木が持っている)。 */
 	ANode* m_Mover = nullptr;
+
+	/** 波紋を追加する水面の世代付き識別子。 */
+	FNodeId m_WaterSurfaceId;
 
 	/** いま向かっている先。着いたら z の符号を反転して折り返す。 */
 	FVec3 m_MoveTarget{ -3.4f, 1.0f, -2.4f };
@@ -104,6 +110,12 @@ private:
 
 	/** 次の3Dエフェクトまでに経過した秒。 */
 	f32 m_EffectElapsedSeconds = 0.0f;
+
+	/** 次の水面波紋までに経過した秒。 */
+	f32 m_WaterRippleElapsedSeconds = 0.0f;
+
+	/** 次に使う固定波紋位置の番号。 */
+	usize m_WaterRippleIndex = 0u;
 
 	/** FXAAの切り替えを受け付けるボタン。 */
 	u32 m_FxaaToggleButton = 0u;

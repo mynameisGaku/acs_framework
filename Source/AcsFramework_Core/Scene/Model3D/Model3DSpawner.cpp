@@ -8,6 +8,36 @@ namespace
 }
 
 
+ANode* CModel3DSpawner::SpawnInto( CSceneNodeGraph& Graph, const FModel3DSpawnParams& Params,
+	ANode* Parent ) noexcept
+{
+	// シーンへ半端なノードを残さないよう、pool登録より前に入力を確定する。
+	if ( !Params.IsValid() ) return nullptr;
+
+	const FScene3DSpawnResult Spawned = Graph.TrySpawn( Params.Name, Parent );
+	if ( !Spawned ) return nullptr;
+
+	ApplyTransform( *Spawned.Node, Params );
+	ApplyMesh( *Spawned.Node, Params );
+	return Spawned.Node;
+}
+
+
+ANode* CModel3DSpawner::SpawnInto( CSceneNodeGraph& Graph, const FModel3DSpawnParams& Params,
+	CModelLibrary& Library, ANode* Parent ) noexcept
+{
+	// プリミティブなら読むものが無い。そのままシーンへ置く。
+	if ( Params.MeshPath.Data() == nullptr || Params.MeshPath.Size() == 0u )
+		return SpawnInto( Graph, Params, Parent );
+
+	FModel3DSpawnParams Loaded = Params;
+	Loaded.MeshAsset = Library.Load( Params.MeshPath );
+	if ( !Loaded.MeshAsset ) return nullptr;
+
+	return SpawnInto( Graph, Loaded, Parent );
+}
+
+
 ANode* CModel3DSpawner::SpawnInto( ANode& Parent, const FModel3DSpawnParams& Params ) noexcept
 {
 	// 置いてから «見えない» と気付くのが一番たちが悪いので、作る前に弾く。

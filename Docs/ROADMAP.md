@@ -33,6 +33,7 @@ ACS のモジュールは **438 個**ある。この枠組みが窓口を用意�
 | 入力の割り当て | `CActionBindingTable`、`FActionKeyRebindState`、`CBoundActionSource` |
 | 画面・フェード・ロード中・ポーズ | `CScreenSubsystem`、`CFadeSubsystem`、`CLoadingScreenSubsystem`、`CPauseScreenSubsystem` |
 | ノード生成・シーン保存 | `CPrefabSubsystem`、`CSceneSnapshotSubsystem` |
+| 3D 水面 | `CWater3DSpawner`、`FWater3DSpawnParams`、ACSの動的波紋 |
 | 3D エフェクト | `AEffect3DScene`、`CEffect3DPlayer`、同梱の Effekseer |
 | 遊ぶ人向け UI | `AUi3DScene`、`CUiLayer`、ACSの `AWidget` 群 |
 | 多言語 | `CLocalizationSubsystem` |
@@ -47,7 +48,7 @@ ACS のモジュールは **438 個**ある。この枠組みが窓口を用意�
 | **ポストプロセス** | `PostProcess`、`Ssao`、`Ssgi`、`Ssr`、`Fxaa`、`SubsurfaceScattering`、`MotionVector`、`TemporalHistory`、`HiZ` |
 | **アニメーション** | `AnimationGraph`、`AnimationCurve`、`SkinnedShader`、`asset/SkinnedMesh` |
 | **3D の当たり判定** | `collision/MeshCollider`、`collision/ConvexHull3`、`math/Collision3D` |
-| 水面・天候 | `WaterSurface3D`、`WaterSurface3DComponent`、`WeatherSystem` |
+| 天候 | `WeatherSystem` |
 
 ### 覆えていないもの (v1.0.0 の範囲外と宣言する)
 
@@ -149,6 +150,9 @@ Steam (`SteamworksBridge`)、スクリプト (`ScriptHost`)、機械学習 (`MlR
 - ~~位置のある効果音の左右定位~~ → **実装済み** (2026-08-22)。Engine発行の音源番号、
   距離減衰、要求音量、再生速度を同じvoiceへ合成し、モノラル素材の左右位置をXAudio2へ渡す。
   Demo3Dのボタンで左・右を交互に実行できる
+- ~~対話できる3D水面の配置~~ → **実装済み** (2026-08-22)。`CWater3DSpawner`へ位置と広さを
+  渡すだけで、ACSの屈折、反射、泡、波紋を使う識別子付き水面を置ける。高度な描画実装を
+  複製せず、値の検証とシーンへの接続だけをFrameworkが受け持つ
 - シーン保存でノード名を残す ※ACS の形式 v4 に名前欄が無い
 - エラーとログの方針統一、スレッド安全性の明示、セーブ互換性の方針
 

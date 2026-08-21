@@ -17,7 +17,7 @@ using namespace acs::game;
  * ここはその形を組み立てて親へ繋ぐだけ。
  *
  * @code
- * ANode* const Hero = CModel3DSpawner::SpawnInto( Scene.Root(),
+ * ANode* const Hero = CModel3DSpawner::SpawnInto( Scene.Graph(),
  *     FModel3DSpawnParams::FromMesh( FStringView( "hero.mdl" ), FVec3{ 0.0f, 0.0f, 5.0f } ) );
  * @endcode
  *
@@ -27,6 +27,33 @@ using namespace acs::game;
 class CModel3DSpawner
 {
 public:
+	/**
+	 * シーンの識別子管理へ登録してから置く。
+	 *
+	 * @details
+	 * 波紋、当たり判定、破棄などで `FNodeId` を使う物はこちらを選ぶ。
+	 * `Parent` が nullptr ならシーンのルート直下へ置く。
+	 *
+	 * @param Graph 置くシーンのノードグラフ。
+	 * @param Params 何をどこへ置くか。
+	 * @param Parent 繋ぐ先。nullptrならルート。
+	 * @return 有効な識別子を持つノード。置けなかったらnullptr。
+	 */
+	static ANode* SpawnInto( CSceneNodeGraph& Graph, const FModel3DSpawnParams& Params,
+		ANode* Parent = nullptr ) noexcept;
+
+	/**
+	 * 置き場からモデルを読み、シーンの識別子管理へ登録して置く。
+	 *
+	 * @param Graph 置くシーンのノードグラフ。
+	 * @param Params 置く中身。
+	 * @param Library 読み込みを頼む先。
+	 * @param Parent 繋ぐ先。nullptrならルート。
+	 * @return 有効な識別子を持つノード。読めないか置けなければnullptr。
+	 */
+	static ANode* SpawnInto( CSceneNodeGraph& Graph, const FModel3DSpawnParams& Params,
+		CModelLibrary& Library, ANode* Parent = nullptr ) noexcept;
+
 	/**
 	 * 指定どおりに置く。
 	 *

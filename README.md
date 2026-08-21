@@ -35,6 +35,7 @@ msbuild acs_framework.vcxproj /p:Configuration=Release /p:Platform=x64
 | 3D を置く | `CModel3DSpawner`、FBX の取り込み、材質 (metallic / roughness) |
 | 動かす | `SetPosition` / `RotateDeg` / `LookAt` / `MoveToward`、骨アニメーション |
 | 見た目 | 物理大気・ボリューム雲・影・IBL・遮蔽 (SSAO)・間接光 (SSGI)・反射 (SSR)・霧・トーンマップ・輪郭補正 (FXAA) |
+| 3D 水面 | `CWater3DSpawner`、屈折・反射・泡・動的な波紋 |
 | 3D 演出 | `AEffect3DScene`、Effekseer、depth 遮蔽、HDR・bloom への自動合成 |
 | 3D 音響 | `CSpatialAudioSubsystem`、距離減衰、モノラル効果音の左右定位 |
 | 遊ぶ人向け UI | `AUi3DScene`、文字・ボタン・入力、ポスト処理後の鮮明なHUD合成 |
@@ -49,11 +50,11 @@ msbuild acs_framework.vcxproj /p:Configuration=Release /p:Platform=x64
 // 置く
 FModel3DSpawnParams Ball = FModel3DSpawnParams::FromPrimitive( EMeshPrimitive3D::Sphere, FVec3{ 0, 1, 0 } );
 Ball.Roughness = 0.2f;
-CModel3DSpawner::SpawnInto( Root(), Ball );
+CModel3DSpawner::SpawnInto( Graph(), Ball );
 
 // FBX を置く (Assets からの相対名)
 FModel3DSpawnParams Model = FModel3DSpawnParams::FromMesh( FStringView( "Models/Robot.fbx" ), Position );
-CModel3DSpawner::SpawnInto( Root(), Model, Assets->Models() );
+CModel3DSpawner::SpawnInto( Graph(), Model, Assets->Models() );
 
 // 動かす
 Node->RotateDeg( FVec3{ 0, 90.0f * DeltaSeconds, 0 } );
@@ -62,6 +63,12 @@ Node->LookAt( Target );
 
 // 当てる
 const FSceneRayHit Hit = CScenePicker::Raycast( Root(), FSceneRay::FromScreen( Camera, MouseX, MouseY, W, H ) );
+
+// 反射・屈折・泡を持つ水面を置き、波紋を起こす
+FWater3DSpawnParams Water;
+Water.Position = FVec3{ 2.5f, 0.1f, -1.0f };
+ANode* const Surface = CWater3DSpawner::SpawnInto( Graph(), Water );
+if ( Surface != nullptr ) AddWaterDisturbance( Surface->Id(), Water.Position );
 
 // 近くの物から跳ね返る色を足す
 GlobalIllumination().Intensity = 0.75f;

@@ -85,6 +85,24 @@ void RunModel3DSpawnerTests( CTestHarness& Harness )
 		}
 	}
 
+	Harness.BeginSuite( "CModel3DSpawner / シーンへ識別子付きで置く" );
+
+	{
+		CSceneNodeGraph Graph;
+		ANode* const Placed = CModel3DSpawner::SpawnInto( Graph,
+			FModel3DSpawnParams::FromPrimitive( EMeshPrimitive3D::Plane, FVec3{ 2.0f, 0.0f, -1.0f } ) );
+
+		Harness.Check( Placed != nullptr, "置ける" );
+		Harness.CheckEqualU64( Graph.Root().ChildCount(), 1u, "ルートの下に付く" );
+		Harness.CheckEqualU64( Graph.RegisteredCount(), 2u, "ルートと配置物が登録される" );
+
+		if ( Placed != nullptr )
+		{
+			Harness.Check( Placed->Id().IsValid(), "有効な識別子が付く" );
+			Harness.Check( Graph.Get( Placed->Id() ) == Placed, "識別子から同じノードを取れる" );
+		}
+	}
+
 	Harness.BeginSuite( "CModel3DSpawner / モデルを置く" );
 
 	{
@@ -136,6 +154,18 @@ void RunModel3DSpawnerTests( CTestHarness& Harness )
 
 		Harness.Check( CModel3DSpawner::SpawnInto( *Parent, Broken ) == nullptr, "置けない" );
 		Harness.CheckEqualU64( Parent->ChildCount(), 0u, "半端なノードが残らない" );
+	}
+
+	Harness.BeginSuite( "CModel3DSpawner / シーンへ置けないときも何も足さない" );
+
+	{
+		CSceneNodeGraph Graph;
+		FModel3DSpawnParams Broken;
+		Broken.Scale = FVec3{ 0.0f, 1.0f, 1.0f };
+
+		Harness.Check( CModel3DSpawner::SpawnInto( Graph, Broken ) == nullptr, "置けない" );
+		Harness.CheckEqualU64( Graph.Root().ChildCount(), 0u, "半端な子が残らない" );
+		Harness.CheckEqualU64( Graph.RegisteredCount(), 1u, "識別子の空きも消費しない" );
 	}
 
 	Harness.BeginSuite( "CModel3DSpawner / 積み上げる" );

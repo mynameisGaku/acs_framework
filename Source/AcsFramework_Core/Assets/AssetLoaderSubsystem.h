@@ -29,7 +29,7 @@ public:
 	 * @details
 	 * ```cpp
 	 * CAssetLoaderSubsystem* const Assets = GetSubsystem<CAssetLoaderSubsystem>();
-	 * CModel3DSpawner::SpawnInto( Root(), Params, Assets->Models() );
+	 * CModel3DSpawner::SpawnInto( Graph(), Params, Assets->Models() );
 	 * ```
 	 *
 	 * こちらは**その場で読む**。`Begin` の一括読み込みは、ロード画面を出して待つ場面向け。

@@ -41,6 +41,10 @@ Subsystemにはしない。`AEffect3DScene`がscene単位で`CEffect3DPlayer`を
 挿入できる透明3DパスとD3D12借用契約だけを持つ。Effekseer固有の読込・再生・描画はframework
 側の非公開実装へ閉じる。
 
+3D水面もsceneのノード、カメラ、背景、depthへ結び付くためSubsystemにはしない。
+`FWater3DSpawnParams`は描画器なしで検証できる値、`CWater3DSpawner`はACSの平面メッシュと
+`AWaterSurface3DComponent`を識別子付きノードへ接続する状態なしのアダプターとする。
+
 ### Text変換の契約
 
 `AcsToWide`の配列版は変換成功時だけ出力を更新し、確保・入力長・変換数の失敗時は既存内容を保つ。

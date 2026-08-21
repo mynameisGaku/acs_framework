@@ -4,6 +4,9 @@
     <Filter Include="Assets">
       <UniqueIdentifier>{ff29f78b-74e0-eeca-622c-02928173467e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Assets\Audio">
+      <UniqueIdentifier>{7f540e7f-5c4b-4da0-bd1a-d26fe7df7fe9}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Assets\Effects">
       <UniqueIdentifier>{94954a26-6d5a-e1e0-8e37-d0c32aefec92}</UniqueIdentifier>
     </Filter>
@@ -12,9 +15,6 @@
     </Filter>
     <Filter Include="Assets\Models">
       <UniqueIdentifier>{d0c68ae6-fdb9-be67-9e91-57aadcbcfa32}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Assets\Audio">
-      <UniqueIdentifier>{7f540e7f-5c4b-4da0-bd1a-d26fe7df7fe9}</UniqueIdentifier>
     </Filter>
     <Filter Include="Docs">
       <UniqueIdentifier>{422bb446-cd29-397a-c564-e780bb665a8b}</UniqueIdentifier>
@@ -108,6 +108,12 @@
     </Filter>
     <Filter Include="Source\AcsFramework_Core\Scene\Snapshot\Test">
       <UniqueIdentifier>{37058ff1-369f-5831-9a78-e55bb24db45b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\AcsFramework_Core\Scene\Water3D">
+      <UniqueIdentifier>{8f50d5d4-8947-4505-aa02-c19d5b0ebea1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\AcsFramework_Core\Scene\Water3D\Test">
+      <UniqueIdentifier>{90135e1d-ac03-4281-833a-28937151e1c9}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source\AcsFramework_Core\Screen">
       <UniqueIdentifier>{baf65697-257d-0cf3-e822-e17c15909ac1}</UniqueIdentifier>
@@ -309,9 +315,6 @@
     <ClCompile Include="Source\AcsFramework_Core\Effects\Effect3D\Effect3DScene.cpp">
       <Filter>Source\AcsFramework_Core\Effects\Effect3D</Filter>
     </ClCompile>
-    <ClCompile Include="Source\AcsFramework_Core\UI\Ui3DScene.cpp">
-      <Filter>Source\AcsFramework_Core\UI</Filter>
-    </ClCompile>
     <ClCompile Include="Source\AcsFramework_Core\Event\EventSubscription.cpp">
       <Filter>Source\AcsFramework_Core\Event</Filter>
     </ClCompile>
@@ -395,6 +398,12 @@
     </ClCompile>
     <ClCompile Include="Source\AcsFramework_Core\Scene\Snapshot\SceneSnapshotWriter.cpp">
       <Filter>Source\AcsFramework_Core\Scene\Snapshot</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Scene\Water3D\Water3DSpawner.cpp">
+      <Filter>Source\AcsFramework_Core\Scene\Water3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Scene\Water3D\Water3DSpawnParams.cpp">
+      <Filter>Source\AcsFramework_Core\Scene\Water3D</Filter>
     </ClCompile>
     <ClCompile Include="Source\AcsFramework_Core\Screen\ScreenSubsystem.cpp">
       <Filter>Source\AcsFramework_Core\Screen</Filter>
@@ -485,6 +494,9 @@
     </ClCompile>
     <ClCompile Include="Source\AcsFramework_Core\Time\TimeSubsystem.cpp">
       <Filter>Source\AcsFramework_Core\Time</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\UI\Ui3DScene.cpp">
+      <Filter>Source\AcsFramework_Core\UI</Filter>
     </ClCompile>
     <ClCompile Include="Source\AcsFramework_Sample\Scene\Demo3DScene.cpp">
       <Filter>Source\AcsFramework_Sample\Scene</Filter>
@@ -794,9 +806,6 @@
     <ClInclude Include="Source\AcsFramework_Core\Effects\Effect3D\Effect3DScene.h">
       <Filter>Source\AcsFramework_Core\Effects\Effect3D</Filter>
     </ClInclude>
-    <ClInclude Include="Source\AcsFramework_Core\UI\Ui3DScene.h">
-      <Filter>Source\AcsFramework_Core\UI</Filter>
-    </ClInclude>
     <ClInclude Include="Source\AcsFramework_Core\Event\EventSubscription.h">
       <Filter>Source\AcsFramework_Core\Event</Filter>
     </ClInclude>
@@ -895,6 +904,12 @@
     </ClInclude>
     <ClInclude Include="Source\AcsFramework_Core\Scene\Snapshot\SceneSnapshotWriter.h">
       <Filter>Source\AcsFramework_Core\Scene\Snapshot</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Water3D\Water3DSpawner.h">
+      <Filter>Source\AcsFramework_Core\Scene\Water3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Water3D\Water3DSpawnParams.h">
+      <Filter>Source\AcsFramework_Core\Scene\Water3D</Filter>
     </ClInclude>
     <ClInclude Include="Source\AcsFramework_Core\Screen\ScreenSubsystem.h">
       <Filter>Source\AcsFramework_Core\Screen</Filter>
@@ -1012,6 +1027,9 @@
     </ClInclude>
     <ClInclude Include="Source\AcsFramework_Core\Time\TimeSubsystem.h">
       <Filter>Source\AcsFramework_Core\Time</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\UI\Ui3DScene.h">
+      <Filter>Source\AcsFramework_Core\UI</Filter>
     </ClInclude>
     <ClInclude Include="Source\AcsFramework_Sample\Scene\Demo3DScene.h">
       <Filter>Source\AcsFramework_Sample\Scene</Filter>
@@ -1282,14 +1300,14 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Assets\Models\README.md">
-      <Filter>Assets\Models</Filter>
-    </None>
     <None Include="Assets\Audio\README.md">
       <Filter>Assets\Audio</Filter>
     </None>
     <None Include="Assets\Audio\SpatialPulse.wav">
       <Filter>Assets\Audio</Filter>
+    </None>
+    <None Include="Assets\Models\README.md">
+      <Filter>Assets\Models</Filter>
     </None>
     <None Include="Assets\README.md">
       <Filter>Assets</Filter>
@@ -1324,13 +1342,13 @@
     <None Include="Source\AcsFramework_Core\Audio\Spatial\README.md">
       <Filter>Source\AcsFramework_Core\Audio\Spatial</Filter>
     </None>
-    <None Include="Source\AcsFramework_Core\Audio\Spatial\Test\SpatialSourceRegistryTest.cpp">
-      <Filter>Source\AcsFramework_Core\Audio\Spatial\Test</Filter>
-    </None>
     <None Include="Source\AcsFramework_Core\Audio\Spatial\Test\SpatialAudioSubsystemTest.cpp">
       <Filter>Source\AcsFramework_Core\Audio\Spatial\Test</Filter>
     </None>
     <None Include="Source\AcsFramework_Core\Audio\Spatial\Test\SpatialSfxMixTest.cpp">
+      <Filter>Source\AcsFramework_Core\Audio\Spatial\Test</Filter>
+    </None>
+    <None Include="Source\AcsFramework_Core\Audio\Spatial\Test\SpatialSourceRegistryTest.cpp">
       <Filter>Source\AcsFramework_Core\Audio\Spatial\Test</Filter>
     </None>
     <None Include="Source\AcsFramework_Core\Effects\Effect3D\README.md">
@@ -1338,9 +1356,6 @@
     </None>
     <None Include="Source\AcsFramework_Core\Effects\Effect3D\Test\Effect3DPlayParamsTest.cpp">
       <Filter>Source\AcsFramework_Core\Effects\Effect3D\Test</Filter>
-    </None>
-    <None Include="Source\AcsFramework_Core\UI\README.md">
-      <Filter>Source\AcsFramework_Core\UI</Filter>
     </None>
     <None Include="Source\AcsFramework_Core\README.md">
       <Filter>Source\AcsFramework_Core</Filter>
@@ -1372,19 +1387,25 @@
     <None Include="Source\AcsFramework_Core\Scene\Snapshot\Test\SceneSnapshotTest.cpp">
       <Filter>Source\AcsFramework_Core\Scene\Snapshot\Test</Filter>
     </None>
-    <None Include="Source\AcsFramework_Core\Simulation\README.md">
-      <Filter>Source\AcsFramework_Core\Simulation</Filter>
+    <None Include="Source\AcsFramework_Core\Scene\Water3D\README.md">
+      <Filter>Source\AcsFramework_Core\Scene\Water3D</Filter>
+    </None>
+    <None Include="Source\AcsFramework_Core\Scene\Water3D\Test\Water3DSpawnerTest.cpp">
+      <Filter>Source\AcsFramework_Core\Scene\Water3D\Test</Filter>
     </None>
     <None Include="Source\AcsFramework_Core\Settings\Test\GameSettingsStoreTest.cpp">
       <Filter>Source\AcsFramework_Core\Settings\Test</Filter>
     </None>
+    <None Include="Source\AcsFramework_Core\Simulation\README.md">
+      <Filter>Source\AcsFramework_Core\Simulation</Filter>
+    </None>
     <None Include="Source\AcsFramework_Core\Simulation\Test\ActionBindingTableTest.cpp">
       <Filter>Source\AcsFramework_Core\Simulation\Test</Filter>
     </None>
-    <None Include="Source\AcsFramework_Core\Simulation\Test\ActionKeyRebindStateTest.cpp">
+    <None Include="Source\AcsFramework_Core\Simulation\Test\ActionInputTapeTest.cpp">
       <Filter>Source\AcsFramework_Core\Simulation\Test</Filter>
     </None>
-    <None Include="Source\AcsFramework_Core\Simulation\Test\ActionInputTapeTest.cpp">
+    <None Include="Source\AcsFramework_Core\Simulation\Test\ActionKeyRebindStateTest.cpp">
       <Filter>Source\AcsFramework_Core\Simulation\Test</Filter>
     </None>
     <None Include="Source\AcsFramework_Core\Simulation\Test\FixedStepDriverTest.cpp">
@@ -1404,6 +1425,9 @@
     </None>
     <None Include="Source\AcsFramework_Core\Text\Localization\Test\LocalizationTest.cpp">
       <Filter>Source\AcsFramework_Core\Text\Localization\Test</Filter>
+    </None>
+    <None Include="Source\AcsFramework_Core\UI\README.md">
+      <Filter>Source\AcsFramework_Core\UI</Filter>
     </None>
     <None Include="Source\Common\Compat\README.md">
       <Filter>Source\Common\Compat</Filter>

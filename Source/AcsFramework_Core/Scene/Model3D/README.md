@@ -25,17 +25,21 @@ ACS は 3D を描く力を一式持っている（PBR・影・IBL・空・水・
 
 ```cpp
 // 置く
-ANode* const Hero = CModel3DSpawner::SpawnInto( Scene.Root(),
+ANode* const Hero = CModel3DSpawner::SpawnInto( Scene.Graph(),
     FModel3DSpawnParams::FromMesh( FStringView( "hero.mdl" ), FVec3{ 0.0f, 0.0f, 5.0f } ) );
 
 // 素材が無くても試せる
 FModel3DSpawnParams Ball = FModel3DSpawnParams::FromPrimitive( EMeshPrimitive3D::Sphere, FVec3{ 2.0f, 0.0f, 0.0f } );
 Ball.Color = FVec4{ 1.0f, 0.2f, 0.2f, 1.0f };
-CModel3DSpawner::SpawnInto( Scene.Root(), Ball );
+CModel3DSpawner::SpawnInto( Scene.Graph(), Ball );
 
 // 置いた後に動かす
 Hero->Local().position.x += 1.0f;
 ```
+
+シーンの物は `Scene.Graph()` へ置く。これにより有効な `FNodeId` が付き、当たり判定、
+波紋、識別子による破棄へ同じノードを渡せる。`ANode&` を受ける従来の多重定義は、
+シーン外の一時的なノード木や既存コードとの互換用であり、識別子は発行しない。
 
 何も書かなければ「原点に、等倍で、白い立方体を、影を落とす形で」置く。
 **要るところだけ書けばよい**ようにしてある。

@@ -13,13 +13,13 @@ void AMinimalScene::OnEnter() noexcept
 	FModel3DSpawnParams Floor =
 		FModel3DSpawnParams::FromPrimitive( EMeshPrimitive3D::Plane, FVec3{ 0.0f, 0.0f, 0.0f } );
 	Floor.Scale = FVec3{ 12.0f, 1.0f, 12.0f };
-	CModel3DSpawner::SpawnInto( Root(), Floor );
+	CModel3DSpawner::SpawnInto( Graph(), Floor );
 
 	// 置いて回す物。
 	FModel3DSpawnParams Cube =
 		FModel3DSpawnParams::FromPrimitive( EMeshPrimitive3D::Cube, FVec3{ 0.0f, 1.0f, 0.0f } );
 	Cube.Color = FVec4{ 0.85f, 0.45f, 0.25f, 1.0f };
-	m_Spinner = CModel3DSpawner::SpawnInto( Root(), Cube );
+	m_Spinner = CModel3DSpawner::SpawnInto( Graph(), Cube );
 
 	// 全部が入る位置までカメラを引く。
 	FrameScene();
