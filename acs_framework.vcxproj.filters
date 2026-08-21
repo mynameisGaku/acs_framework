@@ -13,6 +13,9 @@
     <Filter Include="Assets\Models">
       <UniqueIdentifier>{d0c68ae6-fdb9-be67-9e91-57aadcbcfa32}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Assets\Audio">
+      <UniqueIdentifier>{7f540e7f-5c4b-4da0-bd1a-d26fe7df7fe9}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Docs">
       <UniqueIdentifier>{422bb446-cd29-397a-c564-e780bb665a8b}</UniqueIdentifier>
     </Filter>
@@ -283,6 +286,9 @@
       <Filter>Source\AcsFramework_Core\Audio\Spatial</Filter>
     </ClCompile>
     <ClCompile Include="Source\AcsFramework_Core\Audio\Spatial\SpatialListenerBinder.cpp">
+      <Filter>Source\AcsFramework_Core\Audio\Spatial</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Audio\Spatial\SpatialSfxMix.cpp">
       <Filter>Source\AcsFramework_Core\Audio\Spatial</Filter>
     </ClCompile>
     <ClCompile Include="Source\AcsFramework_Core\Audio\Spatial\SpatialSfxRouter.cpp">
@@ -762,6 +768,9 @@
       <Filter>Source\AcsFramework_Core\Audio\Spatial</Filter>
     </ClInclude>
     <ClInclude Include="Source\AcsFramework_Core\Audio\Spatial\SpatialPlayRequest.h">
+      <Filter>Source\AcsFramework_Core\Audio\Spatial</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Audio\Spatial\SpatialSfxMix.h">
       <Filter>Source\AcsFramework_Core\Audio\Spatial</Filter>
     </ClInclude>
     <ClInclude Include="Source\AcsFramework_Core\Audio\Spatial\SpatialSfxRouter.h">
@@ -1276,6 +1285,12 @@
     <None Include="Assets\Models\README.md">
       <Filter>Assets\Models</Filter>
     </None>
+    <None Include="Assets\Audio\README.md">
+      <Filter>Assets\Audio</Filter>
+    </None>
+    <None Include="Assets\Audio\SpatialPulse.wav">
+      <Filter>Assets\Audio</Filter>
+    </None>
     <None Include="Assets\README.md">
       <Filter>Assets</Filter>
     </None>
@@ -1310,6 +1325,12 @@
       <Filter>Source\AcsFramework_Core\Audio\Spatial</Filter>
     </None>
     <None Include="Source\AcsFramework_Core\Audio\Spatial\Test\SpatialSourceRegistryTest.cpp">
+      <Filter>Source\AcsFramework_Core\Audio\Spatial\Test</Filter>
+    </None>
+    <None Include="Source\AcsFramework_Core\Audio\Spatial\Test\SpatialAudioSubsystemTest.cpp">
+      <Filter>Source\AcsFramework_Core\Audio\Spatial\Test</Filter>
+    </None>
+    <None Include="Source\AcsFramework_Core\Audio\Spatial\Test\SpatialSfxMixTest.cpp">
       <Filter>Source\AcsFramework_Core\Audio\Spatial\Test</Filter>
     </None>
     <None Include="Source\AcsFramework_Core\Effects\Effect3D\README.md">
@@ -1430,6 +1451,9 @@
       <Filter>Source\Debug\Simulation</Filter>
     </None>
     <None Include="Tools\CaptureApp.ps1">
+      <Filter>Tools</Filter>
+    </None>
+    <None Include="Tools\GenerateSpatialAudioDemo.ps1">
       <Filter>Tools</Filter>
     </None>
     <None Include="Tools\RunAcsTests.ps1">

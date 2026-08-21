@@ -120,6 +120,10 @@ GameInstanceまたはタイマー窓口をまたいで使わない。別のGameI
 ゲーム時間が停止しても実時間で進むため、止める場合は`Pause()`を明示して呼び出す。
 全体、BGM、効果音の3種類の音量を永続化する場合は、GameSettingsへの接続側が担当する。
 
+効果音名は`CAssetRoot`を通し、`Audio/...`または`Assets/Audio/...`を実際の素材パスへ直す。
+`CSpatialAudioSubsystem`はEngine発行の音源番号を使い、再生開始時の距離減衰と左右位置を同じ
+voiceへ反映する。XAudio2で左右位置を使う3D効果音はモノラル素材にする。
+
 ## 起動・更新・描画の契約
 
 `CAcsFrameworkApp`の処理順は意図的に固定する。新しい常駐機能を追加するときは、ここへ

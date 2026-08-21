@@ -46,6 +46,8 @@ void RunActionBindingTableTests( CTestHarness& Harness );
 void RunActionKeyRebindStateTests( CTestHarness& Harness );
 void RunMusicStateArbiterTests( CTestHarness& Harness );
 void RunSpatialSourceRegistryTests( CTestHarness& Harness );
+void RunSpatialAudioSubsystemTests( CTestHarness& Harness );
+void RunSpatialSfxMixTests( CTestHarness& Harness );
 void RunPerfBudgetTests( CTestHarness& Harness );
 void RunSimulationEventQueueTests( CTestHarness& Harness );
 void RunSceneSnapshotStatusTests( CTestHarness& Harness );
@@ -78,6 +80,8 @@ int main()
 	RunActionKeyRebindStateTests( Harness );
 	RunMusicStateArbiterTests( Harness );
 	RunSpatialSourceRegistryTests( Harness );
+	RunSpatialAudioSubsystemTests( Harness );
+	RunSpatialSfxMixTests( Harness );
 	RunPerfBudgetTests( Harness );
 	RunSimulationEventQueueTests( Harness );
 	RunSceneSnapshotStatusTests( Harness );

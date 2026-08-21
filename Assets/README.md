@@ -35,6 +35,18 @@ PlayEffect3D( FStringView( "Effects/hit.efkefc" ), FVec3{ 0, 1, 0 } );
 
 同梱sampleと参照fileの配置は[`Effects/README.md`](Effects/README.md)を参照。
 
+## 位置のある効果音はモノラルWAV
+
+短い3D効果音は`Audio/`へ置き、`FSpatialPlayRequest`には`Audio/Hit.wav`のような
+`Assets`からの相対名を渡す。XAudio2の左右位置はモノラル素材へ適用されるため、位置を持つ
+効果音はモノラルで書き出す。
+
+同梱の`Audio/SpatialPulse.wav`は左右定位を試す短い音で、次の道具から再生成できる。
+
+```powershell
+.\Tools\GenerateSpatialAudioDemo.ps1
+```
+
 ## 置き場の見つけ方
 
 上から順に見て、最初に見つかったものを使う。

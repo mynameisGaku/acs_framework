@@ -6,7 +6,6 @@
 #include "AcsFramework_Core/Audio/Spatial/SpatialListenerBinder.h"
 #include "AcsFramework_Core/Audio/Spatial/SpatialPlayRequest.h"
 #include "AcsFramework_Core/Audio/Spatial/SpatialSfxRouter.h"
-#include "AcsFramework_Core/Audio/Spatial/SpatialSourceRegistry.h"
 
 using namespace acs;
 using namespace acs::game;
@@ -18,21 +17,18 @@ class CAudioSubsystem;
  *
  * @details
  * 距離と向きの計算はエンジン (CSpatialAudio) が持っている。ここが引き受けるのは、
- * 番号の管理・聴く位置の更新・鳴らす側への受け渡しの 3 つ。
+ * Engineが発行する音源番号の寿命・聴く位置の更新・鳴らす側への受け渡しをまとめる。
+ * 距離減衰と左右位置は、再生を始める時点の同じvoiceへ一度に反映する。
  *
- * **いまは距離による小ささだけが効く。** 左右の振り分けは計算できるが、この世代の
- * CAudioDirector::PlaySfx に渡す口がないため反映されない (GetLastPan で値だけ見られる)。
- * 左右を鳴らし分けるには ACS 側へ口を足す必要がある。
- *
- * 鳴らしっぱなしのもの (火の音など) は Acquire → 毎フレーム UpdateSource → Release、
- * 一度きりのもの (着弾音など) は PlayOnce を使う。
+ * 同じ地点から繰り返し鳴らすものは Acquire → 必要なら UpdateSource → PlayFromSource → Release、
+ * 一度きりのもの (着弾音など) は PlayOnce を使う。再生中voiceの位置追従はこの型の責務外。
  *
  * @code
  * Spatial->Bind( *Audio );
  * Spatial->SetListenerNode( PlayerNode );
  *
  * FSpatialPlayRequest Request;
- * Request.AssetPath = FString( "Assets/Se/Hit.wav" );
+ * Request.AssetPath = FString( "Audio/Hit.wav" );
  * Request.Position = HitPoint;
  * Spatial->PlayOnce( Request );
  * @endcode
@@ -70,13 +66,15 @@ public:
 	void SetListener( const FAudioListener& Listener ) noexcept { m_Listener.SetManualListener( Listener ); }
 
 	/**
-	 * 鳴らし続けるものの場所を登録する。
+	 * 繰り返し効果音を鳴らす場所を登録する。
 	 *
 	 * @param Position 世界座標。
 	 * @param Velocity 動いている速さ。
+	 * @param MaxDistance この距離以上では聞こえなくする距離。
+	 * @param Curve 距離から音量を求める曲線。
 	 * @return 借りた番号 (借りられなければ 0)。
 	 */
-	u32 AcquireSource( FVec3 Position, FVec3 Velocity = FVec3::Zero() ) noexcept;
+	u32 AcquireSource( FVec3 Position, FVec3 Velocity = FVec3::Zero(), f32 MaxDistance = 20.0f, EAttenuationCurve Curve = EAttenuationCurve::Linear ) noexcept;
 
 	/**
 	 * 登録した場所を動かす。
@@ -98,7 +96,7 @@ public:
 	 * 登録済みの場所から 1 回鳴らす。
 	 *
 	 * @param SourceId 借りた番号。
-	 * @param Request 何を鳴らすか (Position は無視され、登録した場所が使われる)。
+	 * @param Request 何を鳴らすか。Position、Velocity、MaxDistance、AttenuationCurveは無視し、登録時と更新後の場所を使う。
 	 * @return 鳴らしたら true。
 	 */
 	bool PlayFromSource( u32 SourceId, const FSpatialPlayRequest& Request ) noexcept;
@@ -123,7 +121,7 @@ public:
 	/** 登録されている場所の数を返す。 */
 	u32 GetSourceCount() const noexcept { return m_Spatial.SourceCount(); }
 
-	/** 直近に求まった «どちらから聞こえるか» を返す (いまは鳴らす側へ渡せない)。 */
+	/** 直近に出力へ渡した «どちらから聞こえるか» を返す。 */
 	f32 GetLastPan() const noexcept { return m_Router.GetLastPan(); }
 
 	/** 直近に渡した音量を返す。 */
@@ -132,12 +130,12 @@ public:
 	/** 遠すぎて鳴らさなかった数を返す。 */
 	u64 GetSkippedCount() const noexcept { return m_Router.GetSkippedCount(); }
 
+	/** 出力先や素材の問題で鳴らせなかった数を返す。 */
+	u64 GetFailedCount() const noexcept { return m_Router.GetFailedCount(); }
+
 private:
 	/** 距離と向きを計算するエンジン側。 */
 	CSpatialAudio m_Spatial;
-
-	/** 番号を配る係。 */
-	CSpatialSourceRegistry m_Sources;
 
 	/** 聴く位置を作る係。 */
 	CSpatialListenerBinder m_Listener;

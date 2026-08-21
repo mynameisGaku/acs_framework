@@ -4,6 +4,7 @@
 #include "AcsFramework_Core/Scene/Model3D/Model3DSpawner.h"
 
 #include "AcsFramework_Core/Assets/AssetLoaderSubsystem.h"
+#include "AcsFramework_Core/Audio/Spatial/SpatialAudioSubsystem.h"
 #include "AcsFramework_Core/Settings/GameSettingsSubsystem.h"
 #include "Common/Compat/AcsEnumReflection.h"
 
@@ -40,7 +41,7 @@ namespace
 	constexpr f32 kUiWidth = 260.0f;
 
 	/** プレイヤーUIのカード高さ。 */
-	constexpr f32 kUiHeight = 252.0f;
+	constexpr f32 kUiHeight = 336.0f;
 
 	/** FXAA切り替えに使うアクション番号。 */
 	constexpr u32 kFxaaActionIndex = 0u;
@@ -50,6 +51,15 @@ namespace
 
 	/** 設定ファイルへ保存するFXAAキーの名前。 */
 	constexpr const char* kFxaaKeySetting = "Input.FxaaToggleKey";
+
+	/** 左右定位デモで鳴らす、短いモノラル効果音。 */
+	constexpr const char* kSpatialSoundAsset = "Audio/SpatialPulse.wav";
+
+	/** 聴く位置から音源を前へ離す距離。 */
+	constexpr f32 kSpatialSoundForwardDistance = 4.0f;
+
+	/** 聴く位置から音源を左右へ離す距離。 */
+	constexpr f32 kSpatialSoundSideDistance = 4.0f;
 
 	/**
 	 * デモのFXAA操作へ使えるキーかを返す。
@@ -240,11 +250,13 @@ void ADemo3DScene::OnEnter() noexcept
 	// ここでは表示物を置き、あとでボタンの結果を読むだけにする。
 	Ui().AddText( "ACS 3D", FVec2{ kUiLeft + 16.0f, kUiTop + 14.0f } );
 	Ui().AddText( "PLAYER UI / POST PROCESS", FVec2{ kUiLeft + 16.0f, kUiTop + 42.0f } );
-	m_FxaaToggleButton = Ui().AddButton(
-		"TOGGLE FXAA", FVec2{ kUiLeft + 16.0f, kUiTop + 76.0f }, FVec2{ kUiWidth - 32.0f, 44.0f } );
+	m_FxaaToggleButton = Ui().AddButton( "TOGGLE FXAA", FVec2{ kUiLeft + 16.0f, kUiTop + 76.0f }, FVec2{ kUiWidth - 32.0f, 44.0f } );
 	m_FxaaStatusText = Ui().AddText( "FXAA: ON", FVec2{ kUiLeft + 16.0f, kUiTop + 132.0f } );
 	m_FxaaRebindButton = Ui().AddButton( "CHANGE FXAA KEY", FVec2{ kUiLeft + 16.0f, kUiTop + 158.0f }, FVec2{ kUiWidth - 32.0f, 44.0f } );
 	m_FxaaKeyText = Ui().AddText( "KEYBOARD: F", FVec2{ kUiLeft + 16.0f, kUiTop + 216.0f } );
+	m_SpatialSoundButton = Ui().AddButton( "PLAY 3D SOUND: LEFT", FVec2{ kUiLeft + 16.0f, kUiTop + 246.0f }, FVec2{ kUiWidth - 32.0f, 44.0f } );
+	m_SpatialSoundStatusText = Ui().AddText( "HEADPHONES RECOMMENDED", FVec2{ kUiLeft + 16.0f, kUiTop + 304.0f } );
+	m_bNextSpatialSoundRight = false;
 
 	// 設定は整数として保存し、EKeyの実キー範囲へ戻せる値だけを採用する。
 	CGameSettingsSubsystem* const Settings = GetSubsystem<CGameSettingsSubsystem>();
@@ -286,6 +298,7 @@ void ADemo3DScene::OnEnter() noexcept
 	// キー入力で画角が変わり、«何が変わったのか» が分からない画が並ぶ。
 	SetFreeCameraEnabled( true );
 	SetOrbit( FVec3{ 0.0f, 1.0f, 0.0f }, 0.0f, 0.32f, 14.0f );
+	RefreshSpatialAudioListener();
 
 	// 素材名と明示した置き方だけで3D effectを出す。renderer準備前なら基底が開始まで保持する。
 	m_EffectElapsedSeconds = 0.0f;
@@ -313,6 +326,7 @@ void ADemo3DScene::OnUpdate( f32 DeltaSeconds ) noexcept
 {
 	AEffect3DScene::OnUpdate( DeltaSeconds );
 	ReportFrameTime( DeltaSeconds );
+	RefreshSpatialAudioListener();
 
 	// Escapeの押下フレームを基底場面が処理し終えてから、入力待ち前の自由カメラ状態へ戻す。
 	if ( m_bRestoreFreeCameraAfterUpdate )
@@ -347,6 +361,8 @@ void ADemo3DScene::OnUpdate( f32 DeltaSeconds ) noexcept
 	{
 		SetFxaaEnabled( !PostParams().fxaa_enabled );
 	}
+
+	if ( Ui().ConsumeButtonPress( m_SpatialSoundButton ) ) PlaySpatialDemoSound();
 
 	// 準備中に再生要求を溜めず、短いhit素材を1つずつ確認できる間隔で繰り返す。
 	if ( Effects3D().IsReady() )
@@ -431,6 +447,76 @@ void ADemo3DScene::RefreshFxaaKeyText() noexcept
 	Ui().SetText( m_FxaaRebindButton, "CHANGE FXAA KEY" );
 	const FString KeyLabel = MakeKeyLabel( m_FxaaKeyRebind.CurrentKey() );
 	Ui().SetText( m_FxaaKeyText, KeyLabel.Data() );
+}
+
+
+bool ADemo3DScene::TryMakeCameraAudioListener( FAudioListener& OutListener ) const noexcept
+{
+	OutListener.position = Camera().Eye();
+
+	if ( const FScene3DCameraState* const Authored = AuthoredCamera() )
+	{
+		if ( LengthSq( Authored->Forward ) <= 0.000001f || LengthSq( Authored->Up ) <= 0.000001f ) return false;
+		OutListener.forward = Normalize( Authored->Forward );
+		OutListener.up = Normalize( Authored->Up );
+		return true;
+	}
+
+	COrbitCameraController3D::FOrbitCameraFixedStepSnapshot3D Snapshot;
+	if ( !TryCaptureOrbitCameraSnapshot( Snapshot ) ) return false;
+
+	const FVec3 Forward = Snapshot.current.target - OutListener.position;
+	if ( LengthSq( Forward ) <= 0.000001f ) return false;
+
+	OutListener.forward = Normalize( Forward );
+	OutListener.up = FVec3::Up();
+	return true;
+}
+
+
+void ADemo3DScene::RefreshSpatialAudioListener() noexcept
+{
+	FAudioListener Listener;
+	if ( !TryMakeCameraAudioListener( Listener ) ) return;
+
+	if ( CSpatialAudioSubsystem* const Spatial = GetSubsystem<CSpatialAudioSubsystem>() ) Spatial->SetListener( Listener );
+}
+
+
+void ADemo3DScene::PlaySpatialDemoSound() noexcept
+{
+	CSpatialAudioSubsystem* const Spatial = GetSubsystem<CSpatialAudioSubsystem>();
+	FAudioListener Listener;
+	if ( Spatial == nullptr || !TryMakeCameraAudioListener( Listener ) )
+	{
+		Ui().SetText( m_SpatialSoundStatusText, "SOUND: UNAVAILABLE" );
+		return;
+	}
+
+	const FVec3 RightDirection = Cross( Listener.up, Listener.forward );
+	if ( LengthSq( RightDirection ) <= 0.000001f )
+	{
+		Ui().SetText( m_SpatialSoundStatusText, "SOUND: UNAVAILABLE" );
+		return;
+	}
+	const FVec3 Right = Normalize( RightDirection );
+
+	Spatial->SetListener( Listener );
+	FSpatialPlayRequest Request;
+	Request.AssetPath = FString( kSpatialSoundAsset );
+	Request.Position = Listener.position + Listener.forward * kSpatialSoundForwardDistance + Right * ( m_bNextSpatialSoundRight ? kSpatialSoundSideDistance : -kSpatialSoundSideDistance );
+	Request.BaseVolume = 0.85f;
+	Request.MaxDistance = 18.0f;
+
+	if ( !Spatial->PlayOnce( Request ) )
+	{
+		Ui().SetText( m_SpatialSoundStatusText, "SOUND: UNAVAILABLE" );
+		return;
+	}
+
+	Ui().SetText( m_SpatialSoundStatusText, m_bNextSpatialSoundRight ? "PLAYED: RIGHT" : "PLAYED: LEFT" );
+	m_bNextSpatialSoundRight = !m_bNextSpatialSoundRight;
+	Ui().SetText( m_SpatialSoundButton, m_bNextSpatialSoundRight ? "PLAY 3D SOUND: RIGHT" : "PLAY 3D SOUND: LEFT" );
 }
 
 

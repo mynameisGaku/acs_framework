@@ -15,9 +15,9 @@ void CSpatialAudioSubsystem::OnDeinitialize() noexcept
 }
 
 
-u32 CSpatialAudioSubsystem::AcquireSource( FVec3 Position, FVec3 Velocity ) noexcept
+u32 CSpatialAudioSubsystem::AcquireSource( FVec3 Position, FVec3 Velocity, f32 MaxDistance, EAttenuationCurve Curve ) noexcept
 {
-	const u32 SourceId = m_Sources.Acquire();
+	const u32 SourceId = m_Spatial.RegisterSource( Position, MaxDistance, Curve );
 	if ( SourceId == 0u ) return 0u;
 
 	m_Spatial.UpdateSource( SourceId, Position, Velocity );
@@ -39,7 +39,6 @@ void CSpatialAudioSubsystem::ReleaseSource( u32 SourceId ) noexcept
 	if ( SourceId == 0u ) return;
 
 	m_Spatial.RemoveSource( SourceId );
-	m_Sources.Release( SourceId );
 }
 
 
@@ -55,7 +54,7 @@ bool CSpatialAudioSubsystem::PlayOnce( const FSpatialPlayRequest& Request ) noex
 {
 	if ( m_Audio == nullptr || !Request.IsValid() ) return false;
 
-	const u32 SourceId = AcquireSource( Request.Position, Request.Velocity );
+	const u32 SourceId = AcquireSource( Request.Position, Request.Velocity, Request.MaxDistance, Request.AttenuationCurve );
 	if ( SourceId == 0u ) return false;
 
 	const bool bPlayed = m_Router.Route( m_Spatial, *m_Audio, SourceId, Request );

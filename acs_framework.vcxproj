@@ -223,6 +223,7 @@
     <ClInclude Include="Source\AcsFramework_Core\Audio\Spatial\SpatialAudioSubsystem.h" />
     <ClInclude Include="Source\AcsFramework_Core\Audio\Spatial\SpatialListenerBinder.h" />
     <ClInclude Include="Source\AcsFramework_Core\Audio\Spatial\SpatialPlayRequest.h" />
+    <ClInclude Include="Source\AcsFramework_Core\Audio\Spatial\SpatialSfxMix.h" />
     <ClInclude Include="Source\AcsFramework_Core\Audio\Spatial\SpatialSfxRouter.h" />
     <ClInclude Include="Source\AcsFramework_Core\Audio\Spatial\SpatialSourceRegistry.h" />
     <ClInclude Include="Source\AcsFramework_Core\Scene\Prefab\IPrefabProvider.h" />
@@ -303,6 +304,8 @@
     <None Include="Source\AcsFramework_Core\Simulation\Test\SimulationEventQueueTest.cpp" />
     <None Include="Source\AcsFramework_Core\Audio\Music\Test\MusicStateArbiterTest.cpp" />
     <None Include="Source\AcsFramework_Core\Audio\Spatial\Test\SpatialSourceRegistryTest.cpp" />
+    <None Include="Source\AcsFramework_Core\Audio\Spatial\Test\SpatialAudioSubsystemTest.cpp" />
+    <None Include="Source\AcsFramework_Core\Audio\Spatial\Test\SpatialSfxMixTest.cpp" />
     <None Include="Source\AcsFramework_Core\Scene\Snapshot\Test\SceneSnapshotStatusTest.cpp" />
     <None Include="Source\Debug\DevConsole\Test\ConsoleArgumentReaderTest.cpp" />
     <None Include="Source\Debug\Perf\Test\PerfBudgetTest.cpp" />
@@ -349,6 +352,7 @@
     <ClInclude Include="Source\AcsFramework_Sample\Scene\Demo3DScene.h" />
     <None Include="Docs\demo3d.png" />
     <None Include="Tools\CaptureApp.ps1" />
+    <None Include="Tools\GenerateSpatialAudioDemo.ps1" />
     <None Include="Docs\demo3d-reference.png" />
     <None Include="Docs\demo3d-sunset.png" />
       <ClInclude Include="Source\AcsFramework_Core\Scene\Pick3D\SceneRay.h" />
@@ -361,6 +365,8 @@
       <None Include="Source\AcsFramework_Core\Assets\Model3D\README.md" />
       <None Include="Source\AcsFramework_Core\Assets\Model3D\Test\ModelLibraryTest.cpp" />
       <None Include="Assets\README.md" />
+      <None Include="Assets\Audio\README.md" />
+      <None Include="Assets\Audio\SpatialPulse.wav" />
       <None Include="Assets\Models\README.md" />
       <None Include="Source\AcsFramework_Core\Assets\Model3D\Test\SkinnedModelTest.cpp" />
       <ClInclude Include="Source\AcsFramework_Sample\Scene\MinimalScene.h" />
@@ -455,6 +461,7 @@
     <ClCompile Include="Source\AcsFramework_Core\Audio\Music\MusicTrackCatalog.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Audio\Spatial\SpatialAudioSubsystem.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Audio\Spatial\SpatialListenerBinder.cpp" />
+    <ClCompile Include="Source\AcsFramework_Core\Audio\Spatial\SpatialSfxMix.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Audio\Spatial\SpatialSfxRouter.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Audio\Spatial\SpatialSourceRegistry.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Scene\Prefab\PrefabRegistrar.cpp" />

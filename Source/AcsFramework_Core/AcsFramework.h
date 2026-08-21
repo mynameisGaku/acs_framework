@@ -10,6 +10,8 @@
 #include "AcsFramework_Core/Audio/AudioSubsystem.h"
 #include "AcsFramework_Core/Audio/Music/MusicSubsystem.h"
 #include "AcsFramework_Core/Audio/Spatial/SpatialAudioSubsystem.h"
+#include "AcsFramework_Core/Audio/Spatial/SpatialSfxMix.h"
+#include "AcsFramework_Core/Audio/Spatial/SpatialSourceRegistry.h"
 #include "AcsFramework_Core/Boot/BootScene.h"
 #include "AcsFramework_Core/Event/EventSubscription.h"
 #include "AcsFramework_Core/Event/EventSubsystem.h"

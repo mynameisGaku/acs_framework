@@ -11,16 +11,10 @@ using namespace acs::game;
 class CAudioSubsystem;
 
 /**
- * 距離で小さくした音を、鳴らす側へ流す係。
+ * 距離で小さくし、左右位置を付けた音を、鳴らす側へ流す係。
  *
  * @details
- * エンジン (CSpatialAudio) が計算するのは «どれくらい小さくなるか» と «どちらから聞こえるか»
- * の 2 つ。このうち音量は鳴らす側へ渡せるが、**左右の振り分けは渡す口がない**
- * (CAudioDirector::PlaySfx が受け取るのは音量だけ)。
- *
- * そこで、音量だけを掛けて流し、左右の値は「求まったが使えなかった値」として持ち帰る。
- * 画面に出して確かめられるようにしてあるのは、無音のまま «効いているつもり» になるのを
- * 避けるため。
+ * 純粋な出力値の決定は`ComputeSpatialSfxMix`へ任せ、ここはvoice開始とEngineへの反映だけを行う。
  */
 class CSpatialSfxRouter
 {
@@ -46,6 +40,9 @@ public:
 	/** 小さくなりきって鳴らさなかった数を返す。 */
 	u64 GetSkippedCount() const noexcept { return m_SkippedCount; }
 
+	/** 出力先や素材の問題で鳴らせなかった数を返す。 */
+	u64 GetFailedCount() const noexcept { return m_FailedCount; }
+
 private:
 	/** 直近の左右の値。 */
 	f32 m_LastPan = 0.0f;
@@ -55,4 +52,7 @@ private:
 
 	/** 鳴らさなかった数。 */
 	u64 m_SkippedCount = 0u;
+
+	/** 出力先や素材の問題で失敗した数。 */
+	u64 m_FailedCount = 0u;
 };

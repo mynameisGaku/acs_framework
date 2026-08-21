@@ -73,6 +73,20 @@ private:
 	/** 現在のキーまたは入力待ちをUIへ反映する。 */
 	void RefreshFxaaKeyText() noexcept;
 
+	/**
+	 * 現在の3Dカメラから、空間音響が使う聴く位置と向きを作る。
+	 *
+	 * @param OutListener 作れた聴く位置と向き。
+	 * @return 有効なカメラ姿勢を作れたらtrue。
+	 */
+	bool TryMakeCameraAudioListener( FAudioListener& OutListener ) const noexcept;
+
+	/** 現在の3Dカメラを空間音響の聴く位置へ反映する。 */
+	void RefreshSpatialAudioListener() noexcept;
+
+	/** UIに表示中の左右どちらかから、短い3D効果音を鳴らす。 */
+	void PlaySpatialDemoSound() noexcept;
+
 	/** 回す対象。所有はしない (木が持っている)。 */
 	ANode* m_Spinner = nullptr;
 
@@ -103,6 +117,12 @@ private:
 	/** 現在のキーボード割り当てまたは入力待ちを示す文字。 */
 	u32 m_FxaaKeyText = 0u;
 
+	/** 左右定位を交互に試すボタン。 */
+	u32 m_SpatialSoundButton = 0u;
+
+	/** 直前に鳴らした側または失敗理由を示す文字。 */
+	u32 m_SpatialSoundStatusText = 0u;
+
 	/** 実機キーをFXAA操作へ変換する割り当て表。 */
 	CActionBindingTable m_ActionBindings;
 
@@ -123,4 +143,7 @@ private:
 
 	/** 入力待ち前に自由カメラが有効だったか。 */
 	bool m_bFreeCameraWasEnabledBeforeCapture = false;
+
+	/** 次の3D効果音を右から鳴らすか。falseなら左。 */
+	bool m_bNextSpatialSoundRight = false;
 };

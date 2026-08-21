@@ -57,6 +57,18 @@ public:
 	void PlaySfx( const FString& Name, f32 VolumeScale = 1.0f );
 
 	/**
+	 * 登録済み3D音源の距離減衰と左右位置を反映して、効果音を1回鳴らす。
+	 *
+	 * @param Name アセット名またはパス。
+	 * @param Spatial 聴く位置と音源を保持する状態。
+	 * @param SourceId Spatialへ登録した音源番号。
+	 * @param VolumeScale この1回だけの音量倍率。
+	 * @param Pitch 再生速度の倍率。
+	 * @return 実際のvoiceを開始して3D値を反映できたらtrue。
+	 */
+	bool PlaySpatialSfx( const FString& Name, const CSpatialAudio& Spatial, u32 SourceId, f32 VolumeScale = 1.0f, f32 Pitch = 1.0f ) noexcept;
+
+	/**
 	 * BGM を一時的に小さくする (台詞や決定音を通すため)。
 	 * @param DurationSeconds 小さくしている秒数。
 	 * @param Depth どれだけ小さくするか (0..1)。
@@ -112,6 +124,9 @@ public:
 private:
 	/** 音を止め、非所有参照を切り、未接続の状態へ戻す。 */
 	void ReleaseBinding() noexcept;
+
+	/** `Assets`からの相対名を実際のパスへ直し、保持配列へ複製する。 */
+	const char* TryResolveAudioName( const FString& Name ) noexcept;
 
 	/** 音声名を保持配列へ複製し、確保または複製に失敗した場合は nullptr を返す。 */
 	const char* TryInternAudioName( const FString& Name ) noexcept;

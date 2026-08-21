@@ -36,6 +36,7 @@ msbuild acs_framework.vcxproj /p:Configuration=Release /p:Platform=x64
 | 動かす | `SetPosition` / `RotateDeg` / `LookAt` / `MoveToward`、骨アニメーション |
 | 見た目 | 物理大気・ボリューム雲・影・IBL・遮蔽 (SSAO)・間接光 (SSGI)・反射 (SSR)・霧・トーンマップ・輪郭補正 (FXAA) |
 | 3D 演出 | `AEffect3DScene`、Effekseer、depth 遮蔽、HDR・bloom への自動合成 |
+| 3D 音響 | `CSpatialAudioSubsystem`、距離減衰、モノラル効果音の左右定位 |
 | 遊ぶ人向け UI | `AUi3DScene`、文字・ボタン・入力、ポスト処理後の鮮明なHUD合成 |
 | 当てる | 線を飛ばして当たったノードを返す (`CScenePicker`) |
 | 土台 | 起動・場面遷移・アセット・音・セーブ・設定・入力再割り当て・多言語・決定性・開発支援 |
@@ -70,6 +71,12 @@ PostParams().fxaa_enabled = true;
 
 // 3D effectを出す (classの基底はAEffect3DScene)
 PlayEffect3D( FStringView( "Effects/hit.efkefc" ), FVec3{ 0, 1, 0 } );
+
+// カメラの左から3D効果音を鳴らす
+FSpatialPlayRequest Sound;
+Sound.AssetPath = FString( "Audio/SpatialPulse.wav" );
+Sound.Position = CameraPosition - CameraRight * 4.0f;
+SpatialAudio->PlayOnce( Sound );
 
 // 遊ぶ人向けのボタンを置く (AUi3DSceneとAEffect3DSceneのどちらでも使える)
 const u32 StartButton = Ui().AddButton( "START", FVec2{ 32, 88 }, FVec2{ 180, 44 } );
