@@ -179,6 +179,10 @@ void ADemo3DScene::OnEnter() noexcept
 	GlobalIllumination().Intensity = 0.75f;
 	GlobalIllumination().MaxDistance = 5.0f;
 
+	// トーンマップ後の輪郭に軽いアンチエイリアスを掛け、斜め線のギザギザを抑える。
+	// このデモはTAAを使わないため、時間方向の履歴を持たないFXAAを仕上げに使う。
+	PostParams().fxaa_enabled = true;
+
 	// 反射。磨いた床と金属に、画面に映っているものを映す。
 	// **画面に映っていないものは映せない** ので、切っておく方が素直な場面もある。
 	Reflections().Intensity = 0.9f;
