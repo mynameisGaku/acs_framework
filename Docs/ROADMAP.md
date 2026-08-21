@@ -30,7 +30,7 @@ ACS のモジュールは **438 個**ある。この枠組みが窓口を用意�
 | 音 (BGM・効果音・位置) | `CAudioSubsystem`、`CMusicSubsystem`、`CSpatialAudioSubsystem` |
 | セーブ・設定 | `CSaveSubsystem`、`CGameSettingsSubsystem` |
 | 時間・待機 | `CTimeSubsystem`、`CTimerSubsystem` |
-| 入力の割り当て | `CActionBindingTable`、`CBoundActionSource` |
+| 入力の割り当て | `CActionBindingTable`、`FActionKeyRebindState`、`CBoundActionSource` |
 | 画面・フェード・ロード中・ポーズ | `CScreenSubsystem`、`CFadeSubsystem`、`CLoadingScreenSubsystem`、`CPauseScreenSubsystem` |
 | ノード生成・シーン保存 | `CPrefabSubsystem`、`CSceneSnapshotSubsystem` |
 | 3D エフェクト | `AEffect3DScene`、`CEffect3DPlayer`、同梱の Effekseer |
@@ -142,6 +142,10 @@ Steam (`SteamworksBridge`)、スクリプト (`ScriptHost`)、機械学習 (`MlR
 
 - 訳文のファイル読み込み
 - 入力の再割り当て (UI + 保存)
+  - ~~キーボードのボタン操作~~ → **実装済み** (2026-08-22)。`FActionKeyRebindState`で
+    入力待ち・確定・取消を決定論的に処理し、`ReplaceKeyBinding`でゲームパッド割り当てを
+    維持したまま差し替える。Demo3DでUI操作、設定保存、次回起動時の復元まで確認できる
+  - 残り: ゲームパッドのボタンと軸を選ぶUI
 - 位置のある音の pan ※**ACS 本体への変更が要る** (`acs_temp_doc/0001`)
 - シーン保存でノード名を残す ※ACS の形式 v4 に名前欄が無い
 - エラーとログの方針統一、スレッド安全性の明示、セーブ互換性の方針

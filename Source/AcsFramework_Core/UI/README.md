@@ -31,3 +31,7 @@ bloomや輪郭補正の影響を受けず、3D場面より手前、ポーズ・�
 `CUiLayer` は固定位置の文字とボタンを少ない手数で置く入口である。アンカー、入力欄、スライダー、
 チェックボックス、データ結合が必要な画面はACSの `AWidget`、`AAnchorPanel`、`AButton`、
 `ATextInput` などを直接使う。
+
+Demo3Dの「CHANGE FXAA KEY」は、ボタンで `FActionKeyRebindState` の入力待ちを始め、次の
+`KeyPressed`を割り当て表へ適用する例になっている。確定キーは`CGameSettingsSubsystem`へ保存し、
+次回起動時に復元する。UI層には設定や入力状態を持たせず、表示とクリックだけを任せる。

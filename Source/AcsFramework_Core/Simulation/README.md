@@ -74,7 +74,7 @@ CSimulationEventQueue → 読む側 (Actor / Audio / VFX)
 | 直下 | 部品 | `CFixedStepDriver`、`CDeterministicRandom`、`CActionInputTape`、`CSimulationEventQueue`、`CReplayFile` |
 | 直下 | 途中から始める | `CSimulationSnapshot`、`CSimulationSnapshotFile` |
 | 直下 | 所有と順番 | `CSimulationSubsystem` |
-| `Input/` | 装置 → アクションの変換 | `IActionDeviceReader`、`CActionBindingTable`、`CDeviceActionReader`、`CBoundActionSource` |
+| `Input/` | 装置 → アクションの変換 | `IActionDeviceReader`、`CActionBindingTable`、`FActionKeyRebindState`、`CDeviceActionReader`、`CBoundActionSource` |
 | `Test/` | ゲーム抜きで回す自己テスト | `SimulationDeterminismTest.cpp` |
 
 **ゲームのルールはここへ置かない。** `ISimulationRule` を実装するのはゲーム側。
@@ -150,6 +150,29 @@ Simulation->ClearEvents();
 AI に差し替えるときは `SetInputSource` へ別の実装を渡すだけ。ルールは 1 文字も変えない。
 
 バグの入力列を残すには `GetTape().TrySaveToBuffer()`。再現するには読み込んで `StartReplay()`。
+
+### キーボード割り当てを変える
+
+`FActionKeyRebindState` は「次のキーを待つ・確定する・取り消す」だけを持つ。UI、実機入力、
+設定保存を知らないので、押下開始の列を直接渡してゲームを起動せず試せる。
+
+```cpp
+FActionKeyRebindState Rebind;
+Rebind.SetCurrentKey( EKey::F );
+Bindings.ReplaceKeyBinding( kActionFire, Rebind.CurrentKey() );
+
+Rebind.BeginCapture( EKey::Escape );
+const auto Result = Rebind.HandlePressedKey( Event.key.key );
+if ( Result == FActionKeyRebindState::EResult::Applied )
+{
+    Bindings.ReplaceKeyBinding( kActionFire, Rebind.CurrentKey() );
+    Settings->SetInt( FString( "Input.FireKey" ), static_cast<i32>( Rebind.CurrentKey() ) );
+}
+```
+
+設定から戻す値は `FActionKeyRebindState::IsValidKey` で検証してから使う。`CActionBindingTable` の
+`ReplaceKeyBinding` は同じアクションのキーボード割り当てだけを1つへまとめ、ゲームパッドの
+割り当てを維持する。Demo3Dではこの形でFXAA操作を変更し、自動保存される設定へ値を残している。
 
 ---
 

@@ -283,6 +283,7 @@
     <ClInclude Include="Source\AcsFramework_Core\Simulation\Input\IActionDeviceReader.h" />
     <ClInclude Include="Source\AcsFramework_Core\Simulation\Input\ActionBinding.h" />
     <ClInclude Include="Source\AcsFramework_Core\Simulation\Input\ActionBindingTable.h" />
+    <ClInclude Include="Source\AcsFramework_Core\Simulation\Input\ActionKeyRebindState.h" />
     <ClInclude Include="Source\AcsFramework_Core\Simulation\Input\DeviceActionReader.h" />
     <ClInclude Include="Source\AcsFramework_Core\Simulation\Input\BoundActionSource.h" />
     <ClInclude Include="Source\AcsFramework_Core\Simulation\ReplayFile.h" />
@@ -298,6 +299,7 @@
     <None Include="Source\Common\Test\README.md" />
     <None Include="Source\AcsFramework_Core\Simulation\Test\ActionInputTapeTest.cpp" />
     <None Include="Source\AcsFramework_Core\Simulation\Test\ActionBindingTableTest.cpp" />
+    <None Include="Source\AcsFramework_Core\Simulation\Test\ActionKeyRebindStateTest.cpp" />
     <None Include="Source\AcsFramework_Core\Simulation\Test\SimulationEventQueueTest.cpp" />
     <None Include="Source\AcsFramework_Core\Audio\Music\Test\MusicStateArbiterTest.cpp" />
     <None Include="Source\AcsFramework_Core\Audio\Spatial\Test\SpatialSourceRegistryTest.cpp" />
@@ -318,6 +320,7 @@
     <ClInclude Include="Source\Common\Compat\AcsAnnotations.h" />
     <None Include="Source\Common\Compat\README.md" />
     <None Include="Source\Common\Test\EnumReflectionTest.cpp" />
+    <None Include="Source\AcsFramework_Core\Settings\Test\GameSettingsStoreTest.cpp" />
     <ClInclude Include="Source\AcsFramework_Core\Text\Localization\TextArgument.h" />
     <ClInclude Include="Source\AcsFramework_Core\Text\Localization\TextFormatter.h" />
     <ClInclude Include="Source\AcsFramework_Core\Text\Localization\LocaleCatalog.h" />
@@ -490,6 +493,7 @@
     <ClCompile Include="Source\AcsFramework_Core\Simulation\SimulationEventQueue.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Simulation\SimulationSubsystem.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Simulation\Input\ActionBindingTable.cpp" />
+    <ClCompile Include="Source\AcsFramework_Core\Simulation\Input\ActionKeyRebindState.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Simulation\Input\DeviceActionReader.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Simulation\Input\BoundActionSource.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Simulation\ReplayFile.cpp" />

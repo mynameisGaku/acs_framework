@@ -104,11 +104,23 @@ TUniquePtr<AScene> CAcsFrameworkApp::InitialScene() noexcept
 		Save->Configure( FString( "Saved/Save" ), FString( "Slot" ), 3 );
 	}
 
-	// プレイヤーが決める設定。あれば読み込まれる (初回は何も無いので既定のまま)。
+	// プレイヤーが決める設定。実行時の作業フォルダに左右されない、書き込み可能な領域へ置く。
+	// 製品へ使うときは「acs_framework」をゲーム固有の識別名へ変える。
 	CGameSettingsSubsystem* const Settings = GetSubsystem<CGameSettingsSubsystem>();
 	if ( Settings != nullptr )
 	{
-		Settings->Configure( FString( "Saved/GameSettings.acscfg" ) );
+		char SettingsPath[1024] = {};
+		const auto PathResult = FStorage::GetAppDataPath( "acs_framework", "GameSettings.acscfg", SettingsPath, sizeof( SettingsPath ) );
+		if ( PathResult.IsOk() )
+		{
+			Settings->Configure( FString( SettingsPath ) );
+		}
+		else
+		{
+			// OSの設定領域を得られない環境でも、従来の相対パスで保存を試せるようにする。
+			ACS_LOG_WARN( "GameSettings: ユーザー設定フォルダを取得できないため相対パスを使います" );
+			Settings->Configure( FString( "Saved/GameSettings.acscfg" ) );
+		}
 	}
 
 	// 音の一式を組み立てる。音量は «残す側» と «鳴らす側» のどちらも相手を知らないので、

@@ -43,6 +43,26 @@ public:
 	bool BindKey( u32 ActionIndex, EKey Key ) noexcept;
 
 	/**
+	 * アクションのキーボード割り当てを1つへ置き換える。
+	 *
+	 * @details 同じアクションに複数のキーがあれば1つへまとめる。ゲームパッドの割り当てと
+	 * 他のアクションは維持する。新規追加時に領域を確保できなければ、表は変えない。
+	 * @param ActionIndex アクション番号。
+	 * @param Key 新しく割り当てるキー。
+	 * @return 置き換えられたらtrue。
+	 */
+	bool ReplaceKeyBinding( u32 ActionIndex, EKey Key ) noexcept;
+
+	/**
+	 * アクションへ最初に割り当てられたキーボードのキーを返す。
+	 *
+	 * @param ActionIndex アクション番号。
+	 * @param OutKey 見つかったキー。見つからない場合は変更しない。
+	 * @return キーボード割り当てが見つかればtrue。
+	 */
+	bool TryGetKeyBinding( u32 ActionIndex, EKey& OutKey ) const noexcept;
+
+	/**
 	 * パッドのボタンをアクションへ割り当てる。
 	 *
 	 * @param ActionIndex アクション番号。

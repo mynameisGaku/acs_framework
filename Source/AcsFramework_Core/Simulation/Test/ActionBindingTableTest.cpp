@@ -149,9 +149,53 @@ void RunActionBindingTableTests( CTestHarness& Harness )
 
 		Harness.Check( !Table.BindKey( kActionButtonCount, EKey::Space ), "範囲外のアクションは弾く" );
 		Harness.Check( !Table.BindKey( 0u, EKey::Unknown ), "Unknown キーは弾く" );
+		Harness.Check( !Table.BindKey( 0u, EKey::_Count ), "キーの番兵値は弾く" );
+		Harness.Check( !Table.BindGamepadButton( 0u, EGamepadButton::_Count ), "パッドボタンの番兵値は弾く" );
 		Harness.Check( !Table.BindAxisKeys( kActionAxisCount, EKey::A, EKey::D ), "範囲外の軸は弾く" );
 		Harness.Check( !Table.BindAxisKeys( 0u, EKey::Unknown, EKey::Unknown ), "両方 Unknown は弾く" );
+		Harness.Check( !Table.BindAxisKeys( 0u, EKey::_Count, EKey::D ), "軸キーの番兵値は弾く" );
+		Harness.Check( !Table.BindGamepadAxis( 0u, EGamepadAxis::_Count ), "パッド軸の番兵値は弾く" );
 		Harness.CheckEqualU64( Table.GetButtonBindingCount(), 0u, "弾いたぶんは入っていない" );
 		Harness.CheckEqualU64( Table.GetAxisBindingCount(), 0u, "軸も入っていない" );
+	}
+
+	Harness.BeginSuite( "CActionBindingTable / キーボード割り当ての置換" );
+
+	{
+		CFakeDevice Device;
+		CActionBindingTable Table;
+		Table.BindKey( 2u, EKey::F );
+		Table.BindGamepadButton( 2u, EGamepadButton::A );
+		Table.BindKey( 2u, EKey::G );
+		Table.BindKey( 4u, EKey::Space );
+
+		Harness.Check( Table.ReplaceKeyBinding( 2u, EKey::P ), "既存のキーを置き換えられる" );
+		Harness.CheckEqualU64( Table.GetButtonBindingCount(), 3u, "同じアクションの余分なキーを1つへまとめる" );
+
+		EKey Found = EKey::Unknown;
+		Harness.Check( Table.TryGetKeyBinding( 2u, Found ), "置換後のキーを取得できる" );
+		Harness.Check( Found == EKey::P, "取得したキーは置換後の値" );
+
+		Device.SetKeyDown( EKey::F, true );
+		Harness.Check( !Table.Resolve( Device ).IsDown( 2u ), "古いキーでは押されない" );
+		Device.SetKeyDown( EKey::F, false );
+		Device.SetKeyDown( EKey::P, true );
+		Harness.Check( Table.Resolve( Device ).IsDown( 2u ), "新しいキーで押される" );
+		Device.SetKeyDown( EKey::P, false );
+		Device.SetButtonDown( EGamepadButton::A, true );
+		Harness.Check( Table.Resolve( Device ).IsDown( 2u ), "ゲームパッド割り当ては維持する" );
+
+		Found = EKey::Tab;
+		Harness.Check( !Table.TryGetKeyBinding( 7u, Found ), "未割り当ては見つからない" );
+		Harness.Check( Found == EKey::Tab, "見つからないとき出力を変えない" );
+
+		Harness.Check( Table.ReplaceKeyBinding( 7u, EKey::Q ), "未割り当てのアクションには新しく足す" );
+		Harness.Check( Table.TryGetKeyBinding( 7u, Found ) && Found == EKey::Q, "新規追加したキーを取得できる" );
+
+		const usize CountBeforeInvalid = Table.GetButtonBindingCount();
+		Harness.Check( !Table.ReplaceKeyBinding( 2u, EKey::Unknown ), "Unknownへの置換は拒否する" );
+		Harness.Check( !Table.ReplaceKeyBinding( 2u, EKey::_Count ), "番兵値への置換は拒否する" );
+		Harness.Check( !Table.ReplaceKeyBinding( kActionButtonCount, EKey::A ), "範囲外アクションへの置換は拒否する" );
+		Harness.CheckEqualU64( Table.GetButtonBindingCount(), CountBeforeInvalid, "拒否した置換で表を変えない" );
 	}
 }

@@ -164,7 +164,9 @@ OnShutdown
 
 `FGameSettingsStore`は製品としてプレイヤーが決める値と、設定へ渡すキー・文字列値の
 安定した領域を所有する。保存先、存在確認、UTF変換、変更状態、自動保存、警告、終了処理は
-`CGameSettingsSubsystem`が所有する。既定の保存先は`Saved/GameSettings.acscfg`である。
+`CGameSettingsSubsystem`が所有する。サンプルの既定保存先は
+`%APPDATA%/acs_framework/GameSettings.acscfg`であり、実行時の作業フォルダには依存しない。
+製品化時は`CAcsFrameworkApp::InitialScene`にある`acs_framework`をゲーム固有の識別名へ変える。
 `CDebugTopSettings`は開発中の診断・調整値なので、同じキーを共有しない。
 
 設定ごとの既定値と初期反映はゲーム側が決定する。`Set*`は変更状態を立て、`Update()`と

@@ -4,6 +4,8 @@
 #include "AcsFramework_Core/Scene/Model3D/Model3DSpawner.h"
 
 #include "AcsFramework_Core/Assets/AssetLoaderSubsystem.h"
+#include "AcsFramework_Core/Settings/GameSettingsSubsystem.h"
+#include "Common/Compat/AcsEnumReflection.h"
 
 namespace
 {
@@ -35,10 +37,49 @@ namespace
 	constexpr f32 kUiTop = 24.0f;
 
 	/** プレイヤーUIのカード幅。 */
-	constexpr f32 kUiWidth = 240.0f;
+	constexpr f32 kUiWidth = 260.0f;
 
 	/** プレイヤーUIのカード高さ。 */
-	constexpr f32 kUiHeight = 170.0f;
+	constexpr f32 kUiHeight = 252.0f;
+
+	/** FXAA切り替えに使うアクション番号。 */
+	constexpr u32 kFxaaActionIndex = 0u;
+
+	/** 初回起動時のFXAA切り替えキー。 */
+	constexpr EKey kDefaultFxaaKey = EKey::F;
+
+	/** 設定ファイルへ保存するFXAAキーの名前。 */
+	constexpr const char* kFxaaKeySetting = "Input.FxaaToggleKey";
+
+	/**
+	 * デモのFXAA操作へ使えるキーかを返す。
+	 *
+	 * @details Escapeは自由カメラの終了操作と、割り当て待ちの取消に使うため予約する。
+	 */
+	bool IsDemoFxaaKey( EKey Key ) noexcept
+	{
+		return FActionKeyRebindState::IsValidKey( Key ) && Key != EKey::Escape;
+	}
+
+	/**
+	 * キー名をUI用のNUL終端文字列へ写す。
+	 *
+	 * @param Key 表示するキー。
+	 * @return 「KEYBOARD: F」のような表示文字列。
+	 */
+	FString MakeKeyLabel( EKey Key ) noexcept
+	{
+		FString Label( "KEYBOARD: " );
+		const AcsFw::FEnumNameView Name = AcsFw::EnumToString( Key );
+		if ( Name.IsEmpty() )
+		{
+			Label.TryAppend( FStringView( "UNKNOWN" ) );
+			return Label;
+		}
+
+		Label.TryAppend( FStringView( Name.Data, Name.Size ) );
+		return Label;
+	}
 
 	/** screenshot用hit effectの位置と倍率を揃える。 */
 	FEffect3DPlayParams MakeDemoEffectParams() noexcept
@@ -201,7 +242,32 @@ void ADemo3DScene::OnEnter() noexcept
 	Ui().AddText( "PLAYER UI / POST PROCESS", FVec2{ kUiLeft + 16.0f, kUiTop + 42.0f } );
 	m_FxaaToggleButton = Ui().AddButton(
 		"TOGGLE FXAA", FVec2{ kUiLeft + 16.0f, kUiTop + 76.0f }, FVec2{ kUiWidth - 32.0f, 44.0f } );
-	m_FxaaStatusText = Ui().AddText( "FXAA: ON", FVec2{ kUiLeft + 16.0f, kUiTop + 136.0f } );
+	m_FxaaStatusText = Ui().AddText( "FXAA: ON", FVec2{ kUiLeft + 16.0f, kUiTop + 132.0f } );
+	m_FxaaRebindButton = Ui().AddButton( "CHANGE FXAA KEY", FVec2{ kUiLeft + 16.0f, kUiTop + 158.0f }, FVec2{ kUiWidth - 32.0f, 44.0f } );
+	m_FxaaKeyText = Ui().AddText( "KEYBOARD: F", FVec2{ kUiLeft + 16.0f, kUiTop + 216.0f } );
+
+	// 設定は整数として保存し、EKeyの実キー範囲へ戻せる値だけを採用する。
+	CGameSettingsSubsystem* const Settings = GetSubsystem<CGameSettingsSubsystem>();
+	const i32 StoredValue = Settings != nullptr
+		? Settings->GetInt( FString( kFxaaKeySetting ), static_cast<i32>( kDefaultFxaaKey ) )
+		: static_cast<i32>( kDefaultFxaaKey );
+	EKey LoadedKey = static_cast<EKey>( StoredValue );
+	if ( !IsDemoFxaaKey( LoadedKey ) )
+	{
+		LoadedKey = kDefaultFxaaKey;
+		if ( Settings != nullptr ) Settings->SetInt( FString( kFxaaKeySetting ), static_cast<i32>( LoadedKey ) );
+	}
+
+	m_ActionBindings.Clear();
+	m_PreviousActionInput = FActionInput{};
+	m_bSuppressBoundActionPress = false;
+	m_bRestoreFreeCameraAfterUpdate = false;
+	m_FxaaKeyRebind.SetCurrentKey( LoadedKey );
+	if ( !m_ActionBindings.ReplaceKeyBinding( kFxaaActionIndex, LoadedKey ) )
+	{
+		ACS_LOG_WARN( "Demo3D: FXAAキー割り当ての初期化に失敗" );
+	}
+	RefreshFxaaKeyText();
 
 	// 反射。磨いた床と金属に、画面に映っているものを映す。
 	// **画面に映っていないものは映せない** ので、切っておく方が素直な場面もある。
@@ -248,11 +314,38 @@ void ADemo3DScene::OnUpdate( f32 DeltaSeconds ) noexcept
 	AEffect3DScene::OnUpdate( DeltaSeconds );
 	ReportFrameTime( DeltaSeconds );
 
-	// ボタンのクリックは1回だけ消費される。状態と表示を同じ場所で確定させる。
-	if ( Ui().ConsumeButtonPress( m_FxaaToggleButton ) )
+	// Escapeの押下フレームを基底場面が処理し終えてから、入力待ち前の自由カメラ状態へ戻す。
+	if ( m_bRestoreFreeCameraAfterUpdate )
 	{
-		PostParams().fxaa_enabled = !PostParams().fxaa_enabled;
-		Ui().SetText( m_FxaaStatusText, PostParams().fxaa_enabled ? "FXAA: ON" : "FXAA: OFF" );
+		SetFreeCameraEnabled( m_bFreeCameraWasEnabledBeforeCapture );
+		m_bRestoreFreeCameraAfterUpdate = false;
+	}
+
+	// キー変更ボタンは状態を開始するだけ。次のキーはOnEventで明示的に1件ずつ処理する。
+	if ( Ui().ConsumeButtonPress( m_FxaaRebindButton ) && m_FxaaKeyRebind.BeginCapture( EKey::Escape ) )
+	{
+		m_bFreeCameraWasEnabledBeforeCapture = FreeCameraEnabled();
+		SetFreeCameraEnabled( false );
+		RefreshFxaaKeyText();
+	}
+
+	const FActionInput CurrentActionInput = m_ActionBindings.Resolve( m_ActionReader );
+	bool bBoundActionPressed = !m_FxaaKeyRebind.IsCapturing()
+		&& CurrentActionInput.IsDown( kFxaaActionIndex )
+		&& !m_PreviousActionInput.IsDown( kFxaaActionIndex );
+	m_PreviousActionInput = CurrentActionInput;
+
+	// 割り当て確定に使った同じ押下ではFXAAを切り替えない。次の押下から通常操作になる。
+	if ( m_bSuppressBoundActionPress )
+	{
+		bBoundActionPressed = false;
+		m_bSuppressBoundActionPress = false;
+	}
+
+	// ボタンのクリックは1回だけ消費される。状態と表示を同じ場所で確定させる。
+	if ( Ui().ConsumeButtonPress( m_FxaaToggleButton ) || bBoundActionPressed )
+	{
+		SetFxaaEnabled( !PostParams().fxaa_enabled );
 	}
 
 	// 準備中に再生要求を溜めず、短いhit素材を1つずつ確認できる間隔で繰り返す。
@@ -278,6 +371,66 @@ void ADemo3DScene::OnUpdate( f32 DeltaSeconds ) noexcept
 		m_MoveTarget.z = -m_MoveTarget.z;
 	}
 	m_Mover->LookAt( m_MoveTarget );
+}
+
+
+void ADemo3DScene::OnEvent( const FEvent& Event ) noexcept
+{
+	if ( m_FxaaKeyRebind.IsCapturing() && Event.type == EEventType::KeyPressed )
+	{
+		const EKey PreviousKey = m_FxaaKeyRebind.CurrentKey();
+		const FActionKeyRebindState::EResult Result = m_FxaaKeyRebind.HandlePressedKey( Event.key.key );
+
+		if ( Result == FActionKeyRebindState::EResult::Applied )
+		{
+			const EKey AppliedKey = m_FxaaKeyRebind.CurrentKey();
+			if ( !IsDemoFxaaKey( AppliedKey ) || !m_ActionBindings.ReplaceKeyBinding( kFxaaActionIndex, AppliedKey ) )
+			{
+				m_FxaaKeyRebind.SetCurrentKey( PreviousKey );
+				ACS_LOG_WARN( "Demo3D: FXAAキー割り当てを適用できなかった" );
+			}
+			else
+			{
+				if ( CGameSettingsSubsystem* const Settings = GetSubsystem<CGameSettingsSubsystem>() )
+				{
+					Settings->SetInt( FString( kFxaaKeySetting ), static_cast<i32>( AppliedKey ) );
+				}
+				m_bSuppressBoundActionPress = true;
+			}
+		}
+
+		if ( Result == FActionKeyRebindState::EResult::Applied || Result == FActionKeyRebindState::EResult::Cancelled )
+		{
+			// OnUpdateの基底処理まで自由カメラを止め、取消のEscapeを終了操作として再利用させない。
+			m_bRestoreFreeCameraAfterUpdate = true;
+		}
+
+		RefreshFxaaKeyText();
+	}
+
+	AEffect3DScene::OnEvent( Event );
+}
+
+
+void ADemo3DScene::SetFxaaEnabled( bool bEnabled ) noexcept
+{
+	PostParams().fxaa_enabled = bEnabled;
+	Ui().SetText( m_FxaaStatusText, bEnabled ? "FXAA: ON" : "FXAA: OFF" );
+}
+
+
+void ADemo3DScene::RefreshFxaaKeyText() noexcept
+{
+	if ( m_FxaaKeyRebind.IsCapturing() )
+	{
+		Ui().SetText( m_FxaaRebindButton, "PRESS A KEY..." );
+		Ui().SetText( m_FxaaKeyText, "ESC: CANCEL" );
+		return;
+	}
+
+	Ui().SetText( m_FxaaRebindButton, "CHANGE FXAA KEY" );
+	const FString KeyLabel = MakeKeyLabel( m_FxaaKeyRebind.CurrentKey() );
+	Ui().SetText( m_FxaaKeyText, KeyLabel.Data() );
 }
 
 

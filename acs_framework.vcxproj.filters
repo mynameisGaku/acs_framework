@@ -112,6 +112,9 @@
     <Filter Include="Source\AcsFramework_Core\Settings">
       <UniqueIdentifier>{6101c26c-1126-a64e-e5ac-bcd6f630cdfc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\AcsFramework_Core\Settings\Test">
+      <UniqueIdentifier>{7c471b2e-2ab6-4ee4-8955-b73fbb750cf8}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Source\AcsFramework_Core\Simulation">
       <UniqueIdentifier>{bf7024f6-6cd5-5779-80d2-8165d52c3c81}</UniqueIdentifier>
     </Filter>
@@ -406,6 +409,9 @@
       <Filter>Source\AcsFramework_Core\Simulation</Filter>
     </ClCompile>
     <ClCompile Include="Source\AcsFramework_Core\Simulation\Input\ActionBindingTable.cpp">
+      <Filter>Source\AcsFramework_Core\Simulation\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Simulation\Input\ActionKeyRebindState.cpp">
       <Filter>Source\AcsFramework_Core\Simulation\Input</Filter>
     </ClCompile>
     <ClCompile Include="Source\AcsFramework_Core\Simulation\Input\BoundActionSource.cpp">
@@ -911,6 +917,9 @@
     <ClInclude Include="Source\AcsFramework_Core\Simulation\Input\ActionBindingTable.h">
       <Filter>Source\AcsFramework_Core\Simulation\Input</Filter>
     </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Simulation\Input\ActionKeyRebindState.h">
+      <Filter>Source\AcsFramework_Core\Simulation\Input</Filter>
+    </ClInclude>
     <ClInclude Include="Source\AcsFramework_Core\Simulation\Input\BoundActionSource.h">
       <Filter>Source\AcsFramework_Core\Simulation\Input</Filter>
     </ClInclude>
@@ -1345,7 +1354,13 @@
     <None Include="Source\AcsFramework_Core\Simulation\README.md">
       <Filter>Source\AcsFramework_Core\Simulation</Filter>
     </None>
+    <None Include="Source\AcsFramework_Core\Settings\Test\GameSettingsStoreTest.cpp">
+      <Filter>Source\AcsFramework_Core\Settings\Test</Filter>
+    </None>
     <None Include="Source\AcsFramework_Core\Simulation\Test\ActionBindingTableTest.cpp">
+      <Filter>Source\AcsFramework_Core\Simulation\Test</Filter>
+    </None>
+    <None Include="Source\AcsFramework_Core\Simulation\Test\ActionKeyRebindStateTest.cpp">
       <Filter>Source\AcsFramework_Core\Simulation\Test</Filter>
     </None>
     <None Include="Source\AcsFramework_Core\Simulation\Test\ActionInputTapeTest.cpp">

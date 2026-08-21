@@ -38,7 +38,7 @@ msbuild acs_framework.vcxproj /p:Configuration=Release /p:Platform=x64
 | 3D 演出 | `AEffect3DScene`、Effekseer、depth 遮蔽、HDR・bloom への自動合成 |
 | 遊ぶ人向け UI | `AUi3DScene`、文字・ボタン・入力、ポスト処理後の鮮明なHUD合成 |
 | 当てる | 線を飛ばして当たったノードを返す (`CScenePicker`) |
-| 土台 | 起動・場面遷移・アセット・音・セーブ・設定・入力・多言語・決定性・開発支援 |
+| 土台 | 起動・場面遷移・アセット・音・セーブ・設定・入力再割り当て・多言語・決定性・開発支援 |
 
 詳しくは [`Docs/ROADMAP.md`](Docs/ROADMAP.md)。**v1.0.0 で何を入れて何を入れないか**もそこに書いてある。
 

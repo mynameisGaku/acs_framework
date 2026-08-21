@@ -1,6 +1,39 @@
 // SPDX-License-Identifier: Apache-2.0
 #include "GameSettingsStore.h"
 
+namespace
+{
+	/**
+	 * ファイルパスの親フォルダを再帰的に作る。
+	 *
+	 * @param FilePath 保存先のOS形式パス。
+	 * @return 親が無いパス、既存の親、作成成功ならtrue。
+	 */
+	bool TryEnsureParentDirectory( const wchar_t* FilePath ) noexcept
+	{
+		if ( FilePath == nullptr || FilePath[0] == L'\0' ) return false;
+
+		usize LastSeparator = static_cast<usize>( -1 );
+		usize Length = 0u;
+		for ( ; FilePath[Length] != L'\0'; ++Length )
+		{
+			if ( CFileSystem::IsPathSeparator( FilePath[Length] ) ) LastSeparator = Length;
+		}
+
+		if ( LastSeparator == static_cast<usize>( -1 ) || LastSeparator == 0u ) return true;
+		if ( LastSeparator == 2u && FilePath[1] == L':' ) return true;
+
+		TArray<wchar_t> Parent;
+		if ( !Parent.TryReserve( LastSeparator + 1u ) ) return false;
+		Parent.SetNum( LastSeparator + 1u );
+		for ( usize Index = 0u; Index < LastSeparator; ++Index ) Parent[Index] = FilePath[Index];
+		Parent[LastSeparator] = L'\0';
+
+		if ( CFileSystem::DirectoryExists( Parent.GetData() ) ) return true;
+		return CFileSystem::CreateDirectory( Parent.GetData() ).IsOk();
+	}
+}
+
 const char* FGameSettingsStore::Intern( const FString& Text )
 {
 	// 同じ内容を持つ既存領域を探すための添字。
@@ -63,6 +96,9 @@ FString FGameSettingsStore::GetString( const FString& Key, const FString& Defaul
 
 TResult<void> FGameSettingsStore::SaveTo( const wchar_t* FilePath ) noexcept
 {
+	// ACSのCSettingsは同じフォルダ内の一時ファイルへ安全に書くが、親フォルダは作らない。
+	// 作成に失敗してもSave本体を呼び、具体的なI/Oエラーを呼び出し側へ返す。
+	( void )TryEnsureParentDirectory( FilePath );
 	return m_Settings.Save( FilePath );
 }
 
