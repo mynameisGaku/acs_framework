@@ -1,6 +1,7 @@
 ﻿// SPDX-License-Identifier: Apache-2.0
 #include "AcsFramework_Sample/Scene/Demo3DScene.h"
 
+#include "AcsFramework_Core/Scene/Animation3D/AnimatedModel3DSpawner.h"
 #include "AcsFramework_Core/Scene/Model3D/Model3DSpawner.h"
 #include "AcsFramework_Core/Scene/Pick3D/ScenePicker.h"
 #include "AcsFramework_Core/Scene/Water3D/Water3DSpawner.h"
@@ -266,24 +267,14 @@ void ADemo3DScene::OnEnter() noexcept
 		Model.Name = FStringView( "ImportedModel" );
 		m_Mover = CModel3DSpawner::SpawnInto( Graph(), Model, Assets->Models() );
 
-		// 骨で動くモデル。読み口が別なので、置き方も別 (部品を自分で付ける)。
-		// **骨の入っていない FBX を渡すと読めない。** そのときは 1 行出て、何も置かれない。
-		TSharedPtr<ASkinnedMeshAsset> Skinned =
-			Assets->Models().LoadSkinned( FStringView( "Models/SkinnedAnimated.fbx" ) );
-		if ( Skinned )
-		{
-			TObjectPtr<ANode> Node = NewObject<ANode>();
-			Node->SetName( FStringView( "Animated" ) );
-			Node->SetPosition( FVec3{ 3.6f, 0.2f, 1.4f } );
-			Node->SetScale( 0.02f );   // 書き出し単位がセンチメートル
-
-			ASkinnedMeshComponent3D& Skin = Node->AddComponent<ASkinnedMeshComponent3D>();
-			Skin.SetMeshAsset( Skinned );
-			Skin.SetColor( FVec3{ 0.72f, 0.78f, 0.86f } );
-			Skin.Play( 0u );
-
-			Root().AddChild( Move( Node ) );
-		}
+		// 骨で動くモデル。読み込み、部品追加、最初のクリップ再生までを1回で行う。
+		// **骨の入っていないFBXを渡すと読めない。** そのときは1行出て、何も置かれない。
+		FAnimatedModel3DSpawnParams Animated = FAnimatedModel3DSpawnParams::FromModel(
+			FStringView( "Models/SkinnedAnimated.fbx" ), FVec3{ 3.6f, 0.2f, 1.4f } );
+		Animated.Scale = FVec3{ 0.02f, 0.02f, 0.02f };   // 書き出し単位がセンチメートル
+		Animated.Color = FVec3{ 0.72f, 0.78f, 0.86f };
+		Animated.Name = FStringView( "Animated" );
+		CAnimatedModel3DSpawner::SpawnInto( Graph(), Animated, Assets->Models() );
 	}
 
 	// 太陽。

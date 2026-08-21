@@ -339,6 +339,10 @@
     <ClInclude Include="Source\AcsFramework_Core\Scene\Model3D\Model3DSpawner.h" />
     <None Include="Source\AcsFramework_Core\Scene\Model3D\README.md" />
     <None Include="Source\AcsFramework_Core\Scene\Model3D\Test\Model3DSpawnerTest.cpp" />
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Animation3D\AnimatedModel3DSpawnParams.h" />
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Animation3D\AnimatedModel3DSpawner.h" />
+    <None Include="Source\AcsFramework_Core\Scene\Animation3D\README.md" />
+    <None Include="Source\AcsFramework_Core\Scene\Animation3D\Test\AnimatedModel3DSpawnerTest.cpp" />
     <ClInclude Include="Source\AcsFramework_Core\Scene\Water3D\Water3DSpawnParams.h" />
     <ClInclude Include="Source\AcsFramework_Core\Scene\Water3D\Water3DSpawner.h" />
     <None Include="Source\AcsFramework_Core\Scene\Water3D\README.md" />
@@ -526,6 +530,8 @@
     <ClCompile Include="Source\AcsFramework_Core\Text\Localization\LocalizationSubsystem.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Scene\Model3D\Model3DSpawnParams.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Scene\Model3D\Model3DSpawner.cpp" />
+    <ClCompile Include="Source\AcsFramework_Core\Scene\Animation3D\AnimatedModel3DSpawnParams.cpp" />
+    <ClCompile Include="Source\AcsFramework_Core\Scene\Animation3D\AnimatedModel3DSpawner.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Scene\Water3D\Water3DSpawnParams.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Scene\Water3D\Water3DSpawner.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Scene\Weather3D\Weather3DAppearance.cpp" />

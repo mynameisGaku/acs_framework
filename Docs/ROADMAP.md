@@ -101,12 +101,14 @@ IBLへ反映する。残りは空を焼くIBLへ雲の形そのものを含め�
 - ライティング — **ACS 側へ実装済み**: 光のコンポーネント (`ALightComponent3D`) と、
   木から集めて shader の配列にする層 (`CLightCollector3D`)。`acs_temp_doc/0005` `0006`。
   残りは描く側との接続と、«何もしなくても綺麗» な既定 (太陽 + IBL + 影 + トーンマップ)
-- アニメーション再生 — **ACS 側の穴を埋めた** (2026-08-18)。
+- アニメーション再生 — **ACS側の穴とFramework側の配置手数を埋めた** (2026-08-18、
+  簡単配置は2026-08-22)。
   `ASkinnedMeshAsset` / `CAnimationPlayer` / `CSkinnedShader` は在ったのに、
   **FBX から骨付きメッシュを作るローダだけが無かった**。`LoadSkinnedMeshFromFbxMemory`
   として ufbx で実装 (骨・祖先・逆バインド・重み 4 本・クリップを 30Hz で焼く)。
-  枠組み側の窓口 (`CModelLibrary::LoadSkinned`) と描画 (`ASkinnedMeshComponent3D` +
-  `DrawSkinnedScene`) も繋いだ。**デモで実際に骨が動いている。**
+  枠組み側は`CAnimatedModel3DSpawner`へパス、位置、初期クリップを渡すだけで、読み込み、
+  識別子付きノード、部品追加、再生まで行う。描画 (`ASkinnedMeshComponent3D` +
+  `DrawSkinnedScene`) も繋がり、**デモで実際に骨が動いている。**
   **質感も揃えた**: CPU で変形して普通のメッシュとして PBR の経路へ流すので、
   IBL・影・遮蔽・反射・霧が静的メッシュとまったく同じに効く (`acs_temp_doc/0022`)。
   何十体も出すなら `CPbrShader` へ GPU スキニングを足すのが次

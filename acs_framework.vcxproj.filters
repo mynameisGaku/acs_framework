@@ -85,6 +85,12 @@
     <Filter Include="Source\AcsFramework_Core\Scene">
       <UniqueIdentifier>{67c1841a-b13b-7209-39b4-8393eb5073d6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\AcsFramework_Core\Scene\Animation3D">
+      <UniqueIdentifier>{33d48164-ef62-74a3-10c8-26b7b8a27074}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\AcsFramework_Core\Scene\Animation3D\Test">
+      <UniqueIdentifier>{661f937f-df28-6ba6-450d-50e31a62ec29}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Source\AcsFramework_Core\Scene\Model3D">
       <UniqueIdentifier>{79cdabc9-6138-da84-dcb5-971d07edd6b0}</UniqueIdentifier>
     </Filter>
@@ -359,6 +365,12 @@
     </ClCompile>
     <ClCompile Include="Source\AcsFramework_Core\Save\SaveSubsystem.cpp">
       <Filter>Source\AcsFramework_Core\Save</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Scene\Animation3D\AnimatedModel3DSpawner.cpp">
+      <Filter>Source\AcsFramework_Core\Scene\Animation3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Scene\Animation3D\AnimatedModel3DSpawnParams.cpp">
+      <Filter>Source\AcsFramework_Core\Scene\Animation3D</Filter>
     </ClCompile>
     <ClCompile Include="Source\AcsFramework_Core\Scene\Model3D\Model3DSpawner.cpp">
       <Filter>Source\AcsFramework_Core\Scene\Model3D</Filter>
@@ -859,6 +871,12 @@
     </ClInclude>
     <ClInclude Include="Source\AcsFramework_Core\Save\SaveSubsystem.h">
       <Filter>Source\AcsFramework_Core\Save</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Animation3D\AnimatedModel3DSpawner.h">
+      <Filter>Source\AcsFramework_Core\Scene\Animation3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Animation3D\AnimatedModel3DSpawnParams.h">
+      <Filter>Source\AcsFramework_Core\Scene\Animation3D</Filter>
     </ClInclude>
     <ClInclude Include="Source\AcsFramework_Core\Scene\Model3D\Model3DSpawner.h">
       <Filter>Source\AcsFramework_Core\Scene\Model3D</Filter>
@@ -1377,6 +1395,12 @@
     </None>
     <None Include="Source\AcsFramework_Core\README.md">
       <Filter>Source\AcsFramework_Core</Filter>
+    </None>
+    <None Include="Source\AcsFramework_Core\Scene\Animation3D\README.md">
+      <Filter>Source\AcsFramework_Core\Scene\Animation3D</Filter>
+    </None>
+    <None Include="Source\AcsFramework_Core\Scene\Animation3D\Test\AnimatedModel3DSpawnerTest.cpp">
+      <Filter>Source\AcsFramework_Core\Scene\Animation3D\Test</Filter>
     </None>
     <None Include="Source\AcsFramework_Core\Scene\Model3D\README.md">
       <Filter>Source\AcsFramework_Core\Scene\Model3D</Filter>

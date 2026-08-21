@@ -54,7 +54,7 @@ Hero->Local().position.x += 1.0f;
 | 直下 | 置く処理 | `CModel3DSpawner` |
 
 カメラ・ライティング・アニメーション・当たり判定はここではない。
-それぞれ別のフォルダになる（v0.2 の残り）。
+骨付きモデルは`Scene/Animation3D`、実形状への線判定は`Scene/Pick3D`へ分けてある。
 
 ---
 

@@ -33,7 +33,7 @@ msbuild acs_framework.vcxproj /p:Configuration=Release /p:Platform=x64
 | | |
 |---|---|
 | 3D を置く | `CModel3DSpawner`、FBX の取り込み、材質 (metallic / roughness) |
-| 動かす | `SetPosition` / `RotateDeg` / `LookAt` / `MoveToward`、骨アニメーション |
+| 動かす | `SetPosition` / `RotateDeg` / `LookAt` / `MoveToward`、`CAnimatedModel3DSpawner`による骨アニメーション |
 | 見た目 | 物理大気・ボリューム雲・影・IBL・遮蔽 (SSAO)・間接光 (SSGI)・反射 (SSR)・霧・トーンマップ・輪郭補正 (FXAA) |
 | 3D 天候 | `AWeather3DScene`、晴天・曇天・雨・雪・嵐・霧・砂嵐の滑らかな遷移 |
 | 3D 水面 | `CWater3DSpawner`、屈折・反射・泡・動的な波紋 |
@@ -56,6 +56,12 @@ CModel3DSpawner::SpawnInto( Graph(), Ball );
 // FBX を置く (Assets からの相対名)
 FModel3DSpawnParams Model = FModel3DSpawnParams::FromMesh( FStringView( "Models/Robot.fbx" ), Position );
 CModel3DSpawner::SpawnInto( Graph(), Model, Assets->Models() );
+
+// 骨付きFBXを読み、置き、Idleを再生する
+FAnimatedModel3DSpawnParams Hero = FAnimatedModel3DSpawnParams::FromModel(
+    FStringView( "Models/Hero.fbx" ), Position );
+Hero.InitialAnimation = FStringView( "Idle" );
+CAnimatedModel3DSpawner::SpawnInto( Graph(), Hero, Assets->Models() );
 
 // 動かす
 Node->RotateDeg( FVec3{ 0, 90.0f * DeltaSeconds, 0 } );

@@ -57,6 +57,7 @@ void RunEnumReflectionTests( CTestHarness& Harness );
 void RunGameSettingsStoreTests( CTestHarness& Harness );
 void RunLocalizationTests( CTestHarness& Harness );
 void RunModel3DSpawnerTests( CTestHarness& Harness );
+void RunAnimatedModel3DSpawnerTests( CTestHarness& Harness );
 void RunWater3DSpawnerTests( CTestHarness& Harness );
 void RunWeather3DAppearanceTests( CTestHarness& Harness );
 void RunScenePickerTests( CTestHarness& Harness );
@@ -93,6 +94,7 @@ int main()
 	RunGameSettingsStoreTests( Harness );
 	RunLocalizationTests( Harness );
 	RunModel3DSpawnerTests( Harness );
+	RunAnimatedModel3DSpawnerTests( Harness );
 	RunWater3DSpawnerTests( Harness );
 	RunWeather3DAppearanceTests( Harness );
 	RunScenePickerTests( Harness );
