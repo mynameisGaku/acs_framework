@@ -8,16 +8,15 @@
  * 木を辿って「線がどれに当たったか」を答える。
  *
  * @details
- * 判定そのものは ACS が持っている (`RaycastAabb`)。ここが足すのは**木を辿って、各ノードの
- * 境界を世界へ移して、いちばん手前を選ぶ**ところ。それを毎回書かせないための窓口。
+ * 判定そのものはACSが持っている。`Raycast`は境界箱、`RaycastGeometry`は
+ * `CSceneNodeGraph::TryRaycastGeometryActiveRange`による実形状を使い、Frameworkは
+ * 使いやすいレイとノードポインタへまとめる。
  *
- * ## 精度について
+ * ## 2種類の精度
  *
- * **境界の箱までしか見ない。** モデルの三角形とは判定しない。丸いものの角を掠めると、
- * 実際には当たっていなくても当たったことになる。
- *
- * 掴む・調べる・大まかに拾う用途にはこれで足りる。厳密に要るなら、ここで候補を絞ってから
- * ACS の `CMeshCollider` (BVH 付き) を使うこと。
+ * `Raycast`は境界の箱までを見るため、丸いものの角を掠めると実際には触れていなくても当たる。
+ * 掴む・調べる・大まかに拾う用途には`Raycast`、球や読み込みメッシュの実表面まで要る用途には
+ * `RaycastGeometry`を使う。
  *
  * ## 見えないものは当たらない
  *
@@ -35,6 +34,29 @@ public:
 	 * @return 当たった記録。外れたときは `Node` が nullptr。
 	 */
 	static FSceneRayHit Raycast( ANode& Root, const FSceneRay& Ray ) noexcept;
+
+	/**
+	 * 場面内の実際に描かれる3D形状へ線を当て、いちばん手前を返す。
+	 *
+	 * @details
+	 * 球、有限平面、立方体、読み込みメッシュの三角形を判定する。見えない、無効、破棄予定の
+	 * ノードとその子は対象外。法線は非一様な拡大も反映した世界座標で返す。
+	 *
+	 * @param Scene 判定する場面。
+	 * @param Ray 飛ばす有限な線。
+	 * @return 実形状へ当たった記録。外れたときは`Node`がnullptr。
+	 */
+	static FSceneRayHit RaycastGeometry( AScene& Scene, const FSceneRay& Ray ) noexcept;
+
+	/**
+	 * ノードグラフ内の実際に描かれる3D形状へ線を当て、いちばん手前を返す。
+	 *
+	 * @details 場面を持たないテストや道具から使う形。判定内容は場面版と同じ。
+	 * @param Graph 判定するノードグラフ。
+	 * @param Ray 飛ばす有限な線。
+	 * @return 実形状へ当たった記録。外れたときは`Node`がnullptr。
+	 */
+	static FSceneRayHit RaycastGeometry( CSceneNodeGraph& Graph, const FSceneRay& Ray ) noexcept;
 
 	/**
 	 * 線に当たったものを、手前から順に埋める。

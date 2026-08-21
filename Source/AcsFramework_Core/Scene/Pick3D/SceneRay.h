@@ -39,7 +39,7 @@ struct FSceneRay
 	 * @param InOrigin 始点。
 	 * @param InDirection 向き (正規化していなくてよい)。
 	 * @param InMaxDistance 届く距離。
-	 * @return 正規化済みの線。向きが 0 なら +Z を向く。
+	 * @return 正規化済みの線。向きが 0 または有限でなければ +Z を向く。
 	 */
 	static FSceneRay FromDirection( FVec3 InOrigin, FVec3 InDirection, f32 InMaxDistance = 1000.0f ) noexcept;
 
@@ -81,7 +81,7 @@ struct FSceneRay
 	/**
 	 * 使える線か。
 	 *
-	 * @return 向きが 0 でなく、届く距離が正なら true。
+	 * @return 始点、向き、距離が有限で、向きが 0 でなく届く距離が正なら true。
 	 */
 	bool IsValid() const noexcept;
 };

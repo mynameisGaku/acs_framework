@@ -2,6 +2,7 @@
 #include "AcsFramework_Sample/Scene/Demo3DScene.h"
 
 #include "AcsFramework_Core/Scene/Model3D/Model3DSpawner.h"
+#include "AcsFramework_Core/Scene/Pick3D/ScenePicker.h"
 #include "AcsFramework_Core/Scene/Water3D/Water3DSpawner.h"
 
 #include "AcsFramework_Core/Assets/AssetLoaderSubsystem.h"
@@ -42,7 +43,7 @@ namespace
 	constexpr f32 kUiWidth = 260.0f;
 
 	/** プレイヤーUIのカード高さ。 */
-	constexpr f32 kUiHeight = 420.0f;
+	constexpr f32 kUiHeight = 504.0f;
 
 	/** FXAA切り替えに使うアクション番号。 */
 	constexpr u32 kFxaaActionIndex = 0u;
@@ -368,6 +369,8 @@ void ADemo3DScene::OnEnter() noexcept
 	m_SpatialSoundStatusText = Ui().AddText( "HEADPHONES RECOMMENDED", FVec2{ kUiLeft + 16.0f, kUiTop + 304.0f } );
 	m_WeatherButton = Ui().AddButton( "SET WEATHER: STORM", FVec2{ kUiLeft + 16.0f, kUiTop + 330.0f }, FVec2{ kUiWidth - 32.0f, 44.0f } );
 	m_WeatherStatusText = Ui().AddText( "WEATHER: CLEAR", FVec2{ kUiLeft + 16.0f, kUiTop + 388.0f } );
+	m_GeometryPickButton = Ui().AddButton( "PICK EXACT SHAPE", FVec2{ kUiLeft + 16.0f, kUiTop + 414.0f }, FVec2{ kUiWidth - 32.0f, 44.0f } );
+	m_GeometryPickStatusText = Ui().AddText( "PICK: READY", FVec2{ kUiLeft + 16.0f, kUiTop + 472.0f } );
 	m_bNextSpatialSoundRight = false;
 	m_NextWeatherIndex = 0u;
 	SetWeather( EWeatherKind::Clear, 0.0f );
@@ -486,6 +489,7 @@ void ADemo3DScene::OnUpdate( f32 DeltaSeconds ) noexcept
 
 	if ( Ui().ConsumeButtonPress( m_SpatialSoundButton ) ) PlaySpatialDemoSound();
 	if ( Ui().ConsumeButtonPress( m_WeatherButton ) ) AdvanceDemoWeather();
+	if ( Ui().ConsumeButtonPress( m_GeometryPickButton ) ) PickSpinnerGeometry();
 
 	if ( m_WaterSurfaceId.IsValid() )
 	{
@@ -693,6 +697,31 @@ void ADemo3DScene::RefreshWeatherText() noexcept
 		StatusText.TryAppend( FStringView( WeatherLabel( Weather().CurrentWeather() ) ) );
 	}
 	Ui().SetText( m_WeatherStatusText, StatusText.Data() );
+}
+
+
+void ADemo3DScene::PickSpinnerGeometry() noexcept
+{
+	if ( m_Spinner == nullptr )
+	{
+		Ui().SetText( m_GeometryPickStatusText, "PICK: NO TARGET" );
+		return;
+	}
+
+	const FVec3 CameraPosition = Camera().Eye();
+	const FSceneRay Ray = FSceneRay::FromDirection(
+		CameraPosition, m_Spinner->World().position - CameraPosition, 100.0f );
+	const FSceneRayHit Hit = CScenePicker::RaycastGeometry( *this, Ray );
+	if ( Hit.Node != m_Spinner )
+	{
+		Ui().SetText( m_GeometryPickStatusText, Hit.IsHit() ? "PICK: OTHER OBJECT" : "PICK: MISS" );
+		return;
+	}
+
+	Ui().SetText( m_GeometryPickStatusText, "PICK: SPINNER SURFACE" );
+	FEffect3DPlayParams Marker = FEffect3DPlayParams::At( Hit.Point + Hit.Normal * 0.03f );
+	Marker.Scale = FVec3{ 0.18f, 0.18f, 0.18f };
+	PlayEffect3D( FStringView( "Effects/hit.efkefc" ), Marker );
 }
 
 

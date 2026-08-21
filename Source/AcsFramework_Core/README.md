@@ -50,6 +50,10 @@ Subsystemにはしない。`AEffect3DScene`がscene単位で`CEffect3DPlayer`を
 `AWeather3DScene`は派生場面が設定した晴天時の環境を基準として記録し、相対値を毎フレーム
 適用する薄いアダプターとする。雨雪の素材は固定せず、粒子密度と風向きを公開する。
 
+3D選択は`CScenePicker::RaycastGeometry`へ場面と`FSceneRay`を渡すだけにする。ACSの
+`CSceneNodeGraph`が持つ実形状判定を再実装せず、世代付き識別子を使いやすいノードポインタと
+世界座標の命中情報へ変換する。高速な境界箱判定は別用途として互換維持する。
+
 ### Text変換の契約
 
 `AcsToWide`の配列版は変換成功時だけ出力を更新し、確保・入力長・変換数の失敗時は既存内容を保つ。

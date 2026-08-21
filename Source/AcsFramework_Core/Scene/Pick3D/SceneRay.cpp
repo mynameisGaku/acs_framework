@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: Apache-2.0
 #include "AcsFramework_Core/Scene/Pick3D/SceneRay.h"
 
+#include <cmath>
+
 namespace
 {
 	/** これ以下の長さは «向きが無い» とみなす。 */
@@ -8,6 +10,12 @@ namespace
 
 	/** 同次座標の w がこれ以下なら、割ると壊れる。 */
 	constexpr f32 kMinimumHomogeneousW = 1.0e-6f;
+
+	/** 3成分が有限か返す。 */
+	bool IsFinite( FVec3 Value ) noexcept
+	{
+		return std::isfinite( Value.x ) && std::isfinite( Value.y ) && std::isfinite( Value.z );
+	}
 
 	/**
 	 * 画面の位置を NDC (-1〜+1) へ直す。
@@ -56,8 +64,8 @@ FSceneRay FSceneRay::FromDirection( FVec3 InOrigin, FVec3 InDirection, f32 InMax
 
 	// 向きが 0 のまま返すと、当たり判定が «全部当たる» か «全部外れる» のどちらかになり、
 	// どちらも原因が分かりにくい。決まった向きへ倒しておく。
-	const f32 LengthValue = Length( InDirection );
-	Ray.Direction = LengthValue > kMinimumDirectionLength
+	const f32 LengthValue = IsFinite( InDirection ) ? Length( InDirection ) : 0.0f;
+	Ray.Direction = std::isfinite( LengthValue ) && LengthValue > kMinimumDirectionLength
 		? Normalize( InDirection )
 		: FVec3{ 0.0f, 0.0f, 1.0f };
 
@@ -106,6 +114,8 @@ FRay3 FSceneRay::ToRay3() const noexcept
 
 bool FSceneRay::IsValid() const noexcept
 {
-	if ( MaxDistance <= 0.0f ) return false;
-	return Length( Direction ) > kMinimumDirectionLength;
+	if ( !IsFinite( Origin ) || !IsFinite( Direction ) ) return false;
+	if ( !std::isfinite( MaxDistance ) || MaxDistance <= 0.0f ) return false;
+	const f32 DirectionLength = Length( Direction );
+	return std::isfinite( DirectionLength ) && DirectionLength > kMinimumDirectionLength;
 }

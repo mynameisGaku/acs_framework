@@ -3,6 +3,8 @@
 #include "AcsFramework_Core/Scene/Model3D/Model3DSpawner.h"
 #include "Common/Test/TestHarness.h"
 
+#include <limits>
+
 namespace
 {
 	/**
@@ -66,6 +68,16 @@ void RunScenePickerTests( CTestHarness& Harness )
 
 		Ray.MaxDistance = 0.0f;
 		Harness.Check( !Ray.IsValid(), "届く距離が 0 の線は使えない" );
+	}
+
+	{
+		FSceneRay Ray;
+		Ray.Origin.x = std::numeric_limits<f32>::infinity();
+		Harness.Check( !Ray.IsValid(), "有限でない始点を弾く" );
+
+		Ray = FSceneRay{};
+		Ray.MaxDistance = std::numeric_limits<f32>::infinity();
+		Harness.Check( !Ray.IsValid(), "有限でない距離を弾く" );
 	}
 
 	Harness.BeginSuite( "CScenePicker / いちばん手前を返す" );
@@ -151,5 +163,59 @@ void RunScenePickerTests( CTestHarness& Harness )
 
 		Harness.Check( Hit.IsHit(), "厚みの無い板にも当たる" );
 		CheckNear( Harness, Hit.Distance, 5.0f, "板の高さまでの距離" );
+	}
+
+	Harness.BeginSuite( "CScenePicker / 実際の3D形状へ当てる" );
+
+	{
+		CSceneNodeGraph Graph;
+		FModel3DSpawnParams Sphere =
+			FModel3DSpawnParams::FromPrimitive( EMeshPrimitive3D::Sphere, FVec3{ 0.0f, 0.0f, 4.0f } );
+		ANode* const SphereNode = CModel3DSpawner::SpawnInto( Graph, Sphere );
+
+		const FSceneRay CornerRay = FSceneRay::FromDirection(
+			FVec3{ 0.49f, 0.49f, 0.0f }, FVec3{ 0.0f, 0.0f, 1.0f } );
+		const FSceneRayHit BoundsHit = CScenePicker::Raycast( Graph.Root(), CornerRay );
+		const FSceneRayHit GeometryMiss = CScenePicker::RaycastGeometry( Graph, CornerRay );
+		Harness.Check( BoundsHit.Node == SphereNode, "境界の箱なら球の角も拾う" );
+		Harness.Check( !GeometryMiss.IsHit(), "実形状なら球の外側を拾わない" );
+
+		const FSceneRay SurfaceRay = FSceneRay::FromDirection(
+			FVec3{ 0.30f, 0.0f, 0.0f }, FVec3{ 0.0f, 0.0f, 1.0f } );
+		const FSceneRayHit SurfaceHit = CScenePicker::RaycastGeometry( Graph, SurfaceRay );
+		Harness.Check( SurfaceHit.Node == SphereNode, "球の実表面へ当たる" );
+		CheckNear( Harness, SurfaceHit.Distance, 3.60f, "球面までの距離を返す" );
+		CheckNear( Harness, SurfaceHit.Normal.x, 0.60f, "球面の横向きを返す" );
+		CheckNear( Harness, SurfaceHit.Normal.z, -0.80f, "球面の手前向きを返す" );
+	}
+
+	{
+		CSceneNodeGraph Graph;
+		TSharedPtr<AMeshAsset> Triangle = MakeShared<AMeshAsset>();
+		Harness.Check( Triangle.IsValid(), "三角形メッシュを作れる" );
+		if ( !Triangle ) return;
+		Triangle->Vertices().Add( FMeshVertex{ FVec3{ -1.0f, -1.0f, 0.0f }, FVec3{ 0.0f, 0.0f, -1.0f }, 0.0f, 0.0f } );
+		Triangle->Vertices().Add( FMeshVertex{ FVec3{ 1.0f, -1.0f, 0.0f }, FVec3{ 0.0f, 0.0f, -1.0f }, 1.0f, 0.0f } );
+		Triangle->Vertices().Add( FMeshVertex{ FVec3{ -1.0f, 1.0f, 0.0f }, FVec3{ 0.0f, 0.0f, -1.0f }, 0.0f, 1.0f } );
+
+		FScene3DSpawnResult Spawned = Graph.TrySpawn( FStringView( "Triangle" ) );
+		Harness.Check( Spawned.Succeeded(), "三角形ノードを置ける" );
+		if ( Spawned.Node != nullptr )
+		{
+			Spawned.Node->SetPosition( FVec3{ 0.0f, 0.0f, 4.0f } );
+			AMeshComponent3D& Mesh = Spawned.Node->AddComponent<AMeshComponent3D>( EMeshPrimitive3D::Mesh );
+			Mesh.SetMeshAsset( TSharedPtr<AAsset>( Triangle ) );
+		}
+
+		const FSceneRay OutsideTriangle = FSceneRay::FromDirection(
+			FVec3{ 0.75f, 0.75f, 0.0f }, FVec3{ 0.0f, 0.0f, 1.0f } );
+		Harness.Check( CScenePicker::Raycast( Graph.Root(), OutsideTriangle ).IsHit(), "境界の箱には入る" );
+		Harness.Check( !CScenePicker::RaycastGeometry( Graph, OutsideTriangle ).IsHit(), "三角形の外側は拾わない" );
+
+		const FSceneRay InsideTriangle = FSceneRay::FromDirection(
+			FVec3{ -0.50f, -0.50f, 0.0f }, FVec3{ 0.0f, 0.0f, 1.0f } );
+		const FSceneRayHit TriangleHit = CScenePicker::RaycastGeometry( Graph, InsideTriangle );
+		Harness.Check( TriangleHit.Node == Spawned.Node, "読み込みメッシュの三角形へ当たる" );
+		CheckNear( Harness, TriangleHit.Distance, 4.0f, "三角形面までの距離を返す" );
 	}
 }

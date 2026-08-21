@@ -8,38 +8,43 @@
 ```cpp
 // マウスの位置から
 const FSceneRay Ray = FSceneRay::FromScreen( Camera, MouseX, MouseY, Width, Height );
-const FSceneRayHit Hit = CScenePicker::Raycast( Root(), Ray );
+const FSceneRayHit Hit = CScenePicker::RaycastGeometry( *this, Ray );
 if ( Hit.IsHit() )
 {
     Hit.Node->SetName( FStringView( "掴んだ" ) );
 }
 
 // 足元
-const FSceneRayHit Ground = CScenePicker::Raycast( Root(), FSceneRay::Down( Position ) );
+const FSceneRayHit Ground = CScenePicker::RaycastGeometry( *this, FSceneRay::Down( Position ) );
 ```
 
-重なっているものを全部欲しいときは `RaycastAll`。手前から順に並ぶ。
+大まかな境界箱だけでよい場合は`Raycast( Root(), Ray )`。重なっている境界箱を全部欲しいときは
+`RaycastAll`で、手前から順に並ぶ。
 
 ## この層が足しているもの
 
-判定そのものは ACS が持っている (`RaycastAabb`)。ここが足すのは 3 つ。
+木の走査と形状判定はACSが持っている。Frameworkが足すのは3つ。
 
-1. **木を辿る。** 根から下の全ノードを見る
-2. **境界を世界へ移す。** 各ノードの `World()` を掛け、8 隅を包み直す
-3. **いちばん手前を選ぶ**
+1. **画面から線を作る。** `FSceneRay::FromScreen`で座標と距離を揃える
+2. **場面をそのまま渡せる。** ノードグラフと識別子の扱いを呼び出し側へ漏らさない
+3. **結果を1つの型へ揃える。** ノード、距離、世界座標の点と法線を`FSceneRayHit`で返す
 
 毎回書くには長いが、書き方は 1 通りしかない。だから窓口にした。
 
-## 精度は «箱まで»
+## 箱と実形状を使い分ける
 
-**モデルの三角形とは判定しない。** 球の角を掠めると、実際には当たっていなくても当たる。
+`RaycastGeometry`は、球の丸い表面や読み込みメッシュの三角形まで判定し、実表面の位置と法線を
+返す。階層の移動・回転・非一様な拡大もACS側で処理する。
 
-掴む・調べる・大まかに拾う用途にはこれで足りる。厳密に要るなら、ここで候補を絞ってから
-ACS の `CMeshCollider` (BVH 付き) を使うこと。
+`Raycast`は従来どおり境界箱だけを見る。取りこぼしにくく安いので、大まかな候補抽出や
+`RaycastAll`が必要な場面に向く。球の角を掠めると実際には触れていなくても当たる。
 
 回転していると箱は実際より大きくなる (軸に沿った箱で包み直すため)。45 度回した細長い板が
 いちばんずれる。**取りこぼすよりは大きめに拾う方がまし**、という判断で作ってある
 (掴めないより、掴みすぎの方が気付ける)。
+
+読み込みメッシュの実形状判定は、境界箱で候補を絞った後に三角形を調べる。高ポリゴンモデルへ
+毎フレーム大量に線を飛ばす用途では、ACSの`CMeshCollider`を所有者側で構築し、BVHを再利用する。
 
 ## 見えないものは当たらない
 
@@ -49,8 +54,8 @@ ACS の `CMeshCollider` (BVH 付き) を使うこと。
 ## 落とし穴
 
 - **`MaxDistance` を無限にしない。** 遠くの物まで拾うと、画面外の物を掴んだことになる
-- 板 (`Plane`) は厚みが 0。内部でごく薄い厚みを足しているので、真上から落とした線でも当たる
-- `FSceneRayHit::Normal` は**箱の面の向き**で、モデル表面の向きではない
+- 境界箱の`Raycast`は厚み0の板へごく薄い幅を足す。`RaycastGeometry`は有限平面そのものを見る
+- `Raycast`の`Normal`は箱の面、`RaycastGeometry`では実表面の向きになる
 - `Hit.Node` は所有しない。この記録を跨いでノードを消さないこと
 
 ## ファイル
@@ -60,4 +65,4 @@ ACS の `CMeshCollider` (BVH 付き) を使うこと。
 | `SceneRay.h` / `.cpp` | 線。画面の位置から作る `FromScreen` を含む |
 | `SceneRayHit.h` | 当たった記録 |
 | `ScenePicker.h` / `.cpp` | 木を辿って答える |
-| `Test/ScenePickerTest.cpp` | 手前が返るか、消したものを飛ばすか、板に当たるか |
+| `Test/ScenePickerTest.cpp` | 手前、表示状態、球面、読み込みメッシュの三角形を検証 |

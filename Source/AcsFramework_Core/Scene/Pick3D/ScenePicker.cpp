@@ -29,6 +29,31 @@ namespace
 }
 
 
+FSceneRayHit CScenePicker::RaycastGeometry( AScene& Scene, const FSceneRay& Ray ) noexcept
+{
+	return RaycastGeometry( Scene.Graph(), Ray );
+}
+
+
+FSceneRayHit CScenePicker::RaycastGeometry( CSceneNodeGraph& Graph, const FSceneRay& Ray ) noexcept
+{
+	FSceneRayHit Result;
+	if ( !Ray.IsValid() ) return Result;
+
+	FScene3DRaycastHit GeometryHit;
+	if ( !Graph.TryRaycastGeometryActiveRange( Ray.ToRay3(), 0.0f, Ray.MaxDistance, GeometryHit ) ) return Result;
+
+	ANode* const Node = Graph.Get( GeometryHit.Node );
+	if ( Node == nullptr ) return Result;
+
+	Result.Node = Node;
+	Result.Distance = GeometryHit.T;
+	Result.Point = GeometryHit.Point;
+	Result.Normal = GeometryHit.Normal;
+	return Result;
+}
+
+
 bool CScenePicker::WorldBounds( ANode& Node, FAabb3& OutBox ) noexcept
 {
 	const AMeshComponent3D* const Mesh = Node.GetComponent<AMeshComponent3D>();

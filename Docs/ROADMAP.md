@@ -48,7 +48,7 @@ ACS のモジュールは **438 個**ある。この枠組みが窓口を用意�
 | **3D 描画** | `MeshComponent3D`、`CameraComponent3D`、`Transform3D`、`PbrShader`、`StandardShader`、`ShadowMap`、`Ibl`、`Sky`、`Atmosphere`、`SceneRenderResources` |
 | **ポストプロセス** | `PostProcess`、`Ssao`、`Ssgi`、`Ssr`、`Fxaa`、`SubsurfaceScattering`、`MotionVector`、`TemporalHistory`、`HiZ` |
 | **アニメーション** | `AnimationGraph`、`AnimationCurve`、`SkinnedShader`、`asset/SkinnedMesh` |
-| **3D の当たり判定** | `collision/MeshCollider`、`collision/ConvexHull3`、`math/Collision3D` |
+| **3D の形状重なり** | `collision/MeshCollider`、`collision/ConvexHull3`、`math/Collision3D` |
 
 ### 覆えていないもの (v1.0.0 の範囲外と宣言する)
 
@@ -110,9 +110,10 @@ IBLへ反映する。残りは空を焼くIBLへ雲の形そのものを含め�
   **質感も揃えた**: CPU で変形して普通のメッシュとして PBR の経路へ流すので、
   IBL・影・遮蔽・反射・霧が静的メッシュとまったく同じに効く (`acs_temp_doc/0022`)。
   何十体も出すなら `CPbrShader` へ GPU スキニングを足すのが次
-- ~~3D の当たり判定の窓口~~ → **`Scene/Pick3D` として実装済み** (2026-08-18)。
-  線を飛ばして当たったノードを返す (`FSceneRay::FromScreen` でクリックした物を取れる)。
-  精度は境界の箱まで。三角形と厳密に判定したいときは ACS の `CMeshCollider` へ渡す。
+- ~~3D の当たり判定の窓口~~ → **`Scene/Pick3D` として実装済み** (2026-08-18、
+  実形状は2026-08-22)。`FSceneRay::FromScreen`で画面から線を作り、`RaycastGeometry`へ
+  場面ごと渡すだけで、球、有限平面、立方体、読み込みメッシュの三角形から最近点と実法線を返す。
+  従来の境界箱`Raycast`と、全候補を返す`RaycastAll`も用途別に残す。
   ※ **剛体物理とキャラ移動は ACS 側に入れる** (2026-08-17 判断、`acs_temp_doc/0003`)。
   枠組みには書かない。ACS に入った後で窓口だけを足す。
 

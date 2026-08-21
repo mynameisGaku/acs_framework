@@ -96,6 +96,9 @@ private:
 	/** 現在と次の天候をプレイヤーUIへ反映する。 */
 	void RefreshWeatherText() noexcept;
 
+	/** カメラから回転立方体の実表面へ線を当て、結果をUIと3D印へ反映する。 */
+	void PickSpinnerGeometry() noexcept;
+
 	/** 回す対象。所有はしない (木が持っている)。 */
 	ANode* m_Spinner = nullptr;
 
@@ -149,6 +152,12 @@ private:
 
 	/** 次に適用するデモ天候の番号。 */
 	usize m_NextWeatherIndex = 0u;
+
+	/** 回転立方体の実表面へ線を当てるボタン。 */
+	u32 m_GeometryPickButton = 0u;
+
+	/** 実形状判定の直近結果を示す文字。 */
+	u32 m_GeometryPickStatusText = 0u;
 
 	/** 実機キーをFXAA操作へ変換する割り当て表。 */
 	CActionBindingTable m_ActionBindings;

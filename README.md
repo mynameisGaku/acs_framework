@@ -40,7 +40,7 @@ msbuild acs_framework.vcxproj /p:Configuration=Release /p:Platform=x64
 | 3D 演出 | `AEffect3DScene`、Effekseer、depth 遮蔽、HDR・bloom への自動合成 |
 | 3D 音響 | `CSpatialAudioSubsystem`、距離減衰、モノラル効果音の左右定位 |
 | 遊ぶ人向け UI | `AUi3DScene`、文字・ボタン・入力、ポスト処理後の鮮明なHUD合成 |
-| 当てる | 線を飛ばして当たったノードを返す (`CScenePicker`) |
+| 当てる | 画面から線を飛ばし、球面や読み込みメッシュの三角形へ正確に当てる (`CScenePicker`) |
 | 土台 | 起動・場面遷移・アセット・音・セーブ・設定・入力再割り当て・多言語・決定性・開発支援 |
 
 詳しくは [`Docs/ROADMAP.md`](Docs/ROADMAP.md)。**v1.0.0 で何を入れて何を入れないか**もそこに書いてある。
@@ -62,8 +62,9 @@ Node->RotateDeg( FVec3{ 0, 90.0f * DeltaSeconds, 0 } );
 Node->MoveToward( Target, Speed * DeltaSeconds );
 Node->LookAt( Target );
 
-// 当てる
-const FSceneRayHit Hit = CScenePicker::Raycast( Root(), FSceneRay::FromScreen( Camera, MouseX, MouseY, W, H ) );
+// 画面上の位置から、実際の3D表面へ当てる
+const FSceneRayHit Hit = CScenePicker::RaycastGeometry(
+    *this, FSceneRay::FromScreen( Camera, MouseX, MouseY, W, H ) );
 
 // 反射・屈折・泡を持つ水面を置き、波紋を起こす
 FWater3DSpawnParams Water;
