@@ -46,7 +46,41 @@ foreach ($name in @('acs_framework.vcxproj', 'acs_framework.vcxproj.filters')) {
     }
 }
 
-# ---- 3. pinned engine version ----------------------------------------------
+# ---- 3. fixed project paths are unique ------------------------------------
+# テストを None と ClCompile の両方へ登録すると、アプリ本体へ単体テストのmainまで
+# 誤リンクされる。同じ固定パスが複数の項目種類へ入った時点で止める。
+Section 'project fixed paths are unique'
+try {
+    $projectDocument = New-Object System.Xml.XmlDocument
+    $projectDocument.Load((Join-Path $repo 'acs_framework.vcxproj'))
+    $projectNamespaces = New-Object System.Xml.XmlNamespaceManager($projectDocument.NameTable)
+    $projectNamespaces.AddNamespace('msb', 'http://schemas.microsoft.com/developer/msbuild/2003')
+    $knownProjectPaths = @{}
+    $duplicateProjectPaths = @()
+    foreach ($type in @('ClCompile', 'ClInclude', 'None')) {
+        foreach ($node in $projectDocument.SelectNodes(
+                "/msb:Project/msb:ItemGroup/msb:$type", $projectNamespaces)) {
+            $include = $node.GetAttribute('Include')
+            if ([string]::IsNullOrWhiteSpace($include) -or
+                $include.Contains('*') -or $include.Contains('$(')) { continue }
+            $key = $include.Replace('/', '\').ToLowerInvariant()
+            if ($knownProjectPaths.ContainsKey($key)) {
+                $duplicateProjectPaths += "$include ($($knownProjectPaths[$key]) / $type)"
+            } else {
+                $knownProjectPaths[$key] = $type
+            }
+        }
+    }
+    if ($duplicateProjectPaths.Count -gt 0) {
+        Fail 'project-duplicate' "同じ固定パスが複数登録されています: $($duplicateProjectPaths[0])"
+    } else {
+        Pass 'fixed paths are registered once'
+    }
+} catch {
+    Fail 'project-duplicate' "重複検査を実行できません: $($_.Exception.Message)"
+}
+
+# ---- 4. pinned engine version ----------------------------------------------
 # A tag bumped without its checksum downloads successfully and then fails at
 # link time, which reads like a source bug.
 Section 'pinned ACS version'
@@ -64,7 +98,7 @@ try {
     Fail 'acs-version' "acs-version.json is not valid JSON: $($_.Exception.Message)"
 }
 
-# ---- 4. licence headers ----------------------------------------------------
+# ---- 5. licence headers ----------------------------------------------------
 Section 'SPDX headers'
 $missing = @()
 foreach ($file in Get-ChildItem (Join-Path $repo 'Source') -Recurse -Include *.h, *.cpp) {
@@ -79,7 +113,7 @@ if ($missing.Count -gt 0) {
     Pass 'every source file carries one'
 }
 
-# ---- 5. the engine distribution must not be committed ----------------------
+# ---- 6. the engine distribution must not be committed ----------------------
 # It is about 1 GB. Committing it once would be very hard to undo.
 Section 'engine distribution is not committed'
 $tracked = & git -C $repo ls-files 'ThirdParty/acs' 2>$null
@@ -90,7 +124,7 @@ if ($unexpected.Count -gt 0) {
     Pass 'only the README is tracked'
 }
 
-# ---- 6. scripts parse ------------------------------------------------------
+# ---- 7. scripts parse ------------------------------------------------------
 # A script that only breaks when run is a script that breaks in front of a user.
 Section 'scripts parse'
 foreach ($script in Get-ChildItem $PSScriptRoot -Filter *.ps1) {

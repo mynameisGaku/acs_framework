@@ -139,23 +139,33 @@ $itemsRemoved = @()
 $projectWouldChange = $false
 if (-not $FiltersOnly) {
     $sourceNodes = Get-ProjectItemNodes $document $namespaceManager @('ClCompile', 'ClInclude')
+    # テストと補助ヘッダーは RunUnitTests.ps1 が別の実行ファイルへ組み込むため、
+    # 意図的に None として登録する。全種類の固定項目を既知扱いにして、
+    # アプリ本体のソースとして二重登録されないようにする。
+    $projectItems = Get-ProjectItemNodes $document $namespaceManager $itemTypeOrder
     $knownPaths = New-Object System.Collections.Generic.HashSet[string](
         [System.StringComparer]::OrdinalIgnoreCase)
-    foreach ($item in $sourceNodes) {
+    foreach ($item in $projectItems) {
         $null = $knownPaths.Add(
             [System.IO.Path]::GetFullPath(([System.IO.Path]::Combine($projectDirectory, $item.Include))))
     }
 
     foreach ($diskFile in Sort-PathList ([string[]]$diskFiles)) {
         if ($knownPaths.Contains($diskFile)) { continue }
-        $extension = [System.IO.Path]::GetExtension($diskFile).ToLowerInvariant()
-        $type = $null
-        if ($compileExtensions -contains $extension) { $type = 'ClCompile' }
-        elseif ($includeExtensions -contains $extension) { $type = 'ClInclude' }
-        if (-not $type) { continue }
-
         $relative = Resolve-ProjectRelativePath $projectDirectory $diskFile
         if (-not $relative) { continue }
+
+        $extension = [System.IO.Path]::GetExtension($diskFile).ToLowerInvariant()
+        $type = $null
+        if (($compileExtensions + $includeExtensions) -contains $extension -and
+            $relative -match '(^|\\)Test\\') {
+            $type = 'None'
+        } elseif ($compileExtensions -contains $extension) {
+            $type = 'ClCompile'
+        } elseif ($includeExtensions -contains $extension) {
+            $type = 'ClInclude'
+        }
+        if (-not $type) { continue }
 
         # Append to the last ItemGroup that already holds this item type, so the
         # existing grouping in the .vcxproj is preserved.
