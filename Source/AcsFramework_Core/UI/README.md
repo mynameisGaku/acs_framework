@@ -32,6 +32,7 @@ bloomや輪郭補正の影響を受けず、3D場面より手前、ポーズ・�
 空ノード、`SpawnModel3D`はプリミティブまたは静的モデル、`SpawnCollidableModel3D`は静的モデルと
 衝突形状の一括生成、`SpawnImage3D`は向き固定の画像板、`SpawnBillboard3D`はカメラ追従画像板、
 `SpawnAnimatedModel3D`は骨付きモデル、`SpawnCollidableAnimatedModel3D`は骨付きモデルと衝突形状、
+`SpawnThirdPersonCharacter3D`は静的または骨付きモデルと自己衝突、移動、追従カメラ、任意アニメーション、
 `SpawnLight3D`は太陽または点光源、`SpawnWater3D`は水面を扱う。パスを渡した場合だけ場面共通の
 asset窓口で読み、読込済みassetはそのまま使う。
 
@@ -85,7 +86,9 @@ const FSceneRayHit Picked = PickScreen3D( FVec2{ 0.5f, 0.5f }, 100.0f );
 
 `BindThirdPersonCharacter3D`へ呼出側所有の制御と自場面ノードを渡すと、この衝突集合と現在場面の
 追従カメラへまとめて接続する。低水準の`Controller.Bind( Collision3D(), *this, Node, Params )`を
-派生場面へ繰り返し書く必要はない。
+派生場面へ繰り返し書く必要はない。新しく単一モデルから作る場合は
+`SpawnThirdPersonCharacter3D`へ制御、モデル、設定を渡せば、自己形状番号の反映と失敗時の
+形状・ノード巻き戻しまで一括で行う。
 
 `PickScreen3D`は左上を0、右下を1とした画面位置から現在カメラの線を作り、この場面で最前面の
 実形状を返す。判定線もデバッグ表示などへ使う場合は`MakeScreenRay3D`で作り、`Raycast3D`へ渡す。

@@ -4,7 +4,8 @@
 #include <acs.h>
 
 #include "AcsFramework_Core/Scene/Billboard3D/Billboard3DLayer.h"
-#include "AcsFramework_Core/Scene/Character3D/ThirdPersonCharacter3DParams.h"
+#include "AcsFramework_Core/Scene/Character3D/ThirdPersonCharacter3DSpawnParams.h"
+#include "AcsFramework_Core/Scene/Character3D/ThirdPersonCharacter3DSpawnResult.h"
 #include "AcsFramework_Core/Scene/Collision3D/SceneCollision3D.h"
 #include "AcsFramework_Core/Scene/DebugDraw3D/DebugDraw3DLayer.h"
 #include "AcsFramework_Core/Scene/Interaction3D/InteractionHighlight3DParams.h"
@@ -108,6 +109,36 @@ public:
 	 */
 	bool BindThirdPersonCharacter3D( CThirdPersonCharacter3D& Controller, ANode& Character,
 		const FThirdPersonCharacter3DParams& Params = FThirdPersonCharacter3DParams{} ) noexcept;
+
+	/**
+	 * 静的モデルの生成、自己衝突登録、第三者視点操作への接続を1回で完了する。
+	 *
+	 * @param Controller 呼出側が所有する未接続のキャラクター制御。
+	 * @param ModelParams プリミティブまたは静的モデルの配置と見た目。
+	 * @param SpawnParams 自己形状、移動、向き、追従カメラの設定。
+	 * @param Parent この場面が所有する親。空ならroot直下。
+	 * @return 必須処理を全て完了したノードと自己形状。失敗時は空で、半端な生成物を残さない。
+	 */
+	FThirdPersonCharacter3DSpawnResult SpawnThirdPersonCharacter3D(
+		CThirdPersonCharacter3D& Controller, const FModel3DSpawnParams& ModelParams,
+		const FThirdPersonCharacter3DSpawnParams& SpawnParams = FThirdPersonCharacter3DSpawnParams{},
+		ANode* Parent = nullptr ) noexcept;
+
+	/**
+	 * 骨格モデルの生成、自己衝突登録、第三者視点操作への接続を1回で完了する。
+	 *
+	 * @details 移動連動アニメーションだけ接続できない場合も必須処理は成功とし、
+	 * 結果の`bAnimationBound`をfalseにしてモデル側の初期再生を保つ。
+	 * @param Controller 呼出側が所有する未接続のキャラクター制御。
+	 * @param ModelParams 骨格モデルの配置と初期再生。
+	 * @param SpawnParams 自己形状、操作、任意アニメーションの設定。
+	 * @param Parent この場面が所有する親。空ならroot直下。
+	 * @return 必須処理を全て完了したノードと自己形状。失敗時は空で、半端な生成物を残さない。
+	 */
+	FThirdPersonCharacter3DSpawnResult SpawnThirdPersonCharacter3D(
+		CThirdPersonCharacter3D& Controller, const FAnimatedModel3DSpawnParams& ModelParams,
+		const FThirdPersonCharacter3DSpawnParams& SpawnParams = FThirdPersonCharacter3DSpawnParams{},
+		ANode* Parent = nullptr ) noexcept;
 
 	/**
 	 * 左上を0、右下を1とした画面位置から、現在カメラを通る3D判定線を作る。

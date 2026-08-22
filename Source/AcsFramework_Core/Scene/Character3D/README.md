@@ -1,18 +1,20 @@
 # 第三者視点3Dキャラクター操作
 
 `CThirdPersonCharacter3D`は、カメラ基準の移動、ジャンプ、移動方向への向き変更、ノード追従カメラを
-1回の`Update()`へまとめる。`AUi3DScene::BindThirdPersonCharacter3D`なら場面所有の衝突集合と
-カメラへ1回で接続できる。骨付きモデルがある場合だけ、待機・歩き・走り・ジャンプも接続できる。
+1回の`Update()`へまとめる。新しくモデルから始める場合は`AUi3DScene::SpawnThirdPersonCharacter3D`が
+静的または骨格モデルの生成、自己衝突登録、移動、追従カメラを1回で接続する。骨格モデルに
+待機・歩き・走り・ジャンプが揃っていれば、その移動連動再生も同時に接続する。
 
 ```cpp
-CSceneCollision3D& Collision = Collision3D();
-Collision.TryAddBox( *Floor, FVec3{}, FVec3{ 10.0f, 0.5f, 10.0f }, 0x1u );
-
 CThirdPersonCharacter3D HeroController;
-FThirdPersonCharacter3DParams Params;
-Params.CollisionMask = 0x1u;
-BindThirdPersonCharacter3D( HeroController, *Hero, Params );
-HeroController.TryBindAnimation();
+FAnimatedModel3DSpawnParams Hero = FAnimatedModel3DSpawnParams::FromModel(
+	FStringView( "Models/Hero.fbx" ), FVec3{} );
+FThirdPersonCharacter3DSpawnParams Setup;
+Setup.Control.CollisionMask = 0x1u;
+Setup.Collision = FCollisionShape3DParams::FromSphere(
+	Setup.Control.LocalCollisionCenter, Setup.Control.Movement.Radius, 0x2u );
+const FThirdPersonCharacter3DSpawnResult Spawned =
+	SpawnThirdPersonCharacter3D( HeroController, Hero, Setup );
 
 CActionBindingTable ActionBindings;
 const FThirdPersonCharacter3DActionSet Actions = FThirdPersonCharacter3DActionSet::WithRunAction();
@@ -24,6 +26,12 @@ const FActionInput CurrentInput = ActionBindings.Resolve( DeviceReader );
 const FThirdPersonCharacter3DUpdateResult Result = HeroController.Update( CurrentInput, PreviousInput, DeltaSeconds, Actions );
 PreviousInput = CurrentInput;
 ```
+
+`SpawnThirdPersonCharacter3D`は生成した形状番号を`Control.SelfShape`へ必ず設定するため、呼出側が
+同じ番号を写す必要はない。モデル生成、形状登録、移動またはカメラ接続の途中で失敗した場合は、
+形状とノードを両方巻き戻す。骨格モデルの必須処理が成功し、4状態のクリップだけが不足した場合は
+`Succeeded()`をtrueのまま保ち、`bAnimationBound`をfalseにして`InitialAnimation`の再生を続ける。
+既に組み立てた複合ノードを使う場合は、従来の`BindThirdPersonCharacter3D`で個別に接続できる。
 
 既定の`FThirdPersonCharacter3DActionSet`は、軸0/1を左右・前後移動、軸2/3を左右・上下視点、
 アクション0をジャンプ、1/2をカメラの近接・遠隔へ割り当て、走行は無効にして従来入力との互換性を保つ。

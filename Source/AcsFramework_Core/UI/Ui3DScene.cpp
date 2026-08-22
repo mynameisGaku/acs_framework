@@ -5,6 +5,7 @@
 #include "AcsFramework_Core/Audio/Spatial/SpatialAudioSubsystem.h"
 #include "AcsFramework_Core/Scene/Animation3D/AnimatedModel3DSpawner.h"
 #include "AcsFramework_Core/Scene/Character3D/ThirdPersonCharacter3D.h"
+#include "AcsFramework_Core/Scene/Character3D/ThirdPersonCharacter3DSpawner.h"
 #include "AcsFramework_Core/Scene/Light3D/Light3DSpawner.h"
 #include "AcsFramework_Core/Scene/Model3D/Model3DSpawner.h"
 #include "AcsFramework_Core/Scene/Pick3D/ScenePicker.h"
@@ -99,6 +100,48 @@ bool AUi3DScene::BindThirdPersonCharacter3D( CThirdPersonCharacter3D& Controller
 	ANode& Character, const FThirdPersonCharacter3DParams& Params ) noexcept
 {
 	return Controller.Bind( m_Collision3D, *this, Character, Params );
+}
+
+
+FThirdPersonCharacter3DSpawnResult AUi3DScene::SpawnThirdPersonCharacter3D(
+	CThirdPersonCharacter3D& Controller, const FModel3DSpawnParams& ModelParams,
+	const FThirdPersonCharacter3DSpawnParams& SpawnParams, ANode* Parent ) noexcept
+{
+	if ( !ModelParams.IsValid() ) return {};
+	const bool bNeedsLoad = !ModelParams.MeshAsset && ModelParams.MeshPath.Data() != nullptr
+		&& ModelParams.MeshPath.Size() > 0u;
+	if ( !bNeedsLoad ) return CThirdPersonCharacter3DSpawner::SpawnInto(
+		Graph(), m_Collision3D, *this, Controller, ModelParams, SpawnParams, Parent );
+
+	CAssetLoaderSubsystem* const Assets = GetSubsystem<CAssetLoaderSubsystem>();
+	if ( Assets == nullptr )
+	{
+		ACS_LOG_WARN( "AUi3DScene: 第三者視点用の静的3Dモデル読込窓口が無い" );
+		return {};
+	}
+	return CThirdPersonCharacter3DSpawner::SpawnInto(
+		Graph(), m_Collision3D, *this, Controller, ModelParams,
+		Assets->Models(), SpawnParams, Parent );
+}
+
+
+FThirdPersonCharacter3DSpawnResult AUi3DScene::SpawnThirdPersonCharacter3D(
+	CThirdPersonCharacter3D& Controller, const FAnimatedModel3DSpawnParams& ModelParams,
+	const FThirdPersonCharacter3DSpawnParams& SpawnParams, ANode* Parent ) noexcept
+{
+	if ( !ModelParams.IsValid() ) return {};
+	if ( ModelParams.MeshAsset ) return CThirdPersonCharacter3DSpawner::SpawnInto(
+		Graph(), m_Collision3D, *this, Controller, ModelParams, SpawnParams, Parent );
+
+	CAssetLoaderSubsystem* const Assets = GetSubsystem<CAssetLoaderSubsystem>();
+	if ( Assets == nullptr )
+	{
+		ACS_LOG_WARN( "AUi3DScene: 第三者視点用の骨格3Dモデル読込窓口が無い" );
+		return {};
+	}
+	return CThirdPersonCharacter3DSpawner::SpawnInto(
+		Graph(), m_Collision3D, *this, Controller, ModelParams,
+		Assets->Models(), SpawnParams, Parent );
 }
 
 

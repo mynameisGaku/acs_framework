@@ -123,6 +123,110 @@ void RunThirdPersonCharacter3DTests( CTestHarness& Harness )
 		Harness.Check( !Controller.IsBound() && Scene->FreeCameraEnabled() && !Scene->OrbitCameraOverrideActive(), "解除時に移動接続と場面カメラ設定を戻す" );
 	}
 
+	Harness.BeginSuite( "CThirdPersonCharacter3DSpawner / 静的モデル生成から操作接続までを一括化する" );
+
+	{
+		TUniquePtr<CTestThirdPersonScene3D> Scene = MakeUnique<CTestThirdPersonScene3D>();
+		CSceneCollision3D Collision{ Scene->Graph() };
+		CThirdPersonCharacter3D Controller;
+
+		FModel3DSpawnParams Model = FModel3DSpawnParams::FromPrimitive(
+			EMeshPrimitive3D::Cube, FVec3{ 1.0f, 0.0f, 2.0f } );
+		Model.Name = FStringView( "SpawnedThirdPersonCharacter" );
+		FThirdPersonCharacter3DSpawnParams Params;
+		Params.Control.Movement.GravityAcceleration = 0.0f;
+		Params.Control.CollisionMask = 0x2u;
+		Params.Collision = FCollisionShape3DParams::FromSphere(
+			FVec3{ 0.0f, 0.5f, 0.0f }, 0.5f, 0x4u );
+
+		const FThirdPersonCharacter3DSpawnResult Spawned =
+			CThirdPersonCharacter3DSpawner::SpawnInto(
+				Scene->Graph(), Collision, *Scene, Controller, Model, Params );
+		Harness.Check( Spawned.Succeeded(), "モデル、自己形状、操作を1回で接続できる" );
+		Harness.Check( Controller.IsBound() && Controller.Character() == Spawned.Node,
+			"生成ノードを移動と追従カメラの対象にする" );
+		Harness.Check( Controller.Params().SelfShape == Spawned.Shape,
+			"生成した形状番号を自己除外へ自動設定する" );
+		Harness.Check( !Spawned.bAnimationBound, "静的モデルではアニメーション接続を報告しない" );
+		Harness.CheckEqualU64( Collision.ShapeCount(), 1u, "自己形状を1個だけ登録する" );
+
+		const u64 RegisteredBeforeRetry = Scene->Graph().RegisteredCount();
+		const FThirdPersonCharacter3DSpawnResult Rejected =
+			CThirdPersonCharacter3DSpawner::SpawnInto(
+				Scene->Graph(), Collision, *Scene, Controller, Model, Params );
+		Harness.Check( !Rejected.Succeeded(), "接続中の制御への二重生成を拒む" );
+		Harness.CheckEqualU64( Scene->Graph().RegisteredCount(), RegisteredBeforeRetry,
+			"二重生成拒否ではノードを増やさない" );
+		Harness.CheckEqualU64( Collision.ShapeCount(), 1u,
+			"二重生成拒否では形状を増やさない" );
+		Controller.Unbind();
+	}
+
+	Harness.BeginSuite( "CThirdPersonCharacter3DSpawner / 骨格モデルの移動連動再生も接続する" );
+
+	{
+		TUniquePtr<CTestThirdPersonScene3D> Scene = MakeUnique<CTestThirdPersonScene3D>();
+		CSceneCollision3D Collision{ Scene->Graph() };
+		CThirdPersonCharacter3D Controller;
+		FAnimatedModel3DSpawnParams Model;
+		Model.MeshAsset = MakeCharacterMesh();
+		Model.Position = FVec3{ -2.0f, 0.0f, 1.0f };
+		Model.InitialAnimation = FStringView( "Idle" );
+
+		FThirdPersonCharacter3DSpawnParams Params;
+		Params.Control.Movement.GravityAcceleration = 0.0f;
+		Params.Collision = FCollisionShape3DParams::FromSphere(
+			FVec3{ 0.0f, 0.5f, 0.0f }, 0.5f, 0x8u );
+		const FThirdPersonCharacter3DSpawnResult Spawned =
+			CThirdPersonCharacter3DSpawner::SpawnInto(
+				Scene->Graph(), Collision, *Scene, Controller, Model, Params );
+
+		Harness.Check( Spawned.Succeeded(), "骨格モデルも操作可能なキャラクターとして生成できる" );
+		Harness.Check( Spawned.bAnimationBound && Controller.Animator().IsBound(),
+			"待機、歩き、走り、ジャンプを移動状態へ自動接続する" );
+		Harness.Check( Controller.Params().SelfShape == Spawned.Shape,
+			"骨格モデルでも自己形状を移動問い合わせから除外する" );
+		Controller.Unbind();
+
+		Model.Position = FVec3{ -4.0f, 0.0f, 1.0f };
+		Params.Animation.WalkClip = FString( "MissingWalk" );
+		const FThirdPersonCharacter3DSpawnResult MissingAnimation =
+			CThirdPersonCharacter3DSpawner::SpawnInto(
+				Scene->Graph(), Collision, *Scene, Controller, Model, Params );
+		ASkinnedMeshComponent3D* const MissingAnimationSkin = MissingAnimation.Node != nullptr
+			? MissingAnimation.Node->GetComponent<ASkinnedMeshComponent3D>() : nullptr;
+		Harness.Check( MissingAnimation.Succeeded() && !MissingAnimation.bAnimationBound,
+			"4状態の一部が無くても移動とカメラの必須接続は保つ" );
+		Harness.Check( MissingAnimationSkin != nullptr && MissingAnimationSkin->Player().IsPlaying(),
+			"移動連動再生だけ失敗した場合はモデルの初期再生を止めない" );
+		Controller.Unbind();
+	}
+
+	Harness.BeginSuite( "CThirdPersonCharacter3DSpawner / 操作接続失敗を完全に巻き戻す" );
+
+	{
+		TUniquePtr<CTestThirdPersonScene3D> Scene = MakeUnique<CTestThirdPersonScene3D>();
+		CSceneCollision3D Collision{ Scene->Graph() };
+		CThirdPersonCharacter3D Controller;
+		const FModel3DSpawnParams Model = FModel3DSpawnParams::FromPrimitive(
+			EMeshPrimitive3D::Sphere, FVec3{} );
+		FThirdPersonCharacter3DSpawnParams Params;
+		Params.Control.MaximumMoveSpeed = std::numeric_limits<f32>::infinity();
+
+		const FThirdPersonCharacter3DSpawnResult Failed =
+			CThirdPersonCharacter3DSpawner::SpawnInto(
+				Scene->Graph(), Collision, *Scene, Controller, Model, Params );
+		Harness.Check( !Failed.Succeeded() && !Controller.IsBound(),
+			"不正な操作設定では空の結果を返す" );
+		Harness.CheckEqualU64( Collision.ShapeCount(), 0u,
+			"操作接続に失敗した自己形状を外す" );
+		Scene->Graph().ResolveStructuralChanges();
+		Harness.CheckEqualU64( Scene->Graph().Root().ChildCount(), 0u,
+			"操作接続に失敗したモデルを残さない" );
+		Harness.CheckEqualU64( Scene->Graph().RegisteredCount(), 1u,
+			"巻き戻したノードの識別子も解放する" );
+	}
+
 	Harness.BeginSuite( "CThirdPersonCharacter3D / 不正入力と接続失敗を段階別に返す" );
 
 	{

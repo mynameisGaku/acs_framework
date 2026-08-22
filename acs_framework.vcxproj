@@ -438,6 +438,9 @@
     <ClInclude Include="Source\AcsFramework_Core\Scene\Character3D\ThirdPersonCharacter3DControlPreset.h" />
     <ClInclude Include="Source\AcsFramework_Core\Scene\Character3D\ThirdPersonCharacter3DInput.h" />
     <ClInclude Include="Source\AcsFramework_Core\Scene\Character3D\ThirdPersonCharacter3DParams.h" />
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Character3D\ThirdPersonCharacter3DSpawner.h" />
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Character3D\ThirdPersonCharacter3DSpawnParams.h" />
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Character3D\ThirdPersonCharacter3DSpawnResult.h" />
     <ClInclude Include="Source\AcsFramework_Core\Scene\Character3D\ThirdPersonCharacter3DUpdateResult.h" />
     <None Include="Source\AcsFramework_Core\Scene\Character3D\README.md" />
     <None Include="Source\AcsFramework_Core\Scene\Character3D\Test\CharacterMover3DTest.cpp" />
@@ -645,6 +648,7 @@
     <ClCompile Include="Source\AcsFramework_Core\Scene\Character3D\ThirdPersonCharacter3DActionSet.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Scene\Character3D\ThirdPersonCharacter3DControlPreset.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Scene\Character3D\ThirdPersonCharacter3DInput.cpp" />
+    <ClCompile Include="Source\AcsFramework_Core\Scene\Character3D\ThirdPersonCharacter3DSpawner.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Scene\Camera3D\NodeOrbitCamera3D.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Scene\DebugDraw3D\DebugDraw3DLayer.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Scene\DebugDraw3D\DebugDraw3DQueue.cpp" />

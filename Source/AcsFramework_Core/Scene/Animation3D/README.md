@@ -2,7 +2,8 @@
 
 `AUi3DScene::SpawnAnimatedModel3D`で、骨付きFBXの読み込み、ノード作成、部品追加、初期アニメーション再生を
 1回の呼び出しへまとめる。衝突も必要なら`SpawnCollidableAnimatedModel3D`が登録と失敗時の巻き戻しまで
-一括で行う。asset窓口を直接扱う場面では`CAnimatedModel3DSpawner`も使える。
+一括で行う。第三者視点で操作する人物なら`SpawnThirdPersonCharacter3D`が自己衝突、移動、追従カメラと
+4状態の移動連動再生まで接続する。asset窓口を直接扱う場面では`CAnimatedModel3DSpawner`も使える。
 さらに、移動速度と接地状態だけで待機・歩き・走り・ジャンプを選び、姿勢を滑らかに切り替えられる。
 
 ```cpp

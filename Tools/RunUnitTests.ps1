@@ -86,6 +86,7 @@ $sources = @(
     'AcsFramework_Core\Scene\Character3D\Test\ThirdPersonCharacter3DControlPresetTest.cpp',
     'AcsFramework_Core\Scene\Character3D\ThirdPersonCharacter3DInput.cpp',
     'AcsFramework_Core\Scene\Character3D\ThirdPersonCharacter3D.cpp',
+	'AcsFramework_Core\Scene\Character3D\ThirdPersonCharacter3DSpawner.cpp',
     'AcsFramework_Core\Scene\Character3D\Test\ThirdPersonCharacter3DTest.cpp',
     'AcsFramework_Core\Scene\Collision3D\SceneCollision3D.cpp',
     'AcsFramework_Core\Scene\Collision3D\Test\SceneCollision3DTest.cpp',
