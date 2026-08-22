@@ -159,6 +159,10 @@ cameraからの距離に応じて大気へ馴染み、雲も実距離まで同�
   終了は場面寿命へまとまり、HDR、tonemap、TAAまたはFXAAが終わった後のLDR画面へ描く。
   そのため文字はbloomで光らずFXAAでぼけない。`AEffect3DScene`もこの基底を含むので、3D演出と
   UIを同じ場面で使える。複雑な画面はACSの`AWidget` / `AAnchorPanel` / 標準widget群を直接使う
+- ~~3Dノードへ追従する文字表示~~ → **実装済み** (2026-08-22)。`AUi3DScene`の
+  `WorldLabels().AddNodeLabel( Node, Params )`で敵名、会話対象、目的地をworld位置へ置ける。
+  ACSの`WorldToScreen`と共有HUDフォントを使い、ノード破棄、scene読込後の識別子再利用、非表示の
+  祖先、カメラ後方、画面外、最大距離を毎描画で確認する。固定world位置と公開射影adapterも持つ
 - ~~3D 素材の置き場と取り込み手順~~ → **決定・実装済み** (2026-08-18)。
   置き場は `Assets`、形式は **FBX** (`.gltf` `.glb` `.obj` も通る)。
   `CModelLibrary` が置き場を探して読み、`CModel3DSpawner::SpawnInto(..., Library)` が置く。

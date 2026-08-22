@@ -190,6 +190,12 @@
     <Filter Include="Source\AcsFramework_Core\UI">
       <UniqueIdentifier>{ae5e8cf7-37f1-4fa2-8d78-2478334d1f43}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\AcsFramework_Core\UI\WorldLabel3D">
+      <UniqueIdentifier>{ab2e2b15-9362-d33c-66dd-1beefb299631}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\AcsFramework_Core\UI\WorldLabel3D\Test">
+      <UniqueIdentifier>{02f069bd-5e97-91b3-d12f-73a6de207e0d}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Source\AcsFramework_Sample">
       <UniqueIdentifier>{c6ca8f33-14b7-d32b-63a8-8b39066ed096}</UniqueIdentifier>
     </Filter>
@@ -590,6 +596,15 @@
     </ClCompile>
     <ClCompile Include="Source\AcsFramework_Core\UI\Ui3DScene.cpp">
       <Filter>Source\AcsFramework_Core\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\UI\WorldLabel3D\WorldLabel3DLayer.cpp">
+      <Filter>Source\AcsFramework_Core\UI\WorldLabel3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\UI\WorldLabel3D\WorldLabel3DParams.cpp">
+      <Filter>Source\AcsFramework_Core\UI\WorldLabel3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\UI\WorldLabel3D\WorldLabelProjector3D.cpp">
+      <Filter>Source\AcsFramework_Core\UI\WorldLabel3D</Filter>
     </ClCompile>
     <ClCompile Include="Source\AcsFramework_Sample\Scene\Demo3DScene.cpp">
       <Filter>Source\AcsFramework_Sample\Scene</Filter>
@@ -1193,6 +1208,18 @@
     <ClInclude Include="Source\AcsFramework_Core\UI\Ui3DScene.h">
       <Filter>Source\AcsFramework_Core\UI</Filter>
     </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\UI\WorldLabel3D\WorldLabel3DHandle.h">
+      <Filter>Source\AcsFramework_Core\UI\WorldLabel3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\UI\WorldLabel3D\WorldLabel3DLayer.h">
+      <Filter>Source\AcsFramework_Core\UI\WorldLabel3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\UI\WorldLabel3D\WorldLabel3DParams.h">
+      <Filter>Source\AcsFramework_Core\UI\WorldLabel3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\UI\WorldLabel3D\WorldLabelProjector3D.h">
+      <Filter>Source\AcsFramework_Core\UI\WorldLabel3D</Filter>
+    </ClInclude>
     <ClInclude Include="Source\AcsFramework_Sample\Scene\Demo3DScene.h">
       <Filter>Source\AcsFramework_Sample\Scene</Filter>
     </ClInclude>
@@ -1644,6 +1671,12 @@
     </None>
     <None Include="Source\AcsFramework_Core\UI\README.md">
       <Filter>Source\AcsFramework_Core\UI</Filter>
+    </None>
+    <None Include="Source\AcsFramework_Core\UI\WorldLabel3D\README.md">
+      <Filter>Source\AcsFramework_Core\UI\WorldLabel3D</Filter>
+    </None>
+    <None Include="Source\AcsFramework_Core\UI\WorldLabel3D\Test\WorldLabel3DTest.cpp">
+      <Filter>Source\AcsFramework_Core\UI\WorldLabel3D\Test</Filter>
     </None>
     <None Include="Source\Common\Compat\README.md">
       <Filter>Source\Common\Compat</Filter>

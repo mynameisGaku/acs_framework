@@ -6,6 +6,7 @@
 #include "AcsFramework_Core/Scene/Model3D/Model3DSpawner.h"
 #include "AcsFramework_Core/Scene/Pick3D/ScenePicker.h"
 #include "AcsFramework_Core/Scene/Water3D/Water3DSpawner.h"
+#include "AcsFramework_Core/UI/WorldLabel3D/WorldLabel3DParams.h"
 
 #include "AcsFramework_Core/Assets/AssetLoaderSubsystem.h"
 #include "AcsFramework_Core/Audio/Spatial/SpatialAudioSubsystem.h"
@@ -691,6 +692,11 @@ bool ADemo3DScene::TryInitializeThirdPersonCharacter() noexcept
 	m_CharacterNode = Character;
 	m_CharacterActionBindings = Move( BuiltBindings );
 	m_PreviousCharacterInput = FActionInput{};
+	FWorldLabel3DParams CharacterLabel;
+	CharacterLabel.Text = FStringView( "PLAYER" );
+	CharacterLabel.WorldOffset = FVec3{ 0.0f, 2.15f, 0.0f };
+	CharacterLabel.TextColor = FVec4{ 0.72f, 0.92f, 1.0f, 1.0f };
+	WorldLabels().AddNodeLabel( *Character, CharacterLabel );
 	return true;
 }
 

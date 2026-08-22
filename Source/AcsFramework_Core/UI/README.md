@@ -28,6 +28,18 @@ private:
 UIはHDR描画、トーンマップ、TAAまたはFXAAが終わった後のLDR画面へ重ねる。文字やボタンは
 bloomや輪郭補正の影響を受けず、3D場面より手前、ポーズ・デバッグ・ロード表示より奥に出る。
 
+3Dノードへ文字を追従させる場合は`WorldLabels()`を使う。場面グラフへの接続、現在カメラからの
+射影、ノード破棄と表示状態の確認を基底が受け持つ。
+
+```cpp
+FWorldLabel3DParams Label;
+Label.Text = FStringView( "BOSS" );
+Label.WorldOffset = FVec3{ 0.0f, 2.4f, 0.0f };
+WorldLabels().AddNodeLabel( *BossNode, Label );
+```
+
+詳しい表示範囲と固定位置の使い方は`UI/WorldLabel3D/README.md`を参照する。
+
 `CUiLayer` は固定位置の文字とボタンを少ない手数で置く入口である。アンカー、入力欄、スライダー、
 チェックボックス、データ結合が必要な画面はACSの `AWidget`、`AAnchorPanel`、`AButton`、
 `ATextInput` などを直接使う。

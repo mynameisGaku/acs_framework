@@ -45,6 +45,7 @@ WASDで移動、左Shiftで走行、矢印キーで視点、Spaceでジャンプ
 | 3D 演出 | `AEffect3DScene`、Effekseer、depth 遮蔽、HDR・bloom への自動合成 |
 | 3D 音響 | `CSpatialAudioSubsystem`、距離減衰、モノラル効果音の左右定位 |
 | 遊ぶ人向け UI | `AUi3DScene`、文字・ボタン・入力、ポスト処理後の鮮明なHUD合成 |
+| 3D位置の文字 | `WorldLabels()`、ノード破棄と画面外を安全に扱う敵名・目的地表示 |
 | 当てる | 画面から線を飛ばし、球面や読み込みメッシュの三角形へ正確に当てる (`CScenePicker`) |
 | 重なりと移動判定 | `CSceneCollision3D`、ノード追従、球・箱の重なり、球スイープ、レイヤー |
 | 土台 | 起動・場面遷移・アセット・音・セーブ・設定・入力再割り当て・多言語・決定性・開発支援 |
@@ -113,6 +114,12 @@ const FActionInput CharacterInput = ActionBindings.Resolve( InputReader );
 HeroController.Update( CharacterInput, PreviousCharacterInput, DeltaSeconds, Actions );
 PreviousCharacterInput = CharacterInput;
 HeroController.OrbitCamera().TryShakePreset( EShakePreset::HitImpact ); // 被弾時
+
+// ノードの頭上へ、ポスト処理でぼけない文字を追従させる
+FWorldLabel3DParams PlayerLabel;
+PlayerLabel.Text = FStringView( "PLAYER" );
+PlayerLabel.WorldOffset = FVec3{ 0.0f, 2.15f, 0.0f };
+WorldLabels().AddNodeLabel( *HeroNode, PlayerLabel );
 
 // 反射・屈折・泡を持つ水面を置き、波紋を起こす
 FWater3DSpawnParams Water;
