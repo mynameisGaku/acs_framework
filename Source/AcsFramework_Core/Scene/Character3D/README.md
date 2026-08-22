@@ -13,15 +13,22 @@ Params.CollisionMask = 0x1u;
 HeroController.Bind( Collision, *this, *Hero, Params );
 HeroController.TryBindAnimation();
 
-FThirdPersonCharacter3DInput Input;
-Input.MoveAxes = FVec2{ MoveX, MoveForward };
-Input.LookAxes = FVec2{ LookX, LookY };
-Input.ZoomAxis = Zoom;
-Input.bJumpRequested = bJumpPressed;
-const FThirdPersonCharacter3DUpdateResult Result = HeroController.Update( Input, DeltaSeconds );
+FActionInput PreviousInput;
+
+// 固定更新ごとに装置を明示的に読み、前回入力と一緒に渡す。
+const FActionInput CurrentInput = ActionBindings.Resolve( DeviceReader );
+const FThirdPersonCharacter3DUpdateResult Result = HeroController.Update( CurrentInput, PreviousInput, DeltaSeconds );
+PreviousInput = CurrentInput;
 ```
 
-入力装置と時刻は内部取得しない。`FThirdPersonCharacter3DUpdateResult`は視点、移動、向き、追従点、
+既定の`FThirdPersonCharacter3DActionSet`は、軸0/1を左右・前後移動、軸2/3を左右・上下視点、
+アクション0をジャンプ、1/2をカメラの近接・遠隔へ割り当てる。番号を変えたい場合は
+`FThirdPersonCharacter3DActionSet`の値を変更して`Update()`の第4引数へ渡す。ジャンプは現在と前回の
+差から押した瞬間だけ発生し、押し続けたまま着地しても自動で再ジャンプしない。
+
+入力装置と時刻は内部取得しない。AIや記録再生から直接操作する場合は、従来どおり
+`FThirdPersonCharacter3DInput`を組み立てる`Update()`も使える。`FThirdPersonCharacter3DUpdateResult`は
+視点、移動、向き、追従点、
 任意アニメーションの各段階を分けて返すため、途中まで反映された失敗を隠さない。`Mover()`、
 `OrbitCamera()`、`Animator()`から個別機能も操作でき、たとえば被弾時は
 `HeroController.OrbitCamera().TryShakePreset(EShakePreset::HitImpact)`で揺らせる。

@@ -4,6 +4,7 @@
 #include "AcsFramework_Core/Scene/Animation3D/CharacterAnimator3D.h"
 #include "AcsFramework_Core/Scene/Camera3D/NodeOrbitCamera3D.h"
 #include "AcsFramework_Core/Scene/Character3D/CharacterMover3D.h"
+#include "AcsFramework_Core/Scene/Character3D/ThirdPersonCharacter3DActionSet.h"
 #include "AcsFramework_Core/Scene/Character3D/ThirdPersonCharacter3DInput.h"
 #include "AcsFramework_Core/Scene/Character3D/ThirdPersonCharacter3DParams.h"
 #include "AcsFramework_Core/Scene/Character3D/ThirdPersonCharacter3DUpdateResult.h"
@@ -75,6 +76,19 @@ public:
 	 * @return 各処理を完了できたか表す結果。
 	 */
 	FThirdPersonCharacter3DUpdateResult Update( const FThirdPersonCharacter3DInput& Input, f32 DeltaSeconds ) noexcept;
+
+	/**
+	 * 汎用アクション入力を変換し、視点、移動、向き、追従点、任意アニメーションを更新する。
+	 *
+	 * @details 現在と前回の入力を明示してジャンプの押した瞬間を判定する。入力変換に失敗した場合は
+	 * どの処理も実行せず、全段階が未完了の結果を返す。
+	 * @param CurrentInput 今回の汎用アクション入力。
+	 * @param PreviousInput 前回の汎用アクション入力。
+	 * @param DeltaSeconds 進める有限かつ0以上の秒数。
+	 * @param Actions 軸とボタンを第三者視点操作へ割り当てる値。
+	 * @return 各処理を完了できたか表す結果。
+	 */
+	FThirdPersonCharacter3DUpdateResult Update( const FActionInput& CurrentInput, const FActionInput& PreviousInput, f32 DeltaSeconds, const FThirdPersonCharacter3DActionSet& Actions = FThirdPersonCharacter3DActionSet{} ) noexcept;
 
 	/** 移動と追従カメラの両方へ接続中ならtrue。 */
 	bool IsBound() const noexcept { return m_Scene != nullptr && m_Mover.IsBound() && m_Camera.IsBound(); }

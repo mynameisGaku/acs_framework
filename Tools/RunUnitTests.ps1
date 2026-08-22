@@ -74,6 +74,8 @@ $sources = @(
     'AcsFramework_Core\Scene\Camera3D\Test\NodeOrbitCamera3DTest.cpp',
     'AcsFramework_Core\Scene\Character3D\CharacterMover3D.cpp',
     'AcsFramework_Core\Scene\Character3D\Test\CharacterMover3DTest.cpp',
+    'AcsFramework_Core\Scene\Character3D\ThirdPersonCharacter3DActionSet.cpp',
+    'AcsFramework_Core\Scene\Character3D\Test\ThirdPersonCharacter3DActionSetTest.cpp',
     'AcsFramework_Core\Scene\Character3D\ThirdPersonCharacter3DInput.cpp',
     'AcsFramework_Core\Scene\Character3D\ThirdPersonCharacter3D.cpp',
     'AcsFramework_Core\Scene\Character3D\Test\ThirdPersonCharacter3DTest.cpp',

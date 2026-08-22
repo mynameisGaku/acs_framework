@@ -84,11 +84,11 @@ void RunThirdPersonCharacter3DTests( CTestHarness& Harness )
 		Harness.Check( Controller.IsBound() && Controller.Character() == Character, "一括接続状態を確認できる" );
 		Harness.Check( !Scene->FreeCameraEnabled() && Scene->OrbitCameraOverrideActive(), "接続中は追従カメラを明示選択する" );
 
-		FThirdPersonCharacter3DInput Input;
-		Input.MoveAxes = FVec2{ 0.0f, 1.0f };
-		Input.LookAxes = FVec2{ 0.5f, 0.0f };
-		const FThirdPersonCharacter3DUpdateResult Result = Controller.Update( Input, 0.5f );
-		Harness.Check( Result.Succeeded(), "必須の4段階を1回で完了する" );
+		FActionInput CurrentInput;
+		CurrentInput.SetAxis( 1u, 1.0f );
+		CurrentInput.SetAxis( 2u, 0.5f );
+		const FThirdPersonCharacter3DUpdateResult Result = Controller.Update( CurrentInput, FActionInput{}, 0.5f );
+		Harness.Check( Result.Succeeded(), "汎用入力から必須の4段階を1回で完了する" );
 		Harness.Check( !Result.bAnimationWasBound && Result.AnimationSucceeded(), "任意アニメーションなしでも成功する" );
 		CheckNear( Harness, Controller.OrbitCamera().State().yaw_radians, 45.0f * kDeg2Rad, "視点操作を移動より先に反映する" );
 

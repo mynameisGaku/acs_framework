@@ -74,6 +74,14 @@ FThirdPersonCharacter3DUpdateResult CThirdPersonCharacter3D::Update( const FThir
 }
 
 
+FThirdPersonCharacter3DUpdateResult CThirdPersonCharacter3D::Update( const FActionInput& CurrentInput, const FActionInput& PreviousInput, f32 DeltaSeconds, const FThirdPersonCharacter3DActionSet& Actions ) noexcept
+{
+	FThirdPersonCharacter3DInput Input;
+	if ( !Actions.TryEvaluate( CurrentInput, PreviousInput, Input ) ) return {};
+	return Update( Input, DeltaSeconds );
+}
+
+
 bool CThirdPersonCharacter3D::IsValidParams_Internal( const FThirdPersonCharacter3DParams& Params ) noexcept
 {
 	return IsFinite_Internal( Params.LocalCollisionCenter ) && std::isfinite( Params.MaximumMoveSpeed ) && Params.MaximumMoveSpeed >= 0.0f && std::isfinite( Params.MaximumTurnDegreesPerSecond ) && Params.MaximumTurnDegreesPerSecond >= 0.0f;

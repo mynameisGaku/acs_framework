@@ -34,7 +34,7 @@ msbuild acs_framework.vcxproj /p:Configuration=Release /p:Platform=x64
 |---|---|
 | 3D を置く | `CModel3DSpawner`、FBX の取り込み、材質 (metallic / roughness) |
 | 3D を照らす | `CLight3DSpawner`、方向だけで置ける太陽、位置と距離だけで置ける点光源 |
-| 動かす | `CThirdPersonCharacter3D`で移動・向き・追従カメラを一括化。個別の`CCharacterMover3D`と`CCharacterAnimator3D`も利用可能 |
+| 動かす | `CThirdPersonCharacter3D`へ`FActionInput`を渡すだけで移動・向き・追従カメラを一括化。個別機能も利用可能 |
 | カメラで追う | `CNodeOrbitCamera3D`、人物の注視点追従、回転・距離操作、遮蔽物回避 |
 | 見た目 | 物理大気・ボリューム雲・影・IBL・遮蔽 (SSAO)・間接光 (SSGI)・反射 (SSR)・霧・トーンマップ・輪郭補正 (FXAA) |
 | 3D 天候 | `AWeather3DScene`、晴天・曇天・雨・雪・嵐・霧・砂嵐の滑らかな遷移 |
@@ -102,12 +102,9 @@ CharacterParams.CollisionMask = 0x2u;
 HeroController.Bind( Collision, *this, *HeroNode, CharacterParams );
 HeroController.TryBindAnimation();
 
-FThirdPersonCharacter3DInput CharacterInput;
-CharacterInput.MoveAxes = FVec2{ MoveX, MoveForward };
-CharacterInput.LookAxes = FVec2{ LookX, LookY };
-CharacterInput.ZoomAxis = Zoom;
-CharacterInput.bJumpRequested = bJumpPressed;
-HeroController.Update( CharacterInput, DeltaSeconds );
+const FActionInput CharacterInput = ActionBindings.Resolve( InputReader );
+HeroController.Update( CharacterInput, PreviousCharacterInput, DeltaSeconds );
+PreviousCharacterInput = CharacterInput;
 HeroController.OrbitCamera().TryShakePreset( EShakePreset::HitImpact ); // 被弾時
 
 // 反射・屈折・泡を持つ水面を置き、波紋を起こす
