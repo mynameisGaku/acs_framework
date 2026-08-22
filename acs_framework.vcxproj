@@ -457,6 +457,13 @@
     <ClInclude Include="Source\AcsFramework_Core\Scene\DebugDraw3D\DebugLine3D.h" />
     <ClInclude Include="Source\AcsFramework_Core\Scene\Collision3D\CollisionShape3DParams.h" />
     <ClInclude Include="Source\AcsFramework_Core\Scene\Model3D\CollidableModel3DSpawnResult.h" />
+    <None Include="Source\AcsFramework_Core\Scene\Trigger3D\README.md" />
+    <None Include="Source\AcsFramework_Core\Scene\DebugDraw3D\Test\DebugDraw3DQueueTest.cpp" />
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Trigger3D\ProximityTrigger3D.h" />
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Trigger3D\ProximityTrigger3DParams.h" />
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Trigger3D\ProximityTrigger3DUpdateResult.h" />
+    <None Include="Source\AcsFramework_Core\Scene\Trigger3D\Test\ProximityTrigger3DTest.cpp" />
+    <ClInclude Include="Source\Debug\DebugTop\Element\DebugTopEnum.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Common\Pch.cpp">
@@ -655,6 +662,9 @@
     <ClCompile Include="Source\AcsFramework_Core\Scene\DebugDraw3D\DebugDraw3DLayer.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Scene\DebugDraw3D\DebugDraw3DQueue.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Scene\DebugDraw3D\DebugLine3D.cpp" />
+    <ClCompile Include="Source\AcsFramework_Core\Scene\Trigger3D\ProximityTrigger3D.cpp" />
+    <ClCompile Include="Source\AcsFramework_Core\Scene\Trigger3D\ProximityTrigger3DParams.cpp" />
+    <ClCompile Include="Source\AcsFramework_Core\Scene\Trigger3D\ProximityTrigger3DUpdateResult.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

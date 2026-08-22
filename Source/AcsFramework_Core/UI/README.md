@@ -82,6 +82,19 @@ const FSceneRayHit Picked = PickScreen3D( FVec2{ 0.5f, 0.5f }, 100.0f );
 問い合わせ時に現在位置へ同期し、破棄済みノードと場面終了時の登録を自動で外す。場面側で
 `CSceneCollision3D{ Graph() }`を別途所有する必要はない。
 
+呼出側所有の`CProximityTrigger3D`を`BindProximityTrigger3D`へ渡すと、基準ノードへ追従する
+球範囲をこの場面の衝突集合へ接続できる。毎更新の`Update`は、対象レイヤーに入った、滞在中、
+出たノードを別々の世代付き識別子配列で返す。扉や会話などの反応は場面側で決める。
+
+```cpp
+CProximityTrigger3D DoorTrigger;
+BindProximityTrigger3D(
+    DoorTrigger, *DoorNode, FProximityTrigger3DParams::Around( 3.0f, PlayerLayer ) );
+
+FProximityTrigger3DUpdateResult Result;
+if ( DoorTrigger.Update( Result ) && Result.DidEnter( PlayerNode->Id() ) ) OpenDoor();
+```
+
 `SpawnCollidableModel3D`はモデル生成とこの衝突登録を一括で行い、ノードと形状番号を返す。
 描画境界、明示箱、明示球を選べ、登録できなければ生成ノードも破棄予定へ戻す。厚さのない
 `Plane`を床にする場合は`FCollisionShape3DParams::FromBox`で歩ける厚みを明示する。

@@ -169,6 +169,12 @@
     <Filter Include="Source\AcsFramework_Core\Scene\Sprite3D\Test">
       <UniqueIdentifier>{74af0ac3-913a-436c-80e3-c844ad144540}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\AcsFramework_Core\Scene\Trigger3D">
+      <UniqueIdentifier>{87d869b4-8ad8-69af-9b80-22fd7f9a41a0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\AcsFramework_Core\Scene\Trigger3D\Test">
+      <UniqueIdentifier>{e4a94b70-f1c2-4a4c-1815-5e78aa8a5e91}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Source\AcsFramework_Core\Scene\Water3D">
       <UniqueIdentifier>{8f50d5d4-8947-4505-aa02-c19d5b0ebea1}</UniqueIdentifier>
     </Filter>
@@ -563,6 +569,15 @@
     </ClCompile>
     <ClCompile Include="Source\AcsFramework_Core\Scene\Sprite3D\Sprite3DSpawnParams.cpp">
       <Filter>Source\AcsFramework_Core\Scene\Sprite3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Scene\Trigger3D\ProximityTrigger3D.cpp">
+      <Filter>Source\AcsFramework_Core\Scene\Trigger3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Scene\Trigger3D\ProximityTrigger3DParams.cpp">
+      <Filter>Source\AcsFramework_Core\Scene\Trigger3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Scene\Trigger3D\ProximityTrigger3DUpdateResult.cpp">
+      <Filter>Source\AcsFramework_Core\Scene\Trigger3D</Filter>
     </ClCompile>
     <ClCompile Include="Source\AcsFramework_Core\Scene\Water3D\Water3DSpawner.cpp">
       <Filter>Source\AcsFramework_Core\Scene\Water3D</Filter>
@@ -1220,6 +1235,15 @@
     <ClInclude Include="Source\AcsFramework_Core\Scene\Sprite3D\Sprite3DSpawnParams.h">
       <Filter>Source\AcsFramework_Core\Scene\Sprite3D</Filter>
     </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Trigger3D\ProximityTrigger3D.h">
+      <Filter>Source\AcsFramework_Core\Scene\Trigger3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Trigger3D\ProximityTrigger3DParams.h">
+      <Filter>Source\AcsFramework_Core\Scene\Trigger3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Trigger3D\ProximityTrigger3DUpdateResult.h">
+      <Filter>Source\AcsFramework_Core\Scene\Trigger3D</Filter>
+    </ClInclude>
     <ClInclude Include="Source\AcsFramework_Core\Scene\Water3D\Water3DSpawner.h">
       <Filter>Source\AcsFramework_Core\Scene\Water3D</Filter>
     </ClInclude>
@@ -1452,6 +1476,9 @@
       <Filter>Source\Debug\DebugTop\Element</Filter>
     </ClInclude>
     <ClInclude Include="Source\Debug\DebugTop\Element\DebugTopElementWatch.h">
+      <Filter>Source\Debug\DebugTop\Element</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Debug\DebugTop\Element\DebugTopEnum.h">
       <Filter>Source\Debug\DebugTop\Element</Filter>
     </ClInclude>
     <ClInclude Include="Source\Debug\DebugTop\Input\DebugTopCursor.h">
@@ -1759,6 +1786,9 @@
     <None Include="Source\AcsFramework_Core\Scene\Collision3D\Test\SceneCollision3DTest.cpp">
       <Filter>Source\AcsFramework_Core\Scene\Collision3D\Test</Filter>
     </None>
+    <None Include="Source\AcsFramework_Core\Scene\DebugDraw3D\Test\DebugDraw3DQueueTest.cpp">
+      <Filter>Source\AcsFramework_Core\Scene\DebugDraw3D\Test</Filter>
+    </None>
     <None Include="Source\AcsFramework_Core\Scene\Interaction3D\README.md">
       <Filter>Source\AcsFramework_Core\Scene\Interaction3D</Filter>
     </None>
@@ -1806,6 +1836,12 @@
     </None>
     <None Include="Source\AcsFramework_Core\Scene\Sprite3D\Test\Sprite3DSpawnerTest.cpp">
       <Filter>Source\AcsFramework_Core\Scene\Sprite3D\Test</Filter>
+    </None>
+    <None Include="Source\AcsFramework_Core\Scene\Trigger3D\README.md">
+      <Filter>Source\AcsFramework_Core\Scene\Trigger3D</Filter>
+    </None>
+    <None Include="Source\AcsFramework_Core\Scene\Trigger3D\Test\ProximityTrigger3DTest.cpp">
+      <Filter>Source\AcsFramework_Core\Scene\Trigger3D\Test</Filter>
     </None>
     <None Include="Source\AcsFramework_Core\Scene\Water3D\README.md">
       <Filter>Source\AcsFramework_Core\Scene\Water3D</Filter>

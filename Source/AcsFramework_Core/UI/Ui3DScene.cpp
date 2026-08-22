@@ -97,6 +97,13 @@ FInteractionFocus3DUpdateResult AUi3DScene::UpdateInteractionFocus( bool bActiva
 }
 
 
+bool AUi3DScene::BindProximityTrigger3D( CProximityTrigger3D& Trigger,
+	ANode& Origin, const FProximityTrigger3DParams& Params ) noexcept
+{
+	return Trigger.Bind( Graph(), m_Collision3D, Origin, Params );
+}
+
+
 bool AUi3DScene::BindThirdPersonCharacter3D( CThirdPersonCharacter3D& Controller,
 	ANode& Character, const FThirdPersonCharacter3DParams& Params ) noexcept
 {

@@ -13,6 +13,7 @@
 #include "AcsFramework_Core/Scene/Model3D/CollidableModel3DSpawnResult.h"
 #include "AcsFramework_Core/Scene/Pick3D/SceneRay.h"
 #include "AcsFramework_Core/Scene/Pick3D/SceneRayHit.h"
+#include "AcsFramework_Core/Scene/Trigger3D/ProximityTrigger3D.h"
 #include "AcsFramework_Core/UI/InteractionReticle3D/InteractionReticle3DParams.h"
 #include "AcsFramework_Core/UI/WorldLabel3D/WorldLabel3DLayer.h"
 
@@ -98,6 +99,17 @@ public:
 
 	/** 読み取り専用の3D衝突集合を返す。 */
 	const CSceneCollision3D& Collision3D() const noexcept { return m_Collision3D; }
+
+	/**
+	 * 呼出側所有の球型近接トリガーを、この場面の衝突集合と基準ノードへ接続する。
+	 *
+	 * @param Trigger 呼出側が所有する未接続の近接トリガー。
+	 * @param Origin この場面が所有する球範囲の基準ノード。
+	 * @param Params ローカル球と検出する衝突レイヤー。
+	 * @return 所属と設定を確認して完全に接続できたらtrue。
+	 */
+	bool BindProximityTrigger3D( CProximityTrigger3D& Trigger, ANode& Origin,
+		const FProximityTrigger3DParams& Params = FProximityTrigger3DParams{} ) noexcept;
 
 	/**
 	 * 第三者視点キャラクターを、この場面の衝突集合、カメラ、対象ノードへ接続する。

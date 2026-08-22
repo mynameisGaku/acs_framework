@@ -5,6 +5,7 @@
 #include "AcsFramework_Core/Scene/Character3D/ThirdPersonCharacter3DControlPreset.h"
 #include "AcsFramework_Core/Scene/Collision3D/SceneCollision3D.h"
 #include "AcsFramework_Core/Scene/Model3D/CollidableModel3DSpawnResult.h"
+#include "AcsFramework_Core/Scene/Trigger3D/ProximityTrigger3D.h"
 #include "AcsFramework_Core/Scene/Weather3D/Weather3DScene.h"
 #include "AcsFramework_Core/Simulation/Input/ActionBindingTable.h"
 #include "AcsFramework_Core/Simulation/Input/ActionGamepadRebindState.h"
@@ -102,6 +103,9 @@ private:
 	/** Xキーで回転立方体を全登録ごと破棄または再生成する。 */
 	void ToggleDemoInteractable3D_Internal() noexcept;
 
+	/** 回転立方体の近接範囲と往復モデルから進入・退出表示を更新する。 */
+	void UpdateDemoProximityTrigger_Internal() noexcept;
+
 	/** Bキーで3D画像板を実行中に追加または破棄し、資源同期を見せる。 */
 	void ToggleDemoBillboard3D() noexcept;
 
@@ -129,6 +133,9 @@ private:
 
 	/** 回す操作対象と衝突形状。ノード所有は場面グラフが持つ。 */
 	FCollidableModel3DSpawnResult m_Spinner;
+
+	/** 回転立方体を基準に、往復モデルの進入と退出を追跡する。 */
+	CProximityTrigger3D m_SpinnerProximityTrigger;
 
 	/** 往復させる取り込みモデル。所有はしない (木が持っている)。 */
 	ANode* m_Mover = nullptr;

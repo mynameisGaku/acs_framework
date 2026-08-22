@@ -69,6 +69,12 @@ Subsystemにはしない。`AEffect3DScene`がscene単位で`CEffect3DPlayer`を
 `CCharacterMover3D`はその結果を親座標へ戻してノードへ反映し、速度と接地状態だけを保持する。
 固定更新と入力寿命は所有せず、キャラクターごとの短い寿命なのでsubsystemにはしない。
 
+3D近接トリガーは、場面またはゲーム機能が`CProximityTrigger3D`を所有する。基準ノードへ追従する
+球と`CSceneCollision3D`の既存重なり問い合わせを使い、前回からの進入、滞在、退出だけを
+世代付きノード識別子で返す。`AUi3DScene::BindProximityTrigger3D`は場面グラフと衝突集合への
+接続をまとめる。扉、会話、チェックポイントなど作品固有の反応、入力、描画、時間は所有せず、
+短い寿命の局所状態なのでsubsystemにはしない。
+
 単一モデルを第三者視点キャラクターとして使う定型処理は`CThirdPersonCharacter3DSpawner`へまとめる。
 静的または骨格モデルの既存生成器、`CSceneCollision3D`、`CThirdPersonCharacter3D`を順に呼ぶだけの
 状態なしアダプターとし、自己形状番号を移動設定へ反映する。必須接続の途中で失敗した場合は形状と

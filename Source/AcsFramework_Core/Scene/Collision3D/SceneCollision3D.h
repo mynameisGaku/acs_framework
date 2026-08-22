@@ -37,6 +37,9 @@ public:
 	/** 所有権の重複を防ぐためコピー代入を禁止する。 */
 	CSceneCollision3D& operator=( const CSceneCollision3D& ) = delete;
 
+	/** 指定したノードグラフへ接続した衝突集合ならtrue。 */
+	bool IsBoundTo( const CSceneNodeGraph& Graph ) const noexcept { return m_Graph == &Graph; }
+
 	/**
 	 * 設定で選んだ描画境界、明示箱、明示球のいずれかをノードへ登録する。
 	 *

@@ -30,6 +30,8 @@ WASDで移動、左Shiftで走行、矢印キーで視点、Spaceでジャンプ
 デモ中に `B` を押すと、カメラ追従する3D画像板を実行中に追加し、もう一度押すと安全に破棄する。
 描画開始後の追加・削除でも、ACSのGPU資源同期を通ることを確認できる。
 `X`では回転立方体を操作対象・衝突形状ごと破棄し、もう一度押すと3登録をまとめて再生成する。
+往復する取り込みモデルが回転立方体の範囲へ入る、または出ると、同じ表示欄で近接トリガーの
+進入・退出も確認できる。
 
 > `FetchAcs.ps1` がまだ Release を落とせない段階なら、エンジンをローカルでビルドして
 > `.\Tools\FetchAcs.ps1 -FromLocal C:\acs_dev` で持ってくる (`ThirdParty/acs/README.md`)。
@@ -54,6 +56,7 @@ WASDで移動、左Shiftで走行、矢印キーで視点、Spaceでジャンプ
 | 3Dデバッグ描画 | `DrawLine3D()`、`DrawAabb3D()`、`DrawSphere3D()`、深度を無視して常に確認できる1フレーム線 |
 | 当てる | `MakeScreenRay3D()` / `Raycast3D()` / `PickScreen3D()`で球面や読み込みメッシュへ正確に当てる |
 | 重なりと移動判定 | `CSceneCollision3D`、ノード追従、球・箱の重なり、球スイープ、レイヤー |
+| 近づきを取る | `BindProximityTrigger3D()`、ノード追従球への進入・滞在・退出、レイヤー絞り込み |
 | 土台 | 起動・場面遷移・アセット・音・セーブ・設定・入力再割り当て・多言語・決定性・開発支援 |
 
 詳しくは [`Docs/ROADMAP.md`](Docs/ROADMAP.md)。**v1.0.0 で何を入れて何を入れないか**もそこに書いてある。
@@ -149,6 +152,13 @@ Collision.TryAddBounds( *WallNode, 0x2u );
 TArray<ANode*> Nearby;
 Collision.TryOverlapSphere(
     FSphere{ HeroNode->World().position, 2.0f }, Nearby, HeroSpawn.Shape, 0x2u );
+
+// 扉へ追従する球範囲へ人物が入った瞬間だけ処理する。Triggerは場面のメンバーとして保持する
+CProximityTrigger3D DoorTrigger;
+BindProximityTrigger3D(
+    DoorTrigger, *Door.Node, FProximityTrigger3DParams::Around( 3.0f, 0x1u ) );
+FProximityTrigger3DUpdateResult Proximity;
+if ( DoorTrigger.Update( Proximity ) && Proximity.DidEnter( HeroNode->Id() ) ) OpenDoor();
 
 // 接続済みキャラクターを、既定の入力割り当てから1回進める
 CActionBindingTable ActionBindings;

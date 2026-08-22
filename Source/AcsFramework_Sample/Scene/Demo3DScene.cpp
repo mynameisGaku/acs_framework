@@ -31,6 +31,9 @@ namespace
 	/** 操作キャラクターと歩ける面・障害物を結ぶ衝突レイヤー。 */
 	constexpr u32 kCharacterCollisionLayer = 0x1u;
 
+	/** 回転立方体の近接トリガーだけが往復モデルを選ぶ追加レイヤー。 */
+	constexpr u32 kProximityTargetLayer = 0x2u;
+
 	/** 初期画面でキャラクターと展示物を同時に見せる足元位置。 */
 	constexpr FVec3 kCharacterStartPosition{ 0.0f, 0.001f, 4.2f };
 
@@ -338,6 +341,7 @@ void ADemo3DScene::OnEnter() noexcept
 	InteractionParams.MaximumDistance = 8.0f;
 	if ( !InteractionFocus().SetParams( InteractionParams ) ) ACS_LOG_WARN( "Demo3D: 視線フォーカス距離を設定できなかった" );
 	m_Spinner = FCollidableModel3DSpawnResult{};
+	m_SpinnerProximityTrigger.Unbind();
 	m_Mover = nullptr;
 	m_DynamicBillboard = nullptr;
 	m_WaterSurfaceId = FNodeId{};
@@ -430,7 +434,8 @@ void ADemo3DScene::OnEnter() noexcept
 	Model.Roughness = 0.40f;
 	Model.Name = FStringView( "ImportedModel" );
 	m_Mover = SpawnCollidableModel3D(
-		Model, FCollisionShape3DParams::FromBounds( kCharacterCollisionLayer ) ).Node;
+		Model, FCollisionShape3DParams::FromBounds(
+			kCharacterCollisionLayer | kProximityTargetLayer ) ).Node;
 
 	// 透過PNGをカメラへ向く3D板として置く。画像読込、ノード、追従登録を1回へまとめる。
 	FSprite3DSpawnParams ImageMarker = FSprite3DSpawnParams::FromImage(
@@ -641,6 +646,7 @@ void ADemo3DScene::OnExit() noexcept
 	m_GeometryPickDebugRemainingSeconds = 0.0f;
 	m_CharacterNode = nullptr;
 	m_Spinner = FCollidableModel3DSpawnResult{};
+	m_SpinnerProximityTrigger.Unbind();
 	m_Mover = nullptr;
 	m_WaterSurfaceId = FNodeId{};
 	m_bInteractionRequested = false;
@@ -853,13 +859,15 @@ void ADemo3DScene::OnUpdate( f32 DeltaSeconds ) noexcept
 
 	// 取り込んだモデルを 2 点のあいだで往復させ、進む先を向かせる。
 	// **«動かす» のに要るのはこれだけ**、というのを見せるための最小の動き。
-	if ( m_Mover == nullptr ) return;
-
-	if ( m_Mover->MoveToward( m_MoveTarget, kMoveSpeed * DeltaSeconds ) )
+	if ( m_Mover != nullptr )
 	{
-		m_MoveTarget.z = -m_MoveTarget.z;
+		if ( m_Mover->MoveToward( m_MoveTarget, kMoveSpeed * DeltaSeconds ) )
+		{
+			m_MoveTarget.z = -m_MoveTarget.z;
+		}
+		m_Mover->LookAt( m_MoveTarget );
 	}
-	m_Mover->LookAt( m_MoveTarget );
+	UpdateDemoProximityTrigger_Internal();
 }
 
 
@@ -1083,7 +1091,15 @@ bool ADemo3DScene::TrySpawnDemoSpinner3D_Internal() noexcept
 	m_Spinner = SpawnInteractableCollidableModel3D(
 		Cube, FStringView( "ENTER: INSPECT" ),
 		FCollisionShape3DParams::FromBounds( kCharacterCollisionLayer ) );
-	return m_Spinner.Succeeded();
+	if ( !m_Spinner ) return false;
+	if ( BindProximityTrigger3D( m_SpinnerProximityTrigger, *m_Spinner.Node,
+		FProximityTrigger3DParams::Around( 3.0f, kProximityTargetLayer ) ) ) return true;
+
+	if ( !DestroyInteractableCollidableModel3D( m_Spinner ) )
+	{
+		ACS_LOG_WARN( "Demo3D: 近接トリガー接続失敗後の回転立方体を巻き戻せなかった" );
+	}
+	return false;
 }
 
 
@@ -1096,6 +1112,7 @@ void ADemo3DScene::ToggleDemoInteractable3D_Internal() noexcept
 			ACS_LOG_WARN( "Demo3D: 回転立方体を全登録ごと破棄できなかった" );
 			return;
 		}
+		m_SpinnerProximityTrigger.Unbind();
 		SetUiTextIfChanged( Ui(), m_InteractionStatusText, "SPINNER: REMOVED" );
 		return;
 	}
@@ -1106,6 +1123,24 @@ void ADemo3DScene::ToggleDemoInteractable3D_Internal() noexcept
 		return;
 	}
 	SetUiTextIfChanged( Ui(), m_InteractionStatusText, "SPINNER: ADDED" );
+}
+
+
+void ADemo3DScene::UpdateDemoProximityTrigger_Internal() noexcept
+{
+	if ( !m_SpinnerProximityTrigger.IsBound() || m_Mover == nullptr ) return;
+
+	FProximityTrigger3DUpdateResult Result;
+	if ( !m_SpinnerProximityTrigger.Update( Result ) ) return;
+	const FNodeId MoverId = m_Mover->Id();
+	if ( Result.DidEnter( MoverId ) )
+	{
+		SetUiTextIfChanged( Ui(), m_InteractionStatusText, "PROXIMITY: MOVER ENTERED" );
+	}
+	else if ( Result.DidExit( MoverId ) )
+	{
+		SetUiTextIfChanged( Ui(), m_InteractionStatusText, "PROXIMITY: MOVER EXITED" );
+	}
 }
 
 
