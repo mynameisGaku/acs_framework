@@ -68,6 +68,11 @@ void RunThirdPersonCharacter3DTests( CTestHarness& Harness )
 	Harness.BeginSuite( "CThirdPersonCharacter3D / 1入力で視点、移動、向き、追従を更新する" );
 
 	{
+		const FThirdPersonCharacter3DInput DefaultInput;
+		Harness.Check( DefaultInput.IsValid() && DefaultInput.MoveAxes.x == 0.0f && DefaultInput.MoveAxes.y == 0.0f
+			&& DefaultInput.LookAxes.x == 0.0f && DefaultInput.LookAxes.y == 0.0f && DefaultInput.ZoomAxis == 0.0f
+			&& !DefaultInput.bJumpRequested, "未指定の操作量を安全な無入力として初期化する" );
+
 		TUniquePtr<CTestThirdPersonScene3D> Scene = MakeUnique<CTestThirdPersonScene3D>();
 		CSceneCollision3D Collision{ Scene->Graph() };
 		Harness.Check( AddFloor( *Scene, Collision ).IsValid(), "移動用の床を登録できる" );
