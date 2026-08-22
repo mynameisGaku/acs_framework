@@ -71,6 +71,44 @@ bool CCharacterMover3D::MoveFromCamera( const CCamera& Camera, FVec2 MoveAxes, f
 }
 
 
+bool CCharacterMover3D::TurnTowardMovement( f32 MaximumDegreesPerSecond, f32 DeltaSeconds ) noexcept
+{
+	if ( m_Node == nullptr || m_Node->IsPendingDestroy() || !std::isfinite( MaximumDegreesPerSecond ) || MaximumDegreesPerSecond < 0.0f || !std::isfinite( DeltaSeconds ) || DeltaSeconds < 0.0f ) return false;
+
+	FVec3 DesiredForward{ m_State.Velocity.x, 0.0f, m_State.Velocity.z };
+	const f32 DesiredLengthSq = LengthSq( DesiredForward );
+	if ( !IsFinite_Internal( DesiredForward ) || !std::isfinite( DesiredLengthSq ) ) return false;
+	if ( DesiredLengthSq <= 1.0e-8f || MaximumDegreesPerSecond == 0.0f || DeltaSeconds == 0.0f ) return true;
+	DesiredForward = Normalize( DesiredForward );
+
+	const FTransform3D CurrentWorld = m_Node->World();
+	if ( !IsUsableRotation_Internal( CurrentWorld.rotation ) ) return false;
+	FVec3 CurrentForward = Rotate( Normalize( CurrentWorld.rotation ), FVec3::Forward() );
+	CurrentForward.y = 0.0f;
+	const f32 CurrentLengthSq = LengthSq( CurrentForward );
+	if ( !IsFinite_Internal( CurrentForward ) || !std::isfinite( CurrentLengthSq ) || CurrentLengthSq <= 1.0e-8f ) return false;
+	CurrentForward = Normalize( CurrentForward );
+
+	const f32 SignedAngle = std::atan2( Cross( CurrentForward, DesiredForward ).y, Dot( CurrentForward, DesiredForward ) );
+	const f32 MaximumRadians = MaximumDegreesPerSecond * kDeg2Rad * DeltaSeconds;
+	if ( !std::isfinite( SignedAngle ) || !std::isfinite( MaximumRadians ) ) return false;
+	const f32 AppliedAngle = SignedAngle < -MaximumRadians ? -MaximumRadians : ( SignedAngle > MaximumRadians ? MaximumRadians : SignedAngle );
+	if ( AppliedAngle == 0.0f ) return true;
+
+	FQuat LocalRotation = Normalize( Normalize( CurrentWorld.rotation ) * FQuat::AxisAngle( FVec3::Up(), AppliedAngle ) );
+	if ( const ANode* const Parent = m_Node->Parent() )
+	{
+		const FQuat ParentWorldRotation = Parent->World().rotation;
+		if ( !IsUsableRotation_Internal( ParentWorldRotation ) ) return false;
+		LocalRotation = Normalize( LocalRotation * Inverse( Normalize( ParentWorldRotation ) ) );
+	}
+	if ( !IsUsableRotation_Internal( LocalRotation ) ) return false;
+
+	m_Node->Local().rotation = LocalRotation;
+	return true;
+}
+
+
 bool CCharacterMover3D::ResetMotion() noexcept
 {
 	if ( m_Node == nullptr || m_Node->IsPendingDestroy() ) return false;
@@ -163,4 +201,12 @@ bool CCharacterMover3D::TryCameraRelativeVelocity_Internal( const CCamera& Camer
 bool CCharacterMover3D::IsFinite_Internal( FVec3 Value ) noexcept
 {
 	return std::isfinite( Value.x ) && std::isfinite( Value.y ) && std::isfinite( Value.z );
+}
+
+
+bool CCharacterMover3D::IsUsableRotation_Internal( FQuat Value ) noexcept
+{
+	if ( !std::isfinite( Value.x ) || !std::isfinite( Value.y ) || !std::isfinite( Value.z ) || !std::isfinite( Value.w ) ) return false;
+	const f32 LengthSquared = Value.x * Value.x + Value.y * Value.y + Value.z * Value.z + Value.w * Value.w;
+	return std::isfinite( LengthSquared ) && LengthSquared > 1.0e-8f;
 }

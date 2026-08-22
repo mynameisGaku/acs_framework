@@ -136,6 +136,57 @@ void RunCharacterMover3DTests( CTestHarness& Harness )
 		CheckNear( Harness, Length( DiagonalTranslation ), 2.0f, "斜め入力を最大速度へ制限する" );
 	}
 
+	Harness.BeginSuite( "CCharacterMover3D / 実際の移動方向へ滑らかに向く" );
+
+	{
+		CSceneNodeGraph Graph;
+		CSceneCollision3D Collision{ Graph };
+		ANode* const Player = SpawnNode( Graph, "TurningCharacter" );
+		Harness.Check( Player != nullptr, "向き制御の対象を置ける" );
+		if ( Player == nullptr ) return;
+
+		FKinematicCharacterMovementParams3D Params;
+		Params.GravityAcceleration = 0.0f;
+		CCharacterMover3D Mover;
+		Harness.Check( Mover.Bind( Collision, *Player, FVec3{}, Params ), "向き制御へ接続できる" );
+		Harness.Check( Mover.Move( FVec2{ 1.0f, 0.0f }, false, 1.0f ), "世界Xへ移動できる" );
+		Harness.Check( Mover.TurnTowardMovement( 45.0f, 1.0f ), "1秒分だけ世界Xへ向ける" );
+		FVec3 Forward = Rotate( Player->World().rotation, FVec3::Forward() );
+		CheckNear( Harness, Forward.x, 0.7071068f, "45度回転後の前方向X" );
+		CheckNear( Harness, Forward.z, 0.7071068f, "45度回転後の前方向Z" );
+
+		Harness.Check( Mover.TurnTowardMovement( 45.0f, 1.0f ), "残り45度を回せる" );
+		Forward = Rotate( Player->World().rotation, FVec3::Forward() );
+		CheckNear( Harness, Forward.x, 1.0f, "移動方向へ到達する" );
+		CheckNear( Harness, Forward.z, 0.0f, "回り過ぎない" );
+
+		const FQuat RotationBeforeStop = Player->Local().rotation;
+		Harness.Check( Mover.Move( FVec2{}, false, 1.0f ) && Mover.TurnTowardMovement( 360.0f, 1.0f ), "停止中も正常に処理できる" );
+		Harness.Check( Player->Local().rotation.x == RotationBeforeStop.x && Player->Local().rotation.y == RotationBeforeStop.y && Player->Local().rotation.z == RotationBeforeStop.z && Player->Local().rotation.w == RotationBeforeStop.w, "停止中は回転を変更しない" );
+	}
+
+	Harness.BeginSuite( "CCharacterMover3D / 親が回っていても世界の移動方向へ向く" );
+
+	{
+		CSceneNodeGraph Graph;
+		CSceneCollision3D Collision{ Graph };
+		ANode* const Parent = SpawnNode( Graph, "TurningParent" );
+		ANode* const Player = Parent != nullptr ? SpawnNode( Graph, "NestedTurningCharacter", Parent ) : nullptr;
+		Harness.Check( Parent != nullptr && Player != nullptr, "向き制御用の親子ノードを置ける" );
+		if ( Parent == nullptr || Player == nullptr ) return;
+		Parent->RotateDeg( FVec3{ 0.0f, 90.0f, 0.0f } );
+
+		FKinematicCharacterMovementParams3D Params;
+		Params.GravityAcceleration = 0.0f;
+		CCharacterMover3D Mover;
+		Harness.Check( Mover.Bind( Collision, *Player, FVec3{}, Params ), "親付きの向き制御へ接続できる" );
+		Harness.Check( Mover.Move( FVec2{ 0.0f, 1.0f }, false, 1.0f ), "世界Zへ移動できる" );
+		Harness.Check( Mover.TurnTowardMovement( 360.0f, 1.0f ), "親座標へ戻して世界Zを向ける" );
+		const FVec3 Forward = Rotate( Player->World().rotation, FVec3::Forward() );
+		CheckNear( Harness, Forward.x, 0.0f, "親回転後の世界前方向X" );
+		CheckNear( Harness, Forward.z, 1.0f, "親回転後も世界Zを向く" );
+	}
+
 	Harness.BeginSuite( "CCharacterMover3D / 不正値と解除でノードと状態を保つ" );
 
 	{
@@ -166,6 +217,9 @@ void RunCharacterMover3DTests( CTestHarness& Harness )
 		Harness.Check( !Mover.MoveFromCamera( VerticalCamera, FVec2{}, -1.0f, false, 1.0f ), "負の最大速度を拒否する" );
 		CheckNear( Harness, Player->Position().x, PositionBefore.x, "カメラ変換失敗でもノードXを保つ" );
 		CheckNear( Harness, Mover.State().Position.x, StateBefore.Position.x, "カメラ変換失敗でも状態を保つ" );
+		const FQuat RotationBeforeFailure = Player->Local().rotation;
+		Harness.Check( !Mover.TurnTowardMovement( Infinity, 1.0f ) && !Mover.TurnTowardMovement( 90.0f, -1.0f ), "不正な回転速度と時刻を拒否する" );
+		Harness.Check( Player->Local().rotation.x == RotationBeforeFailure.x && Player->Local().rotation.y == RotationBeforeFailure.y && Player->Local().rotation.z == RotationBeforeFailure.z && Player->Local().rotation.w == RotationBeforeFailure.w, "向き制御失敗でも回転を保つ" );
 
 		Harness.Check( !Mover.Bind( Collision, *Player, FVec3{ Infinity, 0.0f, 0.0f } ), "有限でない球中心を拒否する" );
 		Harness.Check( Mover.IsBound(), "再接続失敗で既存接続を保つ" );

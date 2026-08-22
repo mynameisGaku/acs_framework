@@ -97,6 +97,7 @@ HeroMover.Bind( Collision, *HeroNode, FVec3{ 0.0f, 0.45f, 0.0f } );
 HeroMover.SetCollisionFilter( PlayerShape, 0x2u );
 HeroMover.MoveFromCamera(
     Camera(), FVec2{ MoveX, MoveForward }, 4.0f, bJumpPressed, DeltaSeconds );
+HeroMover.TurnTowardMovement( 540.0f, DeltaSeconds );
 
 // 反射・屈折・泡を持つ水面を置き、波紋を起こす
 FWater3DSpawnParams Water;

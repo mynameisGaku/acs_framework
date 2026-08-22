@@ -56,6 +56,16 @@ public:
 	bool MoveFromCamera( const CCamera& Camera, FVec2 MoveAxes, f32 MaximumSpeed, bool bJumpRequested, f32 DeltaSeconds ) noexcept;
 
 	/**
+	 * 直前に確定した水平速度へ、ノードの前方向を世界Y軸回りで滑らかに向ける。
+	 *
+	 * @details 停止中は向きを保つ。親ノードがある場合は確定した世界回転を親座標へ戻す。
+	 * @param MaximumDegreesPerSecond 1秒間に回せる有限かつ0以上の最大角度。
+	 * @param DeltaSeconds 進める有限かつ0以上の秒数。
+	 * @return 接続と回転が有効で向きの更新または維持を完了できたらtrue。
+	 */
+	bool TurnTowardMovement( f32 MaximumDegreesPerSecond, f32 DeltaSeconds ) noexcept;
+
+	/**
 	 * 現在のノード位置を球中心へ読み直し、速度と接地状態を初期化する。
 	 *
 	 * @return 接続中のノードから有限な球中心を作れたらtrue。失敗時は状態を変更しない。
@@ -111,6 +121,9 @@ private:
 
 	/** 全成分が有限ならtrueを返す。 */
 	static bool IsFinite_Internal( FVec3 Value ) noexcept;
+
+	/** 回転の全成分が有限で長さを持つならtrueを返す。 */
+	static bool IsUsableRotation_Internal( FQuat Value ) noexcept;
 
 	/** 呼出側が所有するシーン衝突集合。 */
 	CSceneCollision3D* m_Collision = nullptr;
