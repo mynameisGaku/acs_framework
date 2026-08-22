@@ -3,6 +3,7 @@
 
 #include <acs.h>
 
+#include "AcsFramework_Core/Scene/Billboard3D/Billboard3DLayer.h"
 #include "AcsFramework_Core/Scene/DebugDraw3D/DebugDraw3DLayer.h"
 #include "AcsFramework_Core/Scene/Interaction3D/InteractionHighlight3DParams.h"
 #include "AcsFramework_Core/Scene/Interaction3D/InteractionFocus3D.h"
@@ -63,6 +64,29 @@ public:
 	 * @return この場面が所有するワールドラベルレイヤー。
 	 */
 	const CWorldLabel3DLayer& WorldLabels() const noexcept { return m_WorldLabels; }
+
+	/**
+	 * 3D画像板を現在カメラへ向け続ける追従レイヤーを返す。
+	 *
+	 * @return この場面のグラフへ接続済みのビルボードレイヤー。
+	 */
+	CBillboard3DLayer& Billboards() noexcept { return m_Billboards; }
+
+	/** 読み取り専用のビルボードレイヤーを返す。 */
+	const CBillboard3DLayer& Billboards() const noexcept { return m_Billboards; }
+
+	/**
+	 * 画像名からカメラ追従の3D画像板を1回で生成する。
+	 *
+	 * @param Params 画像名、位置、大きさ、ノード名。
+	 * @param Mode 上下も追うか、worldのY軸を保つか。
+	 * @param RollDegrees 正面軸まわりへ加える度数。
+	 * @param Parent この場面が所有する親。空ならroot直下。
+	 * @return 生成して追従へ加えたノード。画像読込や登録に失敗したらnullptr。
+	 */
+	ANode* SpawnBillboard3D( const FSprite3DSpawnParams& Params,
+		EBillboard3DMode Mode = EBillboard3DMode::FaceCamera, f32 RollDegrees = 0.0f,
+		ANode* Parent = nullptr ) noexcept;
 
 	/**
 	 * 登録対象の視線判定と操作案内を扱う3Dインタラクション窓口を返す。
@@ -177,6 +201,9 @@ private:
 
 	/** この場面のノード位置をHUDへ射影するワールドラベルレイヤー。 */
 	CWorldLabel3DLayer m_WorldLabels;
+
+	/** 3D画像板の世代付き識別子とカメラ追従を場面寿命で所有する層。 */
+	CBillboard3DLayer m_Billboards;
 
 	/** 実形状ピックと操作案内を接続する、この場面所有の視線フォーカス。 */
 	CInteractionFocus3D m_InteractionFocus;

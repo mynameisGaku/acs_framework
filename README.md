@@ -35,7 +35,7 @@ WASDで移動、左Shiftで走行、矢印キーで視点、Spaceでジャンプ
 | | |
 |---|---|
 | 3D を置く | `CModel3DSpawner`、FBX の取り込み、材質 (metallic / roughness) |
-| 3D画像を置く | `CSprite3DSpawner`、透過PNG、深度判定、HDRへの透過合成 |
+| 3D画像を置く | `CSprite3DSpawner`の固定板、`SpawnBillboard3D()`のカメラ追従板、透過PNG、深度判定、HDR合成 |
 | 3D を照らす | `CLight3DSpawner`、方向だけで置ける太陽、位置と距離だけで置ける点光源 |
 | 動かす | `CThirdPersonCharacter3D`へ既定のWASD・パッド入力を渡すだけで移動・向き・追従カメラを一括化 |
 | 操作を変える | UIでキーボード、ゲームパッドのボタン・軸を選び、自動保存して次回起動時に復元 |
@@ -70,6 +70,9 @@ CModel3DSpawner::SpawnInto( Graph(), Model, Assets->Models() );
 FSprite3DSpawnParams Marker = FSprite3DSpawnParams::FromImage(
     FStringView( "Textures/Marker.png" ), FVec3{ 0, 2, 3 }, FVec2{ 0.8f, 0.8f } );
 CSprite3DSpawner::SpawnInto( Graph(), Marker, Assets->Images() );
+
+// AUi3DSceneなら、同じ指定をカメラへ向く3D板として1回で置ける
+SpawnBillboard3D( Marker );
 
 // 面から太陽へ向かう方向だけで、影とPBRへ繋がる平行光を置く
 CLight3DSpawner::SpawnInto( Graph(), FLight3DSpawnParams::Sun( FVec3{ -0.47f, 0.58f, 0.66f } ) );

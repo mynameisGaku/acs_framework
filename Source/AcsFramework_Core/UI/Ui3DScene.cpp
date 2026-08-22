@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: Apache-2.0
 #include "AcsFramework_Core/UI/Ui3DScene.h"
 
+#include "AcsFramework_Core/Assets/AssetLoaderSubsystem.h"
+#include "AcsFramework_Core/Scene/Sprite3D/Sprite3DSpawnParams.h"
 #include "AcsFramework_Core/UI/InteractionReticle3D/InteractionReticle3DLayout.h"
 
 namespace
@@ -19,6 +21,7 @@ void AUi3DScene::OnEnter() noexcept
 	m_AppliedInteractionHighlightNode = FNodeId{};
 	m_bInteractionHighlightApplied = false;
 	m_WorldLabels.Bind( Graph() );
+	m_Billboards.Bind( Graph() );
 	if ( !m_InteractionFocus.Bind( Graph(), m_WorldLabels ) ) ACS_LOG_WARN( "AUi3DScene: 3D視線フォーカスを場面へ接続できなかった" );
 	m_Ui.Init();
 }
@@ -31,6 +34,7 @@ void AUi3DScene::OnExit() noexcept
 	m_bInteractionHighlightApplied = false;
 	m_Ui.Shutdown();
 	m_InteractionFocus.Unbind();
+	m_Billboards.Unbind();
 	m_WorldLabels.Unbind();
 	m_DebugDraw3D.Shutdown();
 	ALegacyScene3DAdapter::OnExit();
@@ -46,6 +50,8 @@ void AUi3DScene::OnUpdate( f32 DeltaSeconds ) noexcept
 
 void AUi3DScene::OnRender( FRenderContext& Context ) noexcept
 {
+	(void)RefreshActiveCamera();
+	(void)m_Billboards.UpdateFacing( Camera() );
 	SyncInteractionHighlight_Internal();
 	ALegacyScene3DAdapter::OnRender( Context );
 }
@@ -70,6 +76,19 @@ void AUi3DScene::OnDrawHud( FRenderContext& Context, CSpriteBatch& Sprites ) noe
 FInteractionFocus3DUpdateResult AUi3DScene::UpdateInteractionFocus( bool bActivateRequested ) noexcept
 {
 	return m_InteractionFocus.Update( Camera(), bActivateRequested );
+}
+
+
+ANode* AUi3DScene::SpawnBillboard3D( const FSprite3DSpawnParams& Params,
+	EBillboard3DMode Mode, f32 RollDegrees, ANode* Parent ) noexcept
+{
+	CAssetLoaderSubsystem* const Assets = GetSubsystem<CAssetLoaderSubsystem>();
+	if ( Assets == nullptr )
+	{
+		ACS_LOG_WARN( "AUi3DScene: 3Dビルボード用の画像読込窓口が無い" );
+		return nullptr;
+	}
+	return m_Billboards.Spawn( Params, Assets->Images(), Mode, RollDegrees, Parent );
 }
 
 

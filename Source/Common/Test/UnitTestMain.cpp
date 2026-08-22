@@ -59,6 +59,7 @@ void RunGameSettingsStoreTests( CTestHarness& Harness );
 void RunLocalizationTests( CTestHarness& Harness );
 void RunModel3DSpawnerTests( CTestHarness& Harness );
 void RunSprite3DSpawnerTests( CTestHarness& Harness );
+void RunBillboard3DTests( CTestHarness& Harness );
 void RunAnimatedModel3DSpawnerTests( CTestHarness& Harness );
 void RunCharacterAnimation3DProfileTests( CTestHarness& Harness );
 void RunCharacterAnimator3DTests( CTestHarness& Harness );
@@ -113,6 +114,7 @@ int main()
 	RunLocalizationTests( Harness );
 	RunModel3DSpawnerTests( Harness );
 	RunSprite3DSpawnerTests( Harness );
+	RunBillboard3DTests( Harness );
 	RunAnimatedModel3DSpawnerTests( Harness );
 	RunCharacterAnimation3DProfileTests( Harness );
 	RunCharacterAnimator3DTests( Harness );

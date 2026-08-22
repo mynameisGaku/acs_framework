@@ -161,7 +161,11 @@ cameraからの距離に応じて大気へ馴染み、雲も実距離まで同�
 - ~~固定向き3D画像の簡単配置~~ → **実装済み** (2026-08-22)。
   `FSprite3DSpawnParams::FromImage`へ画像名、位置、大きさを渡し、`CSprite3DSpawner`で置く。
   `CImageLibrary`は`Assets`相対名をACSの画像ローダへ渡し、深度判定とHDR透過描画も既存の
-  `ASprite3DComponent`経路を使う。カメラ追従のビルボードは別の向き契約として後続へ分ける
+  `ASprite3DComponent`経路を使う
+- ~~カメラ追従3Dビルボード~~ → **実装済み** (2026-08-22)。
+  `AUi3DScene::SpawnBillboard3D`へ固定板と同じ指定を渡すだけで、画像読込、生成、追従登録を行う。
+  全軸追従とY軸固定を選べ、親ノードが回転していても描画直前の現在カメラへworld正面を合わせる。
+  世代付きノード識別子を使うため、画像板の破棄と場面グラフ差し替え後に別ノードへ誤追従しない
 - ~~遊ぶ人向け UI の土台 (`UiLayer`、`Widget`)~~ → **配線済み** (2026-08-22)。
   `AUi3DScene` を継承し、`Ui().AddText` / `Ui().AddButton` で置く。UIの初期化、入力、更新、
   終了は場面寿命へまとまり、HDR、tonemap、TAAまたはFXAAが終わった後のLDR画面へ描く。

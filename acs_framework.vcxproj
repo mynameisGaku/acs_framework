@@ -343,6 +343,11 @@
     <ClInclude Include="Source\AcsFramework_Core\Scene\Model3D\Model3DSpawner.h" />
     <None Include="Source\AcsFramework_Core\Scene\Model3D\README.md" />
     <None Include="Source\AcsFramework_Core\Scene\Model3D\Test\Model3DSpawnerTest.cpp" />
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Billboard3D\Billboard3DLayer.h" />
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Billboard3D\Billboard3DMath.h" />
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Billboard3D\Billboard3DMode.h" />
+    <None Include="Source\AcsFramework_Core\Scene\Billboard3D\README.md" />
+    <None Include="Source\AcsFramework_Core\Scene\Billboard3D\Test\Billboard3DTest.cpp" />
     <ClInclude Include="Source\AcsFramework_Core\Scene\Sprite3D\Sprite3DSpawnParams.h" />
     <ClInclude Include="Source\AcsFramework_Core\Scene\Sprite3D\Sprite3DSpawner.h" />
     <None Include="Source\AcsFramework_Core\Scene\Sprite3D\README.md" />
@@ -597,6 +602,8 @@
     <ClCompile Include="Source\AcsFramework_Core\Text\Localization\LocalizationSubsystem.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Scene\Model3D\Model3DSpawnParams.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Scene\Model3D\Model3DSpawner.cpp" />
+    <ClCompile Include="Source\AcsFramework_Core\Scene\Billboard3D\Billboard3DLayer.cpp" />
+    <ClCompile Include="Source\AcsFramework_Core\Scene\Billboard3D\Billboard3DMath.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Scene\Sprite3D\Sprite3DSpawnParams.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Scene\Sprite3D\Sprite3DSpawner.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Scene\Animation3D\AnimatedModel3DSpawnParams.cpp" />

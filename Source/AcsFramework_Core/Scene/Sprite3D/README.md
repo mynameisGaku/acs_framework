@@ -14,10 +14,11 @@ if ( Assets != nullptr )
 ```
 
 板はノードのローカルXY面に固定される。看板、カード、印、簡単な草木など、worldに向きが
-ある画像へ使う。カメラへ自動で向くビルボードではない。向きは`RotationDeg`へ度で指定する。
+ある画像へ使い、向きは`RotationDeg`へ度で指定する。カメラへ自動で向ける場合は
+`AUi3DScene::SpawnBillboard3D`または`Billboards().Track(...)`を使う。
 
 `SpawnInto(..., CImageLibrary&)`は画像が未読込なら`TexturePath`から同期で読み、失敗時は
 ノードを追加せず`nullptr`を返す。読込済みの`ImageAsset`を渡した場合は再読込しない。
 
 画像板は通常のscene depthを読み、透過部分を捨ててHDRへ合成される。ポスト処理の前なので
-露出とbloomの対象になる。色変更、UV切出し、カメラ追従は現時点の公開契約に含めない。
+露出とbloomの対象になる。色変更とUV切出しは現時点の公開契約に含めない。

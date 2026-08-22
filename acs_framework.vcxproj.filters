@@ -97,6 +97,12 @@
     <Filter Include="Source\AcsFramework_Core\Scene\Animation3D\Test">
       <UniqueIdentifier>{661f937f-df28-6ba6-450d-50e31a62ec29}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\AcsFramework_Core\Scene\Billboard3D">
+      <UniqueIdentifier>{579cc2cb-af1b-2b2f-4624-033115e8bb29}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\AcsFramework_Core\Scene\Billboard3D\Test">
+      <UniqueIdentifier>{25c14089-d5b8-f173-7b17-44de6c9a33df}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Source\AcsFramework_Core\Scene\Camera3D">
       <UniqueIdentifier>{6356cf5a-24ae-902d-0c95-4834fea49f27}</UniqueIdentifier>
     </Filter>
@@ -443,6 +449,12 @@
     </ClCompile>
     <ClCompile Include="Source\AcsFramework_Core\Scene\Animation3D\CharacterAnimator3D.cpp">
       <Filter>Source\AcsFramework_Core\Scene\Animation3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Scene\Billboard3D\Billboard3DLayer.cpp">
+      <Filter>Source\AcsFramework_Core\Scene\Billboard3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Scene\Billboard3D\Billboard3DMath.cpp">
+      <Filter>Source\AcsFramework_Core\Scene\Billboard3D</Filter>
     </ClCompile>
     <ClCompile Include="Source\AcsFramework_Core\Scene\Camera3D\NodeOrbitCamera3D.cpp">
       <Filter>Source\AcsFramework_Core\Scene\Camera3D</Filter>
@@ -1039,6 +1051,15 @@
     </ClInclude>
     <ClInclude Include="Source\AcsFramework_Core\Scene\Animation3D\CharacterAnimator3D.h">
       <Filter>Source\AcsFramework_Core\Scene\Animation3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Billboard3D\Billboard3DLayer.h">
+      <Filter>Source\AcsFramework_Core\Scene\Billboard3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Billboard3D\Billboard3DMath.h">
+      <Filter>Source\AcsFramework_Core\Scene\Billboard3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Billboard3D\Billboard3DMode.h">
+      <Filter>Source\AcsFramework_Core\Scene\Billboard3D</Filter>
     </ClInclude>
     <ClInclude Include="Source\AcsFramework_Core\Scene\Camera3D\NodeOrbitCamera3D.h">
       <Filter>Source\AcsFramework_Core\Scene\Camera3D</Filter>
@@ -1680,6 +1701,12 @@
     </None>
     <None Include="Source\AcsFramework_Core\Scene\Animation3D\Test\CharacterAnimator3DTest.cpp">
       <Filter>Source\AcsFramework_Core\Scene\Animation3D\Test</Filter>
+    </None>
+    <None Include="Source\AcsFramework_Core\Scene\Billboard3D\README.md">
+      <Filter>Source\AcsFramework_Core\Scene\Billboard3D</Filter>
+    </None>
+    <None Include="Source\AcsFramework_Core\Scene\Billboard3D\Test\Billboard3DTest.cpp">
+      <Filter>Source\AcsFramework_Core\Scene\Billboard3D\Test</Filter>
     </None>
     <None Include="Source\AcsFramework_Core\Scene\Camera3D\README.md">
       <Filter>Source\AcsFramework_Core\Scene\Camera3D</Filter>
