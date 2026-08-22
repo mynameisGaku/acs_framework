@@ -57,6 +57,10 @@ const FSceneRayHit Picked = PickScreen3D( FVec2{ 0.5f, 0.5f }, 100.0f );
 問い合わせ時に現在位置へ同期し、破棄済みノードと場面終了時の登録を自動で外す。場面側で
 `CSceneCollision3D{ Graph() }`を別途所有する必要はない。
 
+`BindThirdPersonCharacter3D`へ呼出側所有の制御と自場面ノードを渡すと、この衝突集合と現在場面の
+追従カメラへまとめて接続する。低水準の`Controller.Bind( Collision3D(), *this, Node, Params )`を
+派生場面へ繰り返し書く必要はない。
+
 `PickScreen3D`は左上を0、右下を1とした画面位置から現在カメラの線を作り、この場面で最前面の
 実形状を返す。判定線もデバッグ表示などへ使う場合は`MakeScreenRay3D`で作り、`Raycast3D`へ渡す。
 

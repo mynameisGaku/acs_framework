@@ -40,7 +40,7 @@ WASDで移動、左Shiftで走行、矢印キーで視点、Spaceでジャンプ
 | 3D を置く | `SpawnModel3D()`、`SpawnAnimatedModel3D()`、FBX の取り込み、材質 (metallic / roughness) |
 | 3D画像を置く | `SpawnImage3D()`の固定板、`SpawnBillboard3D()`のカメラ追従板、透過PNG、深度判定、HDR合成 |
 | 3D を照らす | `SpawnLight3D()`、方向だけで置ける太陽、位置と距離だけで置ける点光源 |
-| 動かす | `CThirdPersonCharacter3D`へ既定のWASD・パッド入力を渡すだけで移動・向き・追従カメラを一括化 |
+| 動かす | `BindThirdPersonCharacter3D()`で場面へ接続し、既定のWASD・パッド入力から移動・向き・追従カメラを一括化 |
 | 操作を変える | UIでキーボード、ゲームパッドのボタン・軸を選び、自動保存して次回起動時に復元 |
 | カメラで追う | `CNodeOrbitCamera3D`、人物の注視点追従、回転・距離操作、遮蔽物回避 |
 | 見た目 | 物理大気・空気遠近・ボリューム雲・影・IBL・遮蔽 (SSAO)・間接光 (SSGI)・反射 (SSR)・霧・トーンマップ・輪郭補正 (FXAA) |
@@ -128,7 +128,7 @@ CharacterParams.LocalCollisionCenter = FVec3{ 0.0f, 0.45f, 0.0f };
 CharacterParams.Movement.Radius = 0.45f;
 CharacterParams.SelfShape = PlayerShape;
 CharacterParams.CollisionMask = 0x2u;
-HeroController.Bind( Collision, *this, *HeroNode, CharacterParams );
+BindThirdPersonCharacter3D( HeroController, *HeroNode, CharacterParams );
 HeroController.TryBindAnimation();
 
 CActionBindingTable ActionBindings;

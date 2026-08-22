@@ -4,6 +4,7 @@
 #include <acs.h>
 
 #include "AcsFramework_Core/Scene/Billboard3D/Billboard3DLayer.h"
+#include "AcsFramework_Core/Scene/Character3D/ThirdPersonCharacter3DParams.h"
 #include "AcsFramework_Core/Scene/Collision3D/SceneCollision3D.h"
 #include "AcsFramework_Core/Scene/DebugDraw3D/DebugDraw3DLayer.h"
 #include "AcsFramework_Core/Scene/Interaction3D/InteractionHighlight3DParams.h"
@@ -22,6 +23,7 @@ struct FModel3DSpawnParams;
 struct FSpatialPlayRequest;
 struct FSprite3DSpawnParams;
 struct FWater3DSpawnParams;
+class CThirdPersonCharacter3D;
 
 /**
  * 遊ぶ人向けUIを3D場面の寿命と描画順へ自動で接続する基底場面。
@@ -94,6 +96,17 @@ public:
 
 	/** 読み取り専用の3D衝突集合を返す。 */
 	const CSceneCollision3D& Collision3D() const noexcept { return m_Collision3D; }
+
+	/**
+	 * 第三者視点キャラクターを、この場面の衝突集合、カメラ、対象ノードへ接続する。
+	 *
+	 * @param Controller 呼出側が所有する第三者視点キャラクター制御。
+	 * @param Character この場面が所有する移動・追従対象ノード。
+	 * @param Params 移動、向き、衝突、追従カメラ設定。
+	 * @return 未接続の制御を有効な自場面ノードへ完全に接続できたらtrue。
+	 */
+	bool BindThirdPersonCharacter3D( CThirdPersonCharacter3D& Controller, ANode& Character,
+		const FThirdPersonCharacter3DParams& Params = FThirdPersonCharacter3DParams{} ) noexcept;
 
 	/**
 	 * 左上を0、右下を1とした画面位置から、現在カメラを通る3D判定線を作る。

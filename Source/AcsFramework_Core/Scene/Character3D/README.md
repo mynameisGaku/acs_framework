@@ -1,7 +1,8 @@
 # 第三者視点3Dキャラクター操作
 
 `CThirdPersonCharacter3D`は、カメラ基準の移動、ジャンプ、移動方向への向き変更、ノード追従カメラを
-1回の`Update()`へまとめる。骨付きモデルがある場合だけ、待機・歩き・走り・ジャンプも接続できる。
+1回の`Update()`へまとめる。`AUi3DScene::BindThirdPersonCharacter3D`なら場面所有の衝突集合と
+カメラへ1回で接続できる。骨付きモデルがある場合だけ、待機・歩き・走り・ジャンプも接続できる。
 
 ```cpp
 CSceneCollision3D& Collision = Collision3D();
@@ -10,7 +11,7 @@ Collision.TryAddBox( *Floor, FVec3{}, FVec3{ 10.0f, 0.5f, 10.0f }, 0x1u );
 CThirdPersonCharacter3D HeroController;
 FThirdPersonCharacter3DParams Params;
 Params.CollisionMask = 0x1u;
-HeroController.Bind( Collision, *this, *Hero, Params );
+BindThirdPersonCharacter3D( HeroController, *Hero, Params );
 HeroController.TryBindAnimation();
 
 CActionBindingTable ActionBindings;

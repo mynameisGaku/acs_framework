@@ -675,7 +675,7 @@ bool ADemo3DScene::TryInitializeThirdPersonCharacter() noexcept
 
 	if ( !BuiltBindings.ReplaceGamepadButtonBinding( Actions.JumpAction, m_JumpGamepadRebind.CurrentButton(), kGamepadPlayerIndex ) || !BuiltBindings.ReplaceGamepadAxisBinding( Actions.MoveForwardAxis, m_MoveGamepadRebind.CurrentAxis(), kGamepadPlayerIndex, kGamepadDeadZone, 1.0f ) ) return false;
 
-	ANode* const Character = SpawnThirdPersonCharacter( Graph() );
+	ANode* Character = SpawnThirdPersonCharacter( Graph() );
 	if ( Character == nullptr ) return false;
 
 	FThirdPersonCharacter3DParams Params;
@@ -690,9 +690,9 @@ bool ADemo3DScene::TryInitializeThirdPersonCharacter() noexcept
 	Params.Camera.MinimumDistance = 2.0f;
 	Params.Camera.MaximumDistance = 14.0f;
 	Params.Camera.TargetClearance = 2.5f;
-	if ( !m_ThirdPersonCharacter.Bind( Collision3D(), *this, *Character, Params ) )
+	if ( !BindThirdPersonCharacter3D( m_ThirdPersonCharacter, *Character, Params ) )
 	{
-		Graph().Destroy( Character->Id() );
+		(void)DestroyNode3D( Character );
 		return false;
 	}
 
@@ -700,7 +700,7 @@ bool ADemo3DScene::TryInitializeThirdPersonCharacter() noexcept
 	if ( !InitialUpdate.Succeeded() )
 	{
 		m_ThirdPersonCharacter.Unbind();
-		Graph().Destroy( Character->Id() );
+		(void)DestroyNode3D( Character );
 		return false;
 	}
 

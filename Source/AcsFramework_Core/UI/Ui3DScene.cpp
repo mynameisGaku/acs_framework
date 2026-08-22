@@ -4,6 +4,7 @@
 #include "AcsFramework_Core/Assets/AssetLoaderSubsystem.h"
 #include "AcsFramework_Core/Audio/Spatial/SpatialAudioSubsystem.h"
 #include "AcsFramework_Core/Scene/Animation3D/AnimatedModel3DSpawner.h"
+#include "AcsFramework_Core/Scene/Character3D/ThirdPersonCharacter3D.h"
 #include "AcsFramework_Core/Scene/Light3D/Light3DSpawner.h"
 #include "AcsFramework_Core/Scene/Model3D/Model3DSpawner.h"
 #include "AcsFramework_Core/Scene/Pick3D/ScenePicker.h"
@@ -91,6 +92,13 @@ FInteractionFocus3DUpdateResult AUi3DScene::UpdateInteractionFocus( bool bActiva
 {
 	(void)RefreshActiveCamera();
 	return m_InteractionFocus.Update( Camera(), bActivateRequested );
+}
+
+
+bool AUi3DScene::BindThirdPersonCharacter3D( CThirdPersonCharacter3D& Controller,
+	ANode& Character, const FThirdPersonCharacter3DParams& Params ) noexcept
+{
+	return Controller.Bind( m_Collision3D, *this, Character, Params );
 }
 
 

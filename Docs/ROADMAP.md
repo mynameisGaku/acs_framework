@@ -145,7 +145,8 @@ cameraからの距離に応じて大気へ馴染み、雲も実距離まで同�
   球スイープ、壁沿い移動、貫通解消を固定回数で計算する。`CCharacterMover3D`は球中心をノードから
   読み、成功結果の世界移動量だけを親座標へ戻して反映する。画面の左右・前後操作量は
   `MoveFromCamera`が水平なカメラ基準速度へ変換し、`TurnTowardMovement`が実速度へ滑らかに向ける。
-  `CThirdPersonCharacter3D`はこれらと追従カメラ、任意アニメーションを1回の更新へまとめる。
+  `CThirdPersonCharacter3D`はこれらと追従カメラ、任意アニメーションを1回の更新へまとめ、
+  `AUi3DScene::BindThirdPersonCharacter3D`が場面所有の衝突集合とカメラへの接続を1回にする。
   `FThirdPersonCharacter3DActionSet`により、既存の`FActionInput`を現在・前回の2値だけで移動、視点、
   ズーム、単発ジャンプ、明示的に有効化した押下中の走行へ変換できる。`FThirdPersonCharacter3DControlPreset`はWASD、
   左Shiftとゲームパッドの操作を`CActionBindingTable`へ1回で構築する。Demo3Dでは素材不要の人物を床、水底、障害物、
