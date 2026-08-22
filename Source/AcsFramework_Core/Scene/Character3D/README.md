@@ -31,6 +31,8 @@ PreviousInput = CurrentInput;
 `FThirdPersonCharacter3DControlPreset`は、WASD、矢印、Space、E/Qと、左右スティック、下側ボタン、
 左右バンパーを上記の番号へまとめて割り当てる。別のキー配置が必要なら、既存の
 `CActionBindingTable`へ個別に追加する。プリセットは入力装置を読まず、作成先の表だけを置き換える。
+`AcsFramework_Sample/Scene/Demo3DScene.cpp`では、素材不要のキャラクター、床・水底・障害物の衝突、
+この既定操作、追従カメラまでを実際の場面寿命へ接続している。
 
 入力装置と時刻は内部取得しない。AIや記録再生から直接操作する場合は、従来どおり
 `FThirdPersonCharacter3DInput`を組み立てる`Update()`も使える。`FThirdPersonCharacter3DUpdateResult`は

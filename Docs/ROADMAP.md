@@ -134,7 +134,8 @@ IBLへ反映する。残りは空を焼くIBLへ雲の形そのものを含め�
   `CThirdPersonCharacter3D`はこれらと追従カメラ、任意アニメーションを1回の更新へまとめる。
   `FThirdPersonCharacter3DActionSet`により、既存の`FActionInput`を現在・前回の2値だけで移動、視点、
   ズーム、単発ジャンプへ変換できる。`FThirdPersonCharacter3DControlPreset`はWASDとゲームパッドの
-  既定操作を`CActionBindingTable`へ1回で構築する。失敗時はノードと保持状態を変更しない。
+  既定操作を`CActionBindingTable`へ1回で構築する。Demo3Dでは素材不要の人物を床、水底、障害物、
+  追従カメラへ接続し、起動直後から実際に操作できる。失敗時はノードと保持状態を変更しない。
 
 ### v0.3 — 見た目と手触り (完了)
 

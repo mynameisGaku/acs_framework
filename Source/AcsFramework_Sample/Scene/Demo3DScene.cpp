@@ -12,6 +12,8 @@
 #include "AcsFramework_Core/Settings/GameSettingsSubsystem.h"
 #include "Common/Compat/AcsEnumReflection.h"
 
+#include <cstring>
+
 namespace
 {
 	/** 床の広さ。広げすぎると FrameScene がカメラを引きすぎ、物が豆粒になる。 */
@@ -25,6 +27,12 @@ namespace
 
 	/** 往復させる速さ (world 単位 / 秒)。 */
 	constexpr f32 kMoveSpeed = 1.8f;
+
+	/** 操作キャラクターと歩ける面・障害物を結ぶ衝突レイヤー。 */
+	constexpr u32 kCharacterCollisionLayer = 0x1u;
+
+	/** 初期画面でキャラクターと展示物を同時に見せる足元位置。 */
+	constexpr FVec3 kCharacterStartPosition{ 0.0f, 0.001f, 4.2f };
 
 	/** screenshotでも見つけやすいようにhit effectを繰り返す間隔。 */
 	constexpr f32 kEffectRepeatSeconds = 1.25f;
@@ -156,6 +164,21 @@ namespace
 	}
 
 	/**
+	 * 表示内容が変わったときだけUI文字列を置き換える。
+	 *
+	 * @param Layer 文字列を持つUI層。
+	 * @param Handle 置き換える文字列またはボタンの識別子。
+	 * @param Text 新しいNUL終端文字列。
+	 */
+	void SetUiTextIfChanged( CUiLayer& Layer, u32 Handle, const char* Text ) noexcept
+	{
+		if ( Text == nullptr ) return;
+		const char* const CurrentText = Layer.Text( Handle );
+		if ( CurrentText != nullptr && std::strcmp( CurrentText, Text ) == 0 ) return;
+		Layer.SetText( Handle, Text );
+	}
+
+	/**
 	 * デモ用の平面を識別子付きで置く。
 	 *
 	 * @param Graph 置くシーン。
@@ -164,8 +187,9 @@ namespace
 	 * @param Color 表面色。
 	 * @param Roughness 表面の粗さ。
 	 * @param Name ノード名。
+	 * @return 置いた平面ノード。生成に失敗したらnullptr。
 	 */
-	void SpawnDemoPlane( CSceneNodeGraph& Graph, FVec3 Position, FVec3 Scale, FVec4 Color,
+	ANode* SpawnDemoPlane( CSceneNodeGraph& Graph, FVec3 Position, FVec3 Scale, FVec4 Color,
 		f32 Roughness, FStringView Name ) noexcept
 	{
 		FModel3DSpawnParams Plane = FModel3DSpawnParams::FromPrimitive( EMeshPrimitive3D::Plane, Position );
@@ -174,7 +198,60 @@ namespace
 		Plane.Roughness = Roughness;
 		Plane.bCastsShadow = false;
 		Plane.Name = Name;
-		CModel3DSpawner::SpawnInto( Graph, Plane );
+		return CModel3DSpawner::SpawnInto( Graph, Plane );
+	}
+
+	/**
+	 * 描画平面の直下へ厚さ1の歩ける箱を登録する。
+	 *
+	 * @param Collision 登録先の場面衝突集合。
+	 * @param Plane 描画平面ノード。
+	 * @return 平面の現在拡縮に追従する箱を登録できたらtrue。
+	 */
+	bool TryAddWalkablePlane( CSceneCollision3D* Collision, ANode* Plane ) noexcept
+	{
+		return Collision != nullptr && Plane != nullptr && Collision->TryAddBox( *Plane, FVec3{ 0.0f, -0.5f, 0.0f }, FVec3{ 0.5f, 0.5f, 0.5f }, kCharacterCollisionLayer ).IsValid();
+	}
+
+	/**
+	 * 素材ファイルなしで向きが読める操作キャラクターを置く。
+	 *
+	 * @param Graph 置く場面のノードグラフ。
+	 * @return 足元原点の親ノード。全ての見た目を置けなければnullptr。
+	 */
+	ANode* SpawnThirdPersonCharacter( CSceneNodeGraph& Graph ) noexcept
+	{
+		const FScene3DSpawnResult RootSpawn = Graph.TrySpawn( FStringView( "ThirdPersonCharacter" ) );
+		ANode* const Root = RootSpawn ? RootSpawn.Node : nullptr;
+		if ( Root == nullptr ) return nullptr;
+		Root->SetPosition( kCharacterStartPosition );
+		Root->RotateDeg( FVec3{ 0.0f, 180.0f, 0.0f } );
+
+		FModel3DSpawnParams Body = FModel3DSpawnParams::FromPrimitive( EMeshPrimitive3D::Cube, FVec3{ 0.0f, 0.72f, 0.0f } );
+		Body.Scale = FVec3{ 0.72f, 1.12f, 0.46f };
+		Body.Color = FVec4{ 0.10f, 0.56f, 0.78f, 1.0f };
+		Body.Metallic = 0.18f;
+		Body.Roughness = 0.28f;
+		Body.Name = FStringView( "ThirdPersonBody" );
+
+		FModel3DSpawnParams Head = FModel3DSpawnParams::FromPrimitive( EMeshPrimitive3D::Sphere, FVec3{ 0.0f, 1.52f, 0.0f } );
+		Head.Scale = FVec3{ 0.48f, 0.48f, 0.48f };
+		Head.Color = FVec4{ 0.72f, 0.90f, 0.96f, 1.0f };
+		Head.Metallic = 0.08f;
+		Head.Roughness = 0.20f;
+		Head.Name = FStringView( "ThirdPersonHead" );
+
+		FModel3DSpawnParams FacingMark = FModel3DSpawnParams::FromPrimitive( EMeshPrimitive3D::Sphere, FVec3{ 0.0f, 0.88f, 0.50f } );
+		FacingMark.Scale = FVec3{ 0.18f, 0.18f, 0.18f };
+		FacingMark.Color = FVec4{ 1.0f, 0.42f, 0.08f, 1.0f };
+		FacingMark.Roughness = 0.24f;
+		FacingMark.Name = FStringView( "ThirdPersonFacingMark" );
+
+		const bool bComplete = CModel3DSpawner::SpawnInto( Graph, Body, Root ) != nullptr && CModel3DSpawner::SpawnInto( Graph, Head, Root ) != nullptr && CModel3DSpawner::SpawnInto( Graph, FacingMark, Root ) != nullptr;
+		if ( bComplete ) return Root;
+
+		Graph.Destroy( Root->Id() );
+		return nullptr;
 	}
 }
 
@@ -182,22 +259,38 @@ namespace
 void ADemo3DScene::OnEnter() noexcept
 {
 	AWeather3DScene::OnEnter();
+	m_Spinner = nullptr;
+	m_Mover = nullptr;
+	m_WaterSurfaceId = FNodeId{};
+	m_ThirdPersonCharacter.Unbind();
+	m_CharacterCollision = MakeUnique<CSceneCollision3D>( Graph() );
+	m_CharacterNode = nullptr;
+	m_CharacterActionBindings.Clear();
+	m_PreviousCharacterInput = FActionInput{};
 
 	// 磨いた床。水面の直下だけ穴を空け、屈折が極浅い床を拾って白くならないようにする。
 	constexpr FVec4 FloorColor{ 0.55f, 0.56f, 0.58f, 1.0f };
-	SpawnDemoPlane( Graph(), FVec3{ -1.75f, 0.0f, 0.0f }, FVec3{ 5.5f, 1.0f, kFloorSize },
+	ANode* const FloorLeft = SpawnDemoPlane( Graph(), FVec3{ -1.75f, 0.0f, 0.0f }, FVec3{ 5.5f, 1.0f, kFloorSize },
 		FloorColor, 0.10f, FStringView( "FloorLeft" ) );
-	SpawnDemoPlane( Graph(), FVec3{ 2.7f, 0.0f, -3.625f }, FVec3{ 3.4f, 1.0f, 1.75f },
+	ANode* const FloorFront = SpawnDemoPlane( Graph(), FVec3{ 2.7f, 0.0f, -3.625f }, FVec3{ 3.4f, 1.0f, 1.75f },
 		FloorColor, 0.10f, FStringView( "FloorFront" ) );
-	SpawnDemoPlane( Graph(), FVec3{ 2.7f, 0.0f, 2.275f }, FVec3{ 3.4f, 1.0f, 4.45f },
+	ANode* const FloorBack = SpawnDemoPlane( Graph(), FVec3{ 2.7f, 0.0f, 2.275f }, FVec3{ 3.4f, 1.0f, 4.45f },
 		FloorColor, 0.10f, FStringView( "FloorBack" ) );
-	SpawnDemoPlane( Graph(), FVec3{ 4.45f, 0.0f, 0.0f }, FVec3{ 0.10f, 1.0f, kFloorSize },
+	ANode* const FloorRight = SpawnDemoPlane( Graph(), FVec3{ 4.45f, 0.0f, 0.0f }, FVec3{ 0.10f, 1.0f, kFloorSize },
 		FloorColor, 0.10f, FStringView( "FloorRight" ) );
 
 	// 水底。水面から十分離し、ACSの吸収と散乱が色として現れる深さを作る。
-	SpawnDemoPlane( Graph(), FVec3{ kWaterPosition.x, -0.76f, kWaterPosition.z },
+	ANode* const PoolBottom = SpawnDemoPlane( Graph(), FVec3{ kWaterPosition.x, -0.76f, kWaterPosition.z },
 		FVec3{ kWaterSize.x, 1.0f, kWaterSize.y }, FVec4{ 0.08f, 0.16f, 0.20f, 1.0f },
 		0.82f, FStringView( "PoolBottom" ) );
+
+	// 描画面と同じ拡縮を持つ箱を直下へ置き、床の穴と水底の深さも実際の移動へ反映する。
+	const bool bFloorLeftWalkable = TryAddWalkablePlane( m_CharacterCollision.Get(), FloorLeft );
+	const bool bFloorFrontWalkable = TryAddWalkablePlane( m_CharacterCollision.Get(), FloorFront );
+	const bool bFloorBackWalkable = TryAddWalkablePlane( m_CharacterCollision.Get(), FloorBack );
+	const bool bFloorRightWalkable = TryAddWalkablePlane( m_CharacterCollision.Get(), FloorRight );
+	const bool bPoolBottomWalkable = TryAddWalkablePlane( m_CharacterCollision.Get(), PoolBottom );
+	const bool bCharacterWorldReady = bFloorLeftWalkable && bFloorFrontWalkable && bFloorBackWalkable && bFloorRightWalkable && bPoolBottomWalkable;
 
 	// ACSの屈折、反射、泡、動的波紋を使う水面。位置と広さを決めるだけで置ける。
 	FWater3DSpawnParams Water;
@@ -225,7 +318,8 @@ void ADemo3DScene::OnEnter() noexcept
 	WaterStone.Color = FVec4{ 0.32f, 0.36f, 0.39f, 1.0f };
 	WaterStone.Roughness = 0.72f;
 	WaterStone.Name = FStringView( "WaterStone" );
-	CModel3DSpawner::SpawnInto( Graph(), WaterStone );
+	ANode* const WaterStoneNode = CModel3DSpawner::SpawnInto( Graph(), WaterStone );
+	if ( m_CharacterCollision && WaterStoneNode != nullptr ) m_CharacterCollision->TryAddBounds( *WaterStoneNode, kCharacterCollisionLayer );
 
 	// 並べた球。色違いで陰りの出方を見比べられるようにする。
 	// 立方体より手前 (z = +1.6) へ置く。同じ列だと真ん中の球が立方体に隠れる。
@@ -244,7 +338,8 @@ void ADemo3DScene::OnEnter() noexcept
 		Ball.Color = Colors[Index];
 		// 粗さを 3 つで振る。同じ色でも «艶» が違うと材質の違いとして読める。
 		Ball.Roughness = 0.12f + static_cast<f32>( Index ) * 0.34f;
-		CModel3DSpawner::SpawnInto( Graph(), Ball );
+		ANode* const BallNode = CModel3DSpawner::SpawnInto( Graph(), Ball );
+		if ( m_CharacterCollision && BallNode != nullptr ) m_CharacterCollision->TryAddBounds( *BallNode, kCharacterCollisionLayer );
 	}
 
 	// 回す立方体。動いていることと、面ごとの陰りの差が分かる。
@@ -255,6 +350,7 @@ void ADemo3DScene::OnEnter() noexcept
 	Cube.Roughness = 0.28f;
 	Cube.Name = FStringView( "Spinner" );
 	m_Spinner = CModel3DSpawner::SpawnInto( Graph(), Cube );
+	if ( m_CharacterCollision && m_Spinner != nullptr ) m_CharacterCollision->TryAddBounds( *m_Spinner, kCharacterCollisionLayer );
 
 	// Assets に置いた FBX。**置き場からモデルを読む道が通っていることの確認**でもある。
 	// 読めなければ置かずに nullptr が返り、理由が 1 行出る (黙って消えない)。
@@ -267,6 +363,7 @@ void ADemo3DScene::OnEnter() noexcept
 		Model.Roughness = 0.40f;
 		Model.Name = FStringView( "ImportedModel" );
 		m_Mover = CModel3DSpawner::SpawnInto( Graph(), Model, Assets->Models() );
+		if ( m_CharacterCollision && m_Mover != nullptr ) m_CharacterCollision->TryAddBounds( *m_Mover, kCharacterCollisionLayer );
 
 		// 骨で動くモデル。読み込み、部品追加、最初のクリップ再生までを1回で行う。
 		// **骨の入っていないFBXを渡すと読めない。** そのときは1行出て、何も置かれない。
@@ -344,7 +441,7 @@ void ADemo3DScene::OnEnter() noexcept
 	// 遊ぶ人向けUI。初期化、入力、更新、終了、ポスト処理後の描画はAUi3DSceneが受け持つ。
 	// ここでは表示物を置き、あとでボタンの結果を読むだけにする。
 	Ui().AddText( "ACS 3D", FVec2{ kUiLeft + 16.0f, kUiTop + 14.0f } );
-	Ui().AddText( "PLAYER UI / 3D WEATHER", FVec2{ kUiLeft + 16.0f, kUiTop + 42.0f } );
+	Ui().AddText( "WASD + PAD: THIRD PERSON", FVec2{ kUiLeft + 16.0f, kUiTop + 42.0f } );
 	m_FxaaToggleButton = Ui().AddButton( "TOGGLE FXAA", FVec2{ kUiLeft + 16.0f, kUiTop + 76.0f }, FVec2{ kUiWidth - 32.0f, 44.0f } );
 	m_FxaaStatusText = Ui().AddText( "FXAA: ON", FVec2{ kUiLeft + 16.0f, kUiTop + 132.0f } );
 	m_FxaaRebindButton = Ui().AddButton( "CHANGE FXAA KEY", FVec2{ kUiLeft + 16.0f, kUiTop + 158.0f }, FVec2{ kUiWidth - 32.0f, 44.0f } );
@@ -395,12 +492,16 @@ void ADemo3DScene::OnEnter() noexcept
 	// 全体が入る位置までカメラを引く。
 	FrameScene();
 
-	// 見回せるようにしておく。矢印キーで回り、WASD で寄る。
+	// 第三者視点の接続に失敗しても見回せるよう、復元先には従来の自由カメラを用意する。
 	//
 	// 切ると画角が動かなくなる。**撮り比べるときは切ること。** 入れたままだと撮影中の
 	// キー入力で画角が変わり、«何が変わったのか» が分からない画が並ぶ。
 	SetFreeCameraEnabled( true );
 	SetOrbit( FVec3{ 0.0f, 1.0f, 0.0f }, 0.0f, 0.32f, 14.0f );
+	if ( !bCharacterWorldReady || !TryInitializeThirdPersonCharacter() )
+	{
+		ACS_LOG_WARN( "Demo3D: 第三者視点キャラクターの初期化に失敗。自由カメラで継続" );
+	}
 	RefreshSpatialAudioListener();
 
 	// 素材名と明示した置き方だけで3D effectを出す。renderer準備前なら基底が開始まで保持する。
@@ -411,6 +512,74 @@ void ADemo3DScene::OnEnter() noexcept
 	m_WaterRippleElapsedSeconds = 0.0f;
 	m_WaterRippleIndex = 0u;
 	AddDemoWaterRipple();
+}
+
+
+void ADemo3DScene::OnExit() noexcept
+{
+	m_ThirdPersonCharacter.Unbind();
+	m_CharacterActionBindings.Clear();
+	m_PreviousCharacterInput = FActionInput{};
+	m_CharacterNode = nullptr;
+	m_CharacterCollision.Reset();
+	m_Spinner = nullptr;
+	m_Mover = nullptr;
+	m_WaterSurfaceId = FNodeId{};
+	AWeather3DScene::OnExit();
+}
+
+
+bool ADemo3DScene::TryInitializeThirdPersonCharacter() noexcept
+{
+	if ( !m_CharacterCollision || m_ThirdPersonCharacter.IsBound() ) return false;
+
+	CActionBindingTable BuiltBindings;
+	if ( !FThirdPersonCharacter3DControlPreset{}.TryBuildBindings( BuiltBindings ) ) return false;
+
+	ANode* const Character = SpawnThirdPersonCharacter( Graph() );
+	if ( Character == nullptr ) return false;
+
+	FThirdPersonCharacter3DParams Params;
+	Params.LocalCollisionCenter = FVec3{ 0.0f, 0.52f, 0.0f };
+	Params.Movement.Radius = 0.52f;
+	Params.MaximumMoveSpeed = 3.6f;
+	Params.CollisionMask = kCharacterCollisionLayer;
+	Params.Camera.LocalTargetOffset = FVec3{ 0.0f, 1.05f, 0.0f };
+	Params.Camera.InitialYawDegrees = 180.0f;
+	Params.Camera.InitialPitchDegrees = 18.0f;
+	Params.Camera.InitialDistance = 6.8f;
+	Params.Camera.MinimumDistance = 2.0f;
+	Params.Camera.MaximumDistance = 14.0f;
+	Params.Camera.TargetClearance = 2.5f;
+	if ( !m_ThirdPersonCharacter.Bind( *m_CharacterCollision, *this, *Character, Params ) )
+	{
+		Graph().Destroy( Character->Id() );
+		return false;
+	}
+
+	const FThirdPersonCharacter3DUpdateResult InitialUpdate = m_ThirdPersonCharacter.Update( FActionInput{}, FActionInput{}, 0.0f );
+	if ( !InitialUpdate.Succeeded() )
+	{
+		m_ThirdPersonCharacter.Unbind();
+		Graph().Destroy( Character->Id() );
+		return false;
+	}
+
+	m_CharacterNode = Character;
+	m_CharacterActionBindings = Move( BuiltBindings );
+	m_PreviousCharacterInput = FActionInput{};
+	return true;
+}
+
+
+void ADemo3DScene::UpdateThirdPersonCharacter( f32 DeltaSeconds ) noexcept
+{
+	if ( !m_ThirdPersonCharacter.IsBound() || m_CharacterNode == nullptr ) return;
+
+	FActionInput CurrentInput = m_CharacterActionBindings.Resolve( m_ActionReader );
+	if ( m_FxaaKeyRebind.IsCapturing() || m_bSuppressBoundActionPress ) CurrentInput = FActionInput{};
+	m_ThirdPersonCharacter.Update( CurrentInput, m_PreviousCharacterInput, DeltaSeconds );
+	m_PreviousCharacterInput = CurrentInput;
 }
 
 
@@ -434,7 +603,6 @@ void ADemo3DScene::OnUpdate( f32 DeltaSeconds ) noexcept
 {
 	AWeather3DScene::OnUpdate( DeltaSeconds );
 	ReportFrameTime( DeltaSeconds );
-	RefreshSpatialAudioListener();
 	RefreshWeatherText();
 
 	// Escapeの押下フレームを基底場面が処理し終えてから、入力待ち前の自由カメラ状態へ戻す。
@@ -457,6 +625,8 @@ void ADemo3DScene::OnUpdate( f32 DeltaSeconds ) noexcept
 		&& CurrentActionInput.IsDown( kFxaaActionIndex )
 		&& !m_PreviousActionInput.IsDown( kFxaaActionIndex );
 	m_PreviousActionInput = CurrentActionInput;
+	UpdateThirdPersonCharacter( DeltaSeconds );
+	RefreshSpatialAudioListener();
 
 	// 割り当て確定に使った同じ押下ではFXAAを切り替えない。次の押下から通常操作になる。
 	if ( m_bSuppressBoundActionPress )
@@ -560,14 +730,14 @@ void ADemo3DScene::RefreshFxaaKeyText() noexcept
 {
 	if ( m_FxaaKeyRebind.IsCapturing() )
 	{
-		Ui().SetText( m_FxaaRebindButton, "PRESS A KEY..." );
-		Ui().SetText( m_FxaaKeyText, "ESC: CANCEL" );
+		SetUiTextIfChanged( Ui(), m_FxaaRebindButton, "PRESS A KEY..." );
+		SetUiTextIfChanged( Ui(), m_FxaaKeyText, "ESC: CANCEL" );
 		return;
 	}
 
-	Ui().SetText( m_FxaaRebindButton, "CHANGE FXAA KEY" );
+	SetUiTextIfChanged( Ui(), m_FxaaRebindButton, "CHANGE FXAA KEY" );
 	const FString KeyLabel = MakeKeyLabel( m_FxaaKeyRebind.CurrentKey() );
-	Ui().SetText( m_FxaaKeyText, KeyLabel.Data() );
+	SetUiTextIfChanged( Ui(), m_FxaaKeyText, KeyLabel.Data() );
 }
 
 
@@ -667,7 +837,7 @@ void ADemo3DScene::RefreshWeatherText() noexcept
 	const EWeatherKind NextWeather = kDemoWeatherCycle[m_NextWeatherIndex % kDemoWeatherCount];
 	FString ButtonText( "SET WEATHER: " );
 	ButtonText.TryAppend( FStringView( WeatherLabel( NextWeather ) ) );
-	Ui().SetText( m_WeatherButton, ButtonText.Data() );
+	SetUiTextIfChanged( Ui(), m_WeatherButton, ButtonText.Data() );
 
 	FString StatusText( "WEATHER: " );
 	if ( Weather().TransitionT() < 1.0f )
@@ -680,7 +850,7 @@ void ADemo3DScene::RefreshWeatherText() noexcept
 	{
 		StatusText.TryAppend( FStringView( WeatherLabel( Weather().CurrentWeather() ) ) );
 	}
-	Ui().SetText( m_WeatherStatusText, StatusText.Data() );
+	SetUiTextIfChanged( Ui(), m_WeatherStatusText, StatusText.Data() );
 }
 
 

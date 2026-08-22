@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: Apache-2.0
 #pragma once
 
+#include "AcsFramework_Core/Scene/Character3D/ThirdPersonCharacter3D.h"
+#include "AcsFramework_Core/Scene/Character3D/ThirdPersonCharacter3DControlPreset.h"
+#include "AcsFramework_Core/Scene/Collision3D/SceneCollision3D.h"
 #include "AcsFramework_Core/Scene/Weather3D/Weather3DScene.h"
 #include "AcsFramework_Core/Simulation/Input/ActionBindingTable.h"
 #include "AcsFramework_Core/Simulation/Input/ActionKeyRebindState.h"
@@ -27,6 +30,9 @@ class ADemo3DScene : public AWeather3DScene
 public:
 	/** 物と光を置き、カメラを引く。 */
 	void OnEnter() noexcept override;
+
+	/** 第三者視点接続と衝突集合を場面ノードより先に解除する。 */
+	void OnExit() noexcept override;
 
 	/**
 	 * 見え方の変化が分かるように、置いた物をゆっくり回す。
@@ -99,11 +105,36 @@ private:
 	/** カメラから回転立方体の実表面へ線を当て、結果をUIと3D印へ反映する。 */
 	void PickSpinnerGeometry() noexcept;
 
+	/**
+	 * 素材不要の操作キャラクターを置き、衝突、追従カメラ、既定操作へ接続する。
+	 *
+	 * @return 必須の接続を全て完了できたらtrue。
+	 */
+	bool TryInitializeThirdPersonCharacter() noexcept;
+
+	/** 明示秒と実機入力から操作キャラクターを1回更新する。 */
+	void UpdateThirdPersonCharacter( f32 DeltaSeconds ) noexcept;
+
 	/** 回す対象。所有はしない (木が持っている)。 */
 	ANode* m_Spinner = nullptr;
 
 	/** 往復させる取り込みモデル。所有はしない (木が持っている)。 */
 	ANode* m_Mover = nullptr;
+
+	/** 場面グラフより短く所有する、操作キャラクター用の衝突集合。 */
+	TUniquePtr<CSceneCollision3D> m_CharacterCollision;
+
+	/** 移動、向き、追従カメラをまとめる操作キャラクター。 */
+	CThirdPersonCharacter3D m_ThirdPersonCharacter;
+
+	/** 操作対象の足元ノード。所有はしない。 */
+	ANode* m_CharacterNode = nullptr;
+
+	/** WASDとゲームパッドを第三者視点操作へ変換する専用表。 */
+	CActionBindingTable m_CharacterActionBindings;
+
+	/** ジャンプの押した瞬間を判定する前フレームの操作入力。 */
+	FActionInput m_PreviousCharacterInput;
 
 	/** 波紋を追加する水面の世代付き識別子。 */
 	FNodeId m_WaterSurfaceId;

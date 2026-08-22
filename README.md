@@ -23,7 +23,8 @@ msbuild acs_framework.vcxproj /p:Configuration=Release /p:Platform=x64
 .\x64\Release\acs_framework.exe
 ```
 
-矢印キーで見回し、WASD で寄る。
+WASDで移動、矢印キーで視点、Spaceでジャンプ、Q/Eで距離を操作する。ゲームパッドなら
+左スティックで移動、右スティックで視点、下側ボタンでジャンプ、左右バンパーで距離を変える。
 
 > `FetchAcs.ps1` がまだ Release を落とせない段階なら、エンジンをローカルでビルドして
 > `.\Tools\FetchAcs.ps1 -FromLocal C:\acs_dev` で持ってくる (`ThirdParty/acs/README.md`)。
