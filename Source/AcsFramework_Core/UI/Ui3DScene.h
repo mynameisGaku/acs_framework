@@ -13,6 +13,8 @@
 using namespace acs;
 using namespace acs::game;
 
+struct FAnimatedModel3DSpawnParams;
+
 /**
  * 遊ぶ人向けUIを3D場面の寿命と描画順へ自動で接続する基底場面。
  *
@@ -86,6 +88,16 @@ public:
 	 */
 	ANode* SpawnBillboard3D( const FSprite3DSpawnParams& Params,
 		EBillboard3DMode Mode = EBillboard3DMode::FaceCamera, f32 RollDegrees = 0.0f,
+		ANode* Parent = nullptr ) noexcept;
+
+	/**
+	 * 骨付き3Dモデルを画像板と同じく、読み込みから初期再生まで1回で場面へ置く。
+	 *
+	 * @param Params 骨付きモデルの相対path、位置、大きさ、初期animation。
+	 * @param Parent この場面が所有する親。空ならroot直下。
+	 * @return 置いたノード。asset窓口、読み込み、検証のいずれかに失敗したらnullptr。
+	 */
+	ANode* SpawnAnimatedModel3D( const FAnimatedModel3DSpawnParams& Params,
 		ANode* Parent = nullptr ) noexcept;
 
 	/**

@@ -470,7 +470,7 @@ void ADemo3DScene::OnEnter() noexcept
 		Animated.Scale = FVec3{ 0.02f, 0.02f, 0.02f };   // 書き出し単位がセンチメートル
 		Animated.Color = FVec3{ 0.72f, 0.78f, 0.86f };
 		Animated.Name = FStringView( "Animated" );
-		CAnimatedModel3DSpawner::SpawnInto( Graph(), Animated, Assets->Models() );
+		SpawnAnimatedModel3D( Animated );
 	}
 
 	// 太陽。

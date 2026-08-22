@@ -2,6 +2,7 @@
 #include "AcsFramework_Core/UI/Ui3DScene.h"
 
 #include "AcsFramework_Core/Assets/AssetLoaderSubsystem.h"
+#include "AcsFramework_Core/Scene/Animation3D/AnimatedModel3DSpawner.h"
 #include "AcsFramework_Core/Scene/Sprite3D/Sprite3DSpawnParams.h"
 #include "AcsFramework_Core/UI/InteractionReticle3D/InteractionReticle3DLayout.h"
 
@@ -89,6 +90,18 @@ ANode* AUi3DScene::SpawnBillboard3D( const FSprite3DSpawnParams& Params,
 		return nullptr;
 	}
 	return m_Billboards.Spawn( Params, Assets->Images(), Mode, RollDegrees, Parent );
+}
+
+
+ANode* AUi3DScene::SpawnAnimatedModel3D( const FAnimatedModel3DSpawnParams& Params, ANode* Parent ) noexcept
+{
+	CAssetLoaderSubsystem* const Assets = GetSubsystem<CAssetLoaderSubsystem>();
+	if ( Assets == nullptr )
+	{
+		ACS_LOG_WARN( "AUi3DScene: 骨付き3Dモデル用のasset読込窓口が無い" );
+		return nullptr;
+	}
+	return CAnimatedModel3DSpawner::SpawnInto( Graph(), Params, Assets->Models(), Parent );
 }
 
 

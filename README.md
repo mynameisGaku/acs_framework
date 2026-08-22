@@ -37,7 +37,7 @@ WASDで移動、左Shiftで走行、矢印キーで視点、Spaceでジャンプ
 
 | | |
 |---|---|
-| 3D を置く | `CModel3DSpawner`、FBX の取り込み、材質 (metallic / roughness) |
+| 3D を置く | `CModel3DSpawner`、`AUi3DScene::SpawnAnimatedModel3D()`、FBX の取り込み、材質 (metallic / roughness) |
 | 3D画像を置く | `CSprite3DSpawner`の固定板、`SpawnBillboard3D()`のカメラ追従板、透過PNG、深度判定、HDR合成 |
 | 3D を照らす | `CLight3DSpawner`、方向だけで置ける太陽、位置と距離だけで置ける点光源 |
 | 動かす | `CThirdPersonCharacter3D`へ既定のWASD・パッド入力を渡すだけで移動・向き・追従カメラを一括化 |
