@@ -14,8 +14,10 @@ using namespace acs;
 using namespace acs::game;
 
 struct FAnimatedModel3DSpawnParams;
+struct FLight3DSpawnParams;
 struct FModel3DSpawnParams;
 struct FSprite3DSpawnParams;
+struct FWater3DSpawnParams;
 
 /**
  * 遊ぶ人向けUIを3D場面の寿命と描画順へ自動で接続する基底場面。
@@ -120,6 +122,26 @@ public:
 	 * @return 置いたノード。asset窓口、読み込み、検証のいずれかに失敗したらnullptr。
 	 */
 	ANode* SpawnAnimatedModel3D( const FAnimatedModel3DSpawnParams& Params,
+		ANode* Parent = nullptr ) noexcept;
+
+	/**
+	 * 太陽または点光源を、光の種類に応じた位置・向きと部品を含めて1回で場面へ置く。
+	 *
+	 * @param Params 光の種類、位置または方向、色、明るさ、届く距離。
+	 * @param Parent この場面が所有する親。空ならroot直下。
+	 * @return 置いた光ノード。入力または親が無効ならnullptr。
+	 */
+	ANode* SpawnLight3D( const FLight3DSpawnParams& Params,
+		ANode* Parent = nullptr ) noexcept;
+
+	/**
+	 * 屈折、反射、泡、波紋へ接続済みの3D水面を1回で場面へ置く。
+	 *
+	 * @param Params 水面の位置、広さ、見た目、ノード名。
+	 * @param Parent この場面が所有する親。空ならroot直下。
+	 * @return 置いた水面ノード。入力または親が無効ならnullptr。
+	 */
+	ANode* SpawnWater3D( const FWater3DSpawnParams& Params,
 		ANode* Parent = nullptr ) noexcept;
 
 	/**

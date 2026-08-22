@@ -3,8 +3,10 @@
 
 #include "AcsFramework_Core/Assets/AssetLoaderSubsystem.h"
 #include "AcsFramework_Core/Scene/Animation3D/AnimatedModel3DSpawner.h"
+#include "AcsFramework_Core/Scene/Light3D/Light3DSpawner.h"
 #include "AcsFramework_Core/Scene/Model3D/Model3DSpawner.h"
 #include "AcsFramework_Core/Scene/Sprite3D/Sprite3DSpawner.h"
+#include "AcsFramework_Core/Scene/Water3D/Water3DSpawner.h"
 #include "AcsFramework_Core/UI/InteractionReticle3D/InteractionReticle3DLayout.h"
 
 namespace
@@ -134,6 +136,18 @@ ANode* AUi3DScene::SpawnAnimatedModel3D( const FAnimatedModel3DSpawnParams& Para
 		return nullptr;
 	}
 	return CAnimatedModel3DSpawner::SpawnInto( Graph(), Params, Assets->Models(), Parent );
+}
+
+
+ANode* AUi3DScene::SpawnLight3D( const FLight3DSpawnParams& Params, ANode* Parent ) noexcept
+{
+	return CLight3DSpawner::SpawnInto( Graph(), Params, Parent );
+}
+
+
+ANode* AUi3DScene::SpawnWater3D( const FWater3DSpawnParams& Params, ANode* Parent ) noexcept
+{
+	return CWater3DSpawner::SpawnInto( Graph(), Params, Parent );
 }
 
 

@@ -39,13 +39,13 @@ WASDで移動、左Shiftで走行、矢印キーで視点、Spaceでジャンプ
 |---|---|
 | 3D を置く | `SpawnModel3D()`、`SpawnAnimatedModel3D()`、FBX の取り込み、材質 (metallic / roughness) |
 | 3D画像を置く | `SpawnImage3D()`の固定板、`SpawnBillboard3D()`のカメラ追従板、透過PNG、深度判定、HDR合成 |
-| 3D を照らす | `CLight3DSpawner`、方向だけで置ける太陽、位置と距離だけで置ける点光源 |
+| 3D を照らす | `SpawnLight3D()`、方向だけで置ける太陽、位置と距離だけで置ける点光源 |
 | 動かす | `CThirdPersonCharacter3D`へ既定のWASD・パッド入力を渡すだけで移動・向き・追従カメラを一括化 |
 | 操作を変える | UIでキーボード、ゲームパッドのボタン・軸を選び、自動保存して次回起動時に復元 |
 | カメラで追う | `CNodeOrbitCamera3D`、人物の注視点追従、回転・距離操作、遮蔽物回避 |
 | 見た目 | 物理大気・空気遠近・ボリューム雲・影・IBL・遮蔽 (SSAO)・間接光 (SSGI)・反射 (SSR)・霧・トーンマップ・輪郭補正 (FXAA) |
 | 3D 天候 | `AWeather3DScene`、晴天・曇天・雨・雪・嵐・霧・砂嵐の滑らかな遷移 |
-| 3D 水面 | `CWater3DSpawner`、屈折・反射・泡・動的な波紋 |
+| 3D 水面 | `SpawnWater3D()`、屈折・反射・泡・動的な波紋 |
 | 3D 演出 | `AEffect3DScene`、Effekseer、depth 遮蔽、HDR・bloom への自動合成 |
 | 3D 音響 | `CSpatialAudioSubsystem`、距離減衰、モノラル効果音の左右定位 |
 | 遊ぶ人向け UI | `AUi3DScene`、文字・ボタン・入力、ポスト処理後の鮮明なHUD合成 |
@@ -78,7 +78,7 @@ SpawnImage3D( Marker );
 SpawnBillboard3D( Marker );
 
 // 面から太陽へ向かう方向だけで、影とPBRへ繋がる平行光を置く
-CLight3DSpawner::SpawnInto( Graph(), FLight3DSpawnParams::Sun( FVec3{ -0.47f, 0.58f, 0.66f } ) );
+SpawnLight3D( FLight3DSpawnParams::Sun( FVec3{ -0.47f, 0.58f, 0.66f } ) );
 
 // 骨付きFBXを読み、置き、Idleを再生する
 FAnimatedModel3DSpawnParams Hero = FAnimatedModel3DSpawnParams::FromModel(
@@ -149,7 +149,7 @@ WorldLabels().AddNodeLabel( *HeroNode, PlayerLabel );
 // 反射・屈折・泡を持つ水面を置き、波紋を起こす
 FWater3DSpawnParams Water;
 Water.Position = FVec3{ 2.5f, 0.1f, -1.0f };
-ANode* const Surface = CWater3DSpawner::SpawnInto( Graph(), Water );
+ANode* const Surface = SpawnWater3D( Water );
 if ( Surface != nullptr ) AddWaterDisturbance( Surface->Id(), Water.Position );
 
 // 近くの物から跳ね返る色を足す

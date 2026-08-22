@@ -2,11 +2,11 @@
 #include "AcsFramework_Sample/Scene/Demo3DScene.h"
 
 #include "AcsFramework_Core/Scene/Animation3D/AnimatedModel3DSpawner.h"
-#include "AcsFramework_Core/Scene/Light3D/Light3DSpawner.h"
+#include "AcsFramework_Core/Scene/Light3D/Light3DSpawnParams.h"
 #include "AcsFramework_Core/Scene/Model3D/Model3DSpawner.h"
 #include "AcsFramework_Core/Scene/Pick3D/ScenePicker.h"
 #include "AcsFramework_Core/Scene/Sprite3D/Sprite3DSpawner.h"
-#include "AcsFramework_Core/Scene/Water3D/Water3DSpawner.h"
+#include "AcsFramework_Core/Scene/Water3D/Water3DSpawnParams.h"
 #include "AcsFramework_Core/UI/WorldLabel3D/WorldLabel3DParams.h"
 
 #include "AcsFramework_Core/Audio/Spatial/SpatialAudioSubsystem.h"
@@ -396,7 +396,7 @@ void ADemo3DScene::OnEnter() noexcept
 	Water.FoamIntensity = 0.32f;
 	Water.Name = FStringView( "DemoWater" );
 	m_WaterSurfaceId = FNodeId{};
-	if ( ANode* const WaterSurface = CWater3DSpawner::SpawnInto( Graph(), Water ) )
+	if ( ANode* const WaterSurface = SpawnWater3D( Water ) )
 	{
 		m_WaterSurfaceId = WaterSurface->Id();
 	}
@@ -484,7 +484,7 @@ void ADemo3DScene::OnEnter() noexcept
 	// 描けていなかったのではなく、映る場所が画面の外だった。
 	// 以前のEuler角と同じ方向を、光の意味に合う「面から太陽へ向かう方向」で直接渡す。
 	// ノード作成、回転への変換、部品の追加は配置窓口がまとめる。
-	CLight3DSpawner::SpawnInto( Graph(), FLight3DSpawnParams::Sun( FVec3{ -0.472623f, 0.581683f, 0.662021f } ) );
+	SpawnLight3D( FLight3DSpawnParams::Sun( FVec3{ -0.472623f, 0.581683f, 0.662021f } ) );
 
 	// 点光源は置かない。
 	//

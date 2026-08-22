@@ -30,14 +30,19 @@ bloomや輪郭補正の影響を受けず、3D場面より手前、ポーズ・�
 
 同じ基底は、3Dの見える物を少ない手数で置く窓口も持つ。`SpawnModel3D`はプリミティブまたは静的
 モデル、`SpawnImage3D`は向き固定の画像板、`SpawnBillboard3D`はカメラ追従画像板、
-`SpawnAnimatedModel3D`は骨付きモデルを扱う。パスを渡した場合だけ場面共通のasset窓口で読み、
-読込済みassetはそのまま使う。
+`SpawnAnimatedModel3D`は骨付きモデル、`SpawnLight3D`は太陽または点光源、`SpawnWater3D`は
+水面を扱う。パスを渡した場合だけ場面共通のasset窓口で読み、読込済みassetはそのまま使う。
 
 ```cpp
 SpawnModel3D( FModel3DSpawnParams::FromMesh(
     FStringView( "Models/House.fbx" ), FVec3{ 0.0f, 0.0f, 4.0f } ) );
 SpawnImage3D( FSprite3DSpawnParams::FromImage(
     FStringView( "Textures/Sign.png" ), FVec3{ 0.0f, 2.0f, 3.0f }, FVec2{ 1.2f, 0.6f } ) );
+SpawnLight3D( FLight3DSpawnParams::Sun( FVec3{ -0.47f, 0.58f, 0.66f } ) );
+
+FWater3DSpawnParams Water;
+Water.Position = FVec3{ 2.5f, 0.1f, -1.0f };
+SpawnWater3D( Water );
 ```
 
 返ったノードは`RotateDeg`、`MoveToward`、`LookAt`で動かせる。不要になったら

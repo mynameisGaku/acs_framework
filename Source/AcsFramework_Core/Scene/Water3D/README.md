@@ -7,7 +7,7 @@ FWater3DSpawnParams Water;
 Water.Position = FVec3{ 2.5f, 0.1f, -1.0f };
 Water.Size = FVec2{ 4.0f, 3.0f };
 
-ANode* const Surface = CWater3DSpawner::SpawnInto( Graph(), Water );
+ANode* const Surface = SpawnWater3D( Water );
 if ( Surface != nullptr )
 {
 	AddWaterDisturbance( Surface->Id(), Water.Position, 0.24f, 0.30f );
@@ -15,8 +15,9 @@ if ( Surface != nullptr )
 ```
 
 `FWater3DSpawnParams`は位置、広さ、主要な見た目だけを持つ検証可能な値で、描画機能や
-時刻には依存しない。`CWater3DSpawner`は平面メッシュと`AWaterSurface3DComponent`を
-シーンの識別子管理へ接続するだけで、状態を持たない。
+時刻には依存しない。`SpawnWater3D`は平面メッシュと`AWaterSurface3DComponent`を
+シーンの識別子管理へ接続するだけで、状態を持たない。`AUi3DScene`を使わない独自の
+場面グラフでは、低水準の`CWater3DSpawner::SpawnInto`を直接使える。
 
 水面はローカルXZ平面として置かれる。戻り値の`FNodeId`は同じ場面の
 `AddWaterDisturbance`、`AddWaterWake`、`ActiveWaterRippleCount`へ渡せる。

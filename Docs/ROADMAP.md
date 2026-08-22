@@ -33,7 +33,7 @@ ACS のモジュールは **438 個**ある。この枠組みが窓口を用意�
 | 入力の割り当て | `CActionBindingTable`、`FActionKeyRebindState`、`CBoundActionSource` |
 | 画面・フェード・ロード中・ポーズ | `CScreenSubsystem`、`CFadeSubsystem`、`CLoadingScreenSubsystem`、`CPauseScreenSubsystem` |
 | ノード生成・シーン保存 | `CPrefabSubsystem`、`CSceneSnapshotSubsystem` |
-| 3D 水面 | `CWater3DSpawner`、`FWater3DSpawnParams`、ACSの動的波紋 |
+| 3D 水面 | `AUi3DScene::SpawnWater3D`、`FWater3DSpawnParams`、ACSの動的波紋 |
 | 3D 天候 | `AWeather3DScene`、`FWeather3DAppearance`、ACSの`CWeatherSystem` |
 | 3D エフェクト | `AEffect3DScene`、`CEffect3DPlayer`、同梱の Effekseer |
 | 3D の形状重なり | `CSceneCollision3D`、ACSの`CCollisionWorld3D` |
@@ -112,7 +112,7 @@ cameraからの距離に応じて大気へ馴染み、雲も実距離まで同�
   操作をACSの軌道計算へ渡す。場面の描画形状による遮蔽物回避も既定で有効にする。
 - ライティング — **ACS側とFramework側へ実装済み**: 光のコンポーネント
   (`ALightComponent3D`) と木から集める層 (`CLightCollector3D`) を描画へ接続し、Frameworkでは
-  `CLight3DSpawner`へ方向または位置を渡すだけで置ける。光が無い場面も既定の太陽 + IBL + 影 +
+  `AUi3DScene::SpawnLight3D`へ方向または位置を渡すだけで置ける。光が無い場面も既定の太陽 + IBL + 影 +
   トーンマップを維持する。`acs_temp_doc/0005` `0006`。
 - アニメーション再生 — **ACS側の穴とFramework側の配置手数を埋めた** (2026-08-18、
 	簡単配置は2026-08-22、場面窓口は2026-08-23)。
@@ -209,7 +209,8 @@ cameraからの距離に応じて大気へ馴染み、雲も実距離まで同�
 - ~~位置のある効果音の左右定位~~ → **実装済み** (2026-08-22)。Engine発行の音源番号、
   距離減衰、要求音量、再生速度を同じvoiceへ合成し、モノラル素材の左右位置をXAudio2へ渡す。
   Demo3Dのボタンで左・右を交互に実行できる
-- ~~対話できる3D水面の配置~~ → **実装済み** (2026-08-22)。`CWater3DSpawner`へ位置と広さを
+- ~~対話できる3D水面の配置~~ → **実装済み** (2026-08-22、場面窓口は2026-08-23)。
+  `AUi3DScene::SpawnWater3D`へ位置と広さを
   渡すだけで、ACSの屈折、反射、泡、波紋を使う識別子付き水面を置ける。高度な描画実装を
   複製せず、値の検証とシーンへの接続だけをFrameworkが受け持つ
 - ~~3D天候の遷移と描画接続~~ → **実装済み** (2026-08-22)。`AWeather3DScene`で
@@ -256,7 +257,7 @@ cameraからの距離に応じて大気へ馴染み、雲も実距離まで同�
 | 3D カメラ (追従・揺れ) | ACSの`CCamera3D`とFrameworkの`CNodeOrbitCamera3D`を実装済み | 2026-08-22 |
 | 3D の光 | ACS 側へ実装済み (`ALightComponent3D`) | 2026-08-17 |
 | 光を集める層 | ACS 側へ実装済み (`CLightCollector3D`) | 2026-08-17 |
-| 3D の光を置く窓口 | Framework側へ実装済み (`CLight3DSpawner`) | 2026-08-22 |
+| 3D の光を置く窓口 | Framework側へ実装済み (`AUi3DScene::SpawnLight3D`) | 2026-08-23 |
 | 追う ACS のブランチ | **`dev`** (main は ABI ガードが逆で使えない) | 2026-08-17 |
 | 配布物の作り方 | `.\Tools\UpdateAcsDist.ps1` で dev の worktree からビルドして配置 | 2026-08-17 |
 | 対応する配布物 | dev から生成したもの (`C:\acs_dev`)。世代差は `Source/Common/Compat/` が吸収 | 2026-08-17 |
