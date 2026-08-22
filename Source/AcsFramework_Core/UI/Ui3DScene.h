@@ -3,6 +3,7 @@
 
 #include <acs.h>
 
+#include "AcsFramework_Core/Scene/Interaction3D/InteractionHighlight3DParams.h"
 #include "AcsFramework_Core/Scene/Interaction3D/InteractionFocus3D.h"
 #include "AcsFramework_Core/UI/InteractionReticle3D/InteractionReticle3DParams.h"
 #include "AcsFramework_Core/UI/WorldLabel3D/WorldLabel3DLayer.h"
@@ -90,6 +91,16 @@ public:
 	/** 読み取り専用の3Dインタラクション照準設定を返す。 */
 	const FInteractionReticle3DParams& InteractionReticleParams() const noexcept { return m_InteractionReticleParams; }
 
+	/**
+	 * 視線で捉えた3D対象へ自動で重ねる選択輪郭設定を返す。
+	 *
+	 * @return この場面が所有し、描画直前にACSへ同期する輪郭設定。
+	 */
+	FInteractionHighlight3DParams& InteractionHighlightParams() noexcept { return m_InteractionHighlightParams; }
+
+	/** 読み取り専用の3Dインタラクション選択輪郭設定を返す。 */
+	const FInteractionHighlight3DParams& InteractionHighlightParams() const noexcept { return m_InteractionHighlightParams; }
+
 	/** 通常の3D場面を開始してからUI層を初期化する。 */
 	void OnEnter() noexcept override;
 
@@ -98,6 +109,9 @@ public:
 
 	/** 通常の3D場面とUI層を同じ明示秒で更新する。 */
 	void OnUpdate( f32 DeltaSeconds ) noexcept override;
+
+	/** 現在の視線対象を選択輪郭へ同期してから通常の3D場面を描く。 */
+	void OnRender( FRenderContext& Context ) noexcept override;
 
 	/**
 	 * ウィンドウ入力をUI層と通常の場面へ配送する。
@@ -116,6 +130,9 @@ protected:
 	void OnDrawHud( FRenderContext& Context, CSpriteBatch& Sprites ) noexcept override;
 
 private:
+	/** 有効な視線対象と輪郭設定だけをACSの選択マスクへ同期する。 */
+	void SyncInteractionHighlight_Internal() noexcept;
+
 	/** 視線判定と同じ正規化画面位置へ、対象状態に応じた照準を描く。 */
 	void DrawInteractionReticle_Internal( FRenderContext& Context, CSpriteBatch& Sprites ) noexcept;
 
@@ -127,6 +144,18 @@ private:
 
 	/** 視線位置へ重ねる照準の色とpixel寸法。 */
 	FInteractionReticle3DParams m_InteractionReticleParams;
+
+	/** 視線で捉えたメッシュ部分木へ重ねる選択輪郭設定。 */
+	FInteractionHighlight3DParams m_InteractionHighlightParams;
+
+	/** ACSへ最後に反映できた選択輪郭設定。不要な全ノード走査を避ける比較元。 */
+	FInteractionHighlight3DParams m_AppliedInteractionHighlightParams;
+
+	/** ACSへ最後に反映できた選択部分木の根。 */
+	FNodeId m_AppliedInteractionHighlightNode;
+
+	/** 選択輪郭の印をACSへ反映中ならtrue。 */
+	bool m_bInteractionHighlightApplied = false;
 
 	/** この場面だけが所有する遊ぶ人向けUI層。 */
 	CUiLayer m_Ui;

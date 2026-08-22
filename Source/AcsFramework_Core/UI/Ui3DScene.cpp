@@ -3,9 +3,21 @@
 
 #include "AcsFramework_Core/UI/InteractionReticle3D/InteractionReticle3DLayout.h"
 
+namespace
+{
+	/** ACSへ反映済みの選択輪郭設定と完全に同じならtrue。 */
+	bool IsSameInteractionHighlightParams( const FInteractionHighlight3DParams& Left, const FInteractionHighlight3DParams& Right ) noexcept
+	{
+		return Left.bEnabled == Right.bEnabled && Left.Color.x == Right.Color.x && Left.Color.y == Right.Color.y && Left.Color.z == Right.Color.z && Left.Intensity == Right.Intensity && Left.ThicknessPixels == Right.ThicknessPixels;
+	}
+}
+
 void AUi3DScene::OnEnter() noexcept
 {
 	ALegacyScene3DAdapter::OnEnter();
+	ClearSelectionHighlight();
+	m_AppliedInteractionHighlightNode = FNodeId{};
+	m_bInteractionHighlightApplied = false;
 	m_WorldLabels.Bind( Graph() );
 	if ( !m_InteractionFocus.Bind( Graph(), m_WorldLabels ) ) ACS_LOG_WARN( "AUi3DScene: 3D視線フォーカスを場面へ接続できなかった" );
 	m_Ui.Init();
@@ -14,6 +26,9 @@ void AUi3DScene::OnEnter() noexcept
 
 void AUi3DScene::OnExit() noexcept
 {
+	ClearSelectionHighlight();
+	m_AppliedInteractionHighlightNode = FNodeId{};
+	m_bInteractionHighlightApplied = false;
 	m_Ui.Shutdown();
 	m_InteractionFocus.Unbind();
 	m_WorldLabels.Unbind();
@@ -25,6 +40,13 @@ void AUi3DScene::OnUpdate( f32 DeltaSeconds ) noexcept
 {
 	ALegacyScene3DAdapter::OnUpdate( DeltaSeconds );
 	m_Ui.Tick( DeltaSeconds );
+}
+
+
+void AUi3DScene::OnRender( FRenderContext& Context ) noexcept
+{
+	SyncInteractionHighlight_Internal();
+	ALegacyScene3DAdapter::OnRender( Context );
 }
 
 
@@ -47,6 +69,33 @@ void AUi3DScene::OnDrawHud( FRenderContext& Context, CSpriteBatch& Sprites ) noe
 FInteractionFocus3DUpdateResult AUi3DScene::UpdateInteractionFocus( bool bActivateRequested ) noexcept
 {
 	return m_InteractionFocus.Update( Camera(), bActivateRequested );
+}
+
+
+void AUi3DScene::SyncInteractionHighlight_Internal() noexcept
+{
+	ANode* const FocusedNode = m_InteractionFocus.FocusedNode();
+	if ( !m_InteractionHighlightParams.bEnabled || !m_InteractionHighlightParams.IsValid() || FocusedNode == nullptr )
+	{
+		if ( m_bInteractionHighlightApplied ) ClearSelectionHighlight();
+		m_AppliedInteractionHighlightNode = FNodeId{};
+		m_bInteractionHighlightApplied = false;
+		return;
+	}
+
+	if ( m_bInteractionHighlightApplied && m_AppliedInteractionHighlightNode == FocusedNode->Id() && IsSameInteractionHighlightParams( m_AppliedInteractionHighlightParams, m_InteractionHighlightParams ) ) return;
+
+	if ( SetSelectionHighlight( FocusedNode->Id(), m_InteractionHighlightParams.Color, m_InteractionHighlightParams.Intensity, m_InteractionHighlightParams.ThicknessPixels ) )
+	{
+		m_AppliedInteractionHighlightNode = FocusedNode->Id();
+		m_AppliedInteractionHighlightParams = m_InteractionHighlightParams;
+		m_bInteractionHighlightApplied = true;
+		return;
+	}
+
+	if ( m_bInteractionHighlightApplied ) ClearSelectionHighlight();
+	m_AppliedInteractionHighlightNode = FNodeId{};
+	m_bInteractionHighlightApplied = false;
 }
 
 

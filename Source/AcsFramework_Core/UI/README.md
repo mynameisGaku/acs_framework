@@ -42,7 +42,8 @@ WorldLabels().AddNodeLabel( *BossNode, Label );
 
 `InteractionFocus()`へ3D操作対象を登録すると、判定位置には照準も自動表示される。対象を
 捉えたときの色や寸法は`InteractionReticleParams()`で変更できる。詳しくは
-`UI/InteractionReticle3D/README.md`を参照する。
+`UI/InteractionReticle3D/README.md`を参照する。捉えたmesh subtreeには奥行きを守る選択輪郭も
+自動で付き、色、強さ、pixel幅は`InteractionHighlightParams()`で変更できる。
 
 `CUiLayer` は固定位置の文字とボタンを少ない手数で置く入口である。アンカー、入力欄、スライダー、
 チェックボックス、データ結合が必要な画面はACSの `AWidget`、`AAnchorPanel`、`AButton`、

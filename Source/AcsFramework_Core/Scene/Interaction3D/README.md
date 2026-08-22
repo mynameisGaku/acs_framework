@@ -8,6 +8,10 @@
 ```cpp
 InteractionFocus().RegisterTarget( *Door, FStringView( "E: OPEN" ), FVec3{ 0.0f, 2.0f, 0.0f } );
 
+// 省略時も、捉えた対象には照準と奥行きを守る選択輪郭が自動で付く。
+InteractionHighlightParams().Color = FVec3{ 0.3f, 1.0f, 0.7f };
+InteractionHighlightParams().ThicknessPixels = 2.0f;
+
 const FInteractionFocus3DUpdateResult Result = UpdateInteractionFocus( bInteractPressed );
 if ( Result.Activated() )
 {
@@ -27,6 +31,11 @@ if ( Result.Activated() )
 2. `CScenePicker::RaycastGeometry`で最前面の実形状だけを取る
 3. 命中した子から登録済み祖先を探す
 4. 純粋遷移へ候補を渡し、フォーカス中だけ`CWorldLabel3DLayer`へ操作案内を置く
+
+`AUi3DScene`は描画直前に現在の有効対象だけをACSの`SetSelectionHighlight`へ渡す。
+輪郭マスク、手前の物による遮蔽、ポスト処理での合成はACSが持ち、Frameworkは
+`FInteractionHighlight3DParams`の検証と場面寿命に合わせた解除だけを行う。
+`InteractionHighlightParams().bEnabled = false`で輪郭だけを切っても、判定、案内、照準は残る。
 
 未登録の最前面形状は遮蔽物になる。壁越しに奥の対象を拾わない。ノード破棄とscene内容差し替えは
 `FNodeId`とroot同一性で検出し、古い対象や案内を再利用しない。

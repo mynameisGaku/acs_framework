@@ -453,6 +453,9 @@
     <ClCompile Include="Source\AcsFramework_Core\Scene\Interaction3D\InteractionFocus3DTransition.cpp">
       <Filter>Source\AcsFramework_Core\Scene\Interaction3D</Filter>
     </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Scene\Interaction3D\InteractionHighlight3DParams.cpp">
+      <Filter>Source\AcsFramework_Core\Scene\Interaction3D</Filter>
+    </ClCompile>
     <ClCompile Include="Source\AcsFramework_Core\Scene\Light3D\Light3DSpawner.cpp">
       <Filter>Source\AcsFramework_Core\Scene\Light3D</Filter>
     </ClCompile>
@@ -1049,6 +1052,9 @@
     <ClInclude Include="Source\AcsFramework_Core\Scene\Interaction3D\InteractionFocus3DUpdateResult.h">
       <Filter>Source\AcsFramework_Core\Scene\Interaction3D</Filter>
     </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Interaction3D\InteractionHighlight3DParams.h">
+      <Filter>Source\AcsFramework_Core\Scene\Interaction3D</Filter>
+    </ClInclude>
     <ClInclude Include="Source\AcsFramework_Core\Scene\Light3D\Light3DSpawner.h">
       <Filter>Source\AcsFramework_Core\Scene\Light3D</Filter>
     </ClInclude>
@@ -1643,6 +1649,9 @@
       <Filter>Source\AcsFramework_Core\Scene\Interaction3D</Filter>
     </None>
     <None Include="Source\AcsFramework_Core\Scene\Interaction3D\Test\InteractionFocus3DTest.cpp">
+      <Filter>Source\AcsFramework_Core\Scene\Interaction3D\Test</Filter>
+    </None>
+    <None Include="Source\AcsFramework_Core\Scene\Interaction3D\Test\InteractionHighlight3DParamsTest.cpp">
       <Filter>Source\AcsFramework_Core\Scene\Interaction3D\Test</Filter>
     </None>
     <None Include="Source\AcsFramework_Core\Scene\Light3D\README.md">
