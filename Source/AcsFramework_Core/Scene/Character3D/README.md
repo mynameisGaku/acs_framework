@@ -13,7 +13,7 @@ FThirdPersonCharacter3DSpawnParams Setup;
 Setup.Control.CollisionMask = 0x1u;
 Setup.Collision = FCollisionShape3DParams::FromSphere(
 	Setup.Control.LocalCollisionCenter, Setup.Control.Movement.Radius, 0x2u );
-const FThirdPersonCharacter3DSpawnResult Spawned =
+FThirdPersonCharacter3DSpawnResult Spawned =
 	SpawnThirdPersonCharacter3D( HeroController, Hero, Setup );
 
 CActionBindingTable ActionBindings;
@@ -31,6 +31,8 @@ PreviousInput = CurrentInput;
 同じ番号を写す必要はない。モデル生成、形状登録、移動またはカメラ接続の途中で失敗した場合は、
 形状とノードを両方巻き戻す。骨格モデルの必須処理が成功し、4状態のクリップだけが不足した場合は
 `Succeeded()`をtrueのまま保ち、`bAnimationBound`をfalseにして`InitialAnimation`の再生を続ける。
+場面の途中で消す場合は`DestroyThirdPersonCharacter3D(HeroController, Spawned)`へ生成結果を渡す。
+ノードだけを先に破棄して制御へ非所有参照を残さず、自己形状を外して生成結果も空へ戻す。
 既に組み立てた複合ノードを使う場合は、従来の`BindThirdPersonCharacter3D`で個別に接続できる。
 
 既定の`FThirdPersonCharacter3DActionSet`は、軸0/1を左右・前後移動、軸2/3を左右・上下視点、

@@ -100,6 +100,20 @@ public:
 		const FThirdPersonCharacter3DSpawnParams& SpawnParams = FThirdPersonCharacter3DSpawnParams{},
 		ANode* Parent = nullptr ) noexcept;
 
+	/**
+	 * 一括生成したキャラクターのノード、自己形状、操作接続を安全に破棄する。
+	 *
+	 * @details ノード破棄を受け付けてから非所有の操作接続と自己形状を外し、成功時だけ結果を空にする。
+	 * @param Graph キャラクターノードを所有する場面グラフ。
+	 * @param Collision 自己形状を所有する場面の衝突集合。
+	 * @param Controller 生成時に接続した、または既に解除済みのキャラクター制御。
+	 * @param Character 生成時に返したノードと自己形状。成功時は空の結果へ置き換える。
+	 * @return 自場面の有効な生成結果を破棄予定にして全接続を外せたらtrue。
+	 */
+	static bool Destroy( CSceneNodeGraph& Graph, CSceneCollision3D& Collision,
+		CThirdPersonCharacter3D& Controller,
+		FThirdPersonCharacter3DSpawnResult& Character ) noexcept;
+
 private:
 	/** 生成済みモデルへ自己形状を設定して操作を接続し、失敗時は形状とノードを巻き戻す。 */
 	static FThirdPersonCharacter3DSpawnResult BindOrRollback_Internal(

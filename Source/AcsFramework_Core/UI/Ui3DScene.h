@@ -141,6 +141,16 @@ public:
 		ANode* Parent = nullptr ) noexcept;
 
 	/**
+	 * 一括生成した第三者視点キャラクターを、操作と自己形状を残さず破棄する。
+	 *
+	 * @param Controller 生成時に接続した、または既に解除済みのキャラクター制御。
+	 * @param Character `SpawnThirdPersonCharacter3D`の結果。成功時は空の結果へ置き換える。
+	 * @return 自場面の有効な生成結果を破棄予定にして全接続を外せたらtrue。
+	 */
+	bool DestroyThirdPersonCharacter3D( CThirdPersonCharacter3D& Controller,
+		FThirdPersonCharacter3DSpawnResult& Character ) noexcept;
+
+	/**
 	 * 左上を0、右下を1とした画面位置から、現在カメラを通る3D判定線を作る。
 	 *
 	 * @param NormalizedScreenPosition 左上が(0, 0)、右下が(1, 1)の画面位置。

@@ -88,7 +88,8 @@ const FSceneRayHit Picked = PickScreen3D( FVec2{ 0.5f, 0.5f }, 100.0f );
 追従カメラへまとめて接続する。低水準の`Controller.Bind( Collision3D(), *this, Node, Params )`を
 派生場面へ繰り返し書く必要はない。新しく単一モデルから作る場合は
 `SpawnThirdPersonCharacter3D`へ制御、モデル、設定を渡せば、自己形状番号の反映と失敗時の
-形状・ノード巻き戻しまで一括で行う。
+形状・ノード巻き戻しまで一括で行う。場面途中の破棄は`DestroyThirdPersonCharacter3D`が
+ノード破棄予約、制御解除、自己形状解除、生成結果の無効化を同じ呼び出しで行う。
 
 `PickScreen3D`は左上を0、右下を1とした画面位置から現在カメラの線を作り、この場面で最前面の
 実形状を返す。判定線もデバッグ表示などへ使う場合は`MakeScreenRay3D`で作り、`Raycast3D`へ渡す。

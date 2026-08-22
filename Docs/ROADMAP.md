@@ -154,7 +154,8 @@ cameraからの距離に応じて大気へ馴染み、雲も実距離まで同�
   `AUi3DScene::BindThirdPersonCharacter3D`が場面所有の衝突集合とカメラへの接続を1回にする。
   新規の単一モデルなら`SpawnThirdPersonCharacter3D`が静的または骨格モデル生成、自己衝突登録、
   形状番号の自己除外、移動、追従カメラ、任意の4状態アニメーションを1回で接続し、必須処理の
-  失敗時は形状とノードを両方巻き戻す。
+  失敗時は形状とノードを両方巻き戻す。`DestroyThirdPersonCharacter3D`は場面途中の破棄でも
+  操作の非所有参照、自己形状、有効な生成結果を残さない。
   `FThirdPersonCharacter3DActionSet`により、既存の`FActionInput`を現在・前回の2値だけで移動、視点、
   ズーム、単発ジャンプ、明示的に有効化した押下中の走行へ変換できる。`FThirdPersonCharacter3DControlPreset`はWASD、
   左Shiftとゲームパッドの操作を`CActionBindingTable`へ1回で構築する。Demo3Dでは素材不要の人物を床、水底、障害物、

@@ -108,7 +108,7 @@ HeroSetup.Control.Movement.Radius = 0.45f;
 HeroSetup.Control.CollisionMask = 0x2u;
 HeroSetup.Collision = FCollisionShape3DParams::FromSphere(
     FVec3{ 0.0f, 0.9f, 0.0f }, 0.45f, 0x1u );
-const FThirdPersonCharacter3DSpawnResult HeroSpawn =
+FThirdPersonCharacter3DSpawnResult HeroSpawn =
     SpawnThirdPersonCharacter3D( HeroController, Hero, HeroSetup );
 ANode* const HeroNode = HeroSpawn.Node;
 
@@ -182,6 +182,9 @@ PlaySound3D( FStringView( "Audio/SpatialPulse.wav" ), CameraPosition - CameraRig
 
 // 遊ぶ人向けのボタンを置く (AUi3DSceneとAEffect3DSceneのどちらでも使える)
 const u32 StartButton = Ui().AddButton( "START", FVec2{ 32, 88 }, FVec2{ 180, 44 } );
+
+// 場面の途中で消す場合も、操作と自己形状を残さず結果まで空にする
+DestroyThirdPersonCharacter3D( HeroController, HeroSpawn );
 ```
 
 ## 素材

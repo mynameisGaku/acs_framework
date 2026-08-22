@@ -145,6 +145,14 @@ FThirdPersonCharacter3DSpawnResult AUi3DScene::SpawnThirdPersonCharacter3D(
 }
 
 
+bool AUi3DScene::DestroyThirdPersonCharacter3D( CThirdPersonCharacter3D& Controller,
+	FThirdPersonCharacter3DSpawnResult& Character ) noexcept
+{
+	return CThirdPersonCharacter3DSpawner::Destroy(
+		Graph(), m_Collision3D, Controller, Character );
+}
+
+
 FSceneRay AUi3DScene::MakeScreenRay3D( FVec2 NormalizedScreenPosition, f32 MaximumDistance ) noexcept
 {
 	(void)RefreshActiveCamera();

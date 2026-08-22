@@ -58,6 +58,23 @@ FThirdPersonCharacter3DSpawnResult CThirdPersonCharacter3DSpawner::SpawnInto(
 }
 
 
+bool CThirdPersonCharacter3DSpawner::Destroy( CSceneNodeGraph& Graph,
+	CSceneCollision3D& Collision, CThirdPersonCharacter3D& Controller,
+	FThirdPersonCharacter3DSpawnResult& Character ) noexcept
+{
+	if ( !Character ) return false;
+	const FNodeId NodeId = Graph.IdOf( Character.Node );
+	if ( !NodeId.IsValid() || Graph.Get( NodeId ) != Character.Node ) return false;
+	if ( Controller.IsBound() && Controller.Character() != Character.Node ) return false;
+	if ( !Character.Node->IsPendingDestroy() && !Graph.Destroy( NodeId ) ) return false;
+
+	if ( Controller.Character() == Character.Node ) Controller.Unbind();
+	(void)Collision.Remove( Character.Shape );
+	Character = FThirdPersonCharacter3DSpawnResult{};
+	return true;
+}
+
+
 FThirdPersonCharacter3DSpawnResult CThirdPersonCharacter3DSpawner::BindOrRollback_Internal(
 	CSceneNodeGraph& Graph, CSceneCollision3D& Collision,
 	ALegacyScene3DAdapter& Scene, CThirdPersonCharacter3D& Controller,

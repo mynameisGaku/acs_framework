@@ -139,7 +139,7 @@ void RunThirdPersonCharacter3DTests( CTestHarness& Harness )
 		Params.Collision = FCollisionShape3DParams::FromSphere(
 			FVec3{ 0.0f, 0.5f, 0.0f }, 0.5f, 0x4u );
 
-		const FThirdPersonCharacter3DSpawnResult Spawned =
+		FThirdPersonCharacter3DSpawnResult Spawned =
 			CThirdPersonCharacter3DSpawner::SpawnInto(
 				Scene->Graph(), Collision, *Scene, Controller, Model, Params );
 		Harness.Check( Spawned.Succeeded(), "モデル、自己形状、操作を1回で接続できる" );
@@ -159,7 +159,35 @@ void RunThirdPersonCharacter3DTests( CTestHarness& Harness )
 			"二重生成拒否ではノードを増やさない" );
 		Harness.CheckEqualU64( Collision.ShapeCount(), 1u,
 			"二重生成拒否では形状を増やさない" );
-		Controller.Unbind();
+
+		CSceneNodeGraph OtherGraph;
+		CSceneCollision3D OtherCollision{ OtherGraph };
+		FThirdPersonCharacter3DSpawnResult ForeignResult = Spawned;
+		Harness.Check( !CThirdPersonCharacter3DSpawner::Destroy(
+			OtherGraph, OtherCollision, Controller, ForeignResult ),
+			"別場面へ生成結果を渡した破棄を拒む" );
+		Harness.Check( ForeignResult.Succeeded() && Controller.IsBound(),
+			"別場面での破棄失敗は結果と操作接続を保つ" );
+		Harness.CheckEqualU64( Collision.ShapeCount(), 1u,
+			"別場面での破棄失敗は元の自己形状を保つ" );
+
+		ANode* const DestroyedNode = Spawned.Node;
+		Harness.Check( CThirdPersonCharacter3DSpawner::Destroy(
+			Scene->Graph(), Collision, Controller, Spawned ),
+			"生成結果からノード、自己形状、操作を1回で破棄できる" );
+		Harness.Check( !Spawned.Succeeded() && Spawned.Node == nullptr
+			&& !Spawned.Shape.IsValid() && !Controller.IsBound(),
+			"破棄成功時は結果と非所有の操作接続を空にする" );
+		Harness.CheckEqualU64( Collision.ShapeCount(), 0u,
+			"破棄したキャラクターの自己形状を直ちに外す" );
+		Harness.Check( DestroyedNode != nullptr && DestroyedNode->IsPendingDestroy(),
+			"ノードを次の構造反映で消える破棄予定にする" );
+		Harness.Check( !CThirdPersonCharacter3DSpawner::Destroy(
+			Scene->Graph(), Collision, Controller, Spawned ),
+			"空になった結果の二重破棄を拒む" );
+		Scene->Graph().ResolveStructuralChanges();
+		Harness.CheckEqualU64( Scene->Graph().RegisteredCount(), 1u,
+			"構造反映後に破棄ノードの識別子も解放する" );
 	}
 
 	Harness.BeginSuite( "CThirdPersonCharacter3DSpawner / 骨格モデルの移動連動再生も接続する" );
