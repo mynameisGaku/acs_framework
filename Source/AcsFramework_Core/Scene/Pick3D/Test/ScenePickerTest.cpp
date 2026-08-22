@@ -7,6 +7,15 @@
 
 namespace
 {
+	/** 原点から+Zを見る、画面位置からの判定線検証用カメラを作る。 */
+	CCamera MakeForwardCamera() noexcept
+	{
+		CCamera Camera;
+		Camera.SetPerspective( 60.0f * kDeg2Rad, 1.0f, 0.1f, 100.0f );
+		Camera.SetLookAt( FVec3{}, FVec3{ 0.0f, 0.0f, 1.0f } );
+		return Camera;
+	}
+
 	/**
 	 * 距離の一致を、誤差を許して見る。
 	 *
@@ -78,6 +87,27 @@ void RunScenePickerTests( CTestHarness& Harness )
 		Ray = FSceneRay{};
 		Ray.MaxDistance = std::numeric_limits<f32>::infinity();
 		Harness.Check( !Ray.IsValid(), "有限でない距離を弾く" );
+	}
+
+	Harness.BeginSuite( "FSceneRay / 正規化画面位置から判定線を作る" );
+
+	{
+		const CCamera Camera = MakeForwardCamera();
+		const FSceneRay Center = FSceneRay::FromNormalizedScreen( Camera, FVec2{ 0.5f, 0.5f }, 25.0f );
+		Harness.Check( Center.IsValid(), "画面中央から有限の線を作れる" );
+		CheckNear( Harness, Center.Direction.x, 0.0f, "画面中央は横へ傾かない" );
+		CheckNear( Harness, Center.Direction.y, 0.0f, "画面中央は縦へ傾かない" );
+		CheckNear( Harness, Center.Direction.z, 1.0f, "画面中央は正面を向く" );
+		CheckNear( Harness, Center.MaxDistance, 25.0f, "指定した距離を保つ" );
+
+		const FSceneRay Left = FSceneRay::FromNormalizedScreen( Camera, FVec2{ 0.0f, 0.5f } );
+		const FSceneRay Right = FSceneRay::FromNormalizedScreen( Camera, FVec2{ 1.0f, 0.5f } );
+		Harness.Check( Left.Direction.x < 0.0f && Right.Direction.x > 0.0f, "左右端から対応する向きへ伸びる" );
+
+		Harness.Check( !FSceneRay::FromNormalizedScreen( Camera, FVec2{ -0.01f, 0.5f } ).IsValid(), "画面範囲外を拒否する" );
+		Harness.Check( !FSceneRay::FromNormalizedScreen( Camera,
+			FVec2{ std::numeric_limits<f32>::quiet_NaN(), 0.5f } ).IsValid(), "有限でない画面位置を拒否する" );
+		Harness.Check( !FSceneRay::FromNormalizedScreen( Camera, FVec2{ 0.5f, 0.5f }, 0.0f ).IsValid(), "距離0を拒否する" );
 	}
 
 	Harness.BeginSuite( "CScenePicker / いちばん手前を返す" );

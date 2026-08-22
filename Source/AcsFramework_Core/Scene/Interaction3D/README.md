@@ -27,7 +27,7 @@ if ( Result.Activated() )
 
 `CInteractionFocus3D`は薄い場面アダプターで、次だけを行う。
 
-1. `FSceneRay::FromScreen`で正規化画面位置から有限レイを作る
+1. `FSceneRay::FromNormalizedScreen`で正規化画面位置から有限レイを作る
 2. `CScenePicker::RaycastGeometry`で最前面の実形状だけを取る
 3. 命中した子から登録済み祖先を探す
 4. 純粋遷移へ候補を渡し、フォーカス中だけ`CWorldLabel3DLayer`へ操作案内を置く

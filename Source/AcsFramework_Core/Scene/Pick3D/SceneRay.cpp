@@ -17,6 +17,21 @@ namespace
 		return std::isfinite( Value.x ) && std::isfinite( Value.y ) && std::isfinite( Value.z );
 	}
 
+	/** 左上を0、右下を1とした有限の画面位置ならtrue。 */
+	bool IsNormalizedScreenPosition( FVec2 Value ) noexcept
+	{
+		return std::isfinite( Value.x ) && Value.x >= 0.0f && Value.x <= 1.0f
+			&& std::isfinite( Value.y ) && Value.y >= 0.0f && Value.y <= 1.0f;
+	}
+
+	/** 入力拒否を呼出側で`IsValid`から判別できる線を作る。 */
+	FSceneRay MakeInvalidSceneRay() noexcept
+	{
+		FSceneRay Ray;
+		Ray.MaxDistance = 0.0f;
+		return Ray;
+	}
+
 	/**
 	 * 画面の位置を NDC (-1〜+1) へ直す。
 	 *
@@ -94,6 +109,15 @@ FSceneRay FSceneRay::FromScreen( const CCamera& Camera, f32 ScreenX, f32 ScreenY
 	}
 
 	return FromDirection( Near, Far - Near, InMaxDistance );
+}
+
+
+FSceneRay FSceneRay::FromNormalizedScreen( const CCamera& Camera, FVec2 NormalizedScreenPosition,
+	f32 InMaxDistance ) noexcept
+{
+	if ( !IsNormalizedScreenPosition( NormalizedScreenPosition ) ) return MakeInvalidSceneRay();
+	return FromScreen( Camera, NormalizedScreenPosition.x * 2.0f,
+		NormalizedScreenPosition.y * 2.0f, 2u, 2u, InMaxDistance );
 }
 
 

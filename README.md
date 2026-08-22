@@ -51,7 +51,7 @@ WASDで移動、左Shiftで走行、矢印キーで視点、Spaceでジャンプ
 | 遊ぶ人向け UI | `AUi3DScene`、文字・ボタン・入力、ポスト処理後の鮮明なHUD合成 |
 | 3D位置の文字 | `WorldLabels()`、ノード破棄と画面外を安全に扱う敵名・目的地表示 |
 | 3Dデバッグ描画 | `DrawLine3D()`、`DrawAabb3D()`、`DrawSphere3D()`、深度を無視して常に確認できる1フレーム線 |
-| 当てる | 画面から線を飛ばし、球面や読み込みメッシュの三角形へ正確に当てる (`CScenePicker`) |
+| 当てる | `MakeScreenRay3D()` / `Raycast3D()` / `PickScreen3D()`で球面や読み込みメッシュへ正確に当てる |
 | 重なりと移動判定 | `CSceneCollision3D`、ノード追従、球・箱の重なり、球スイープ、レイヤー |
 | 土台 | 起動・場面遷移・アセット・音・セーブ・設定・入力再割り当て・多言語・決定性・開発支援 |
 
@@ -99,9 +99,9 @@ Node->LookAt( Target );
 // 消す。成功時はNodeもnullptrになるので、破棄予定ノードを触り続けない
 DestroyNode3D( Node );
 
-// 画面上の位置から、実際の3D表面へ当てる
-const FSceneRay Ray = FSceneRay::FromScreen( Camera, MouseX, MouseY, W, H );
-const FSceneRayHit Hit = CScenePicker::RaycastGeometry( *this, Ray );
+// 左上を0、右下を1とした画面位置から、実際の3D表面へ当てる
+const FSceneRay Ray = MakeScreenRay3D( FVec2{ MouseX / static_cast<f32>( W ), MouseY / static_cast<f32>( H ) } );
+const FSceneRayHit Hit = Raycast3D( Ray );
 
 // 当たり判定の線と箱を1フレーム表示する。残したい場合は毎フレーム呼ぶ
 if ( Hit.IsHit() )

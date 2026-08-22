@@ -45,6 +45,8 @@ Water.Position = FVec3{ 2.5f, 0.1f, -1.0f };
 SpawnWater3D( Water );
 
 PlaySound3D( FStringView( "Audio/Hit.wav" ), FVec3{ 1.0f, 0.5f, 3.0f } );
+
+const FSceneRayHit Picked = PickScreen3D( FVec2{ 0.5f, 0.5f }, 100.0f );
 ```
 
 `PlaySound3D`は現在カメラを聴取位置へ同期してから、その瞬間の距離と左右位置で短い効果音を
@@ -54,6 +56,9 @@ PlaySound3D( FStringView( "Audio/Hit.wav" ), FVec3{ 1.0f, 0.5f, 3.0f } );
 `Collision3D()`はこの場面専用の3D衝突集合を返す。ノードへ球・箱・描画境界を登録すると、
 問い合わせ時に現在位置へ同期し、破棄済みノードと場面終了時の登録を自動で外す。場面側で
 `CSceneCollision3D{ Graph() }`を別途所有する必要はない。
+
+`PickScreen3D`は左上を0、右下を1とした画面位置から現在カメラの線を作り、この場面で最前面の
+実形状を返す。判定線もデバッグ表示などへ使う場合は`MakeScreenRay3D`で作り、`Raycast3D`へ渡す。
 
 返ったノードは`RotateDeg`、`MoveToward`、`LookAt`で動かせる。不要になったら
 `DestroyNode3D( Node )`へ生ポインタを渡す。自場面のノードだけを破棄予定にし、成功時は

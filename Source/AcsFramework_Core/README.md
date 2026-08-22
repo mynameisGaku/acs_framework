@@ -50,9 +50,10 @@ Subsystemにはしない。`AEffect3DScene`がscene単位で`CEffect3DPlayer`を
 `AWeather3DScene`は派生場面が設定した晴天時の環境を基準として記録し、相対値を毎フレーム
 適用する薄いアダプターとする。雨雪の素材は固定せず、粒子密度と風向きを公開する。
 
-3D選択は`CScenePicker::RaycastGeometry`へ場面と`FSceneRay`を渡すだけにする。ACSの
-`CSceneNodeGraph`が持つ実形状判定を再実装せず、世代付き識別子を使いやすいノードポインタと
-世界座標の命中情報へ変換する。高速な境界箱判定は別用途として互換維持する。
+3D選択は`AUi3DScene::MakeScreenRay3D`と`Raycast3D`、1回で済ませる`PickScreen3D`へまとめる。
+内部では`CScenePicker`からACSの`CSceneNodeGraph`が持つ実形状判定を呼び、再実装しない。
+世代付き識別子を使いやすいノードポインタと世界座標の命中情報へ変換し、高速な境界箱判定は
+低水準の別用途として互換維持する。
 
 3Dの重なりと移動判定は、場面側が`CSceneCollision3D`を所有する。ACSの`CCollisionWorld3D`へ
 ノードとローカル形状を登録し、問い合わせ時に現在Transformへ同期して、結果をノードポインタへ

@@ -6,17 +6,20 @@
 ## 使う
 
 ```cpp
-// マウスの位置から
-const FSceneRay Ray = FSceneRay::FromScreen( Camera, MouseX, MouseY, Width, Height );
-const FSceneRayHit Hit = CScenePicker::RaycastGeometry( *this, Ray );
+// AUi3DSceneでは、左上を0、右下を1とした画面位置から1回で選べる
+const FSceneRayHit Hit = PickScreen3D( FVec2{
+    MouseX / static_cast<f32>( Width ), MouseY / static_cast<f32>( Height ) } );
 if ( Hit.IsHit() )
 {
     Hit.Node->SetName( FStringView( "掴んだ" ) );
 }
 
 // 足元
-const FSceneRayHit Ground = CScenePicker::RaycastGeometry( *this, FSceneRay::Down( Position ) );
+const FSceneRayHit Ground = Raycast3D( FSceneRay::Down( Position ) );
 ```
+
+判定線も表示や再利用へ残す場合は`MakeScreenRay3D`で作り、`Raycast3D`へ渡す。場面を持たない
+道具やテストでは、従来どおり`FSceneRay::FromNormalizedScreen`と`CScenePicker`を直接使える。
 
 大まかな境界箱だけでよい場合は`Raycast( Root(), Ray )`。重なっている境界箱を全部欲しいときは
 `RaycastAll`で、手前から順に並ぶ。
@@ -25,8 +28,8 @@ const FSceneRayHit Ground = CScenePicker::RaycastGeometry( *this, FSceneRay::Dow
 
 木の走査と形状判定はACSが持っている。Frameworkが足すのは3つ。
 
-1. **画面から線を作る。** `FSceneRay::FromScreen`で座標と距離を揃える
-2. **場面をそのまま渡せる。** ノードグラフと識別子の扱いを呼び出し側へ漏らさない
+1. **画面から線を作る。** `MakeScreenRay3D`で正規化画面位置と距離を揃える
+2. **場面をそのまま判定する。** `Raycast3D`でグラフと識別子を呼び出し側へ漏らさない
 3. **結果を1つの型へ揃える。** ノード、距離、世界座標の点と法線を`FSceneRayHit`で返す
 
 毎回書くには長いが、書き方は 1 通りしかない。だから窓口にした。
@@ -62,7 +65,7 @@ const FSceneRayHit Ground = CScenePicker::RaycastGeometry( *this, FSceneRay::Dow
 
 | | |
 |---|---|
-| `SceneRay.h` / `.cpp` | 線。画面の位置から作る `FromScreen` を含む |
+| `SceneRay.h` / `.cpp` | 線。pixelまたは正規化画面位置から作る関数を含む |
 | `SceneRayHit.h` | 当たった記録 |
 | `ScenePicker.h` / `.cpp` | 木を辿って答える |
 | `Test/ScenePickerTest.cpp` | 手前、表示状態、球面、読み込みメッシュの三角形を検証 |

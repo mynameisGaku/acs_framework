@@ -4,7 +4,6 @@
 #include "AcsFramework_Core/Scene/Animation3D/AnimatedModel3DSpawner.h"
 #include "AcsFramework_Core/Scene/Light3D/Light3DSpawnParams.h"
 #include "AcsFramework_Core/Scene/Model3D/Model3DSpawner.h"
-#include "AcsFramework_Core/Scene/Pick3D/ScenePicker.h"
 #include "AcsFramework_Core/Scene/Sprite3D/Sprite3DSpawner.h"
 #include "AcsFramework_Core/Scene/Water3D/Water3DSpawnParams.h"
 #include "AcsFramework_Core/UI/WorldLabel3D/WorldLabel3DParams.h"
@@ -1136,11 +1135,10 @@ void ADemo3DScene::PickVisibleGeometry_Internal() noexcept
 	m_GeometryPickDebugRemainingSeconds = 0.0f;
 	/** 3D操作の照準と同じ、左上を0・右下を1とする画面位置。 */
 	const FVec2 ScreenPosition = InteractionFocus().Params().ScreenPosition;
-	/** 2x2画面へ正規化位置を写し、現在見えている方向へ作る判定線。 */
-	const FSceneRay Ray = FSceneRay::FromScreen(
-		Camera(), ScreenPosition.x * 2.0f, ScreenPosition.y * 2.0f, 2u, 2u, 100.0f );
+	/** 現在カメラから、照準の正規化画面位置へ伸ばす判定線。 */
+	const FSceneRay Ray = MakeScreenRay3D( ScreenPosition, 100.0f );
 	/** 判定線上で最初に見つかった実際の3D表面。 */
-	const FSceneRayHit Hit = CScenePicker::RaycastGeometry( *this, Ray );
+	const FSceneRayHit Hit = Raycast3D( Ray );
 	if ( !Hit.IsHit() )
 	{
 		Ui().SetText( m_GeometryPickStatusText, "PICK: MISS" );

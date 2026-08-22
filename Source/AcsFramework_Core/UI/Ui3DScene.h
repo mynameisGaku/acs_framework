@@ -8,6 +8,8 @@
 #include "AcsFramework_Core/Scene/DebugDraw3D/DebugDraw3DLayer.h"
 #include "AcsFramework_Core/Scene/Interaction3D/InteractionHighlight3DParams.h"
 #include "AcsFramework_Core/Scene/Interaction3D/InteractionFocus3D.h"
+#include "AcsFramework_Core/Scene/Pick3D/SceneRay.h"
+#include "AcsFramework_Core/Scene/Pick3D/SceneRayHit.h"
 #include "AcsFramework_Core/UI/InteractionReticle3D/InteractionReticle3DParams.h"
 #include "AcsFramework_Core/UI/WorldLabel3D/WorldLabel3DLayer.h"
 
@@ -92,6 +94,34 @@ public:
 
 	/** 読み取り専用の3D衝突集合を返す。 */
 	const CSceneCollision3D& Collision3D() const noexcept { return m_Collision3D; }
+
+	/**
+	 * 左上を0、右下を1とした画面位置から、現在カメラを通る3D判定線を作る。
+	 *
+	 * @param NormalizedScreenPosition 左上が(0, 0)、右下が(1, 1)の画面位置。
+	 * @param MaximumDistance 線が届くworld距離。
+	 * @return 現在カメラから伸びる線。位置または距離が無効なら`IsValid()`がfalseの線。
+	 */
+	FSceneRay MakeScreenRay3D( FVec2 NormalizedScreenPosition,
+		f32 MaximumDistance = 1000.0f ) noexcept;
+
+	/**
+	 * この場面で実際に描かれる3D形状へ有限の線を当てる。
+	 *
+	 * @param Ray world座標の始点、正規化済みの向き、届く距離。
+	 * @return 最前面のノード、距離、world位置、実表面法線。外れた場合は`IsHit()`がfalse。
+	 */
+	FSceneRayHit Raycast3D( const FSceneRay& Ray ) noexcept;
+
+	/**
+	 * 現在カメラの画面位置から、この場面の最前面にある実形状を1回で選ぶ。
+	 *
+	 * @param NormalizedScreenPosition 左上が(0, 0)、右下が(1, 1)の画面位置。
+	 * @param MaximumDistance 判定が届くworld距離。
+	 * @return 最前面の命中結果。入力が無効または外れた場合は`IsHit()`がfalse。
+	 */
+	FSceneRayHit PickScreen3D( FVec2 NormalizedScreenPosition,
+		f32 MaximumDistance = 1000.0f ) noexcept;
 
 	/**
 	 * プリミティブまたは静的3Dモデルを、必要な読み込みを含めて1回で場面へ置く。

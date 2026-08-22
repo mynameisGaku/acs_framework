@@ -61,6 +61,17 @@ struct FSceneRay
 		u32 Width, u32 Height, f32 InMaxDistance = 1000.0f ) noexcept;
 
 	/**
+	 * 左上を0、右下を1とした画面位置から、カメラを通して世界へ伸ばす。
+	 *
+	 * @param Camera 見ているカメラ。
+	 * @param NormalizedScreenPosition 左上が(0, 0)、右下が(1, 1)の画面位置。
+	 * @param InMaxDistance 届く距離。
+	 * @return カメラ位置から画面のその点へ向かう線。位置が範囲外なら無効な線。
+	 */
+	static FSceneRay FromNormalizedScreen( const CCamera& Camera, FVec2 NormalizedScreenPosition,
+		f32 InMaxDistance = 1000.0f ) noexcept;
+
+	/**
 	 * 真下へ落とす。
 	 *
 	 * @details 足元に何があるかを調べるとき。

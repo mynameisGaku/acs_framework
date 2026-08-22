@@ -37,7 +37,7 @@ ACS のモジュールは **438 個**ある。この枠組みが窓口を用意�
 | 3D 天候 | `AWeather3DScene`、`FWeather3DAppearance`、ACSの`CWeatherSystem` |
 | 3D エフェクト | `AEffect3DScene`、`CEffect3DPlayer`、同梱の Effekseer |
 | 3D の形状重なり | `AUi3DScene::Collision3D`、`CSceneCollision3D`、ACSの`CCollisionWorld3D` |
-| 3D の視線操作 | `CInteractionFocus3D`、`CScenePicker`、`CWorldLabel3DLayer` |
+| 3D の視線操作 | `AUi3DScene::PickScreen3D`、`CInteractionFocus3D`、`CWorldLabel3DLayer` |
 | 3D デバッグ描画 | `DrawLine3D`、`DrawAabb3D`、`DrawSphere3D`、ACSの`FDebugDraw3D` |
 | 遊ぶ人向け UI | `AUi3DScene`、`CUiLayer`、ACSの `AWidget` 群 |
 | 多言語 | `CLocalizationSubsystem` |
@@ -128,8 +128,9 @@ cameraからの距離に応じて大気へ馴染み、雲も実距離まで同�
   IBL・影・遮蔽・反射・霧が静的メッシュとまったく同じに効く (`acs_temp_doc/0022`)。
   何十体も出すなら `CPbrShader` へ GPU スキニングを足すのが次
 - ~~3D の当たり判定の窓口~~ → **`Scene/Pick3D` として実装済み** (2026-08-18、
-  実形状は2026-08-22)。`FSceneRay::FromScreen`で画面から線を作り、`RaycastGeometry`へ
-  場面ごと渡すだけで、球、有限平面、立方体、読み込みメッシュの三角形から最近点と実法線を返す。
+  実形状は2026-08-22、場面窓口は2026-08-23)。`PickScreen3D`へ正規化画面位置を渡すだけで、
+  球、有限平面、立方体、読み込みメッシュの三角形から最近点と実法線を返す。判定線を再利用する
+  場合は`MakeScreenRay3D`と`Raycast3D`へ分ける。
   従来の境界箱`Raycast`と、全候補を返す`RaycastAll`も用途別に残す。
   ※ 剛体物理は引き続きACS側の責務とする。球型キャラクター移動はACSへ実装し、Frameworkには
   ノードへ反映する薄い窓口だけを置いた。

@@ -97,7 +97,7 @@ FInteractionFocus3DUpdateResult CInteractionFocus3D::Update( const CCamera& Came
 	FInteractionFocus3DInput Input;
 	if ( RefreshGraphIdentity_Internal() )
 	{
-		const FSceneRay Ray = FSceneRay::FromScreen( Camera, m_Params.ScreenPosition.x * 2.0f, m_Params.ScreenPosition.y * 2.0f, 2u, 2u, m_Params.MaximumDistance );
+		const FSceneRay Ray = FSceneRay::FromNormalizedScreen( Camera, m_Params.ScreenPosition, m_Params.MaximumDistance );
 		const FSceneRayHit Hit = CScenePicker::RaycastGeometry( *m_Graph, Ray );
 		Input.CandidateNode = FindRegisteredAncestor_Internal( Hit.Node );
 		Input.bActivateRequested = bActivateRequested;

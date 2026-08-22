@@ -6,6 +6,7 @@
 #include "AcsFramework_Core/Scene/Animation3D/AnimatedModel3DSpawner.h"
 #include "AcsFramework_Core/Scene/Light3D/Light3DSpawner.h"
 #include "AcsFramework_Core/Scene/Model3D/Model3DSpawner.h"
+#include "AcsFramework_Core/Scene/Pick3D/ScenePicker.h"
 #include "AcsFramework_Core/Scene/Sprite3D/Sprite3DSpawner.h"
 #include "AcsFramework_Core/Scene/Water3D/Water3DSpawner.h"
 #include "AcsFramework_Core/UI/InteractionReticle3D/InteractionReticle3DLayout.h"
@@ -88,7 +89,27 @@ void AUi3DScene::OnDrawHud( FRenderContext& Context, CSpriteBatch& Sprites ) noe
 
 FInteractionFocus3DUpdateResult AUi3DScene::UpdateInteractionFocus( bool bActivateRequested ) noexcept
 {
+	(void)RefreshActiveCamera();
 	return m_InteractionFocus.Update( Camera(), bActivateRequested );
+}
+
+
+FSceneRay AUi3DScene::MakeScreenRay3D( FVec2 NormalizedScreenPosition, f32 MaximumDistance ) noexcept
+{
+	(void)RefreshActiveCamera();
+	return FSceneRay::FromNormalizedScreen( Camera(), NormalizedScreenPosition, MaximumDistance );
+}
+
+
+FSceneRayHit AUi3DScene::Raycast3D( const FSceneRay& Ray ) noexcept
+{
+	return CScenePicker::RaycastGeometry( Graph(), Ray );
+}
+
+
+FSceneRayHit AUi3DScene::PickScreen3D( FVec2 NormalizedScreenPosition, f32 MaximumDistance ) noexcept
+{
+	return Raycast3D( MakeScreenRay3D( NormalizedScreenPosition, MaximumDistance ) );
 }
 
 
