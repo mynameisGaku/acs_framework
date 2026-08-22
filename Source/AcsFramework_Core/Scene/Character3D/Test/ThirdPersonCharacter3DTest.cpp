@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: Apache-2.0
-#include "AcsFramework_Core/Scene/Character3D/ThirdPersonCharacter3D.h"
+#include "AcsFramework_Core/AcsFramework.h"
 #include "Common/Test/TestHarness.h"
 
 #include <limits>
