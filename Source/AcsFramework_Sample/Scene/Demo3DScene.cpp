@@ -649,10 +649,10 @@ bool ADemo3DScene::TryInitializeThirdPersonCharacter() noexcept
 {
 	if ( !m_CharacterCollision || m_ThirdPersonCharacter.IsBound() ) return false;
 
+	const FThirdPersonCharacter3DActionSet Actions = FThirdPersonCharacter3DActionSet::WithRunAction();
 	CActionBindingTable BuiltBindings;
-	if ( !FThirdPersonCharacter3DControlPreset{}.TryBuildBindings( BuiltBindings ) ) return false;
+	if ( !FThirdPersonCharacter3DControlPreset{}.TryBuildBindings( BuiltBindings, Actions ) ) return false;
 
-	const FThirdPersonCharacter3DActionSet Actions;
 	if ( !BuiltBindings.ReplaceGamepadButtonBinding( Actions.JumpAction, m_JumpGamepadRebind.CurrentButton(), kGamepadPlayerIndex ) || !BuiltBindings.ReplaceGamepadAxisBinding( Actions.MoveForwardAxis, m_MoveGamepadRebind.CurrentAxis(), kGamepadPlayerIndex, kGamepadDeadZone, 1.0f ) ) return false;
 
 	ANode* const Character = SpawnThirdPersonCharacter( Graph() );
@@ -676,7 +676,7 @@ bool ADemo3DScene::TryInitializeThirdPersonCharacter() noexcept
 		return false;
 	}
 
-	const FThirdPersonCharacter3DUpdateResult InitialUpdate = m_ThirdPersonCharacter.Update( FActionInput{}, FActionInput{}, 0.0f );
+	const FThirdPersonCharacter3DUpdateResult InitialUpdate = m_ThirdPersonCharacter.Update( FActionInput{}, FActionInput{}, 0.0f, Actions );
 	if ( !InitialUpdate.Succeeded() )
 	{
 		m_ThirdPersonCharacter.Unbind();
@@ -709,7 +709,8 @@ void ADemo3DScene::UpdateThirdPersonCharacter( f32 DeltaSeconds ) noexcept
 		else m_bSuppressMoveAxisUntilCentered = false;
 	}
 	if ( bSuppressInput ) CurrentInput = FActionInput{};
-	m_ThirdPersonCharacter.Update( CurrentInput, m_PreviousCharacterInput, DeltaSeconds );
+	const FThirdPersonCharacter3DActionSet Actions = FThirdPersonCharacter3DActionSet::WithRunAction();
+	m_ThirdPersonCharacter.Update( CurrentInput, m_PreviousCharacterInput, DeltaSeconds, Actions );
 	m_PreviousCharacterInput = CurrentInput;
 }
 

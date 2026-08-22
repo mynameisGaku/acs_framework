@@ -76,7 +76,7 @@ void RunThirdPersonCharacter3DControlPresetTests( CTestHarness& Harness )
 		Harness.Check( Bindings.BindKey( 31u, EKey::F12 ), "置換確認用の既存操作を用意できる" );
 		Harness.Check( Preset.TryBuildBindings( Bindings ), "キーボードとゲームパッドの既定操作を作れる" );
 		Harness.Check( Bindings.GetAxisBindingCount() == 8u, "4軸へキーとスティックを1組ずつ割り当てる" );
-		Harness.Check( Bindings.GetButtonBindingCount() == 6u, "3操作へキーとパッドボタンを1個ずつ割り当てる" );
+		Harness.Check( Bindings.GetButtonBindingCount() == 6u, "従来の3操作へキーとパッドボタンを1個ずつ割り当てる" );
 
 		CThirdPersonPresetDevice Device;
 		Device.PressKey( EKey::D );
@@ -85,6 +85,7 @@ void RunThirdPersonCharacter3DControlPresetTests( CTestHarness& Harness )
 		Device.PressKey( EKey::Up );
 		Device.PressKey( EKey::Space );
 		Device.PressKey( EKey::E );
+		Device.PressKey( EKey::LeftShift );
 		Device.PressKey( EKey::F12 );
 		const FActionInput CurrentInput = Bindings.Resolve( Device );
 		Harness.Check( !CurrentInput.IsDown( 31u ), "成功時は既存の割り当て表を置き換える" );
@@ -98,6 +99,14 @@ void RunThirdPersonCharacter3DControlPresetTests( CTestHarness& Harness )
 		Harness.CheckEqualF32( Evaluated.LookAxes.y, -1.0f, "上矢印を上視点へ割り当てる" );
 		Harness.CheckEqualF32( Evaluated.ZoomAxis, 1.0f, "Eを近接ズームへ割り当てる" );
 		Harness.Check( Evaluated.bJumpRequested, "Spaceをジャンプへ割り当てる" );
+		Harness.Check( !Evaluated.bRunRequested, "明示前は左Shiftを走行へ割り当てない" );
+
+		const FThirdPersonCharacter3DActionSet RunActions = FThirdPersonCharacter3DActionSet::WithRunAction();
+		CActionBindingTable RunBindings;
+		Harness.Check( Preset.TryBuildBindings( RunBindings, RunActions ), "走行を明示した既定操作を作れる" );
+		Harness.Check( RunBindings.GetButtonBindingCount() == 8u, "明示時だけ走行のキーとパッドボタンを追加する" );
+		Harness.Check( RunActions.TryEvaluate( RunBindings.Resolve( Device ), FActionInput{}, Evaluated ), "走行付き既定キーを変換できる" );
+		Harness.Check( Evaluated.bRunRequested, "左Shiftを明示した走行へ割り当てる" );
 
 		CThirdPersonPresetDevice OppositeDevice;
 		OppositeDevice.PressKey( EKey::A );
@@ -120,7 +129,8 @@ void RunThirdPersonCharacter3DControlPresetTests( CTestHarness& Harness )
 		Preset.GamepadPlayerIndex = 2u;
 		Preset.GamepadDeadZone = 0.2f;
 		CActionBindingTable Bindings;
-		Harness.Check( Preset.TryBuildBindings( Bindings ), "3台目のゲームパッドへ既定操作を作れる" );
+		const FThirdPersonCharacter3DActionSet Actions = FThirdPersonCharacter3DActionSet::WithRunAction();
+		Harness.Check( Preset.TryBuildBindings( Bindings, Actions ), "3台目のゲームパッドへ走行付き既定操作を作れる" );
 
 		CThirdPersonPresetDevice Device;
 		Device.SetAxis( 2u, EGamepadAxis::LeftX, 0.1f );
@@ -129,8 +139,8 @@ void RunThirdPersonCharacter3DControlPresetTests( CTestHarness& Harness )
 		Device.SetAxis( 2u, EGamepadAxis::RightY, 0.25f );
 		Device.PressButton( 2u, EGamepadButton::South );
 		Device.PressButton( 2u, EGamepadButton::LeftBumper );
+		Device.PressButton( 2u, EGamepadButton::LeftStick );
 		FThirdPersonCharacter3DInput Evaluated;
-		const FThirdPersonCharacter3DActionSet Actions;
 		Harness.Check( Actions.TryEvaluate( Bindings.Resolve( Device ), FActionInput{}, Evaluated ), "指定パッドを第三者視点入力へ変換できる" );
 		Harness.CheckEqualF32( Evaluated.MoveAxes.x, 0.0f, "中心付近の左スティックXを除く" );
 		Harness.CheckEqualF32( Evaluated.MoveAxes.y, 0.75f, "左スティック上を前移動へ割り当てる" );
@@ -138,6 +148,7 @@ void RunThirdPersonCharacter3DControlPresetTests( CTestHarness& Harness )
 		Harness.CheckEqualF32( Evaluated.LookAxes.y, -0.25f, "右スティック上を上視点へ反転する" );
 		Harness.CheckEqualF32( Evaluated.ZoomAxis, -1.0f, "左バンパーを遠隔ズームへ割り当てる" );
 		Harness.Check( Evaluated.bJumpRequested, "下側ボタンをジャンプへ割り当てる" );
+		Harness.Check( Evaluated.bRunRequested, "左スティック押込を走行へ割り当てる" );
 
 		CThirdPersonPresetDevice ZoomInDevice;
 		ZoomInDevice.PressButton( 2u, EGamepadButton::RightBumper );

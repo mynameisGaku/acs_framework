@@ -19,17 +19,19 @@ namespace
 		return First < kActionAxisCount && Second < kActionAxisCount && Third < kActionAxisCount && Fourth < kActionAxisCount && First != Second && First != Third && First != Fourth && Second != Third && Second != Fourth && Third != Fourth;
 	}
 
-	/** 3個のアクション番号が全て範囲内かつ互いに異なるか返す。 */
-	bool AreActionsValid( u32 First, u32 Second, u32 Third ) noexcept
+	/** 既存3操作が有効で、任意の4番目が無効番兵または重複しない実番号ならtrueを返す。 */
+	bool AreActionsValid( u32 First, u32 Second, u32 Third, u32 Fourth ) noexcept
 	{
-		return First < kActionButtonCount && Second < kActionButtonCount && Third < kActionButtonCount && First != Second && First != Third && Second != Third;
+		const bool bBaseValid = First < kActionButtonCount && Second < kActionButtonCount && Third < kActionButtonCount && First != Second && First != Third && Second != Third;
+		if ( !bBaseValid ) return false;
+		return Fourth == kActionButtonCount || ( Fourth < kActionButtonCount && Fourth != First && Fourth != Second && Fourth != Third );
 	}
 }
 
 
 bool FThirdPersonCharacter3DActionSet::IsValid() const noexcept
 {
-	return AreAxesValid( MoveRightAxis, MoveForwardAxis, LookYawAxis, LookPitchAxis ) && AreActionsValid( JumpAction, ZoomInAction, ZoomOutAction );
+	return AreAxesValid( MoveRightAxis, MoveForwardAxis, LookYawAxis, LookPitchAxis ) && AreActionsValid( JumpAction, ZoomInAction, ZoomOutAction, RunAction );
 }
 
 
@@ -50,6 +52,7 @@ bool FThirdPersonCharacter3DActionSet::TryEvaluate( const FActionInput& CurrentI
 	Evaluated.LookAxes = FVec2{ ClampInputAxis( LookYaw ), ClampInputAxis( LookPitch ) };
 	Evaluated.ZoomAxis = bZoomIn == bZoomOut ? 0.0f : ( bZoomIn ? 1.0f : -1.0f );
 	Evaluated.bJumpRequested = CurrentInput.IsDown( JumpAction ) && !PreviousInput.IsDown( JumpAction );
+	Evaluated.bRunRequested = HasRunAction() && CurrentInput.IsDown( RunAction );
 	OutInput = Evaluated;
 	return true;
 }

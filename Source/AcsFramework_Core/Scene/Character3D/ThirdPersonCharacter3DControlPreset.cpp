@@ -17,16 +17,18 @@ namespace
 		return Bindings.BindGamepadAxis( Actions.MoveRightAxis, EGamepadAxis::LeftX, PlayerIndex, DeadZone, 1.0f ) && Bindings.BindGamepadAxis( Actions.MoveForwardAxis, EGamepadAxis::LeftY, PlayerIndex, DeadZone, 1.0f ) && Bindings.BindGamepadAxis( Actions.LookYawAxis, EGamepadAxis::RightX, PlayerIndex, DeadZone, 1.0f ) && Bindings.BindGamepadAxis( Actions.LookPitchAxis, EGamepadAxis::RightY, PlayerIndex, DeadZone, -1.0f );
 	}
 
-	/** SpaceとE/Qをジャンプとズームへ割り当てる。 */
+	/** Space、E/Q、左Shiftをジャンプ、ズーム、走行へ割り当てる。 */
 	bool TryBindKeyboardActions( CActionBindingTable& Bindings, const FThirdPersonCharacter3DActionSet& Actions ) noexcept
 	{
-		return Bindings.BindKey( Actions.JumpAction, EKey::Space ) && Bindings.BindKey( Actions.ZoomInAction, EKey::E ) && Bindings.BindKey( Actions.ZoomOutAction, EKey::Q );
+		if ( !Bindings.BindKey( Actions.JumpAction, EKey::Space ) || !Bindings.BindKey( Actions.ZoomInAction, EKey::E ) || !Bindings.BindKey( Actions.ZoomOutAction, EKey::Q ) ) return false;
+		return !Actions.HasRunAction() || Bindings.BindKey( Actions.RunAction, EKey::LeftShift );
 	}
 
-	/** 下側ボタンと左右バンパーをジャンプとズームへ割り当てる。 */
+	/** 下側ボタン、左右バンパー、左スティック押込をジャンプ、ズーム、走行へ割り当てる。 */
 	bool TryBindGamepadActions( CActionBindingTable& Bindings, const FThirdPersonCharacter3DActionSet& Actions, u32 PlayerIndex ) noexcept
 	{
-		return Bindings.BindGamepadButton( Actions.JumpAction, EGamepadButton::South, PlayerIndex ) && Bindings.BindGamepadButton( Actions.ZoomInAction, EGamepadButton::RightBumper, PlayerIndex ) && Bindings.BindGamepadButton( Actions.ZoomOutAction, EGamepadButton::LeftBumper, PlayerIndex );
+		if ( !Bindings.BindGamepadButton( Actions.JumpAction, EGamepadButton::South, PlayerIndex ) || !Bindings.BindGamepadButton( Actions.ZoomInAction, EGamepadButton::RightBumper, PlayerIndex ) || !Bindings.BindGamepadButton( Actions.ZoomOutAction, EGamepadButton::LeftBumper, PlayerIndex ) ) return false;
+		return !Actions.HasRunAction() || Bindings.BindGamepadButton( Actions.RunAction, EGamepadButton::LeftStick, PlayerIndex );
 	}
 }
 

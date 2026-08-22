@@ -58,7 +58,8 @@ FThirdPersonCharacter3DUpdateResult CThirdPersonCharacter3D::Update( const FThir
 	Result.bCameraInputApplied = m_Camera.Update( Input.LookAxes, Input.ZoomAxis, DeltaSeconds );
 	if ( !Result.bCameraInputApplied ) return Result;
 
-	Result.bMovementApplied = m_Mover.MoveFromCamera( m_Scene->Camera(), Input.MoveAxes, m_Params.MaximumMoveSpeed, Input.bJumpRequested, DeltaSeconds );
+	const f32 MoveSpeed = m_Params.MaximumMoveSpeed * ( Input.bRunRequested ? m_Params.RunSpeedMultiplier : 1.0f );
+	Result.bMovementApplied = m_Mover.MoveFromCamera( m_Scene->Camera(), Input.MoveAxes, MoveSpeed, Input.bJumpRequested, DeltaSeconds );
 	if ( !Result.bMovementApplied ) return Result;
 
 	Result.bFacingApplied = m_Mover.TurnTowardMovement( m_Params.MaximumTurnDegreesPerSecond, DeltaSeconds );
@@ -84,7 +85,7 @@ FThirdPersonCharacter3DUpdateResult CThirdPersonCharacter3D::Update( const FActi
 
 bool CThirdPersonCharacter3D::IsValidParams_Internal( const FThirdPersonCharacter3DParams& Params ) noexcept
 {
-	return IsFinite_Internal( Params.LocalCollisionCenter ) && std::isfinite( Params.MaximumMoveSpeed ) && Params.MaximumMoveSpeed >= 0.0f && std::isfinite( Params.MaximumTurnDegreesPerSecond ) && Params.MaximumTurnDegreesPerSecond >= 0.0f;
+	return IsFinite_Internal( Params.LocalCollisionCenter ) && std::isfinite( Params.MaximumMoveSpeed ) && Params.MaximumMoveSpeed >= 0.0f && std::isfinite( Params.RunSpeedMultiplier ) && Params.RunSpeedMultiplier >= 1.0f && std::isfinite( Params.MaximumMoveSpeed * Params.RunSpeedMultiplier ) && std::isfinite( Params.MaximumTurnDegreesPerSecond ) && Params.MaximumTurnDegreesPerSecond >= 0.0f;
 }
 
 

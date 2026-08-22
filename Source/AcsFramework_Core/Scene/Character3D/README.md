@@ -14,22 +14,26 @@ HeroController.Bind( Collision, *this, *Hero, Params );
 HeroController.TryBindAnimation();
 
 CActionBindingTable ActionBindings;
-FThirdPersonCharacter3DControlPreset{}.TryBuildBindings( ActionBindings );
+const FThirdPersonCharacter3DActionSet Actions = FThirdPersonCharacter3DActionSet::WithRunAction();
+FThirdPersonCharacter3DControlPreset{}.TryBuildBindings( ActionBindings, Actions );
 FActionInput PreviousInput;
 
 // 固定更新ごとに装置を明示的に読み、前回入力と一緒に渡す。
 const FActionInput CurrentInput = ActionBindings.Resolve( DeviceReader );
-const FThirdPersonCharacter3DUpdateResult Result = HeroController.Update( CurrentInput, PreviousInput, DeltaSeconds );
+const FThirdPersonCharacter3DUpdateResult Result = HeroController.Update( CurrentInput, PreviousInput, DeltaSeconds, Actions );
 PreviousInput = CurrentInput;
 ```
 
 既定の`FThirdPersonCharacter3DActionSet`は、軸0/1を左右・前後移動、軸2/3を左右・上下視点、
-アクション0をジャンプ、1/2をカメラの近接・遠隔へ割り当てる。番号を変えたい場合は
+アクション0をジャンプ、1/2をカメラの近接・遠隔へ割り当て、走行は無効にして従来入力との互換性を保つ。
+`WithRunAction()`で作るとアクション3を走行へ明示追加できる。番号を変えたい場合は
 `FThirdPersonCharacter3DActionSet`の値を変更して`Update()`の第4引数へ渡す。ジャンプは現在と前回の
 差から押した瞬間だけ発生し、押し続けたまま着地しても自動で再ジャンプしない。
 
 `FThirdPersonCharacter3DControlPreset`は、WASD、矢印、Space、E/Qと、左右スティック、下側ボタン、
-左右バンパーを上記の番号へまとめて割り当てる。別のキー配置が必要なら、既存の
+左右バンパーを上記の番号へまとめて割り当てる。走行を有効にした`ActionSet`も渡すと、左Shiftと
+左スティック押込を追加する。走行中は`FThirdPersonCharacter3DParams::RunSpeedMultiplier`を
+基本速度へ掛ける。別のキー配置が必要なら、既存の
 `CActionBindingTable`へ個別に追加する。プリセットは入力装置を読まず、作成先の表だけを置き換える。
 `AcsFramework_Sample/Scene/Demo3DScene.cpp`では、素材不要のキャラクター、床・水底・障害物の衝突、
 この既定操作、追従カメラまでを実際の場面寿命へ接続している。

@@ -32,4 +32,7 @@ struct FThirdPersonCharacter3DParams
 
 	/** 追従点、初期角度、距離、操作速度、遮蔽物回避設定。 */
 	FNodeOrbitCamera3DParams Camera;
+
+	/** 走行要求中に基本速度へ掛ける倍率。1以上を指定する。 */
+	f32 RunSpeedMultiplier = 1.75f;
 };

@@ -22,6 +22,9 @@ struct FThirdPersonCharacter3DInput
 	/** 接地中のキャラクターへジャンプを要求するならtrue。 */
 	bool bJumpRequested = false;
 
+	/** 基本速度へ走行倍率を掛けて移動するならtrue。 */
+	bool bRunRequested = false;
+
 	/**
 	 * 各操作量を既存のACS計算へ渡せるか返す。
 	 *

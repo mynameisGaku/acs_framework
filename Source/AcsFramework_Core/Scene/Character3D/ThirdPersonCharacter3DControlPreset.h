@@ -9,6 +9,7 @@
  *
  * @details キーボードはWASD移動、矢印視点、Spaceジャンプ、E/Qズームを使う。
  * ゲームパッドは左右スティック、下側ボタン、左右バンパーを同じ操作へ重ねる。
+ * `Actions.HasRunAction()`がtrueなら、左Shiftと左スティック押込も走行へ追加する。
  */
 struct FThirdPersonCharacter3DControlPreset
 {

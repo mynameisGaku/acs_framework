@@ -71,7 +71,9 @@ void RunThirdPersonCharacter3DTests( CTestHarness& Harness )
 		const FThirdPersonCharacter3DInput DefaultInput;
 		Harness.Check( DefaultInput.IsValid() && DefaultInput.MoveAxes.x == 0.0f && DefaultInput.MoveAxes.y == 0.0f
 			&& DefaultInput.LookAxes.x == 0.0f && DefaultInput.LookAxes.y == 0.0f && DefaultInput.ZoomAxis == 0.0f
-			&& !DefaultInput.bJumpRequested, "未指定の操作量を安全な無入力として初期化する" );
+			&& !DefaultInput.bJumpRequested && !DefaultInput.bRunRequested, "未指定の操作量を安全な無入力として初期化する" );
+		const FThirdPersonCharacter3DParams LegacyOrderedParams{ FVec3{ 0.0f, 0.5f, 0.0f }, FKinematicCharacterMovementParams3D{}, 4.0f, 540.0f, FCollisionShapeId3D{}, CSceneCollision3D::kAllLayers, FNodeOrbitCamera3DParams{} };
+		Harness.Check( LegacyOrderedParams.MaximumTurnDegreesPerSecond == 540.0f && LegacyOrderedParams.CollisionMask == CSceneCollision3D::kAllLayers && LegacyOrderedParams.RunSpeedMultiplier == 1.75f, "従来順の位置指定初期化を保ち、走行倍率だけ末尾の既定値を使う" );
 
 		TUniquePtr<CTestThirdPersonScene3D> Scene = MakeUnique<CTestThirdPersonScene3D>();
 		CSceneCollision3D Collision{ Scene->Graph() };
@@ -109,6 +111,14 @@ void RunThirdPersonCharacter3DTests( CTestHarness& Harness )
 		CheckNear( Harness, Controller.OrbitCamera().State().target.z, Position.z, "移動後の注視点Zを追う" );
 		Harness.Check( Controller.OrbitCamera().TryShakePreset( EShakePreset::HitImpact ), "公開カメラアダプターから揺れを加えられる" );
 
+		FThirdPersonCharacter3DInput RunInput;
+		RunInput.MoveAxes = FVec2{ 0.0f, 1.0f };
+		RunInput.bRunRequested = true;
+		const FThirdPersonCharacter3DUpdateResult RunResult = Controller.Update( RunInput, 0.25f );
+		Harness.Check( RunResult.Succeeded(), "走行要求も同じ更新経路で適用する" );
+		const FVec3 RunVelocity = Controller.Mover().Velocity();
+		CheckNear( Harness, Length( FVec2{ RunVelocity.x, RunVelocity.z } ), 7.0f, "走行中は基本速度へ既定倍率を掛ける" );
+
 		Controller.Unbind();
 		Harness.Check( !Controller.IsBound() && Scene->FreeCameraEnabled() && !Scene->OrbitCameraOverrideActive(), "解除時に移動接続と場面カメラ設定を戻す" );
 	}
@@ -126,6 +136,9 @@ void RunThirdPersonCharacter3DTests( CTestHarness& Harness )
 		FThirdPersonCharacter3DParams BrokenParams;
 		BrokenParams.MaximumMoveSpeed = std::numeric_limits<f32>::infinity();
 		Harness.Check( !Controller.Bind( Collision, *Scene, *Character, BrokenParams ), "有限でない最大速度を接続前に拒否する" );
+		BrokenParams.MaximumMoveSpeed = 4.0f;
+		BrokenParams.RunSpeedMultiplier = 0.99f;
+		Harness.Check( !Controller.Bind( Collision, *Scene, *Character, BrokenParams ), "1未満の走行倍率を接続前に拒否する" );
 		Harness.Check( !Controller.IsBound() && Scene->FreeCameraEnabled() && !Scene->OrbitCameraOverrideActive(), "接続失敗で場面設定を変えない" );
 
 		FThirdPersonCharacter3DParams Params;

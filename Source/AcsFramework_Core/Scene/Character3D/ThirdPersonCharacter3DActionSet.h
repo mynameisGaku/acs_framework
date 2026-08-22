@@ -32,17 +32,36 @@ struct FThirdPersonCharacter3DActionSet
 	/** カメラを遠ざけるアクション番号。 */
 	u32 ZoomOutAction = 2u;
 
+	/** 基本速度から走行速度へ切り替えるアクション番号。 */
+	u32 RunAction = kActionButtonCount;
+
+	/**
+	 * 既存3操作へ走行アクションを明示追加した値を作る。
+	 *
+	 * @param ActionIndex 走行へ使う範囲内のアクション番号。
+	 * @return 指定番号を走行へ設定した値。範囲外ならIsValidが拒否する値。
+	 */
+	static FThirdPersonCharacter3DActionSet WithRunAction( u32 ActionIndex = 3u ) noexcept
+	{
+		FThirdPersonCharacter3DActionSet Actions;
+		Actions.RunAction = ActionIndex < kActionButtonCount ? ActionIndex : kActionButtonCount + 1u;
+		return Actions;
+	}
+
+	/** 走行アクションが明示的に有効ならtrueを返す。 */
+	bool HasRunAction() const noexcept { return RunAction < kActionButtonCount; }
+
 	/**
 	 * 軸とアクションの割り当てが利用可能か返す。
 	 *
-	 * @return 各番号が範囲内で、同じ種類の番号に重複がなければtrue。
+	 * @return 各番号が範囲内で、有効な同じ種類の番号に重複がなければtrue。
 	 */
 	bool IsValid() const noexcept;
 
 	/**
 	 * 現在と前回の汎用入力から第三者視点の明示入力を作る。
 	 *
-	 * @details 軸は個別に-1から1へ制限する。ジャンプは押した瞬間だけ要求し、
+	 * @details 軸は個別に-1から1へ制限する。走行は押している間だけ有効にする。ジャンプは押した瞬間だけ要求し、
 	 * ズームの近接と遠隔が同時なら中立にする。失敗時はOutInputを変更しない。
 	 * @param CurrentInput 今回の汎用アクション入力。
 	 * @param PreviousInput 前回の汎用アクション入力。

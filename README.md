@@ -23,8 +23,9 @@ msbuild acs_framework.vcxproj /p:Configuration=Release /p:Platform=x64
 .\x64\Release\acs_framework.exe
 ```
 
-WASDで移動、矢印キーで視点、Spaceでジャンプ、Q/Eで距離を操作する。ゲームパッドなら
-左スティックで移動、右スティックで視点、下側ボタンでジャンプ、左右バンパーで距離を変える。
+WASDで移動、左Shiftで走行、矢印キーで視点、Spaceでジャンプ、Q/Eで距離を操作する。ゲームパッドなら
+左スティックで移動、左スティック押込で走行、右スティックで視点、下側ボタンでジャンプ、
+左右バンパーで距離を変える。
 
 > `FetchAcs.ps1` がまだ Release を落とせない段階なら、エンジンをローカルでビルドして
 > `.\Tools\FetchAcs.ps1 -FromLocal C:\acs_dev` で持ってくる (`ThirdParty/acs/README.md`)。
@@ -105,10 +106,11 @@ HeroController.Bind( Collision, *this, *HeroNode, CharacterParams );
 HeroController.TryBindAnimation();
 
 CActionBindingTable ActionBindings;
-FThirdPersonCharacter3DControlPreset{}.TryBuildBindings( ActionBindings );
+const FThirdPersonCharacter3DActionSet Actions = FThirdPersonCharacter3DActionSet::WithRunAction();
+FThirdPersonCharacter3DControlPreset{}.TryBuildBindings( ActionBindings, Actions );
 FActionInput PreviousCharacterInput;
 const FActionInput CharacterInput = ActionBindings.Resolve( InputReader );
-HeroController.Update( CharacterInput, PreviousCharacterInput, DeltaSeconds );
+HeroController.Update( CharacterInput, PreviousCharacterInput, DeltaSeconds, Actions );
 PreviousCharacterInput = CharacterInput;
 HeroController.OrbitCamera().TryShakePreset( EShakePreset::HitImpact ); // 被弾時
 
