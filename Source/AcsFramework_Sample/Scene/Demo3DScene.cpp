@@ -9,7 +9,6 @@
 #include "AcsFramework_Core/Scene/Water3D/Water3DSpawner.h"
 #include "AcsFramework_Core/UI/WorldLabel3D/WorldLabel3DParams.h"
 
-#include "AcsFramework_Core/Assets/AssetLoaderSubsystem.h"
 #include "AcsFramework_Core/Audio/Spatial/SpatialAudioSubsystem.h"
 #include "AcsFramework_Core/Settings/GameSettingsSubsystem.h"
 #include "Common/Compat/AcsEnumReflection.h"
@@ -445,33 +444,30 @@ void ADemo3DScene::OnEnter() noexcept
 
 	// Assets に置いた FBX。**置き場からモデルを読む道が通っていることの確認**でもある。
 	// 読めなければ置かずに nullptr が返り、理由が 1 行出る (黙って消えない)。
-	if ( CAssetLoaderSubsystem* const Assets = GetSubsystem<CAssetLoaderSubsystem>() )
-	{
-		FModel3DSpawnParams Model =
-			FModel3DSpawnParams::FromMesh( FStringView( "Models/MergedSphere.fbx" ), FVec3{ -3.4f, 1.0f, 2.4f } );
-		Model.Scale = FVec3{ 1.4f, 1.4f, 1.4f };
-		Model.Color = FVec4{ 0.92f, 0.62f, 0.28f, 1.0f };
-		Model.Roughness = 0.40f;
-		Model.Name = FStringView( "ImportedModel" );
-		m_Mover = CModel3DSpawner::SpawnInto( Graph(), Model, Assets->Models() );
-		if ( m_CharacterCollision && m_Mover != nullptr ) m_CharacterCollision->TryAddBounds( *m_Mover, kCharacterCollisionLayer );
+	FModel3DSpawnParams Model =
+		FModel3DSpawnParams::FromMesh( FStringView( "Models/MergedSphere.fbx" ), FVec3{ -3.4f, 1.0f, 2.4f } );
+	Model.Scale = FVec3{ 1.4f, 1.4f, 1.4f };
+	Model.Color = FVec4{ 0.92f, 0.62f, 0.28f, 1.0f };
+	Model.Roughness = 0.40f;
+	Model.Name = FStringView( "ImportedModel" );
+	m_Mover = SpawnModel3D( Model );
+	if ( m_CharacterCollision && m_Mover != nullptr ) m_CharacterCollision->TryAddBounds( *m_Mover, kCharacterCollisionLayer );
 
-		// 透過PNGをカメラへ向く3D板として置く。画像読込、ノード、追従登録を1回へまとめる。
-		FSprite3DSpawnParams ImageMarker = FSprite3DSpawnParams::FromImage(
-			FStringView( "circle.png" ), FVec3{ -3.4f, 2.45f, 2.4f }, FVec2{ 0.72f, 0.72f } );
-		ImageMarker.Name = FStringView( "ImageMarker" );
-		if ( SpawnBillboard3D( ImageMarker ) == nullptr )
-			ACS_LOG_WARN( "Demo3D: カメラ追従の3D画像マーカーを配置できなかった" );
+	// 透過PNGをカメラへ向く3D板として置く。画像読込、ノード、追従登録を1回へまとめる。
+	FSprite3DSpawnParams ImageMarker = FSprite3DSpawnParams::FromImage(
+		FStringView( "circle.png" ), FVec3{ -3.4f, 2.45f, 2.4f }, FVec2{ 0.72f, 0.72f } );
+	ImageMarker.Name = FStringView( "ImageMarker" );
+	if ( SpawnBillboard3D( ImageMarker ) == nullptr )
+		ACS_LOG_WARN( "Demo3D: カメラ追従の3D画像マーカーを配置できなかった" );
 
-		// 骨で動くモデル。読み込み、部品追加、最初のクリップ再生までを1回で行う。
-		// **骨の入っていないFBXを渡すと読めない。** そのときは1行出て、何も置かれない。
-		FAnimatedModel3DSpawnParams Animated = FAnimatedModel3DSpawnParams::FromModel(
-			FStringView( "Models/SkinnedAnimated.fbx" ), FVec3{ 3.6f, 0.2f, 1.4f } );
-		Animated.Scale = FVec3{ 0.02f, 0.02f, 0.02f };   // 書き出し単位がセンチメートル
-		Animated.Color = FVec3{ 0.72f, 0.78f, 0.86f };
-		Animated.Name = FStringView( "Animated" );
-		SpawnAnimatedModel3D( Animated );
-	}
+	// 骨で動くモデル。読み込み、部品追加、最初のクリップ再生までを1回で行う。
+	// **骨の入っていないFBXを渡すと読めない。** そのときは1行出て、何も置かれない。
+	FAnimatedModel3DSpawnParams Animated = FAnimatedModel3DSpawnParams::FromModel(
+		FStringView( "Models/SkinnedAnimated.fbx" ), FVec3{ 3.6f, 0.2f, 1.4f } );
+	Animated.Scale = FVec3{ 0.02f, 0.02f, 0.02f };   // 書き出し単位がセンチメートル
+	Animated.Color = FVec3{ 0.72f, 0.78f, 0.86f };
+	Animated.Name = FStringView( "Animated" );
+	SpawnAnimatedModel3D( Animated );
 
 	// 太陽。
 	//

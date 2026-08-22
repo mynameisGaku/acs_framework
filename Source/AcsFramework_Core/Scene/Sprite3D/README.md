@@ -4,14 +4,14 @@
 まとめる。画像のデコードは`CImageLibrary`、GPU画像の所有、深度判定、透過合成はACSが担う。
 
 ```cpp
-CAssetLoaderSubsystem* const Assets = GetSubsystem<CAssetLoaderSubsystem>();
-if ( Assets != nullptr )
-{
-    FSprite3DSpawnParams Marker = FSprite3DSpawnParams::FromImage(
-        FStringView( "Textures/Marker.png" ), FVec3{ 0.0f, 2.0f, 3.0f }, FVec2{ 0.8f, 0.8f } );
-    CSprite3DSpawner::SpawnInto( Graph(), Marker, Assets->Images() );
-}
+FSprite3DSpawnParams Marker = FSprite3DSpawnParams::FromImage(
+    FStringView( "Textures/Marker.png" ), FVec3{ 0.0f, 2.0f, 3.0f }, FVec2{ 0.8f, 0.8f } );
+SpawnImage3D( Marker );
 ```
+
+`SpawnImage3D`は`AUi3DScene`の派生場面で使える。画像読込と識別子付きノード生成をまとめるだけで、
+向き固定、深度判定、HDR合成は従来と同じACS経路を通る。`AUi3DScene`を使わないノード木では、
+`CSprite3DSpawner::SpawnInto`へグラフと`CImageLibrary`を渡す。
 
 板はノードのローカルXY面に固定される。看板、カード、印、簡単な草木など、worldに向きが
 ある画像へ使い、向きは`RotationDeg`へ度で指定する。カメラへ自動で向ける場合は

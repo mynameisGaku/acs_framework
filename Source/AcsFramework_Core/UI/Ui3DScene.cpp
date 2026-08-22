@@ -3,7 +3,8 @@
 
 #include "AcsFramework_Core/Assets/AssetLoaderSubsystem.h"
 #include "AcsFramework_Core/Scene/Animation3D/AnimatedModel3DSpawner.h"
-#include "AcsFramework_Core/Scene/Sprite3D/Sprite3DSpawnParams.h"
+#include "AcsFramework_Core/Scene/Model3D/Model3DSpawner.h"
+#include "AcsFramework_Core/Scene/Sprite3D/Sprite3DSpawner.h"
 #include "AcsFramework_Core/UI/InteractionReticle3D/InteractionReticle3DLayout.h"
 
 namespace
@@ -77,6 +78,37 @@ void AUi3DScene::OnDrawHud( FRenderContext& Context, CSpriteBatch& Sprites ) noe
 FInteractionFocus3DUpdateResult AUi3DScene::UpdateInteractionFocus( bool bActivateRequested ) noexcept
 {
 	return m_InteractionFocus.Update( Camera(), bActivateRequested );
+}
+
+
+ANode* AUi3DScene::SpawnModel3D( const FModel3DSpawnParams& Params, ANode* Parent ) noexcept
+{
+	if ( !Params.IsValid() ) return nullptr;
+	const bool bNeedsLoad = !Params.MeshAsset && Params.MeshPath.Data() != nullptr && Params.MeshPath.Size() > 0u;
+	if ( !bNeedsLoad ) return CModel3DSpawner::SpawnInto( Graph(), Params, Parent );
+
+	CAssetLoaderSubsystem* const Assets = GetSubsystem<CAssetLoaderSubsystem>();
+	if ( Assets == nullptr )
+	{
+		ACS_LOG_WARN( "AUi3DScene: 静的3Dモデル用のasset読込窓口が無い" );
+		return nullptr;
+	}
+	return CModel3DSpawner::SpawnInto( Graph(), Params, Assets->Models(), Parent );
+}
+
+
+ANode* AUi3DScene::SpawnImage3D( const FSprite3DSpawnParams& Params, ANode* Parent ) noexcept
+{
+	if ( !Params.IsValid() ) return nullptr;
+	if ( Params.IsReady() ) return CSprite3DSpawner::SpawnInto( Graph(), Params, Parent );
+
+	CAssetLoaderSubsystem* const Assets = GetSubsystem<CAssetLoaderSubsystem>();
+	if ( Assets == nullptr )
+	{
+		ACS_LOG_WARN( "AUi3DScene: 固定向き3D画像板用のasset読込窓口が無い" );
+		return nullptr;
+	}
+	return CSprite3DSpawner::SpawnInto( Graph(), Params, Assets->Images(), Parent );
 }
 
 

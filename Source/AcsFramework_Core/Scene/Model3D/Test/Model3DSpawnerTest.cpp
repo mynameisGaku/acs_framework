@@ -48,6 +48,10 @@ void RunModel3DSpawnerTests( CTestHarness& Harness )
 			FModel3DSpawnParams::FromMesh( FStringView( "hero.mdl" ), FVec3{ 0.0f, 0.0f, 0.0f } );
 		Harness.Check( FromMesh.IsValid(), "場所があれば通る" );
 		Harness.Check( FromMesh.Primitive == EMeshPrimitive3D::Mesh, "モデル指定になる" );
+
+		FModel3DSpawnParams WrongAsset = FromMesh;
+		WrongAsset.MeshAsset = MakeShared<ABinaryAsset>();
+		Harness.Check( !WrongAsset.IsValid(), "静的モデル以外のアセットは拒む" );
 	}
 
 	Harness.BeginSuite( "CModel3DSpawner / 置く" );
@@ -119,6 +123,26 @@ void RunModel3DSpawnerTests( CTestHarness& Harness )
 			Harness.Check( Mesh->MeshPath() == FStringView( "hero.mdl" ), "モデルの場所が入る" );
 			Harness.Check( Mesh->Primitive() == EMeshPrimitive3D::Mesh, "形はモデルになる" );
 		}
+	}
+
+	Harness.BeginSuite( "CModel3DSpawner / 読込済みモデルを読み直さない" );
+
+	{
+		TSharedPtr<AMeshAsset> ReadyMesh = Primitive::MakeCube();
+		Harness.Check( static_cast<bool>( ReadyMesh ), "テスト用モデルを作れる" );
+
+		FModel3DSpawnParams Params;
+		Params.Primitive = EMeshPrimitive3D::Mesh;
+		Params.MeshAsset = TSharedPtr<AAsset>( ReadyMesh );
+		Harness.Check( Params.IsValid(), "パスが無くても読込済みモデルなら有効" );
+
+		CSceneNodeGraph Graph;
+		CModelLibrary UnboundLibrary;
+		ANode* const Placed = CModel3DSpawner::SpawnInto( Graph, Params, UnboundLibrary );
+		const AMeshComponent3D* const Mesh = MeshOf( Placed );
+		Harness.Check( Placed != nullptr, "未接続ライブラリへ触れず配置できる" );
+		Harness.Check( Mesh != nullptr && Mesh->MeshAsset().Get() == ReadyMesh.Get(),
+			"同じモデルの共有所有権を部品へ渡す" );
 	}
 
 	Harness.BeginSuite( "CModel3DSpawner / 向きを度で受ける" );

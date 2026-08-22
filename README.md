@@ -37,8 +37,8 @@ WASDで移動、左Shiftで走行、矢印キーで視点、Spaceでジャンプ
 
 | | |
 |---|---|
-| 3D を置く | `CModel3DSpawner`、`AUi3DScene::SpawnAnimatedModel3D()`、FBX の取り込み、材質 (metallic / roughness) |
-| 3D画像を置く | `CSprite3DSpawner`の固定板、`SpawnBillboard3D()`のカメラ追従板、透過PNG、深度判定、HDR合成 |
+| 3D を置く | `SpawnModel3D()`、`SpawnAnimatedModel3D()`、FBX の取り込み、材質 (metallic / roughness) |
+| 3D画像を置く | `SpawnImage3D()`の固定板、`SpawnBillboard3D()`のカメラ追従板、透過PNG、深度判定、HDR合成 |
 | 3D を照らす | `CLight3DSpawner`、方向だけで置ける太陽、位置と距離だけで置ける点光源 |
 | 動かす | `CThirdPersonCharacter3D`へ既定のWASD・パッド入力を渡すだけで移動・向き・追従カメラを一括化 |
 | 操作を変える | UIでキーボード、ゲームパッドのボタン・軸を選び、自動保存して次回起動時に復元 |
@@ -63,16 +63,16 @@ WASDで移動、左Shiftで走行、矢印キーで視点、Spaceでジャンプ
 // 置く
 FModel3DSpawnParams Ball = FModel3DSpawnParams::FromPrimitive( EMeshPrimitive3D::Sphere, FVec3{ 0, 1, 0 } );
 Ball.Roughness = 0.2f;
-CModel3DSpawner::SpawnInto( Graph(), Ball );
+SpawnModel3D( Ball );
 
 // FBX を置く (Assets からの相対名)
 FModel3DSpawnParams Model = FModel3DSpawnParams::FromMesh( FStringView( "Models/Robot.fbx" ), Position );
-CModel3DSpawner::SpawnInto( Graph(), Model, Assets->Models() );
+SpawnModel3D( Model );
 
 // 透過PNGを固定向きの3D板として置く
 FSprite3DSpawnParams Marker = FSprite3DSpawnParams::FromImage(
     FStringView( "Textures/Marker.png" ), FVec3{ 0, 2, 3 }, FVec2{ 0.8f, 0.8f } );
-CSprite3DSpawner::SpawnInto( Graph(), Marker, Assets->Images() );
+SpawnImage3D( Marker );
 
 // AUi3DSceneなら、同じ指定をカメラへ向く3D板として1回で置ける
 SpawnBillboard3D( Marker );
@@ -84,7 +84,7 @@ CLight3DSpawner::SpawnInto( Graph(), FLight3DSpawnParams::Sun( FVec3{ -0.47f, 0.
 FAnimatedModel3DSpawnParams Hero = FAnimatedModel3DSpawnParams::FromModel(
     FStringView( "Models/Hero.fbx" ), Position );
 Hero.InitialAnimation = FStringView( "Idle" );
-ANode* const HeroNode = CAnimatedModel3DSpawner::SpawnInto( Graph(), Hero, Assets->Models() );
+ANode* const HeroNode = SpawnAnimatedModel3D( Hero );
 
 // HeroAnimatorはキャラクターと同じ場所で所有し、毎フレーム速度と接地状態だけを渡す
 CCharacterAnimator3D HeroAnimator;

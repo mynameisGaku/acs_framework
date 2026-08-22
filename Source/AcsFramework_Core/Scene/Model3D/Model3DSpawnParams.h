@@ -79,7 +79,7 @@ struct FModel3DSpawnParams
 	 * @details
 	 * **`MeshPath` だけでは映らない。** 部品はパスを覚えるだけで、読み込みは別の仕事だから。
 	 * `CModelLibrary::Load` の結果をここへ入れるか、置き場を渡す `SpawnInto` の
-	 * 多重定義を使う (そちらは中で読む)。
+	 * 多重定義を使う (そちらは中で読む)。`AMeshAsset`以外は受け付けない。
 	 */
 	TSharedPtr<AAsset> MeshAsset;
 
@@ -114,10 +114,11 @@ struct FModel3DSpawnParams
 	 * 置ける指定かどうかを返す。
 	 *
 	 * @details
-	 * 置けないのは次の 2 つ。どちらも**何も見えないのに失敗もしない**という、
+	 * 置けないのは次の3つ。どれも**何も見えないのに失敗もしない**という、
 	 * 一番たちの悪い形になるので、置く前に弾く。
 	 * - 大きさに 0 が入っている
-	 * - 形として `Mesh` を指しているのに、モデルの場所が空
+	 * - 形として `Mesh` を指しているのに、モデルの場所も読込済みモデルも無い
+	 * - 読込済みモデルが `AMeshAsset` ではない
 	 */
 	bool IsValid() const noexcept;
 };

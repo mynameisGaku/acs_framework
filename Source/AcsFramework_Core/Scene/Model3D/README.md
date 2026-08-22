@@ -24,18 +24,22 @@ ACS は 3D を描く力を一式持っている（PBR・影・IBL・空・水・
 ## 使い方
 
 ```cpp
-// 置く
-ANode* const Hero = CModel3DSpawner::SpawnInto( Scene.Graph(),
-    FModel3DSpawnParams::FromMesh( FStringView( "hero.mdl" ), FVec3{ 0.0f, 0.0f, 5.0f } ) );
+// AUi3DSceneの派生場面なら、読み込みも含めて置く
+ANode* const Hero = SpawnModel3D(
+    FModel3DSpawnParams::FromMesh( FStringView( "Models/Hero.fbx" ), FVec3{ 0.0f, 0.0f, 5.0f } ) );
 
 // 素材が無くても試せる
 FModel3DSpawnParams Ball = FModel3DSpawnParams::FromPrimitive( EMeshPrimitive3D::Sphere, FVec3{ 2.0f, 0.0f, 0.0f } );
 Ball.Color = FVec4{ 1.0f, 0.2f, 0.2f, 1.0f };
-CModel3DSpawner::SpawnInto( Scene.Graph(), Ball );
+SpawnModel3D( Ball );
 
 // 置いた後に動かす
 Hero->Local().position.x += 1.0f;
 ```
+
+`AUi3DScene`を使わないノード木では、従来どおり`CModel3DSpawner::SpawnInto`へグラフと、
+パス読込時だけ`CModelLibrary`を渡す。`SpawnModel3D`はこの生成器と場面共通のasset窓口を結ぶ薄い
+アダプターであり、別のモデル管理は持たない。
 
 シーンの物は `Scene.Graph()` へ置く。これにより有効な `FNodeId` が付き、当たり判定、
 波紋、識別子による破棄へ同じノードを渡せる。`ANode&` を受ける従来の多重定義は、
@@ -61,7 +65,7 @@ Hero->Local().position.x += 1.0f;
 ## 気をつけること
 
 - **置けたのに見えない、を作らせない。** 大きさに 0 が入っている場合と、モデルを指しているのに
-  場所が空の場合は、置く前に弾いて `nullptr` を返す。失敗も何も起きないのが一番追いにくい。
+  場所も読込済みモデルも無い場合は、置く前に弾いて `nullptr` を返す。失敗も何も起きないのが一番追いにくい。
 - **失敗したら親には何も足さない。** 半端なノードがシーンに残らないようにする。
 - **向きは度で受ける。** 書く人が度で考えるため。中でラジアンへ直す
   （ACS の保存形式も度なので、往復しても崩れない）。

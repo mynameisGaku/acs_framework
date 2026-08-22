@@ -162,6 +162,10 @@ cameraからの距離に応じて大気へ馴染み、雲も実距離まで同�
   `FSprite3DSpawnParams::FromImage`へ画像名、位置、大きさを渡し、`CSprite3DSpawner`で置く。
   `CImageLibrary`は`Assets`相対名をACSの画像ローダへ渡し、深度判定とHDR透過描画も既存の
   `ASprite3DComponent`経路を使う
+- ~~場面からの静的モデル・固定画像の1回配置~~ → **実装済み** (2026-08-23)。
+  `AUi3DScene::SpawnModel3D`と`SpawnImage3D`が、プリミティブまたは`Assets`相対名からの読込、
+  識別子付きノード生成、部品追加をまとめる。読込済みassetは再読込せず、従来の生成器も低水準の
+  組み立て口として残す
 - ~~カメラ追従3Dビルボード~~ → **実装済み** (2026-08-22)。
   `AUi3DScene::SpawnBillboard3D`へ固定板と同じ指定を渡すだけで、画像読込、生成、追従登録を行う。
   全軸追従とY軸固定を選べ、親ノードが回転していても描画直前の現在カメラへworld正面を合わせる。

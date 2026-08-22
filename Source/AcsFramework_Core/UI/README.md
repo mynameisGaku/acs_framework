@@ -28,6 +28,18 @@ private:
 UIはHDR描画、トーンマップ、TAAまたはFXAAが終わった後のLDR画面へ重ねる。文字やボタンは
 bloomや輪郭補正の影響を受けず、3D場面より手前、ポーズ・デバッグ・ロード表示より奥に出る。
 
+同じ基底は、3Dの見える物を少ない手数で置く窓口も持つ。`SpawnModel3D`はプリミティブまたは静的
+モデル、`SpawnImage3D`は向き固定の画像板、`SpawnBillboard3D`はカメラ追従画像板、
+`SpawnAnimatedModel3D`は骨付きモデルを扱う。パスを渡した場合だけ場面共通のasset窓口で読み、
+読込済みassetはそのまま使う。
+
+```cpp
+SpawnModel3D( FModel3DSpawnParams::FromMesh(
+    FStringView( "Models/House.fbx" ), FVec3{ 0.0f, 0.0f, 4.0f } ) );
+SpawnImage3D( FSprite3DSpawnParams::FromImage(
+    FStringView( "Textures/Sign.png" ), FVec3{ 0.0f, 2.0f, 3.0f }, FVec2{ 1.2f, 0.6f } ) );
+```
+
 3Dノードへ文字を追従させる場合は`WorldLabels()`を使う。場面グラフへの接続、現在カメラからの
 射影、ノード破棄と表示状態の確認を基底が受け持つ。
 

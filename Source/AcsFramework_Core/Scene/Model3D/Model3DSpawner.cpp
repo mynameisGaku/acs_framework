@@ -26,6 +26,9 @@ ANode* CModel3DSpawner::SpawnInto( CSceneNodeGraph& Graph, const FModel3DSpawnPa
 ANode* CModel3DSpawner::SpawnInto( CSceneNodeGraph& Graph, const FModel3DSpawnParams& Params,
 	CModelLibrary& Library, ANode* Parent ) noexcept
 {
+	// 読込済みなら置き場へ触れず、その共有所有権をそのまま使う。
+	if ( Params.MeshAsset ) return SpawnInto( Graph, Params, Parent );
+
 	// プリミティブなら読むものが無い。そのままシーンへ置く。
 	if ( Params.MeshPath.Data() == nullptr || Params.MeshPath.Size() == 0u )
 		return SpawnInto( Graph, Params, Parent );
@@ -61,6 +64,9 @@ ANode* CModel3DSpawner::SpawnInto( ANode& Parent, const FModel3DSpawnParams& Par
 ANode* CModel3DSpawner::SpawnInto( ANode& Parent, const FModel3DSpawnParams& Params,
 	CModelLibrary& Library ) noexcept
 {
+	// 読込済みなら置き場へ触れず、その共有所有権をそのまま使う。
+	if ( Params.MeshAsset ) return SpawnInto( Parent, Params );
+
 	// プリミティブなら読むものが無い。そのまま置く。
 	if ( Params.MeshPath.Data() == nullptr || Params.MeshPath.Size() == 0u )
 		return SpawnInto( Parent, Params );

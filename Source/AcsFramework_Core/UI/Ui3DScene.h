@@ -14,6 +14,8 @@ using namespace acs;
 using namespace acs::game;
 
 struct FAnimatedModel3DSpawnParams;
+struct FModel3DSpawnParams;
+struct FSprite3DSpawnParams;
 
 /**
  * 遊ぶ人向けUIを3D場面の寿命と描画順へ自動で接続する基底場面。
@@ -76,6 +78,26 @@ public:
 
 	/** 読み取り専用のビルボードレイヤーを返す。 */
 	const CBillboard3DLayer& Billboards() const noexcept { return m_Billboards; }
+
+	/**
+	 * プリミティブまたは静的3Dモデルを、必要な読み込みを含めて1回で場面へ置く。
+	 *
+	 * @param Params 形またはモデル名、位置、材質、ノード名。
+	 * @param Parent この場面が所有する親。空ならroot直下。
+	 * @return 置いたノード。入力、asset窓口、読み込みのいずれかに失敗したらnullptr。
+	 */
+	ANode* SpawnModel3D( const FModel3DSpawnParams& Params,
+		ANode* Parent = nullptr ) noexcept;
+
+	/**
+	 * 画像名から向き固定の3D画像板を、必要な読み込みを含めて1回で場面へ置く。
+	 *
+	 * @param Params 画像名、位置、向き、大きさ、ノード名。
+	 * @param Parent この場面が所有する親。空ならroot直下。
+	 * @return 置いたノード。入力、asset窓口、読み込みのいずれかに失敗したらnullptr。
+	 */
+	ANode* SpawnImage3D( const FSprite3DSpawnParams& Params,
+		ANode* Parent = nullptr ) noexcept;
 
 	/**
 	 * 画像名からカメラ追従の3D画像板を1回で生成する。

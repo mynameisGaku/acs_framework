@@ -27,9 +27,11 @@ bool FModel3DSpawnParams::IsValid() const noexcept
 	// 0 倍は「置いたのに見えない」になる。負は鏡写しとして使うので通す。
 	if ( Scale.x == 0.0f || Scale.y == 0.0f || Scale.z == 0.0f ) return false;
 
-	// モデルを指しているのに場所が空なら、何も読み込めない。
+	// モデルを指しているのに場所も読込済みモデルも無ければ、何も描けない。
 	const bool bWantsMesh = Primitive == EMeshPrimitive3D::Mesh;
-	if ( bWantsMesh && ( MeshPath.Data() == nullptr || MeshPath.Size() == 0u ) ) return false;
+	const bool bHasMeshPath = MeshPath.Data() != nullptr && MeshPath.Size() > 0u;
+	if ( bWantsMesh && !bHasMeshPath && !MeshAsset ) return false;
+	if ( MeshAsset && MeshAsset->Type() != AMeshAsset::StaticType() ) return false;
 
 	return true;
 }
