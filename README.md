@@ -34,7 +34,7 @@ msbuild acs_framework.vcxproj /p:Configuration=Release /p:Platform=x64
 |---|---|
 | 3D を置く | `CModel3DSpawner`、FBX の取り込み、材質 (metallic / roughness) |
 | 3D を照らす | `CLight3DSpawner`、方向だけで置ける太陽、位置と距離だけで置ける点光源 |
-| 動かす | `SetPosition` / `RotateDeg` / `LookAt` / `MoveToward`、待機・歩き・走り・ジャンプを滑らかに繋ぐ`CCharacterAnimator3D` |
+| 動かす | `CCharacterMover3D`による重力・接地・壁沿い移動・ジャンプ、姿勢を滑らかに繋ぐ`CCharacterAnimator3D` |
 | 見た目 | 物理大気・ボリューム雲・影・IBL・遮蔽 (SSAO)・間接光 (SSGI)・反射 (SSR)・霧・トーンマップ・輪郭補正 (FXAA) |
 | 3D 天候 | `AWeather3DScene`、晴天・曇天・雨・雪・嵐・霧・砂嵐の滑らかな遷移 |
 | 3D 水面 | `CWater3DSpawner`、屈折・反射・泡・動的な波紋 |
@@ -90,6 +90,12 @@ Collision.TryAddBounds( *WallNode, 0x2u );
 TArray<ANode*> Nearby;
 Collision.TryOverlapSphere(
     FSphere{ HeroNode->World().position, 2.0f }, Nearby, PlayerShape, 0x2u );
+
+// 球中心と希望する世界X/Z速度だけで、床・壁・重力・ジャンプをノードへ反映する
+CCharacterMover3D HeroMover;
+HeroMover.Bind( Collision, *HeroNode, FVec3{ 0.0f, 0.45f, 0.0f } );
+HeroMover.SetCollisionFilter( PlayerShape, 0x2u );
+HeroMover.Move( FVec2{ MoveX * 4.0f, MoveZ * 4.0f }, bJumpPressed, DeltaSeconds );
 
 // 反射・屈折・泡を持つ水面を置き、波紋を起こす
 FWater3DSpawnParams Water;

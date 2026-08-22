@@ -395,6 +395,9 @@
     <ClInclude Include="Source\AcsFramework_Core\Scene\Collision3D\SceneSweepHit3D.h" />
     <None Include="Source\AcsFramework_Core\Scene\Collision3D\README.md" />
     <None Include="Source\AcsFramework_Core\Scene\Collision3D\Test\SceneCollision3DTest.cpp" />
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Character3D\CharacterMover3D.h" />
+    <None Include="Source\AcsFramework_Core\Scene\Character3D\README.md" />
+    <None Include="Source\AcsFramework_Core\Scene\Character3D\Test\CharacterMover3DTest.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Common\Pch.cpp">
@@ -565,6 +568,7 @@
       <ClCompile Include="Source\AcsFramework_Core\Assets\Model3D\ModelLibrary.cpp" />
       <ClCompile Include="Source\AcsFramework_Sample\Scene\MinimalScene.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Scene\Collision3D\SceneCollision3D.cpp" />
+    <ClCompile Include="Source\AcsFramework_Core\Scene\Character3D\CharacterMover3D.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

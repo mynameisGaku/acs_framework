@@ -56,7 +56,9 @@ Subsystemにはしない。`AEffect3DScene`がscene単位で`CEffect3DPlayer`を
 
 3Dの重なりと移動判定は、場面側が`CSceneCollision3D`を所有する。ACSの`CCollisionWorld3D`へ
 ノードとローカル形状を登録し、問い合わせ時に現在Transformへ同期して、結果をノードポインタへ
-戻す。速度、剛体、押し戻しは所有せず、場面ごとの短い寿命なのでsubsystemにはしない。
+戻す。球型キャラクターの次状態も、同期済み形状からACSの決定的な移動処理で計算する。
+`CCharacterMover3D`はその結果を親座標へ戻してノードへ反映し、速度と接地状態だけを保持する。
+固定更新と入力寿命は所有せず、キャラクターごとの短い寿命なのでsubsystemにはしない。
 
 3Dライト配置は`FLight3DSpawnParams`を検証可能な値、`CLight3DSpawner`を状態なしの接続層とする。
 位置または光源方向、色、強さ、到達距離から、識別子付きノードと`ALightComponent3D`を作るだけに

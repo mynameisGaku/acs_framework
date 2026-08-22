@@ -196,6 +196,13 @@ bool CSceneCollision3D::TrySweepSphere( const FSceneRay& Ray, f32 Radius,
 }
 
 
+bool CSceneCollision3D::TryMoveCharacter( const FKinematicCharacterMovementInput3D& Input, const FKinematicCharacterState3D& State, f32 DeltaSeconds, const FKinematicCharacterMovementParams3D& Params, FKinematicCharacterMovementResult3D& OutResult ) noexcept
+{
+	if ( !Sync() ) return false;
+	return TryMoveKinematicCharacter3D( m_World, Input, State, DeltaSeconds, Params, OutResult );
+}
+
+
 FCollisionShapeId3D CSceneCollision3D::TryAdd_Internal( ANode& Node, EShapeKind Kind,
 	FVec3 LocalCenter, FVec3 LocalHalfSize, f32 LocalRadius, u32 Layer ) noexcept
 {

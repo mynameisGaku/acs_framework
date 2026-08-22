@@ -140,6 +140,19 @@ public:
 	bool TrySweepSphere( const FSceneRay& Ray, f32 Radius, FSceneSweepHit3D& OutHit,
 		FCollisionShapeId3D Exclude = {}, u32 Mask = kAllLayers ) noexcept;
 
+	/**
+	 * 登録ノードを同期してから、球型3Dキャラクターの次状態を計算する。
+	 *
+	 * @details ノード位置や入力状態は変更しない。計算後のノード反映は呼出側が明示的に行う。
+	 * @param Input 希望水平速度、ジャンプ要求、レイヤーマスク、自己除外形状。
+	 * @param State 現在の球中心、速度、接地状態。
+	 * @param DeltaSeconds 進める有限かつ0以上の秒数。
+	 * @param Params 球半径、重力、ジャンプ初速、接触調整値。
+	 * @param OutResult 次状態と接触事象の受け取り先。失敗時は変更しない。
+	 * @return 同期と次状態の計算に成功したらtrue。
+	 */
+	bool TryMoveCharacter( const FKinematicCharacterMovementInput3D& Input, const FKinematicCharacterState3D& State, f32 DeltaSeconds, const FKinematicCharacterMovementParams3D& Params, FKinematicCharacterMovementResult3D& OutResult ) noexcept;
+
 private:
 	/** ACSへ登録した形状の種類。 */
 	enum class EShapeKind : u8

@@ -35,6 +35,7 @@
 #include "AcsFramework_Core/Scene/Animation3D/CharacterAnimation3DInput.h"
 #include "AcsFramework_Core/Scene/Animation3D/CharacterAnimation3DProfile.h"
 #include "AcsFramework_Core/Scene/Animation3D/CharacterAnimator3D.h"
+#include "AcsFramework_Core/Scene/Character3D/CharacterMover3D.h"
 #include "AcsFramework_Core/Scene/Collision3D/SceneCollision3D.h"
 #include "AcsFramework_Core/Scene/Collision3D/SceneSweepHit3D.h"
 #include "AcsFramework_Core/Scene/Light3D/Light3DSpawner.h"
