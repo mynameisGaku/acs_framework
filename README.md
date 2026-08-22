@@ -112,8 +112,8 @@ if ( Hit.IsHit() )
     DrawSphere3D( FSphere{ Hit.Point, 0.12f }, FVec4{ 1.0f, 0.28f, 0.78f, 1.0f } );
 }
 
-// ノードへ衝突形状を結び、現在位置へ自動追従させる
-CSceneCollision3D Collision{ Graph() };
+// 場面所有の衝突集合へ形状を結び、現在位置へ自動追従させる
+CSceneCollision3D& Collision = Collision3D();
 const FCollisionShapeId3D PlayerShape = Collision.TryAddSphere(
     *HeroNode, FVec3{ 0.0f, 0.9f, 0.0f }, 0.45f, 0x1u );
 Collision.TryAddBounds( *WallNode, 0x2u );

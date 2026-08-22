@@ -36,7 +36,7 @@ ACS のモジュールは **438 個**ある。この枠組みが窓口を用意�
 | 3D 水面 | `AUi3DScene::SpawnWater3D`、`FWater3DSpawnParams`、ACSの動的波紋 |
 | 3D 天候 | `AWeather3DScene`、`FWeather3DAppearance`、ACSの`CWeatherSystem` |
 | 3D エフェクト | `AEffect3DScene`、`CEffect3DPlayer`、同梱の Effekseer |
-| 3D の形状重なり | `CSceneCollision3D`、ACSの`CCollisionWorld3D` |
+| 3D の形状重なり | `AUi3DScene::Collision3D`、`CSceneCollision3D`、ACSの`CCollisionWorld3D` |
 | 3D の視線操作 | `CInteractionFocus3D`、`CScenePicker`、`CWorldLabel3DLayer` |
 | 3D デバッグ描画 | `DrawLine3D`、`DrawAabb3D`、`DrawSphere3D`、ACSの`FDebugDraw3D` |
 | 遊ぶ人向け UI | `AUi3DScene`、`CUiLayer`、ACSの `AWidget` 群 |
@@ -133,10 +133,12 @@ cameraからの距離に応じて大気へ馴染み、雲も実距離まで同�
   従来の境界箱`Raycast`と、全候補を返す`RaycastAll`も用途別に残す。
   ※ 剛体物理は引き続きACS側の責務とする。球型キャラクター移動はACSへ実装し、Frameworkには
   ノードへ反映する薄い窓口だけを置いた。
-- ~~3Dの形状重なりと移動判定~~ → **`Scene/Collision3D`として実装済み** (2026-08-22)。
+- ~~3Dの形状重なりと移動判定~~ → **`Scene/Collision3D`として実装済み**
+  (2026-08-22、場面所有窓口は2026-08-23)。
   ノードへ球、箱、描画境界を1回登録すれば、現在Transformへの同期、レイヤー、自身除外、
   球・箱の重なり列挙、球スイープを`CSceneCollision3D`がまとめる。判定計算と世代付き形状番号は
   ACSの`CCollisionWorld3D`を使い、Frameworkはノード寿命との接続だけを受け持つ。
+  `AUi3DScene::Collision3D`が場面ごとの集合を所有し、終了時の全登録解除も自動で行う。
 - ~~3Dキャラクター移動~~ → **ACSと`Scene/Character3D`へ実装済み** (2026-08-22)。
   `TryMoveKinematicCharacter3D`が希望水平速度、状態、経過秒、調整値から、重力、接地、ジャンプ、
   球スイープ、壁沿い移動、貫通解消を固定回数で計算する。`CCharacterMover3D`は球中心をノードから

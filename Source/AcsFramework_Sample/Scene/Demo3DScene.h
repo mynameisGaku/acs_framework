@@ -129,9 +129,6 @@ private:
 	/** Bキーで追加した3D画像板。所有は場面グラフが持つ。 */
 	ANode* m_DynamicBillboard = nullptr;
 
-	/** 場面グラフより短く所有する、操作キャラクター用の衝突集合。 */
-	TUniquePtr<CSceneCollision3D> m_CharacterCollision;
-
 	/** 移動、向き、追従カメラをまとめる操作キャラクター。 */
 	CThirdPersonCharacter3D m_ThirdPersonCharacter;
 

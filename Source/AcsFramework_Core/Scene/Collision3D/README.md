@@ -5,7 +5,7 @@
 `TryMoveCharacter()`は同期済み形状から球型キャラクターの次状態を求め、ノード反映は行わない。
 
 ```cpp
-CSceneCollision3D Collision{ Graph() };
+CSceneCollision3D& Collision = Collision3D();
 const FCollisionShapeId3D PlayerShape = Collision.TryAddSphere(
     *Player, FVec3{ 0.0f, 0.9f, 0.0f }, 0.45f, 0x1u );
 Collision.TryAddBounds( *Wall, 0x2u );
@@ -19,6 +19,9 @@ Collision.TrySweepSphere(
     FSceneRay::FromDirection( Player->World().position, MoveDirection, MoveDistance ),
     0.45f, Hit, PlayerShape, 0x2u );
 ```
+
+`AUi3DScene`の`Collision3D()`は場面グラフへ接続済みで、場面終了時に全登録を自動で外す。
+`AUi3DScene`を使わない独自の所有者では、従来どおり`CSceneCollision3D{ Graph }`を直接所有できる。
 
 登録時の中心、半サイズ、半径はノードのローカル座標で指定する。問い合わせ前に位置、回転、拡縮を
 自動同期するため、動くノードを毎フレーム登録し直す必要はない。ノードまたは祖先を無効にすると

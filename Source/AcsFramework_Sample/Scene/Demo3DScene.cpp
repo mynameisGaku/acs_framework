@@ -291,9 +291,9 @@ namespace
 	 * @param Plane 描画平面ノード。
 	 * @return 平面の現在拡縮に追従する箱を登録できたらtrue。
 	 */
-	bool TryAddWalkablePlane( CSceneCollision3D* Collision, ANode* Plane ) noexcept
+	bool TryAddWalkablePlane( CSceneCollision3D& Collision, ANode* Plane ) noexcept
 	{
-		return Collision != nullptr && Plane != nullptr && Collision->TryAddBox( *Plane, FVec3{ 0.0f, -0.5f, 0.0f }, FVec3{ 0.5f, 0.5f, 0.5f }, kCharacterCollisionLayer ).IsValid();
+		return Plane != nullptr && Collision.TryAddBox( *Plane, FVec3{ 0.0f, -0.5f, 0.0f }, FVec3{ 0.5f, 0.5f, 0.5f }, kCharacterCollisionLayer ).IsValid();
 	}
 
 	/**
@@ -352,7 +352,7 @@ void ADemo3DScene::OnEnter() noexcept
 	m_DynamicBillboard = nullptr;
 	m_WaterSurfaceId = FNodeId{};
 	m_ThirdPersonCharacter.Unbind();
-	m_CharacterCollision = MakeUnique<CSceneCollision3D>( Graph() );
+	CSceneCollision3D& Collision = Collision3D();
 	m_CharacterNode = nullptr;
 	m_CharacterActionBindings.Clear();
 	m_PreviousCharacterInput = FActionInput{};
@@ -374,11 +374,11 @@ void ADemo3DScene::OnEnter() noexcept
 		0.82f, FStringView( "PoolBottom" ) );
 
 	// 描画面と同じ拡縮を持つ箱を直下へ置き、床の穴と水底の深さも実際の移動へ反映する。
-	const bool bFloorLeftWalkable = TryAddWalkablePlane( m_CharacterCollision.Get(), FloorLeft );
-	const bool bFloorFrontWalkable = TryAddWalkablePlane( m_CharacterCollision.Get(), FloorFront );
-	const bool bFloorBackWalkable = TryAddWalkablePlane( m_CharacterCollision.Get(), FloorBack );
-	const bool bFloorRightWalkable = TryAddWalkablePlane( m_CharacterCollision.Get(), FloorRight );
-	const bool bPoolBottomWalkable = TryAddWalkablePlane( m_CharacterCollision.Get(), PoolBottom );
+	const bool bFloorLeftWalkable = TryAddWalkablePlane( Collision, FloorLeft );
+	const bool bFloorFrontWalkable = TryAddWalkablePlane( Collision, FloorFront );
+	const bool bFloorBackWalkable = TryAddWalkablePlane( Collision, FloorBack );
+	const bool bFloorRightWalkable = TryAddWalkablePlane( Collision, FloorRight );
+	const bool bPoolBottomWalkable = TryAddWalkablePlane( Collision, PoolBottom );
 	const bool bCharacterWorldReady = bFloorLeftWalkable && bFloorFrontWalkable && bFloorBackWalkable && bFloorRightWalkable && bPoolBottomWalkable;
 
 	// ACSの屈折、反射、泡、動的波紋を使う水面。位置と広さを決めるだけで置ける。
@@ -408,7 +408,7 @@ void ADemo3DScene::OnEnter() noexcept
 	WaterStone.Roughness = 0.72f;
 	WaterStone.Name = FStringView( "WaterStone" );
 	ANode* const WaterStoneNode = CModel3DSpawner::SpawnInto( Graph(), WaterStone );
-	if ( m_CharacterCollision && WaterStoneNode != nullptr ) m_CharacterCollision->TryAddBounds( *WaterStoneNode, kCharacterCollisionLayer );
+	if ( WaterStoneNode != nullptr ) Collision.TryAddBounds( *WaterStoneNode, kCharacterCollisionLayer );
 
 	// 並べた球。色違いで陰りの出方を見比べられるようにする。
 	// 立方体より手前 (z = +1.6) へ置く。同じ列だと真ん中の球が立方体に隠れる。
@@ -428,7 +428,7 @@ void ADemo3DScene::OnEnter() noexcept
 		// 粗さを 3 つで振る。同じ色でも «艶» が違うと材質の違いとして読める。
 		Ball.Roughness = 0.12f + static_cast<f32>( Index ) * 0.34f;
 		ANode* const BallNode = CModel3DSpawner::SpawnInto( Graph(), Ball );
-		if ( m_CharacterCollision && BallNode != nullptr ) m_CharacterCollision->TryAddBounds( *BallNode, kCharacterCollisionLayer );
+		if ( BallNode != nullptr ) Collision.TryAddBounds( *BallNode, kCharacterCollisionLayer );
 	}
 
 	// 回す立方体。動いていることと、面ごとの陰りの差が分かる。
@@ -439,7 +439,7 @@ void ADemo3DScene::OnEnter() noexcept
 	Cube.Roughness = 0.28f;
 	Cube.Name = FStringView( "Spinner" );
 	m_Spinner = CModel3DSpawner::SpawnInto( Graph(), Cube );
-	if ( m_CharacterCollision && m_Spinner != nullptr ) m_CharacterCollision->TryAddBounds( *m_Spinner, kCharacterCollisionLayer );
+	if ( m_Spinner != nullptr ) Collision.TryAddBounds( *m_Spinner, kCharacterCollisionLayer );
 
 	// Assets に置いた FBX。**置き場からモデルを読む道が通っていることの確認**でもある。
 	// 読めなければ置かずに nullptr が返り、理由が 1 行出る (黙って消えない)。
@@ -450,7 +450,7 @@ void ADemo3DScene::OnEnter() noexcept
 	Model.Roughness = 0.40f;
 	Model.Name = FStringView( "ImportedModel" );
 	m_Mover = SpawnModel3D( Model );
-	if ( m_CharacterCollision && m_Mover != nullptr ) m_CharacterCollision->TryAddBounds( *m_Mover, kCharacterCollisionLayer );
+	if ( m_Mover != nullptr ) Collision.TryAddBounds( *m_Mover, kCharacterCollisionLayer );
 
 	// 透過PNGをカメラへ向く3D板として置く。画像読込、ノード、追従登録を1回へまとめる。
 	FSprite3DSpawnParams ImageMarker = FSprite3DSpawnParams::FromImage(
@@ -658,7 +658,6 @@ void ADemo3DScene::OnExit() noexcept
 	m_PreviousCharacterInput = FActionInput{};
 	m_GeometryPickDebugRemainingSeconds = 0.0f;
 	m_CharacterNode = nullptr;
-	m_CharacterCollision.Reset();
 	m_Spinner = nullptr;
 	m_Mover = nullptr;
 	m_WaterSurfaceId = FNodeId{};
@@ -669,7 +668,7 @@ void ADemo3DScene::OnExit() noexcept
 
 bool ADemo3DScene::TryInitializeThirdPersonCharacter() noexcept
 {
-	if ( !m_CharacterCollision || m_ThirdPersonCharacter.IsBound() ) return false;
+	if ( m_ThirdPersonCharacter.IsBound() ) return false;
 
 	const FThirdPersonCharacter3DActionSet Actions = FThirdPersonCharacter3DActionSet::WithRunAction();
 	CActionBindingTable BuiltBindings;
@@ -692,7 +691,7 @@ bool ADemo3DScene::TryInitializeThirdPersonCharacter() noexcept
 	Params.Camera.MinimumDistance = 2.0f;
 	Params.Camera.MaximumDistance = 14.0f;
 	Params.Camera.TargetClearance = 2.5f;
-	if ( !m_ThirdPersonCharacter.Bind( *m_CharacterCollision, *this, *Character, Params ) )
+	if ( !m_ThirdPersonCharacter.Bind( Collision3D(), *this, *Character, Params ) )
 	{
 		Graph().Destroy( Character->Id() );
 		return false;

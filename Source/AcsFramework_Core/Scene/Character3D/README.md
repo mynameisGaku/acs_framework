@@ -4,7 +4,7 @@
 1回の`Update()`へまとめる。骨付きモデルがある場合だけ、待機・歩き・走り・ジャンプも接続できる。
 
 ```cpp
-CSceneCollision3D Collision{ Graph() };
+CSceneCollision3D& Collision = Collision3D();
 Collision.TryAddBox( *Floor, FVec3{}, FVec3{ 10.0f, 0.5f, 10.0f }, 0x1u );
 
 CThirdPersonCharacter3D HeroController;
@@ -52,7 +52,7 @@ PreviousInput = CurrentInput;
 初期貫通の解消を1回の`Move()`で扱える。
 
 ```cpp
-CSceneCollision3D Collision{ Graph() };
+CSceneCollision3D& Collision = Collision3D();
 Collision.TryAddBox( *Floor, FVec3{}, FVec3{ 10.0f, 0.5f, 10.0f }, 0x1u );
 
 CCharacterMover3D HeroMover;

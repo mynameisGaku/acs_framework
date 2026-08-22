@@ -4,6 +4,7 @@
 #include <acs.h>
 
 #include "AcsFramework_Core/Scene/Billboard3D/Billboard3DLayer.h"
+#include "AcsFramework_Core/Scene/Collision3D/SceneCollision3D.h"
 #include "AcsFramework_Core/Scene/DebugDraw3D/DebugDraw3DLayer.h"
 #include "AcsFramework_Core/Scene/Interaction3D/InteractionHighlight3DParams.h"
 #include "AcsFramework_Core/Scene/Interaction3D/InteractionFocus3D.h"
@@ -32,8 +33,8 @@ struct FWater3DSpawnParams;
 class AUi3DScene : public ALegacyScene3DAdapter
 {
 public:
-	/** 空のUI層を持つ3D場面を作る。 */
-	AUi3DScene() noexcept = default;
+	/** 場面グラフへ接続済みの衝突集合と空のUI層を持つ3D場面を作る。 */
+	AUi3DScene() noexcept;
 
 	/** UI層と3D場面を破棄する。実際の終了処理はOnExitで行う。 */
 	~AUi3DScene() noexcept override = default;
@@ -81,6 +82,16 @@ public:
 
 	/** 読み取り専用のビルボードレイヤーを返す。 */
 	const CBillboard3DLayer& Billboards() const noexcept { return m_Billboards; }
+
+	/**
+	 * この場面の3Dノードへ衝突形状を登録して問い合わせる集合を返す。
+	 *
+	 * @return 場面グラフへ接続済みで、場面終了時に自動消去する衝突集合。
+	 */
+	CSceneCollision3D& Collision3D() noexcept { return m_Collision3D; }
+
+	/** 読み取り専用の3D衝突集合を返す。 */
+	const CSceneCollision3D& Collision3D() const noexcept { return m_Collision3D; }
 
 	/**
 	 * プリミティブまたは静的3Dモデルを、必要な読み込みを含めて1回で場面へ置く。
@@ -307,6 +318,9 @@ private:
 
 	/** 3D画像板の世代付き識別子とカメラ追従を場面寿命で所有する層。 */
 	CBillboard3DLayer m_Billboards;
+
+	/** 場面グラフ内のノードとACSの3D衝突形状を場面寿命で結ぶ集合。 */
+	CSceneCollision3D m_Collision3D;
 
 	/** 実形状ピックと操作案内を接続する、この場面所有の視線フォーカス。 */
 	CInteractionFocus3D m_InteractionFocus;

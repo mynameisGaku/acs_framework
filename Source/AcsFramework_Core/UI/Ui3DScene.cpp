@@ -19,9 +19,16 @@ namespace
 	}
 }
 
+AUi3DScene::AUi3DScene() noexcept
+	: m_Collision3D( Graph() )
+{
+}
+
+
 void AUi3DScene::OnEnter() noexcept
 {
 	ALegacyScene3DAdapter::OnEnter();
+	m_Collision3D.Clear();
 	ClearSelectionHighlight();
 	m_AppliedInteractionHighlightNode = FNodeId{};
 	m_bInteractionHighlightApplied = false;
@@ -42,6 +49,7 @@ void AUi3DScene::OnExit() noexcept
 	m_Billboards.Unbind();
 	m_WorldLabels.Unbind();
 	m_DebugDraw3D.Shutdown();
+	m_Collision3D.Clear();
 	ALegacyScene3DAdapter::OnExit();
 }
 
