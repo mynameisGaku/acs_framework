@@ -398,12 +398,14 @@
     <ClInclude Include="Source\AcsFramework_Core\Scene\Character3D\CharacterMover3D.h" />
     <ClInclude Include="Source\AcsFramework_Core\Scene\Character3D\ThirdPersonCharacter3D.h" />
     <ClInclude Include="Source\AcsFramework_Core\Scene\Character3D\ThirdPersonCharacter3DActionSet.h" />
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Character3D\ThirdPersonCharacter3DControlPreset.h" />
     <ClInclude Include="Source\AcsFramework_Core\Scene\Character3D\ThirdPersonCharacter3DInput.h" />
     <ClInclude Include="Source\AcsFramework_Core\Scene\Character3D\ThirdPersonCharacter3DParams.h" />
     <ClInclude Include="Source\AcsFramework_Core\Scene\Character3D\ThirdPersonCharacter3DUpdateResult.h" />
     <None Include="Source\AcsFramework_Core\Scene\Character3D\README.md" />
     <None Include="Source\AcsFramework_Core\Scene\Character3D\Test\CharacterMover3DTest.cpp" />
     <None Include="Source\AcsFramework_Core\Scene\Character3D\Test\ThirdPersonCharacter3DActionSetTest.cpp" />
+    <None Include="Source\AcsFramework_Core\Scene\Character3D\Test\ThirdPersonCharacter3DControlPresetTest.cpp" />
     <None Include="Source\AcsFramework_Core\Scene\Character3D\Test\ThirdPersonCharacter3DTest.cpp" />
     <ClInclude Include="Source\AcsFramework_Core\Scene\Camera3D\NodeOrbitCamera3D.h" />
     <ClInclude Include="Source\AcsFramework_Core\Scene\Camera3D\NodeOrbitCamera3DParams.h" />
@@ -582,6 +584,7 @@
     <ClCompile Include="Source\AcsFramework_Core\Scene\Character3D\CharacterMover3D.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Scene\Character3D\ThirdPersonCharacter3D.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Scene\Character3D\ThirdPersonCharacter3DActionSet.cpp" />
+    <ClCompile Include="Source\AcsFramework_Core\Scene\Character3D\ThirdPersonCharacter3DControlPreset.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Scene\Character3D\ThirdPersonCharacter3DInput.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Scene\Camera3D\NodeOrbitCamera3D.cpp" />
   </ItemGroup>

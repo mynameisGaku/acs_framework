@@ -40,6 +40,7 @@
 #include "AcsFramework_Core/Scene/Character3D/CharacterMover3D.h"
 #include "AcsFramework_Core/Scene/Character3D/ThirdPersonCharacter3D.h"
 #include "AcsFramework_Core/Scene/Character3D/ThirdPersonCharacter3DActionSet.h"
+#include "AcsFramework_Core/Scene/Character3D/ThirdPersonCharacter3DControlPreset.h"
 #include "AcsFramework_Core/Scene/Character3D/ThirdPersonCharacter3DInput.h"
 #include "AcsFramework_Core/Scene/Character3D/ThirdPersonCharacter3DParams.h"
 #include "AcsFramework_Core/Scene/Character3D/ThirdPersonCharacter3DUpdateResult.h"

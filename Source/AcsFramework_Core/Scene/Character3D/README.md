@@ -13,6 +13,8 @@ Params.CollisionMask = 0x1u;
 HeroController.Bind( Collision, *this, *Hero, Params );
 HeroController.TryBindAnimation();
 
+CActionBindingTable ActionBindings;
+FThirdPersonCharacter3DControlPreset{}.TryBuildBindings( ActionBindings );
 FActionInput PreviousInput;
 
 // 固定更新ごとに装置を明示的に読み、前回入力と一緒に渡す。
@@ -25,6 +27,10 @@ PreviousInput = CurrentInput;
 アクション0をジャンプ、1/2をカメラの近接・遠隔へ割り当てる。番号を変えたい場合は
 `FThirdPersonCharacter3DActionSet`の値を変更して`Update()`の第4引数へ渡す。ジャンプは現在と前回の
 差から押した瞬間だけ発生し、押し続けたまま着地しても自動で再ジャンプしない。
+
+`FThirdPersonCharacter3DControlPreset`は、WASD、矢印、Space、E/Qと、左右スティック、下側ボタン、
+左右バンパーを上記の番号へまとめて割り当てる。別のキー配置が必要なら、既存の
+`CActionBindingTable`へ個別に追加する。プリセットは入力装置を読まず、作成先の表だけを置き換える。
 
 入力装置と時刻は内部取得しない。AIや記録再生から直接操作する場合は、従来どおり
 `FThirdPersonCharacter3DInput`を組み立てる`Update()`も使える。`FThirdPersonCharacter3DUpdateResult`は

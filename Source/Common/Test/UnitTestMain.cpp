@@ -63,6 +63,7 @@ void RunCharacterAnimator3DTests( CTestHarness& Harness );
 void RunNodeOrbitCamera3DTests( CTestHarness& Harness );
 void RunCharacterMover3DTests( CTestHarness& Harness );
 void RunThirdPersonCharacter3DActionSetTests( CTestHarness& Harness );
+void RunThirdPersonCharacter3DControlPresetTests( CTestHarness& Harness );
 void RunThirdPersonCharacter3DTests( CTestHarness& Harness );
 void RunSceneCollision3DTests( CTestHarness& Harness );
 void RunLight3DSpawnerTests( CTestHarness& Harness );
@@ -108,6 +109,7 @@ int main()
 	RunNodeOrbitCamera3DTests( Harness );
 	RunCharacterMover3DTests( Harness );
 	RunThirdPersonCharacter3DActionSetTests( Harness );
+	RunThirdPersonCharacter3DControlPresetTests( Harness );
 	RunThirdPersonCharacter3DTests( Harness );
 	RunSceneCollision3DTests( Harness );
 	RunLight3DSpawnerTests( Harness );

@@ -133,7 +133,8 @@ IBLへ反映する。残りは空を焼くIBLへ雲の形そのものを含め�
   `MoveFromCamera`が水平なカメラ基準速度へ変換し、`TurnTowardMovement`が実速度へ滑らかに向ける。
   `CThirdPersonCharacter3D`はこれらと追従カメラ、任意アニメーションを1回の更新へまとめる。
   `FThirdPersonCharacter3DActionSet`により、既存の`FActionInput`を現在・前回の2値だけで移動、視点、
-  ズーム、単発ジャンプへ変換できる。失敗時はノードと保持状態を変更しない。
+  ズーム、単発ジャンプへ変換できる。`FThirdPersonCharacter3DControlPreset`はWASDとゲームパッドの
+  既定操作を`CActionBindingTable`へ1回で構築する。失敗時はノードと保持状態を変更しない。
 
 ### v0.3 — 見た目と手触り (完了)
 

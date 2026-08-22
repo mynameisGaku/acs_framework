@@ -417,6 +417,9 @@
     <ClCompile Include="Source\AcsFramework_Core\Scene\Character3D\ThirdPersonCharacter3DActionSet.cpp">
       <Filter>Source\AcsFramework_Core\Scene\Character3D</Filter>
     </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Scene\Character3D\ThirdPersonCharacter3DControlPreset.cpp">
+      <Filter>Source\AcsFramework_Core\Scene\Character3D</Filter>
+    </ClCompile>
     <ClCompile Include="Source\AcsFramework_Core\Scene\Character3D\ThirdPersonCharacter3DInput.cpp">
       <Filter>Source\AcsFramework_Core\Scene\Character3D</Filter>
     </ClCompile>
@@ -957,6 +960,9 @@
       <Filter>Source\AcsFramework_Core\Scene\Character3D</Filter>
     </ClInclude>
     <ClInclude Include="Source\AcsFramework_Core\Scene\Character3D\ThirdPersonCharacter3DActionSet.h">
+      <Filter>Source\AcsFramework_Core\Scene\Character3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Character3D\ThirdPersonCharacter3DControlPreset.h">
       <Filter>Source\AcsFramework_Core\Scene\Character3D</Filter>
     </ClInclude>
     <ClInclude Include="Source\AcsFramework_Core\Scene\Character3D\ThirdPersonCharacter3DInput.h">
@@ -1523,6 +1529,9 @@
       <Filter>Source\AcsFramework_Core\Scene\Character3D\Test</Filter>
     </None>
     <None Include="Source\AcsFramework_Core\Scene\Character3D\Test\ThirdPersonCharacter3DActionSetTest.cpp">
+      <Filter>Source\AcsFramework_Core\Scene\Character3D\Test</Filter>
+    </None>
+    <None Include="Source\AcsFramework_Core\Scene\Character3D\Test\ThirdPersonCharacter3DControlPresetTest.cpp">
       <Filter>Source\AcsFramework_Core\Scene\Character3D\Test</Filter>
     </None>
     <None Include="Source\AcsFramework_Core\Scene\Character3D\Test\ThirdPersonCharacter3DTest.cpp">

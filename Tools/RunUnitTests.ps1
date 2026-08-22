@@ -76,6 +76,8 @@ $sources = @(
     'AcsFramework_Core\Scene\Character3D\Test\CharacterMover3DTest.cpp',
     'AcsFramework_Core\Scene\Character3D\ThirdPersonCharacter3DActionSet.cpp',
     'AcsFramework_Core\Scene\Character3D\Test\ThirdPersonCharacter3DActionSetTest.cpp',
+    'AcsFramework_Core\Scene\Character3D\ThirdPersonCharacter3DControlPreset.cpp',
+    'AcsFramework_Core\Scene\Character3D\Test\ThirdPersonCharacter3DControlPresetTest.cpp',
     'AcsFramework_Core\Scene\Character3D\ThirdPersonCharacter3DInput.cpp',
     'AcsFramework_Core\Scene\Character3D\ThirdPersonCharacter3D.cpp',
     'AcsFramework_Core\Scene\Character3D\Test\ThirdPersonCharacter3DTest.cpp',
