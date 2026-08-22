@@ -46,6 +46,11 @@ const FCollidableModel3DSpawnResult SolidFloor = SpawnCollidableModel3D(
     Floor, FCollisionShape3DParams::FromBox(
         FVec3{ 0.0f, -0.5f, 0.0f }, FVec3{ 0.5f, 0.5f, 0.5f }, 0x2u ) );
 
+// 複数部品を同じ位置・向きで動かす場合は空の親を作る
+ANode* const Character = SpawnNode3D( FStringView( "Character" ) );
+if ( Character != nullptr ) SpawnModel3D(
+    FModel3DSpawnParams::FromPrimitive( EMeshPrimitive3D::Cube, FVec3{} ), Character );
+
 // 置いた後に動かす
 Hero->Local().position.x += 1.0f;
 ```
@@ -57,6 +62,9 @@ Hero->Local().position.x += 1.0f;
 `SpawnCollidableModel3D`は同じ読込経路でモデルを置き、`CSceneCollision3D`へ形状を登録する。
 成功時は`FCollidableModel3DSpawnResult`の`Node`と`Shape`を両方返す。登録に失敗した生成ノードは
 破棄予定へ戻すため、「見えるが当たらない」半端な配置を成功として残さない。
+
+`SpawnNode3D`は`AUi3DScene`のグラフへ空ノードを置く。複数の`SpawnModel3D`へ同じ親を渡せば、
+人物、車、武器などを1個の親Transformで動かせる。途中失敗時は親を`DestroyNode3D`へ渡す。
 
 シーンの物は `Scene.Graph()` へ置く。これにより有効な `FNodeId` が付き、当たり判定、
 波紋、識別子による破棄へ同じノードを渡せる。`ANode&` を受ける従来の多重定義は、

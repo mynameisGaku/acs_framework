@@ -37,7 +37,7 @@ WASDで移動、左Shiftで走行、矢印キーで視点、Spaceでジャンプ
 
 | | |
 |---|---|
-| 3D を置く | `SpawnModel3D()`、`SpawnCollidableModel3D()`、`SpawnAnimatedModel3D()`、FBX の取り込み、材質 (metallic / roughness) |
+| 3D を置く | `SpawnNode3D()`、`SpawnModel3D()`、`SpawnCollidableModel3D()`、`SpawnAnimatedModel3D()`、FBX の取り込み、材質 (metallic / roughness) |
 | 3D画像を置く | `SpawnImage3D()`の固定板、`SpawnBillboard3D()`のカメラ追従板、透過PNG、深度判定、HDR合成 |
 | 3D を照らす | `SpawnLight3D()`、方向だけで置ける太陽、位置と距離だけで置ける点光源 |
 | 動かす | `BindThirdPersonCharacter3D()`で場面へ接続し、既定のWASD・パッド入力から移動・向き・追従カメラを一括化 |
@@ -80,6 +80,11 @@ const FCollidableModel3DSpawnResult Floor = SpawnCollidableModel3D(
     FModel3DSpawnParams::FromPrimitive( EMeshPrimitive3D::Plane, FVec3{} ),
     FCollisionShape3DParams::FromBox(
         FVec3{ 0.0f, -0.5f, 0.0f }, FVec3{ 0.5f, 0.5f, 0.5f }, 0x2u ) );
+
+// 複数の見た目を1個として動かす空ノードを作り、その下へモデルを置く
+ANode* const Robot = SpawnNode3D( FStringView( "Robot" ) );
+if ( Robot != nullptr ) SpawnModel3D(
+    FModel3DSpawnParams::FromPrimitive( EMeshPrimitive3D::Cube, FVec3{} ), Robot );
 
 // 透過PNGを固定向きの3D板として置く
 FSprite3DSpawnParams Marker = FSprite3DSpawnParams::FromImage(

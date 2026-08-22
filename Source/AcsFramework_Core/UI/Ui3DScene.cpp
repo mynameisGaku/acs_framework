@@ -121,6 +121,13 @@ FSceneRayHit AUi3DScene::PickScreen3D( FVec2 NormalizedScreenPosition, f32 Maxim
 }
 
 
+ANode* AUi3DScene::SpawnNode3D( FStringView Name, ANode* Parent ) noexcept
+{
+	const FScene3DSpawnResult Spawned = Graph().TrySpawn( Name, Parent );
+	return Spawned ? Spawned.Node : nullptr;
+}
+
+
 ANode* AUi3DScene::SpawnModel3D( const FModel3DSpawnParams& Params, ANode* Parent ) noexcept
 {
 	if ( !Params.IsValid() ) return nullptr;

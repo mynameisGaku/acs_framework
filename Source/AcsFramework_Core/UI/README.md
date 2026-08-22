@@ -28,9 +28,9 @@ private:
 UIはHDR描画、トーンマップ、TAAまたはFXAAが終わった後のLDR画面へ重ねる。文字やボタンは
 bloomや輪郭補正の影響を受けず、3D場面より手前、ポーズ・デバッグ・ロード表示より奥に出る。
 
-同じ基底は、3Dの見える物を少ない手数で置く窓口も持つ。`SpawnModel3D`はプリミティブまたは静的
-モデル、`SpawnCollidableModel3D`は静的モデルと衝突形状の一括生成、`SpawnImage3D`は向き固定の
-画像板、`SpawnBillboard3D`はカメラ追従画像板、
+同じ基底は、3Dの見える物を少ない手数で置く窓口も持つ。`SpawnNode3D`は複数の見た目をまとめる
+空ノード、`SpawnModel3D`はプリミティブまたは静的モデル、`SpawnCollidableModel3D`は静的モデルと
+衝突形状の一括生成、`SpawnImage3D`は向き固定の画像板、`SpawnBillboard3D`はカメラ追従画像板、
 `SpawnAnimatedModel3D`は骨付きモデル、`SpawnLight3D`は太陽または点光源、`SpawnWater3D`は
 水面を扱う。パスを渡した場合だけ場面共通のasset窓口で読み、読込済みassetはそのまま使う。
 
@@ -40,6 +40,10 @@ SpawnModel3D( FModel3DSpawnParams::FromMesh(
 SpawnImage3D( FSprite3DSpawnParams::FromImage(
     FStringView( "Textures/Sign.png" ), FVec3{ 0.0f, 2.0f, 3.0f }, FVec2{ 1.2f, 0.6f } ) );
 SpawnLight3D( FLight3DSpawnParams::Sun( FVec3{ -0.47f, 0.58f, 0.66f } ) );
+
+ANode* const Vehicle = SpawnNode3D( FStringView( "Vehicle" ) );
+if ( Vehicle != nullptr ) SpawnModel3D(
+    FModel3DSpawnParams::FromPrimitive( EMeshPrimitive3D::Cube, FVec3{} ), Vehicle );
 
 const FCollidableModel3DSpawnResult Wall = SpawnCollidableModel3D(
     FModel3DSpawnParams::FromMesh(
@@ -66,6 +70,10 @@ const FSceneRayHit Picked = PickScreen3D( FVec2{ 0.5f, 0.5f }, 100.0f );
 `SpawnCollidableModel3D`はモデル生成とこの衝突登録を一括で行い、ノードと形状番号を返す。
 描画境界、明示箱、明示球を選べ、登録できなければ生成ノードも破棄予定へ戻す。厚さのない
 `Plane`を床にする場合は`FCollisionShape3DParams::FromBox`で歩ける厚みを明示する。
+
+`SpawnNode3D`は見た目を持たない世代付きノードを作る。車体と車輪、人物の胴体と頭などを
+同じ親の下へ`SpawnModel3D( Params, Parent )`で置くと、親の移動・回転だけで全体を動かせる。
+生成に失敗した複合物は親を`DestroyNode3D`へ渡せば、子も含めて破棄予定へ戻せる。
 
 `BindThirdPersonCharacter3D`へ呼出側所有の制御と自場面ノードを渡すと、この衝突集合と現在場面の
 追従カメラへまとめて接続する。低水準の`Controller.Bind( Collision3D(), *this, Node, Params )`を

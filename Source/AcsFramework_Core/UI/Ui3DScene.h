@@ -138,6 +138,15 @@ public:
 		f32 MaximumDistance = 1000.0f ) noexcept;
 
 	/**
+	 * 複数の3Dモデルをまとめて動かすための空ノードを場面へ置く。
+	 *
+	 * @param Name デバッグと実行中の識別に使う任意名。
+	 * @param Parent この場面が所有する親。空ならroot直下。
+	 * @return 場面の世代付き識別子を持つ空ノード。親または生成に失敗したらnullptr。
+	 */
+	ANode* SpawnNode3D( FStringView Name = FStringView{}, ANode* Parent = nullptr ) noexcept;
+
+	/**
 	 * プリミティブまたは静的3Dモデルを、必要な読み込みを含めて1回で場面へ置く。
 	 *
 	 * @param Params 形またはモデル名、位置、材質、ノード名。

@@ -3,7 +3,7 @@
 
 #include "AcsFramework_Core/Scene/Animation3D/AnimatedModel3DSpawner.h"
 #include "AcsFramework_Core/Scene/Light3D/Light3DSpawnParams.h"
-#include "AcsFramework_Core/Scene/Model3D/Model3DSpawner.h"
+#include "AcsFramework_Core/Scene/Model3D/Model3DSpawnParams.h"
 #include "AcsFramework_Core/Scene/Sprite3D/Sprite3DSpawner.h"
 #include "AcsFramework_Core/Scene/Water3D/Water3DSpawnParams.h"
 #include "AcsFramework_Core/UI/WorldLabel3D/WorldLabel3DParams.h"
@@ -288,13 +288,12 @@ namespace
 	/**
 	 * 素材ファイルなしで向きが読める操作キャラクターを置く。
 	 *
-	 * @param Graph 置く場面のノードグラフ。
+	 * @param Scene 生成と失敗時破棄を受け持つ3D場面。
 	 * @return 足元原点の親ノード。全ての見た目を置けなければnullptr。
 	 */
-	ANode* SpawnThirdPersonCharacter( CSceneNodeGraph& Graph ) noexcept
+	ANode* SpawnThirdPersonCharacter( AUi3DScene& Scene ) noexcept
 	{
-		const FScene3DSpawnResult RootSpawn = Graph.TrySpawn( FStringView( "ThirdPersonCharacter" ) );
-		ANode* const Root = RootSpawn ? RootSpawn.Node : nullptr;
+		ANode* Root = Scene.SpawnNode3D( FStringView( "ThirdPersonCharacter" ) );
 		if ( Root == nullptr ) return nullptr;
 		Root->SetPosition( kCharacterStartPosition );
 		Root->RotateDeg( FVec3{ 0.0f, 180.0f, 0.0f } );
@@ -319,10 +318,12 @@ namespace
 		FacingMark.Roughness = 0.24f;
 		FacingMark.Name = FStringView( "ThirdPersonFacingMark" );
 
-		const bool bComplete = CModel3DSpawner::SpawnInto( Graph, Body, Root ) != nullptr && CModel3DSpawner::SpawnInto( Graph, Head, Root ) != nullptr && CModel3DSpawner::SpawnInto( Graph, FacingMark, Root ) != nullptr;
+		const bool bComplete = Scene.SpawnModel3D( Body, Root ) != nullptr &&
+			Scene.SpawnModel3D( Head, Root ) != nullptr &&
+			Scene.SpawnModel3D( FacingMark, Root ) != nullptr;
 		if ( bComplete ) return Root;
 
-		Graph.Destroy( Root->Id() );
+		(void)Scene.DestroyNode3D( Root );
 		return nullptr;
 	}
 }
@@ -659,7 +660,7 @@ bool ADemo3DScene::TryInitializeThirdPersonCharacter() noexcept
 
 	if ( !BuiltBindings.ReplaceGamepadButtonBinding( Actions.JumpAction, m_JumpGamepadRebind.CurrentButton(), kGamepadPlayerIndex ) || !BuiltBindings.ReplaceGamepadAxisBinding( Actions.MoveForwardAxis, m_MoveGamepadRebind.CurrentAxis(), kGamepadPlayerIndex, kGamepadDeadZone, 1.0f ) ) return false;
 
-	ANode* Character = SpawnThirdPersonCharacter( Graph() );
+	ANode* Character = SpawnThirdPersonCharacter( *this );
 	if ( Character == nullptr ) return false;
 
 	FThirdPersonCharacter3DParams Params;
