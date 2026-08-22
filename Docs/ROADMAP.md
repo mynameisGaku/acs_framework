@@ -210,7 +210,7 @@ IBLへ反映する。残りは空を焼くIBLへ雲の形そのものを含め�
 | v1.0.0 の意味 | 他人が使える形で配れる | 2026-08-17 |
 | ACS 配布物 | GitHub Releases + 取得スクリプト | 2026-08-17 |
 | 3D の剛体物理 | ACS 側へ入れる (枠組みには書かない) | 2026-08-17 |
-| 3D カメラ (追従・揺れ) | ACSの`FCamera3D`とFrameworkの`CNodeOrbitCamera3D`を実装済み | 2026-08-22 |
+| 3D カメラ (追従・揺れ) | ACSの`CCamera3D`とFrameworkの`CNodeOrbitCamera3D`を実装済み | 2026-08-22 |
 | 3D の光 | ACS 側へ実装済み (`ALightComponent3D`) | 2026-08-17 |
 | 光を集める層 | ACS 側へ実装済み (`CLightCollector3D`) | 2026-08-17 |
 | 3D の光を置く窓口 | Framework側へ実装済み (`CLight3DSpawner`) | 2026-08-22 |

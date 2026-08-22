@@ -79,6 +79,29 @@ void RunNodeOrbitCamera3DTests( CTestHarness& Harness )
 		Harness.Check( Scene->TryCaptureOrbitCameraSnapshot( Applied ), "場面へ反映した軌道状態を取得できる" );
 		Harness.Check( SameState( Applied.current, Camera.State() ), "場面と追従器の状態が一致する" );
 
+		const auto BaseStateBeforeShake = Camera.State();
+		Harness.Check( Camera.TryShakePreset( EShakePreset::HitImpact ), "被弾プリセットを1回で加えられる" );
+		const f32 ShakeLevelBeforeUpdate = Camera.ShakeLevel();
+		Harness.Check( ShakeLevelBeforeUpdate > 0.0f, "プリセットの揺れ強度を保持する" );
+		Harness.Check( Camera.Update( FVec2{}, 0.0f, 1.0f / 60.0f ), "明示時間で揺れを進められる" );
+		Harness.Check( Camera.ShakeLevel() < ShakeLevelBeforeUpdate, "揺れ強度を経過時間で減衰する" );
+		COrbitCameraController3D::FOrbitCameraFixedStepSnapshot3D Shaken;
+		Harness.Check( Scene->TryCaptureOrbitCameraSnapshot( Shaken ), "揺れを反映した場面状態を取得できる" );
+		Harness.Check( !SameState( Shaken.current, Camera.State() ), "表示位置だけを基準の追従状態からずらす" );
+		Harness.Check( SameState( Camera.State(), BaseStateBeforeShake ), "揺れで次回の追従計算に使う基準状態を汚さない" );
+
+		const f32 ShakeLevelBeforeFailure = Camera.ShakeLevel();
+		FShakeParams BrokenShake = CCameraShakePresets::GetPreset( EShakePreset::ExplosionSmall );
+		BrokenShake.frequency = std::numeric_limits<f32>::infinity();
+		Harness.Check( !Camera.TryAddShake( BrokenShake ), "有限でない任意揺れを拒否する" );
+		Harness.Check( Camera.ShakeLevel() == ShakeLevelBeforeFailure, "任意揺れの失敗で現在強度を保つ" );
+		Harness.Check( !Camera.TryShakePreset( EShakePreset::Custom ), "名前が必要なCustomプリセットを拒否する" );
+
+		Camera.StopShake();
+		Harness.Check( Camera.ShakeLevel() == 0.0f, "揺れを即座に止める" );
+		COrbitCameraController3D::FOrbitCameraFixedStepSnapshot3D Stopped;
+		Harness.Check( Scene->TryCaptureOrbitCameraSnapshot( Stopped ) && SameState( Stopped.current, Camera.State() ), "停止時に場面を基準の追従位置へ戻す" );
+
 		// 同じ場面へ再接続しても、最初の接続前状態を復元基準として保つ。
 		FNodeOrbitCamera3DParams ReboundParams;
 		ReboundParams.bAvoidObstructions = false;
@@ -130,6 +153,7 @@ void RunNodeOrbitCamera3DTests( CTestHarness& Harness )
 		if ( Target == nullptr || OtherTarget == nullptr ) return;
 
 		CNodeOrbitCamera3D Camera;
+		Harness.Check( !Camera.TryShakePreset( EShakePreset::HitImpact ), "未接続では揺れを開始しない" );
 		Harness.Check( Camera.Bind( *Scene, *Target ), "既存接続を作れる" );
 		Harness.Check( !Camera.Bind( *OtherScene, *Target ), "別場面が所有する追従ノードを拒否する" );
 		FNodeOrbitCamera3DParams Broken;

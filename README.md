@@ -104,6 +104,7 @@ HeroMover.TurnTowardMovement( 540.0f, DeltaSeconds );
 CNodeOrbitCamera3D HeroCamera;
 HeroCamera.Bind( *this, *HeroNode );
 HeroCamera.Update( FVec2{ LookX, LookY }, Zoom, DeltaSeconds );
+HeroCamera.TryShakePreset( EShakePreset::HitImpact ); // 被弾時は1行で揺らす
 
 // 反射・屈折・泡を持つ水面を置き、波紋を起こす
 FWater3DSpawnParams Water;

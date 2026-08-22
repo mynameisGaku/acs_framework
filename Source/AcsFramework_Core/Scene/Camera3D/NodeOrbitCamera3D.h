@@ -52,6 +52,29 @@ public:
 	 */
 	bool Update( FVec2 LookAxes, f32 ZoomAxis, f32 DeltaSeconds ) noexcept;
 
+	/**
+	 * ACSの組み込みプリセットを現在の追従カメラへ加える。
+	 *
+	 * @param Preset 爆発、被弾、地震などの組み込み種別。Customと未知値は拒否する。
+	 * @return 接続中で、有効な組み込みプリセットを加えられたらtrue。
+	 */
+	bool TryShakePreset( EShakePreset Preset ) noexcept;
+
+	/**
+	 * 任意の強さ、振幅、減衰、周波数を現在の追従カメラへ加える。
+	 *
+	 * @details 入力は先に全て検証し、失敗時は現在の揺れを変更しない。
+	 * @param Params ACSの3Dカメラ揺れへ渡す値。
+	 * @return 接続中で、有限かつ有効な値を加えられたらtrue。
+	 */
+	bool TryAddShake( const FShakeParams& Params ) noexcept;
+
+	/** 揺れを止め、接続中なら基準の追従位置を場面へ即座に戻す。 */
+	void StopShake() noexcept;
+
+	/** 現在残っている揺れの強さを0から1で返す。 */
+	f32 ShakeLevel() const noexcept { return m_ShakeCamera.TraumaLevel(); }
+
 	/** 現在位置の追従点だけを即座に読み直す。 */
 	bool RefreshTarget() noexcept { return Update( FVec2{}, 0.0f, 0.0f ); }
 
@@ -91,6 +114,9 @@ private:
 
 	/** 次回更新へ渡す注視点、角度、距離。 */
 	COrbitCameraController3D::FOrbitCameraState3D m_State;
+
+	/** 明示時間だけで揺れの表示位置を計算するACSの3Dカメラ。 */
+	CCamera3D m_ShakeCamera;
 
 	/** 接続時に検証した操作と表示の指定。 */
 	FNodeOrbitCamera3DParams m_Params;

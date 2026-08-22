@@ -58,6 +58,7 @@ bool CNodeOrbitCamera3D::Bind( ALegacyScene3DAdapter& Scene, ANode& Target, cons
 	m_Controller = CandidateController;
 	m_State = CandidateState;
 	m_Params = Params;
+	m_ShakeCamera.StopShake();
 	m_Scene->SetFreeCameraEnabled( false );
 	m_Scene->SetOrbitCameraActive( true );
 	m_Scene->SetOrbit( m_State.target, m_State.yaw_radians, m_State.pitch_radians, m_State.distance );
@@ -72,6 +73,7 @@ void CNodeOrbitCamera3D::Unbind() noexcept
 	m_Target = nullptr;
 	m_Controller = COrbitCameraController3D{};
 	m_State = COrbitCameraController3D::FOrbitCameraState3D{};
+	m_ShakeCamera.StopShake();
 	m_Params = FNodeOrbitCamera3DParams{};
 	m_bPreviousFreeCameraEnabled = true;
 	m_bPreviousOrbitCameraOverrideActive = false;
@@ -99,9 +101,41 @@ bool CNodeOrbitCamera3D::Update( FVec2 LookAxes, f32 ZoomAxis, f32 DeltaSeconds 
 	Candidate.target = WorldTarget;
 	if ( !m_Controller.TryStep( Input, DeltaSeconds, Candidate ) ) return false;
 
+	m_ShakeCamera.Tick( DeltaSeconds );
+	const FVec3 ShakeEye = m_ShakeCamera.EffectiveEye();
+	const FVec3 ShakeBaseEye = m_ShakeCamera.Position();
+	const FVec3 PresentationTarget{ Candidate.target.x + ShakeEye.x - ShakeBaseEye.x, Candidate.target.y + ShakeEye.y - ShakeBaseEye.y, Candidate.target.z + ShakeEye.z - ShakeBaseEye.z };
 	m_State = Candidate;
-	m_Scene->SetOrbit( m_State.target, m_State.yaw_radians, m_State.pitch_radians, m_State.distance );
+	m_Scene->SetOrbit( PresentationTarget, m_State.yaw_radians, m_State.pitch_radians, m_State.distance );
 	return true;
+}
+
+
+bool CNodeOrbitCamera3D::TryShakePreset( EShakePreset Preset ) noexcept
+{
+	if ( Preset == EShakePreset::Custom ) return false;
+	return TryAddShake( CCameraShakePresets::GetPreset( Preset ) );
+}
+
+
+bool CNodeOrbitCamera3D::TryAddShake( const FShakeParams& Params ) noexcept
+{
+	if ( !IsBound() ) return false;
+	if ( !std::isfinite( Params.trauma ) || !std::isfinite( Params.amplitude ) || !std::isfinite( Params.decay_rate ) || !std::isfinite( Params.frequency ) || !std::isfinite( Params.duration_hint ) ) return false;
+	if ( Params.trauma <= 0.0f || Params.amplitude < 0.0f || Params.decay_rate <= 0.0f || Params.frequency <= 0.0f || Params.duration_hint < 0.0f ) return false;
+
+	m_ShakeCamera.SetShakeAmplitude( Params.amplitude );
+	m_ShakeCamera.SetShakeDecayRate( Params.decay_rate );
+	m_ShakeCamera.SetShakeFrequency( Params.frequency );
+	m_ShakeCamera.AddShake( Params.trauma );
+	return true;
+}
+
+
+void CNodeOrbitCamera3D::StopShake() noexcept
+{
+	m_ShakeCamera.StopShake();
+	if ( m_Scene != nullptr ) m_Scene->SetOrbit( m_State.target, m_State.yaw_radians, m_State.pitch_radians, m_State.distance );
 }
 
 
