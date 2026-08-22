@@ -105,6 +105,37 @@ void RunCharacterMover3DTests( CTestHarness& Harness )
 		CheckNear( Harness, After.z, Before.z, "世界Zを保つ" );
 	}
 
+	Harness.BeginSuite( "CCharacterMover3D / 操作量をカメラ基準の水平移動へ変える" );
+
+	{
+		CSceneNodeGraph Graph;
+		CSceneCollision3D Collision{ Graph };
+		ANode* const Player = SpawnNode( Graph, "CameraRelativeCharacter" );
+		Harness.Check( Player != nullptr, "カメラ基準移動の対象を置ける" );
+		if ( Player == nullptr ) return;
+
+		FKinematicCharacterMovementParams3D Params;
+		Params.GravityAcceleration = 0.0f;
+		CCharacterMover3D Mover;
+		Harness.Check( Mover.Bind( Collision, *Player, FVec3{}, Params ), "カメラ基準移動へ接続できる" );
+
+		CCamera Camera;
+		Camera.SetLookAt( FVec3{ 0.0f, 2.0f, -5.0f }, FVec3{ 0.0f, 2.0f, 0.0f } );
+		Harness.Check( Mover.MoveFromCamera( Camera, FVec2{ 0.0f, 1.0f }, 4.0f, false, 0.5f ), "カメラ前方へ進める" );
+		CheckNear( Harness, Player->World().position.x, 0.0f, "正面入力で世界Xを保つ" );
+		CheckNear( Harness, Player->World().position.z, 2.0f, "正面入力を世界Zへ反映する" );
+
+		Camera.SetLookAt( FVec3{ -5.0f, 2.0f, 2.0f }, FVec3{ 0.0f, 2.0f, 2.0f } );
+		Harness.Check( Mover.MoveFromCamera( Camera, FVec2{ 0.0f, 1.0f }, 2.0f, false, 0.5f ), "横を向いたカメラの前方へ進める" );
+		CheckNear( Harness, Player->World().position.x, 1.0f, "カメラ前方の世界Xへ進む" );
+		CheckNear( Harness, Player->World().position.z, 2.0f, "横向き時の世界Zを保つ" );
+
+		const FVec3 BeforeDiagonal = Player->World().position;
+		Harness.Check( Mover.MoveFromCamera( Camera, FVec2{ 1.0f, 1.0f }, 2.0f, false, 1.0f ), "斜め入力で進める" );
+		const FVec3 DiagonalTranslation = Player->World().position - BeforeDiagonal;
+		CheckNear( Harness, Length( DiagonalTranslation ), 2.0f, "斜め入力を最大速度へ制限する" );
+	}
+
 	Harness.BeginSuite( "CCharacterMover3D / 不正値と解除でノードと状態を保つ" );
 
 	{
@@ -128,6 +159,13 @@ void RunCharacterMover3DTests( CTestHarness& Harness )
 		CheckNear( Harness, Player->Position().x, PositionBefore.x, "失敗時にノードXを保つ" );
 		CheckNear( Harness, Player->Position().y, PositionBefore.y, "失敗時にノードYを保つ" );
 		CheckNear( Harness, Mover.State().Position.x, StateBefore.Position.x, "失敗時に状態を保つ" );
+
+		CCamera VerticalCamera;
+		VerticalCamera.SetLookAt( FVec3{}, FVec3{ 0.0f, 1.0f, 0.0f }, FVec3::Forward() );
+		Harness.Check( !Mover.MoveFromCamera( VerticalCamera, FVec2{ 0.0f, 1.0f }, 4.0f, false, 1.0f ), "水平前方を作れないカメラを拒否する" );
+		Harness.Check( !Mover.MoveFromCamera( VerticalCamera, FVec2{}, -1.0f, false, 1.0f ), "負の最大速度を拒否する" );
+		CheckNear( Harness, Player->Position().x, PositionBefore.x, "カメラ変換失敗でもノードXを保つ" );
+		CheckNear( Harness, Mover.State().Position.x, StateBefore.Position.x, "カメラ変換失敗でも状態を保つ" );
 
 		Harness.Check( !Mover.Bind( Collision, *Player, FVec3{ Infinity, 0.0f, 0.0f } ), "有限でない球中心を拒否する" );
 		Harness.Check( Mover.IsBound(), "再接続失敗で既存接続を保つ" );

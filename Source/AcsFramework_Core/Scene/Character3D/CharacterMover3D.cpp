@@ -63,6 +63,14 @@ bool CCharacterMover3D::Move( FVec2 DesiredWorldXZVelocity, bool bJumpRequested,
 }
 
 
+bool CCharacterMover3D::MoveFromCamera( const CCamera& Camera, FVec2 MoveAxes, f32 MaximumSpeed, bool bJumpRequested, f32 DeltaSeconds ) noexcept
+{
+	FVec2 DesiredWorldXZVelocity;
+	if ( !TryCameraRelativeVelocity_Internal( Camera, MoveAxes, MaximumSpeed, DesiredWorldXZVelocity ) ) return false;
+	return Move( DesiredWorldXZVelocity, bJumpRequested, DeltaSeconds );
+}
+
+
 bool CCharacterMover3D::ResetMotion() noexcept
 {
 	if ( m_Node == nullptr || m_Node->IsPendingDestroy() ) return false;
@@ -127,6 +135,28 @@ bool CCharacterMover3D::IsValidParams_Internal( const FKinematicCharacterMovemen
 	CCollisionWorld3D EmptyWorld;
 	FKinematicCharacterMovementResult3D Result;
 	return TryMoveKinematicCharacter3D( EmptyWorld, {}, {}, 0.0f, Params, Result );
+}
+
+
+bool CCharacterMover3D::TryCameraRelativeVelocity_Internal( const CCamera& Camera, FVec2 MoveAxes, f32 MaximumSpeed, FVec2& OutVelocity ) noexcept
+{
+	if ( !std::isfinite( MoveAxes.x ) || !std::isfinite( MoveAxes.y ) || !std::isfinite( MaximumSpeed ) || MaximumSpeed < 0.0f ) return false;
+
+	const FVec3 ViewForward = TransformVector( FVec3::Forward(), Inverse( Camera.View() ) );
+	FVec3 WorldForward{ ViewForward.x, 0.0f, ViewForward.z };
+	const f32 ForwardLengthSq = LengthSq( WorldForward );
+	if ( !IsFinite_Internal( WorldForward ) || !std::isfinite( ForwardLengthSq ) || ForwardLengthSq <= 1.0e-8f ) return false;
+	WorldForward = Normalize( WorldForward );
+	const FVec3 WorldRight = Cross( FVec3::Up(), WorldForward );
+
+	const f32 InputLengthSq = MoveAxes.x * MoveAxes.x + MoveAxes.y * MoveAxes.y;
+	if ( !std::isfinite( InputLengthSq ) ) return false;
+	if ( InputLengthSq > 1.0f ) MoveAxes = MoveAxes * ( 1.0f / std::sqrt( InputLengthSq ) );
+
+	const FVec3 WorldVelocity = ( WorldRight * MoveAxes.x + WorldForward * MoveAxes.y ) * MaximumSpeed;
+	if ( !IsFinite_Internal( WorldVelocity ) ) return false;
+	OutVelocity = FVec2{ WorldVelocity.x, WorldVelocity.z };
+	return true;
 }
 
 

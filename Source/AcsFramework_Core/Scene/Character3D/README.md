@@ -12,12 +12,15 @@ CCharacterMover3D HeroMover;
 HeroMover.Bind( Collision, *Hero, FVec3{ 0.0f, 0.5f, 0.0f } );
 HeroMover.SetCollisionFilter( {}, 0x1u );
 
-HeroMover.Move( FVec2{ MoveX * 4.0f, MoveZ * 4.0f }, bJumpPressed, DeltaSeconds );
+HeroMover.MoveFromCamera( Camera(), FVec2{ MoveX, MoveForward }, 4.0f, bJumpPressed, DeltaSeconds );
 HeroAnimator.Update( FCharacterAnimation3DInput{ Length( FVec2{ HeroMover.Velocity().x, HeroMover.Velocity().z } ), HeroMover.IsGrounded() } );
 ```
 
 `Bind()`は球中心のローカル位置を受け取る。足元をノード原点にする場合は、Yへ球半径を指定する。
 ノードが親を持つ場合も、計算結果の世界移動量を親座標へ戻してからローカル位置へ反映する。
+`MoveFromCamera()`へ画面の左右・前後操作量と最大速度を渡すと、カメラの上下角を除いた向きへ
+変換する。斜め入力は長さ1へ制限するので、前後移動より速くならない。世界X/Z速度を直接決める
+AIや再生処理は`Move()`を使う。
 
 キャラクター自身を`CSceneCollision3D`へ登録した場合は、その形状を`SetCollisionFilter()`へ渡す。
 無効な形状を渡すと自己除外を行わない。外部から瞬間移動させた後に速度と接地状態も消したい場合は、

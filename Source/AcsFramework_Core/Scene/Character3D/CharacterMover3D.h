@@ -43,6 +43,19 @@ public:
 	bool Move( FVec2 DesiredWorldXZVelocity, bool bJumpRequested, f32 DeltaSeconds ) noexcept;
 
 	/**
+	 * 画面上の左右・前後入力を現在カメラ基準の世界速度へ変換して1回進める。
+	 *
+	 * @details カメラの上下角は移動へ含めず、入力の長さは1以下へ制限する。
+	 * @param Camera 移動方向の基準にする現在カメラ。
+	 * @param MoveAxes xを画面右、yを画面奥とする操作量。
+	 * @param MaximumSpeed 入力の長さが1のときの有限かつ0以上の世界速度。
+	 * @param bJumpRequested 接地中なら上向き初速を与える要求。
+	 * @param DeltaSeconds 進める有限かつ0以上の秒数。
+	 * @return 方向変換と移動を完了できたらtrue。失敗時はノードと保持状態を変更しない。
+	 */
+	bool MoveFromCamera( const CCamera& Camera, FVec2 MoveAxes, f32 MaximumSpeed, bool bJumpRequested, f32 DeltaSeconds ) noexcept;
+
+	/**
 	 * 現在のノード位置を球中心へ読み直し、速度と接地状態を初期化する。
 	 *
 	 * @return 接続中のノードから有限な球中心を作れたらtrue。失敗時は状態を変更しない。
@@ -92,6 +105,9 @@ private:
 
 	/** ACSの移動処理へ安全に渡せる調整値ならtrueを返す。 */
 	static bool IsValidParams_Internal( const FKinematicCharacterMovementParams3D& Params ) noexcept;
+
+	/** 画面上の操作量を水平なカメラ基準の世界X/Z速度へ変換する。 */
+	static bool TryCameraRelativeVelocity_Internal( const CCamera& Camera, FVec2 MoveAxes, f32 MaximumSpeed, FVec2& OutVelocity ) noexcept;
 
 	/** 全成分が有限ならtrueを返す。 */
 	static bool IsFinite_Internal( FVec3 Value ) noexcept;
