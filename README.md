@@ -39,7 +39,7 @@ WASDで移動、左Shiftで走行、矢印キーで視点、Spaceでジャンプ
 | 動かす | `CThirdPersonCharacter3D`へ既定のWASD・パッド入力を渡すだけで移動・向き・追従カメラを一括化 |
 | 操作を変える | UIでキーボード、ゲームパッドのボタン・軸を選び、自動保存して次回起動時に復元 |
 | カメラで追う | `CNodeOrbitCamera3D`、人物の注視点追従、回転・距離操作、遮蔽物回避 |
-| 見た目 | 物理大気・ボリューム雲・影・IBL・遮蔽 (SSAO)・間接光 (SSGI)・反射 (SSR)・霧・トーンマップ・輪郭補正 (FXAA) |
+| 見た目 | 物理大気・空気遠近・ボリューム雲・影・IBL・遮蔽 (SSAO)・間接光 (SSGI)・反射 (SSR)・霧・トーンマップ・輪郭補正 (FXAA) |
 | 3D 天候 | `AWeather3DScene`、晴天・曇天・雨・雪・嵐・霧・砂嵐の滑らかな遷移 |
 | 3D 水面 | `CWater3DSpawner`、屈折・反射・泡・動的な波紋 |
 | 3D 演出 | `AEffect3DScene`、Effekseer、depth 遮蔽、HDR・bloom への自動合成 |
@@ -128,6 +128,9 @@ PostParams().fxaa_enabled = true;
 
 // 雲、雲影、霧、空色、環境光を2.5秒で嵐へ揃える (classの基底はAWeather3DScene)
 SetWeather( EWeatherKind::Storm, 2.5f );
+
+// 遠くの3D物体と水面を物理大気へ馴染ませる (world単位はメートル)
+SetAerialPerspectiveEnabled( true );
 
 // 3D effectを出す (AWeather3DSceneにもAEffect3DSceneが含まれる)
 PlayEffect3D( FStringView( "Effects/hit.efkefc" ), FVec3{ 0, 1, 0 } );

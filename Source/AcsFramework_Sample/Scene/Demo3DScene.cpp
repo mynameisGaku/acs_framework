@@ -601,6 +601,10 @@ void ADemo3DScene::OnEnter() noexcept
 	// 別の場所の色になり、床の縁で色が切り替わって見える。
 	Atmosphere().ground_albedo = FVec3{ 0.06f, 0.07f, 0.06f };
 
+	// 遠くの物と水面を、同じ太陽で計算した大気へ距離に応じて馴染ませる。
+	// world単位はキャラクター半径と同じメートルなので、追加の倍率指定は要らない。
+	SetAerialPerspectiveEnabled( true );
+
 	// 全体が入る位置までカメラを引く。
 	FrameScene();
 
