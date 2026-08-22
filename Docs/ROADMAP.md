@@ -90,8 +90,10 @@ Steam (`SteamworksBridge`)、スクリプト (`ScriptHost`)、機械学習 (`MlR
 (`acs_temp_doc/0012`)。**参照描画** (`Clouds().bReferenceMode`) で «汚さの原因が
 ライティングか再構成か» を切り分けられる。
 
-雲影はACSのワールド影へ接続済みで、天候による環境光の暗化も`AWeather3DScene`から
-IBLへ反映する。残りは空を焼くIBLへ雲の形そのものを含めること。
+雲影はACSのワールド影へ接続済みで、天候による環境光の暗化に加え、雲の形と照明も
+IBLへ反映する (2026-08-22)。画面と同じ密度場をGPU上の低解像度cubemapへ焼き、
+高価な再生成は、成功した雲描画30回につき最大1回に抑える。`Clouds().bAffectEnvironmentLighting = false`
+なら、表示中の雲と雲影を保ったまま従来の雲なしIBLへ戻せる。
 空気遠近はACSに在ったEditor向け物理大気体積をLegacy 3D場面へ接続し、Frameworkから
 `SetAerialPerspectiveEnabled( true )`の1行で有効にできる (2026-08-22)。不透明物と水面は
 cameraからの距離に応じて大気へ馴染み、雲も実距離まで同じ大気を受ける。従来の局所霧は
