@@ -32,6 +32,7 @@ void AUi3DScene::OnExit() noexcept
 	m_Ui.Shutdown();
 	m_InteractionFocus.Unbind();
 	m_WorldLabels.Unbind();
+	m_DebugDraw3D.Shutdown();
 	ALegacyScene3DAdapter::OnExit();
 }
 
@@ -69,6 +70,25 @@ void AUi3DScene::OnDrawHud( FRenderContext& Context, CSpriteBatch& Sprites ) noe
 FInteractionFocus3DUpdateResult AUi3DScene::UpdateInteractionFocus( bool bActivateRequested ) noexcept
 {
 	return m_InteractionFocus.Update( Camera(), bActivateRequested );
+}
+
+
+bool AUi3DScene::DrawLine3D( FVec3 Start, FVec3 End, FVec4 Color ) noexcept
+{
+	return m_DebugDraw3D.DrawLine( Start, End, Color );
+}
+
+
+bool AUi3DScene::DrawAabb3D( const FAabb3& Bounds, FVec4 Color ) noexcept
+{
+	return m_DebugDraw3D.DrawAabb( Bounds, Color );
+}
+
+
+bool AUi3DScene::OnRenderTransparent3D( const FScene3DTransparentRenderContext& Context ) noexcept
+{
+	(void)m_DebugDraw3D.Render( Context.Device, Context.Commands, Context.Camera, Context.ColorTarget );
+	return false;
 }
 
 

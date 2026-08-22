@@ -75,6 +75,11 @@ Subsystemにはしない。`AEffect3DScene`がscene単位で`CEffect3DPlayer`を
 `CCharacterAnimator3D`が待機・歩き・走り・ジャンプの姿勢遷移へ接続する。部品を所有せず、
 キャラクターごとの短い寿命だけを持つため、これもsubsystemにはしない。
 
+3Dデバッグ描画もsceneのカメラ、HDR描画先、GPU終了順へ結び付くためSubsystemにはしない。
+`FDebugLine3D`と`CDebugDraw3DQueue`はGPUなしで値と1フレーム上限を検証し、
+`CDebugDraw3DLayer`はACSの`FDebugDraw3D`を遅延初期化して`AUi3DScene`の透明3Dパスへ接続する。
+`DrawLine3D`と`DrawAabb3D`は深度を無視する確認用オーバーレイで、表示を続ける側は更新ごとに登録する。
+
 ### Text変換の契約
 
 `AcsToWide`の配列版は変換成功時だけ出力を更新し、確保・入力長・変換数の失敗時は既存内容を保つ。

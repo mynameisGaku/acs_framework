@@ -112,8 +112,11 @@ private:
 	/** 現在と次の天候をプレイヤーUIへ反映する。 */
 	void RefreshWeatherText() noexcept;
 
-	/** カメラから回転立方体の実表面へ線を当て、結果をUIと3D印へ反映する。 */
-	void PickSpinnerGeometry() noexcept;
+	/** 照準位置から画面内の最前面実形状へ線を当て、結果をUIと3D印へ反映する。 */
+	void PickVisibleGeometry_Internal() noexcept;
+
+	/** 直近の実形状判定を、一定時間だけ線と小箱で見せる。 */
+	void DrawGeometryPickDebug_Internal( f32 DeltaSeconds ) noexcept;
 
 	/**
 	 * 素材不要の操作キャラクターを置き、衝突、追従カメラ、既定操作へ接続する。
@@ -211,6 +214,15 @@ private:
 
 	/** 実形状判定の直近結果を示す文字。 */
 	u32 m_GeometryPickStatusText = 0u;
+
+	/** 直近の実形状判定を表示する線のworld始点。 */
+	FVec3 m_GeometryPickDebugStart;
+
+	/** 直近の実形状判定を表示するworld命中点。 */
+	FVec3 m_GeometryPickDebugEnd;
+
+	/** 直近の実形状判定を3Dデバッグ表示する残り秒数。 */
+	f32 m_GeometryPickDebugRemainingSeconds = 0.0f;
 
 	/** 視線対象の有無と直近の決定結果を示す文字。 */
 	u32 m_InteractionStatusText = 0u;

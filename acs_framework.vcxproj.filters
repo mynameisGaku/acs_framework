@@ -109,6 +109,12 @@
     <Filter Include="Source\AcsFramework_Core\Scene\Collision3D\Test">
       <UniqueIdentifier>{eb51a720-5b1a-13b8-90bc-d964302b1ffb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\AcsFramework_Core\Scene\DebugDraw3D">
+      <UniqueIdentifier>{8f20fe2f-3387-db6a-fbe9-e43b0962357a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\AcsFramework_Core\Scene\DebugDraw3D\Test">
+      <UniqueIdentifier>{4bba147a-e174-f1b7-32b4-cb35b0306898}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Source\AcsFramework_Core\Scene\Interaction3D">
       <UniqueIdentifier>{aad0f73b-89c8-3059-881c-96cbd9d21b27}</UniqueIdentifier>
     </Filter>
@@ -443,6 +449,15 @@
     </ClCompile>
     <ClCompile Include="Source\AcsFramework_Core\Scene\Collision3D\SceneCollision3D.cpp">
       <Filter>Source\AcsFramework_Core\Scene\Collision3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Scene\DebugDraw3D\DebugDraw3DLayer.cpp">
+      <Filter>Source\AcsFramework_Core\Scene\DebugDraw3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Scene\DebugDraw3D\DebugDraw3DQueue.cpp">
+      <Filter>Source\AcsFramework_Core\Scene\DebugDraw3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Scene\DebugDraw3D\DebugLine3D.cpp">
+      <Filter>Source\AcsFramework_Core\Scene\DebugDraw3D</Filter>
     </ClCompile>
     <ClCompile Include="Source\AcsFramework_Core\Scene\Interaction3D\InteractionFocus3D.cpp">
       <Filter>Source\AcsFramework_Core\Scene\Interaction3D</Filter>
@@ -1033,6 +1048,15 @@
     </ClInclude>
     <ClInclude Include="Source\AcsFramework_Core\Scene\Collision3D\SceneSweepHit3D.h">
       <Filter>Source\AcsFramework_Core\Scene\Collision3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Scene\DebugDraw3D\DebugDraw3DLayer.h">
+      <Filter>Source\AcsFramework_Core\Scene\DebugDraw3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Scene\DebugDraw3D\DebugDraw3DQueue.h">
+      <Filter>Source\AcsFramework_Core\Scene\DebugDraw3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Scene\DebugDraw3D\DebugLine3D.h">
+      <Filter>Source\AcsFramework_Core\Scene\DebugDraw3D</Filter>
     </ClInclude>
     <ClInclude Include="Source\AcsFramework_Core\Scene\Interaction3D\InteractionFocus3D.h">
       <Filter>Source\AcsFramework_Core\Scene\Interaction3D</Filter>

@@ -29,5 +29,6 @@ void AEffect3DScene::OnExit() noexcept
 
 bool AEffect3DScene::OnRenderTransparent3D( const FScene3DTransparentRenderContext& Context ) noexcept
 {
+	(void)AUi3DScene::OnRenderTransparent3D( Context );
 	return m_Effects.Render( Context.Device, Context.Commands, Context.Camera, Context.ColorTarget, Context.DepthTarget );
 }

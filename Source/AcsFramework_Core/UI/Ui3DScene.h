@@ -3,6 +3,7 @@
 
 #include <acs.h>
 
+#include "AcsFramework_Core/Scene/DebugDraw3D/DebugDraw3DLayer.h"
 #include "AcsFramework_Core/Scene/Interaction3D/InteractionHighlight3DParams.h"
 #include "AcsFramework_Core/Scene/Interaction3D/InteractionFocus3D.h"
 #include "AcsFramework_Core/UI/InteractionReticle3D/InteractionReticle3DParams.h"
@@ -101,6 +102,28 @@ public:
 	/** 読み取り専用の3Dインタラクション選択輪郭設定を返す。 */
 	const FInteractionHighlight3DParams& InteractionHighlightParams() const noexcept { return m_InteractionHighlightParams; }
 
+	/**
+	 * world座標の線を次の3D描画へ1本登録する。
+	 *
+	 * @details 線は深度を無視して常に見える。表示を続ける場合は更新ごとに呼ぶ。
+	 * @return 値が有効で1フレーム上限内に登録できたらtrue。
+	 */
+	bool DrawLine3D( FVec3 Start, FVec3 End, FVec4 Color = FVec4{ 0.20f, 0.95f, 1.0f, 1.0f } ) noexcept;
+
+	/**
+	 * 軸並行境界箱の12辺を次の3D描画へ一括登録する。
+	 *
+	 * @details 線は深度を無視して常に見える。表示を続ける場合は更新ごとに呼ぶ。
+	 * @return 箱と色が有効で、12辺全てを登録できたらtrue。
+	 */
+	bool DrawAabb3D( const FAabb3& Bounds, FVec4 Color = FVec4{ 0.20f, 0.95f, 1.0f, 1.0f } ) noexcept;
+
+	/** 登録線の消去と拒否数の確認に使う、この場面所有の3Dデバッグ描画層を返す。 */
+	CDebugDraw3DLayer& DebugDraw3D() noexcept { return m_DebugDraw3D; }
+
+	/** 読み取り専用の3Dデバッグ描画層を返す。 */
+	const CDebugDraw3DLayer& DebugDraw3D() const noexcept { return m_DebugDraw3D; }
+
 	/** 通常の3D場面を開始してからUI層を初期化する。 */
 	void OnEnter() noexcept override;
 
@@ -121,6 +144,13 @@ public:
 	void OnEvent( const FEvent& Event ) noexcept override;
 
 protected:
+	/**
+	 * 登録済みの3Dデバッグ線をACSのHDR透明3Dパスへ描く。
+	 *
+	 * @return RHI commandだけを追加するため、外部状態復旧が不要なfalse。
+	 */
+	bool OnRenderTransparent3D( const FScene3DTransparentRenderContext& Context ) noexcept override;
+
 	/**
 	 * ポスト処理後のHUDパスへUI層を描く。
 	 *
@@ -156,6 +186,9 @@ private:
 
 	/** 選択輪郭の印をACSへ反映中ならtrue。 */
 	bool m_bInteractionHighlightApplied = false;
+
+	/** 1フレーム線キューとACSのGPU描画器を場面寿命で所有する層。 */
+	CDebugDraw3DLayer m_DebugDraw3D;
 
 	/** この場面だけが所有する遊ぶ人向けUI層。 */
 	CUiLayer m_Ui;

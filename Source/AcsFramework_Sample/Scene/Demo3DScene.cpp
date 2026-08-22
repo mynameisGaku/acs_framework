@@ -123,6 +123,9 @@ namespace
 	/** デモの天候が次の状態へ移り切るまでの秒数。 */
 	constexpr f32 kWeatherTransitionSeconds = 2.5f;
 
+	/** 実形状判定の線と命中箱を見せ続ける秒数。 */
+	constexpr f32 kGeometryPickDebugSeconds = 2.5f;
+
 	/** 見た目の差が読みやすい順に巡回する天候。 */
 	constexpr EWeatherKind kDemoWeatherCycle[] =
 	{
@@ -341,6 +344,7 @@ void ADemo3DScene::OnEnter() noexcept
 {
 	AWeather3DScene::OnEnter();
 	m_bInteractionRequested = false;
+	m_GeometryPickDebugRemainingSeconds = 0.0f;
 	FInteractionFocus3DParams InteractionParams;
 	InteractionParams.MaximumDistance = 8.0f;
 	if ( !InteractionFocus().SetParams( InteractionParams ) ) ACS_LOG_WARN( "Demo3D: 視線フォーカス距離を設定できなかった" );
@@ -648,6 +652,7 @@ void ADemo3DScene::OnExit() noexcept
 	m_ThirdPersonCharacter.Unbind();
 	m_CharacterActionBindings.Clear();
 	m_PreviousCharacterInput = FActionInput{};
+	m_GeometryPickDebugRemainingSeconds = 0.0f;
 	m_CharacterNode = nullptr;
 	m_CharacterCollision.Reset();
 	m_Spinner = nullptr;
@@ -831,7 +836,8 @@ void ADemo3DScene::OnUpdate( f32 DeltaSeconds ) noexcept
 
 	if ( Ui().ConsumeButtonPress( m_SpatialSoundButton ) ) PlaySpatialDemoSound();
 	if ( Ui().ConsumeButtonPress( m_WeatherButton ) ) AdvanceDemoWeather();
-	if ( Ui().ConsumeButtonPress( m_GeometryPickButton ) ) PickSpinnerGeometry();
+	if ( Ui().ConsumeButtonPress( m_GeometryPickButton ) ) PickVisibleGeometry_Internal();
+	DrawGeometryPickDebug_Internal( DeltaSeconds );
 
 	if ( m_WaterSurfaceId.IsValid() )
 	{
@@ -1144,28 +1150,56 @@ void ADemo3DScene::RefreshWeatherText() noexcept
 }
 
 
-void ADemo3DScene::PickSpinnerGeometry() noexcept
+void ADemo3DScene::PickVisibleGeometry_Internal() noexcept
 {
-	if ( m_Spinner == nullptr )
-	{
-		Ui().SetText( m_GeometryPickStatusText, "PICK: NO TARGET" );
-		return;
-	}
-
-	const FVec3 CameraPosition = Camera().Eye();
-	const FSceneRay Ray = FSceneRay::FromDirection(
-		CameraPosition, m_Spinner->World().position - CameraPosition, 100.0f );
+	m_GeometryPickDebugRemainingSeconds = 0.0f;
+	/** 3D操作の照準と同じ、左上を0・右下を1とする画面位置。 */
+	const FVec2 ScreenPosition = InteractionFocus().Params().ScreenPosition;
+	/** 2x2画面へ正規化位置を写し、現在見えている方向へ作る判定線。 */
+	const FSceneRay Ray = FSceneRay::FromScreen(
+		Camera(), ScreenPosition.x * 2.0f, ScreenPosition.y * 2.0f, 2u, 2u, 100.0f );
+	/** 判定線上で最初に見つかった実際の3D表面。 */
 	const FSceneRayHit Hit = CScenePicker::RaycastGeometry( *this, Ray );
-	if ( Hit.Node != m_Spinner )
+	if ( !Hit.IsHit() )
 	{
-		Ui().SetText( m_GeometryPickStatusText, Hit.IsHit() ? "PICK: OTHER OBJECT" : "PICK: MISS" );
+		Ui().SetText( m_GeometryPickStatusText, "PICK: MISS" );
 		return;
 	}
 
-	Ui().SetText( m_GeometryPickStatusText, "PICK: SPINNER SURFACE" );
+	Ui().SetText( m_GeometryPickStatusText, "PICK: VISIBLE SURFACE" );
+	m_GeometryPickDebugStart = Ray.Origin;
+	m_GeometryPickDebugEnd = Hit.Point;
+	m_GeometryPickDebugRemainingSeconds = kGeometryPickDebugSeconds;
 	FEffect3DPlayParams Marker = FEffect3DPlayParams::At( Hit.Point + Hit.Normal * 0.03f );
 	Marker.Scale = FVec3{ 0.18f, 0.18f, 0.18f };
 	PlayEffect3D( FStringView( "Effects/hit.efkefc" ), Marker );
+}
+
+
+void ADemo3DScene::DrawGeometryPickDebug_Internal( f32 DeltaSeconds ) noexcept
+{
+	if ( m_GeometryPickDebugRemainingSeconds <= 0.0f ) return;
+
+	/** 視線方向の判定線が投影で点に潰れても、元のレイを確認できる登録結果。 */
+	const bool bRayQueued = DrawLine3D( m_GeometryPickDebugStart, m_GeometryPickDebugEnd, FVec4{ 0.20f, 0.95f, 1.0f, 1.0f } );
+	/** どのカメラ角度でも命中点を見分けられる各軸の半分の長さ。 */
+	const FVec3 AxisExtent{ 0.42f, 0.42f, 0.42f };
+	/** 命中点を通るworld X軸線の登録結果。 */
+	const bool bXAxisQueued = DrawLine3D( m_GeometryPickDebugEnd - FVec3{ AxisExtent.x, 0.0f, 0.0f }, m_GeometryPickDebugEnd + FVec3{ AxisExtent.x, 0.0f, 0.0f }, FVec4{ 1.0f, 0.24f, 0.18f, 1.0f } );
+	/** 命中点を通るworld Y軸線の登録結果。 */
+	const bool bYAxisQueued = DrawLine3D( m_GeometryPickDebugEnd - FVec3{ 0.0f, AxisExtent.y, 0.0f }, m_GeometryPickDebugEnd + FVec3{ 0.0f, AxisExtent.y, 0.0f }, FVec4{ 0.34f, 1.0f, 0.24f, 1.0f } );
+	/** 命中点を通るworld Z軸線の登録結果。 */
+	const bool bZAxisQueued = DrawLine3D( m_GeometryPickDebugEnd - FVec3{ 0.0f, 0.0f, AxisExtent.z }, m_GeometryPickDebugEnd + FVec3{ 0.0f, 0.0f, AxisExtent.z }, FVec4{ 0.22f, 0.52f, 1.0f, 1.0f } );
+	/** 命中点を囲む確認箱の登録結果。 */
+	const bool bHitBoxQueued = DrawAabb3D( FAabb3::FromCenterExtents( m_GeometryPickDebugEnd, FVec3{ 0.22f, 0.22f, 0.22f } ), FVec4{ 1.0f, 0.62f, 0.12f, 1.0f } );
+	if ( !bRayQueued || !bXAxisQueued || !bYAxisQueued || !bZAxisQueued || !bHitBoxQueued )
+	{
+		m_GeometryPickDebugRemainingSeconds = 0.0f;
+		ACS_LOG_WARN( "Demo3D: 実形状判定の3Dデバッグ線を登録できなかった" );
+		return;
+	}
+
+	if ( std::isfinite( DeltaSeconds ) && DeltaSeconds > 0.0f ) m_GeometryPickDebugRemainingSeconds -= DeltaSeconds;
 }
 
 

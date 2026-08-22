@@ -61,10 +61,11 @@ public:
 
 protected:
 	/**
-	 * ACSのHDR透明3Dパスへplayerの描画を追加する。
+	 * ACSのHDR透明3Dパスへデバッグ線とplayerの描画を追加する。
 	 *
+	 * @details RHIのデバッグ線を先に描き、外部D3D12 commandを使うplayerを最後に置く。
 	 * @param Context 現在のHDR/depth、カメラ、描画command。
-	 * @return 外部commandを追加したら true。
+	 * @return playerが外部commandを追加したらtrue。
 	 */
 	bool OnRenderTransparent3D( const FScene3DTransparentRenderContext& Context ) noexcept override;
 
