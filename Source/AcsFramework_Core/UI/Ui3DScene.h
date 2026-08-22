@@ -211,6 +211,22 @@ public:
 		ANode* Parent = nullptr ) noexcept;
 
 	/**
+	 * 静的3Dモデルの生成、衝突登録、視線フォーカス対象登録を1回で完了する。
+	 *
+	 * @param Params 形またはモデル名、位置、材質、ノード名。
+	 * @param Prompt フォーカス中だけ表示する1から4096byteのUTF-8文字列。
+	 * @param CollisionParams 登録形状と衝突レイヤー。
+	 * @param WorldOffset ノード位置から操作案内までのworld空間のずれ。
+	 * @param Parent この場面が所有する親。空ならroot直下。
+	 * @return 生成と2登録を完了したノードと形状。失敗時は空で、半端な生成物を残さない。
+	 */
+	FCollidableModel3DSpawnResult SpawnInteractableCollidableModel3D(
+		const FModel3DSpawnParams& Params, FStringView Prompt,
+		const FCollisionShape3DParams& CollisionParams = FCollisionShape3DParams{},
+		FVec3 WorldOffset = FVec3{ 0.0f, 1.8f, 0.0f },
+		ANode* Parent = nullptr ) noexcept;
+
+	/**
 	 * 静的3Dモデルの生成と衝突登録を1回で完了する。
 	 *
 	 * @details 衝突登録に失敗した場合は生成ノードも破棄予定へ戻す。既定は描画境界を使う。
@@ -269,6 +285,22 @@ public:
 	 */
 	ANode* SpawnInteractableAnimatedModel3D(
 		const FAnimatedModel3DSpawnParams& Params, FStringView Prompt,
+		FVec3 WorldOffset = FVec3{ 0.0f, 1.8f, 0.0f },
+		ANode* Parent = nullptr ) noexcept;
+
+	/**
+	 * 骨付き3Dモデルの読込、初期再生、衝突登録、視線対象登録を1回で完了する。
+	 *
+	 * @param Params 骨付きモデルの相対path、位置、大きさ、初期animation。
+	 * @param Prompt フォーカス中だけ表示する1から4096byteのUTF-8文字列。
+	 * @param CollisionParams 登録形状と衝突レイヤー。
+	 * @param WorldOffset ノード位置から操作案内までのworld空間のずれ。
+	 * @param Parent この場面が所有する親。空ならroot直下。
+	 * @return 生成、再生、2登録を完了したノードと形状。失敗時は空で、半端な生成物を残さない。
+	 */
+	FCollidableModel3DSpawnResult SpawnInteractableCollidableAnimatedModel3D(
+		const FAnimatedModel3DSpawnParams& Params, FStringView Prompt,
+		const FCollisionShape3DParams& CollisionParams = FCollisionShape3DParams{},
 		FVec3 WorldOffset = FVec3{ 0.0f, 1.8f, 0.0f },
 		ANode* Parent = nullptr ) noexcept;
 

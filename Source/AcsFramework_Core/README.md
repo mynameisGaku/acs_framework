@@ -58,7 +58,9 @@ Subsystemにはしない。`AEffect3DScene`がscene単位で`CEffect3DPlayer`を
 単一モデルを視線操作対象として置く定型処理は`CInteractableModel3DSpawner`へまとめる。
 静的または骨付きモデルの既存生成器と`CInteractionFocus3D::RegisterTarget`を順に呼ぶだけの
 状態なしアダプターとし、対象登録に失敗した生成ノードは破棄予定へ戻す。複合ノードを登録する
-低水準の窓口はそのまま残し、作品固有の操作内容や入力割り当ては所有しない。
+低水準の窓口はそのまま残し、作品固有の操作内容や入力割り当ては所有しない。衝突付き入口は
+`CModel3DSpawner`または`CAnimatedModel3DSpawner`が返す形状を引き継ぎ、後段失敗時だけ
+`CSceneCollision3D`から形状を外して生成ノードを巻き戻す。
 
 3Dの重なりと移動判定は、場面側が`CSceneCollision3D`を所有する。ACSの`CCollisionWorld3D`へ
 ノードとローカル形状を登録し、問い合わせ時に現在Transformへ同期して、結果をノードポインタへ

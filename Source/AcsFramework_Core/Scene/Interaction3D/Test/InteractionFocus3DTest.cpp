@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: Apache-2.0
+#include "AcsFramework_Core/Scene/Collision3D/SceneCollision3D.h"
 #include "AcsFramework_Core/Scene/Interaction3D/InteractionFocus3D.h"
 #include "AcsFramework_Core/Scene/Interaction3D/InteractionFocus3DInput.h"
 #include "AcsFramework_Core/Scene/Interaction3D/InteractionFocus3DTransition.h"
@@ -193,6 +194,76 @@ void RunInteractionFocus3DTests( CTestHarness& Harness )
 			"登録できなかった生成モデルを場面へ残さない" );
 		Harness.CheckEqualU64( Graph.RegisteredCount(), 1u,
 			"巻き戻した生成モデルの識別子も解放する" );
+	}
+
+	Harness.BeginSuite( "CInteractableModel3DSpawner / 衝突と操作対象を一括登録する" );
+
+	{
+		CSceneNodeGraph Graph;
+		CSceneCollision3D Collision{ Graph };
+		CWorldLabel3DLayer Labels;
+		Labels.Bind( Graph );
+
+		CInteractionFocus3D Focus;
+		FInteractionFocus3DParams FocusParams;
+		FocusParams.MaximumDistance = 8.0f;
+		Harness.Check( Focus.Bind( Graph, Labels, FocusParams ),
+			"衝突付き操作対象の視線フォーカスを場面へ接続できる" );
+
+		const FModel3DSpawnParams Params = FModel3DSpawnParams::FromPrimitive(
+			EMeshPrimitive3D::Cube, FVec3{ 0.0f, 0.0f, 4.0f } );
+		const FCollidableModel3DSpawnResult Spawned =
+			CInteractableModel3DSpawner::SpawnCollidableInto(
+				Graph, Collision, Focus, Params, FStringView( "ENTER: USE" ),
+				FCollisionShape3DParams::FromBounds( 0x4u ), FVec3{} );
+		Harness.Check( Spawned.Succeeded(),
+			"モデル生成、衝突、操作対象を1回で登録する" );
+		Harness.CheckEqualU64( Graph.RegisteredCount(), 2u,
+			"一括生成でもrootとモデルだけを登録する" );
+		Harness.CheckEqualU64( Collision.ShapeCount(), 1u,
+			"生成モデルへ衝突形状を1件登録する" );
+		Harness.CheckEqualU64( Focus.TargetCount(), 1u,
+			"同じ生成モデルを操作対象として1件登録する" );
+
+		if ( Spawned )
+		{
+			TArray<ANode*> Hits;
+			Harness.Check( Collision.TryOverlapSphere(
+				FSphere{ Params.Position, 0.1f }, Hits, {}, 0x4u ),
+				"指定レイヤーの一括登録形状を問い合わせられる" );
+			Harness.Check( Hits.Num() == 1u && Hits[0] == Spawned.Node,
+				"衝突結果を一括生成ノードへ戻す" );
+
+			const FInteractionFocus3DUpdateResult Result = Focus.Update( MakeCamera(), true );
+			Harness.Check( Result.ActivatedNode == Spawned.Node->Id(),
+				"衝突する同じモデルへの視線決定を返す" );
+		}
+	}
+
+	{
+		CSceneNodeGraph Graph;
+		CSceneCollision3D Collision{ Graph };
+		CInteractionFocus3D UnboundFocus;
+		const FModel3DSpawnParams Params = FModel3DSpawnParams::FromPrimitive(
+			EMeshPrimitive3D::Cube, FVec3{ 0.0f, 0.0f, 4.0f } );
+
+		const FCollidableModel3DSpawnResult Failed =
+			CInteractableModel3DSpawner::SpawnCollidableInto(
+				Graph, Collision, UnboundFocus, Params, FStringView( "ENTER: USE" ) );
+		Harness.Check( !Failed.Succeeded(),
+			"操作対象登録に失敗した衝突付き生成は空で返す" );
+		Harness.Check( Failed.Node == nullptr && !Failed.Shape.IsValid(),
+			"操作対象登録失敗時はノードと形状の両方を無効値で返す" );
+		Harness.CheckEqualU64( Collision.ShapeCount(), 0u,
+			"操作対象登録に失敗した衝突形状を外す" );
+		Harness.CheckEqualU64( UnboundFocus.TargetCount(), 0u,
+			"未接続の視線フォーカスへ対象を残さない" );
+
+		Graph.ResolveStructuralChanges();
+		Harness.CheckEqualU64( Graph.Root().ChildCount(), 0u,
+			"操作対象登録に失敗したモデルを場面へ残さない" );
+		Harness.CheckEqualU64( Graph.RegisteredCount(), 1u,
+			"完全巻き戻し後に生成モデルの識別子も解放する" );
 	}
 
 	Harness.BeginSuite( "CInteractionFocus3D / 破棄予定の対象と案内を更新時に外す" );

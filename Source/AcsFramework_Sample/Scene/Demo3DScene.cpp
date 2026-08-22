@@ -415,15 +415,16 @@ void ADemo3DScene::OnEnter() noexcept
 			Ball, FCollisionShape3DParams::FromBounds( kCharacterCollisionLayer ) );
 	}
 
-	// 回す立方体。動いていることと、面ごとの陰りの差が分かる。
+	// 回す立方体。衝突と視線操作も同時に登録し、1個の実形状で両方を試せるようにする。
 	FModel3DSpawnParams Cube = FModel3DSpawnParams::FromPrimitive( EMeshPrimitive3D::Cube, FVec3{ 0.0f, 1.2f, -3.0f } );
 	Cube.Scale = FVec3{ 1.4f, 1.4f, 1.4f };
 	Cube.Color = FVec4{ 0.90f, 0.75f, 0.30f, 1.0f };
 	Cube.Metallic = 1.0f;      // 金属。拡散反射が消えるので、環境光と反射が要る
 	Cube.Roughness = 0.28f;
 	Cube.Name = FStringView( "Spinner" );
-	m_Spinner = SpawnCollidableModel3D(
-		Cube, FCollisionShape3DParams::FromBounds( kCharacterCollisionLayer ) ).Node;
+	m_Spinner = SpawnInteractableCollidableModel3D(
+		Cube, FStringView( "ENTER: INSPECT" ),
+		FCollisionShape3DParams::FromBounds( kCharacterCollisionLayer ) ).Node;
 
 	// Assets に置いた FBX。**置き場からモデルを読む道が通っていることの確認**でもある。
 	// 読めなければ置かずに nullptr が返り、理由が 1 行出る (黙って消えない)。
@@ -803,11 +804,14 @@ void ADemo3DScene::OnUpdate( f32 DeltaSeconds ) noexcept
 	const FInteractionFocus3DUpdateResult InteractionResult = UpdateInteractionFocus( bActivateInteraction );
 	if ( InteractionResult.Activated() )
 	{
-		SetUiTextIfChanged( Ui(), m_InteractionStatusText, "INTERACT: PLAYER" );
+		const bool bSpinnerActivated = m_Spinner != nullptr && InteractionResult.ActivatedNode == m_Spinner->Id();
+		const char* const InteractionText = bSpinnerActivated ? "INTERACT: SPINNER" : "INTERACT: PLAYER";
+		SetUiTextIfChanged( Ui(), m_InteractionStatusText, InteractionText );
 	}
 	else if ( InteractionResult.FocusChanged() )
 	{
-		SetUiTextIfChanged( Ui(), m_InteractionStatusText, InteractionResult.FocusedNode.IsValid() ? "FOCUS: ENTER TO INTERACT" : "FOCUS: LOOK AT PLAYER" );
+		const char* const FocusText = InteractionResult.FocusedNode.IsValid() ? "FOCUS: ENTER TO INTERACT" : "FOCUS: LOOK AT PLAYER / SPINNER";
+		SetUiTextIfChanged( Ui(), m_InteractionStatusText, FocusText );
 	}
 
 	// 割り当て確定に使った同じ押下ではFXAAを切り替えない。次の押下から通常操作になる。

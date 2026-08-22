@@ -30,10 +30,12 @@ bloomや輪郭補正の影響を受けず、3D場面より手前、ポーズ・�
 
 同じ基底は、3Dの見える物を少ない手数で置く窓口も持つ。`SpawnNode3D`は複数の見た目をまとめる
 空ノード、`SpawnModel3D`はプリミティブまたは静的モデル、`SpawnInteractableModel3D`は静的モデルと
-視線操作登録、`SpawnCollidableModel3D`は静的モデルと
-衝突形状の一括生成、`SpawnImage3D`は向き固定の画像板、`SpawnBillboard3D`はカメラ追従画像板、
+視線操作登録、`SpawnCollidableModel3D`は静的モデルと衝突、
+`SpawnInteractableCollidableModel3D`は静的モデルと衝突と視線操作の一括生成、
+`SpawnImage3D`は向き固定の画像板、`SpawnBillboard3D`はカメラ追従画像板、
 `SpawnAnimatedModel3D`は骨付きモデル、`SpawnInteractableAnimatedModel3D`は骨付きモデルと視線操作登録、
-`SpawnCollidableAnimatedModel3D`は骨付きモデルと衝突形状、
+`SpawnCollidableAnimatedModel3D`は骨付きモデルと衝突、
+`SpawnInteractableCollidableAnimatedModel3D`は骨付きモデルと衝突と視線操作、
 `SpawnThirdPersonCharacter3D`は静的または骨付きモデルと自己衝突、移動、追従カメラ、任意アニメーション、
 `SpawnLight3D`は太陽または点光源、`SpawnWater3D`は水面を扱う。パスを渡した場合だけ場面共通の
 asset窓口で読み、読込済みassetはそのまま使う。
@@ -41,10 +43,10 @@ asset窓口で読み、読込済みassetはそのまま使う。
 ```cpp
 SpawnModel3D( FModel3DSpawnParams::FromMesh(
     FStringView( "Models/House.fbx" ), FVec3{ 0.0f, 0.0f, 4.0f } ) );
-SpawnInteractableModel3D(
+SpawnInteractableCollidableModel3D(
     FModel3DSpawnParams::FromMesh(
         FStringView( "Models/Door.fbx" ), FVec3{ 0.0f, 0.0f, 6.0f } ),
-    FStringView( "E: OPEN" ) );
+    FStringView( "E: OPEN" ), FCollisionShape3DParams::FromBounds( 0x2u ) );
 SpawnImage3D( FSprite3DSpawnParams::FromImage(
     FStringView( "Textures/Sign.png" ), FVec3{ 0.0f, 2.0f, 3.0f }, FVec2{ 1.2f, 0.6f } ) );
 SpawnLight3D( FLight3DSpawnParams::Sun( FVec3{ -0.47f, 0.58f, 0.66f } ) );
@@ -90,6 +92,10 @@ const FSceneRayHit Picked = PickScreen3D( FVec2{ 0.5f, 0.5f }, 100.0f );
 `InteractionFocus()`へ操作案内と対象を登録する。対象登録に失敗した場合は生成ノードも破棄予定へ
 戻すため、個別の巻き戻しを書く必要はない。既存の複合ノードを1対象として扱う場合は
 `InteractionFocus().RegisterTarget(...)`を直接使う。
+
+衝突も必要な単一モデルには`SpawnInteractableCollidableModel3D`または
+`SpawnInteractableCollidableAnimatedModel3D`を使う。モデル生成、場面所有の衝突集合、視線操作を
+同じノードへ接続し、最後の対象登録に失敗しても形状とノードを両方巻き戻す。
 
 `SpawnNode3D`は見た目を持たない世代付きノードを作る。車体と車輪、人物の胴体と頭などを
 同じ親の下へ`SpawnModel3D( Params, Parent )`で置くと、親の移動・回転だけで全体を動かせる。

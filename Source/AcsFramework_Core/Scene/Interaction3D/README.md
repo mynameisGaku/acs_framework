@@ -35,6 +35,11 @@ if ( Result.Activated() )
 読み込み、生成、操作対象登録を1回で行う。対象登録まで完了できなければ生成ノードも破棄予定へ
 戻すため、「見えるが操作できない」半端なモデルを成功として残さない。
 
+扉や押せる箱のように衝突も必要なら、`SpawnInteractableCollidableModel3D`または
+`SpawnInteractableCollidableAnimatedModel3D`を使う。モデル生成、衝突形状登録、操作対象登録を
+1回で行い、成功したノードと形状番号を`FCollidableModel3DSpawnResult`で返す。最後の操作登録に
+失敗した場合も衝突形状を外してからノードを破棄予定へ戻す。
+
 ## 分解
 
 `AdvanceInteractionFocus3D(State, Input)`は値だけを受け取り、次の対象とイベントだけを返す。
@@ -48,7 +53,8 @@ if ( Result.Activated() )
 4. 純粋遷移へ候補を渡し、フォーカス中だけ`CWorldLabel3DLayer`へ操作案内を置く
 
 `CInteractableModel3DSpawner`も状態を持たず、既存の静的・骨付きモデル生成器を呼んだ後に
-`CInteractionFocus3D::RegisterTarget`へ渡すだけの接続層とする。
+`CInteractionFocus3D::RegisterTarget`へ渡すだけの接続層とする。衝突付きでは既存生成器が返した
+形状番号も受け取り、後段失敗時の解除順だけを追加する。
 
 `AUi3DScene`は描画直前に現在の有効対象だけをACSの`SetSelectionHighlight`へ渡す。
 輪郭マスク、手前の物による遮蔽、ポスト処理での合成はACSが持ち、Frameworkは

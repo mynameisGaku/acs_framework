@@ -200,7 +200,9 @@ cameraからの距離に応じて大気へ馴染み、雲も実距離まで同�
   祖先、カメラ後方、画面外、最大距離を毎描画で確認する。固定world位置と公開射影adapterも持つ
 - ~~3Dの視線フォーカスと決定~~ → **実装済み** (2026-08-23)。`SpawnInteractableModel3D`または
   `SpawnInteractableAnimatedModel3D`でモデル読込、生成、対象登録を1回で行える。登録失敗時は
-  生成ノードも巻き戻す。既存の人物や扉の親は`InteractionFocus().RegisterTarget`で1件登録し、
+  生成ノードも巻き戻す。衝突も必要な単一モデルは`SpawnInteractableCollidableModel3D`または
+  骨付き版でモデル、形状、操作対象を同時に作り、後段失敗時は3つとも巻き戻す。
+  既存の人物や扉の親は`InteractionFocus().RegisterTarget`で1件登録し、
   `UpdateInteractionFocus( bPressed )`をカメラ更新後に呼ぶだけで、
   最前面の実形状から対象への進入、退出、切替、決定を世代付きIDで返す。命中した子から登録親を
   探し、未登録形状は遮蔽物として扱う。状態遷移は場面・入力装置・描画から分けて単体検証する。

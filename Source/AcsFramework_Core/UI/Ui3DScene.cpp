@@ -217,6 +217,30 @@ ANode* AUi3DScene::SpawnInteractableModel3D( const FModel3DSpawnParams& Params,
 }
 
 
+FCollidableModel3DSpawnResult AUi3DScene::SpawnInteractableCollidableModel3D(
+	const FModel3DSpawnParams& Params, FStringView Prompt,
+	const FCollisionShape3DParams& CollisionParams, FVec3 WorldOffset,
+	ANode* Parent ) noexcept
+{
+	if ( !Params.IsValid() ) return {};
+	const bool bNeedsLoad = !Params.MeshAsset && Params.MeshPath.Data() != nullptr
+		&& Params.MeshPath.Size() > 0u;
+	if ( !bNeedsLoad ) return CInteractableModel3DSpawner::SpawnCollidableInto(
+		Graph(), m_Collision3D, m_InteractionFocus, Params, Prompt,
+		CollisionParams, WorldOffset, Parent );
+
+	CAssetLoaderSubsystem* const Assets = GetSubsystem<CAssetLoaderSubsystem>();
+	if ( Assets == nullptr )
+	{
+		ACS_LOG_WARN( "AUi3DScene: 衝突付き操作対象用の静的3Dモデル読込窓口が無い" );
+		return {};
+	}
+	return CInteractableModel3DSpawner::SpawnCollidableInto(
+		Graph(), m_Collision3D, m_InteractionFocus, Params, Assets->Models(),
+		Prompt, CollisionParams, WorldOffset, Parent );
+}
+
+
 FCollidableModel3DSpawnResult AUi3DScene::SpawnCollidableModel3D(
 	const FModel3DSpawnParams& Params, const FCollisionShape3DParams& CollisionParams,
 	ANode* Parent ) noexcept
@@ -297,6 +321,29 @@ ANode* AUi3DScene::SpawnInteractableAnimatedModel3D(
 	return CInteractableModel3DSpawner::SpawnInto(
 		Graph(), m_InteractionFocus, Params, Assets->Models(), Prompt,
 		WorldOffset, Parent );
+}
+
+
+FCollidableModel3DSpawnResult
+AUi3DScene::SpawnInteractableCollidableAnimatedModel3D(
+	const FAnimatedModel3DSpawnParams& Params, FStringView Prompt,
+	const FCollisionShape3DParams& CollisionParams, FVec3 WorldOffset,
+	ANode* Parent ) noexcept
+{
+	if ( !Params.IsValid() ) return {};
+	if ( Params.MeshAsset ) return CInteractableModel3DSpawner::SpawnCollidableInto(
+		Graph(), m_Collision3D, m_InteractionFocus, Params, Prompt,
+		CollisionParams, WorldOffset, Parent );
+
+	CAssetLoaderSubsystem* const Assets = GetSubsystem<CAssetLoaderSubsystem>();
+	if ( Assets == nullptr )
+	{
+		ACS_LOG_WARN( "AUi3DScene: 衝突付き操作対象用の骨格3Dモデル読込窓口が無い" );
+		return {};
+	}
+	return CInteractableModel3DSpawner::SpawnCollidableInto(
+		Graph(), m_Collision3D, m_InteractionFocus, Params, Assets->Models(),
+		Prompt, CollisionParams, WorldOffset, Parent );
 }
 
 
