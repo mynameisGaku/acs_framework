@@ -33,6 +33,19 @@ FModel3DSpawnParams Ball = FModel3DSpawnParams::FromPrimitive( EMeshPrimitive3D:
 Ball.Color = FVec4{ 1.0f, 0.2f, 0.2f, 1.0f };
 SpawnModel3D( Ball );
 
+// 別の立体に見た目と衝突形状の両方が必要なら、一括生成結果を受け取る
+FModel3DSpawnParams Obstacle = FModel3DSpawnParams::FromPrimitive(
+    EMeshPrimitive3D::Cube, FVec3{ 4.0f, 0.5f, 0.0f } );
+const FCollidableModel3DSpawnResult SolidObstacle = SpawnCollidableModel3D(
+    Obstacle, FCollisionShape3DParams::FromBounds( 0x2u ) );
+
+// 厚さのない描画面には歩ける箱を明示する
+FModel3DSpawnParams Floor = FModel3DSpawnParams::FromPrimitive( EMeshPrimitive3D::Plane, FVec3{} );
+Floor.Scale = FVec3{ 10.0f, 1.0f, 10.0f };
+const FCollidableModel3DSpawnResult SolidFloor = SpawnCollidableModel3D(
+    Floor, FCollisionShape3DParams::FromBox(
+        FVec3{ 0.0f, -0.5f, 0.0f }, FVec3{ 0.5f, 0.5f, 0.5f }, 0x2u ) );
+
 // 置いた後に動かす
 Hero->Local().position.x += 1.0f;
 ```
@@ -40,6 +53,10 @@ Hero->Local().position.x += 1.0f;
 `AUi3DScene`を使わないノード木では、従来どおり`CModel3DSpawner::SpawnInto`へグラフと、
 パス読込時だけ`CModelLibrary`を渡す。`SpawnModel3D`はこの生成器と場面共通のasset窓口を結ぶ薄い
 アダプターであり、別のモデル管理は持たない。
+
+`SpawnCollidableModel3D`は同じ読込経路でモデルを置き、`CSceneCollision3D`へ形状を登録する。
+成功時は`FCollidableModel3DSpawnResult`の`Node`と`Shape`を両方返す。登録に失敗した生成ノードは
+破棄予定へ戻すため、「見えるが当たらない」半端な配置を成功として残さない。
 
 シーンの物は `Scene.Graph()` へ置く。これにより有効な `FNodeId` が付き、当たり判定、
 波紋、識別子による破棄へ同じノードを渡せる。`ANode&` を受ける従来の多重定義は、
@@ -55,6 +72,7 @@ Hero->Local().position.x += 1.0f;
 | 置き場所 | 置いてよいもの | 例 |
 |---|---|---|
 | 直下 | 何をどこへ置くかの指定 | `FModel3DSpawnParams` |
+| 直下 | 生成と衝突登録の結果 | `FCollidableModel3DSpawnResult` |
 | 直下 | 置く処理 | `CModel3DSpawner` |
 
 カメラ・ライティング・アニメーション・当たり判定はここではない。

@@ -38,7 +38,8 @@ void RunSceneCollision3DTests( CTestHarness& Harness )
 		Harness.Check( SphereNode != nullptr, "球ノードを置ける" );
 		if ( SphereNode == nullptr ) return;
 
-		const FCollisionShapeId3D Shape = Collision.TryAddBounds( *SphereNode, 0x1u );
+		const FCollisionShapeId3D Shape = Collision.TryAdd(
+			*SphereNode, FCollisionShape3DParams::FromBounds( 0x1u ) );
 		Harness.Check( Shape.IsValid(), "球プリミティブを登録できる" );
 		Harness.CheckEqualU64( Collision.ShapeCount(), 1u, "登録数を確認できる" );
 		Harness.Check( !Collision.TryAddBounds( *SphereNode ).IsValid(), "同じノードの二重登録を弾く" );
@@ -65,8 +66,8 @@ void RunSceneCollision3DTests( CTestHarness& Harness )
 
 		Harness.Check( !Collision.TryAddSphere( *Spawned.Node, FVec3{}, 0.0f ).IsValid(),
 			"半径0の球を登録前に弾く" );
-		Harness.Check( Collision.TryAddBox(
-			*Spawned.Node, FVec3{}, FVec3{ 2.0f, 0.25f, 0.25f } ).IsValid(), "細長い箱を登録できる" );
+		Harness.Check( Collision.TryAdd( *Spawned.Node, FCollisionShape3DParams::FromBox(
+			FVec3{}, FVec3{ 2.0f, 0.25f, 0.25f } ) ).IsValid(), "細長い箱を登録できる" );
 
 		TArray<ANode*> Hits;
 		Harness.Check( Collision.TryOverlapSphere(

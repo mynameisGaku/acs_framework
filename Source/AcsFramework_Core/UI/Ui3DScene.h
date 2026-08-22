@@ -9,6 +9,7 @@
 #include "AcsFramework_Core/Scene/DebugDraw3D/DebugDraw3DLayer.h"
 #include "AcsFramework_Core/Scene/Interaction3D/InteractionHighlight3DParams.h"
 #include "AcsFramework_Core/Scene/Interaction3D/InteractionFocus3D.h"
+#include "AcsFramework_Core/Scene/Model3D/CollidableModel3DSpawnResult.h"
 #include "AcsFramework_Core/Scene/Pick3D/SceneRay.h"
 #include "AcsFramework_Core/Scene/Pick3D/SceneRayHit.h"
 #include "AcsFramework_Core/UI/InteractionReticle3D/InteractionReticle3DParams.h"
@@ -144,6 +145,21 @@ public:
 	 * @return 置いたノード。入力、asset窓口、読み込みのいずれかに失敗したらnullptr。
 	 */
 	ANode* SpawnModel3D( const FModel3DSpawnParams& Params,
+		ANode* Parent = nullptr ) noexcept;
+
+	/**
+	 * 静的3Dモデルの生成と衝突登録を1回で完了する。
+	 *
+	 * @details 衝突登録に失敗した場合は生成ノードも破棄予定へ戻す。既定は描画境界を使う。
+	 * 厚さのない平面や独自の移動形状には`FCollisionShape3DParams::FromBox`または
+	 * `FromSphere`で明示的な形を渡す。
+	 * @param Params 形またはモデル名、位置、材質、ノード名。
+	 * @param CollisionParams 登録形状と衝突レイヤー。
+	 * @param Parent この場面が所有する親。空ならroot直下。
+	 * @return 置いたノードと形状番号。読込、生成、衝突登録のいずれかに失敗したら空の結果。
+	 */
+	FCollidableModel3DSpawnResult SpawnCollidableModel3D( const FModel3DSpawnParams& Params,
+		const FCollisionShape3DParams& CollisionParams = FCollisionShape3DParams{},
 		ANode* Parent = nullptr ) noexcept;
 
 	/**

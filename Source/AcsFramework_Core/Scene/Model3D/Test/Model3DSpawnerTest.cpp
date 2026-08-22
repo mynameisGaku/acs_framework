@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: Apache-2.0
+#include "AcsFramework_Core/Scene/Collision3D/SceneCollision3D.h"
 #include "AcsFramework_Core/Scene/Model3D/Model3DSpawner.h"
 #include "Common/Test/TestHarness.h"
 
@@ -166,6 +167,86 @@ void RunModel3DSpawnerTests( CTestHarness& Harness )
 			const FVec3 Euler = Placed->Local().EulerDeg();
 			Harness.Check( Euler.y > 89.0f && Euler.y < 91.0f, "度で戻ってくる" );
 		}
+	}
+
+	Harness.BeginSuite( "CModel3DSpawner / 生成と衝突登録を一括で完了する" );
+
+	{
+		CSceneNodeGraph Graph;
+		CSceneCollision3D Collision{ Graph };
+		FModel3DSpawnParams Cube = FModel3DSpawnParams::FromPrimitive(
+			EMeshPrimitive3D::Cube, FVec3{ 1.0f, 2.0f, 3.0f } );
+		Cube.Scale = FVec3{ 2.0f, 1.0f, 3.0f };
+
+		const FCollidableModel3DSpawnResult Spawned = CModel3DSpawner::SpawnCollidableInto(
+			Graph, Collision, Cube, FCollisionShape3DParams::FromBounds( 0x2u ) );
+		Harness.Check( Spawned.Succeeded(), "描画境界付きモデルを置ける" );
+		Harness.Check( Spawned.Node != nullptr && Spawned.Shape.IsValid(),
+			"ノードと形状番号を対で返す" );
+		Harness.CheckEqualU64( Graph.Root().ChildCount(), 1u, "成功時だけノードを1個足す" );
+		Harness.CheckEqualU64( Collision.ShapeCount(), 1u, "成功時だけ形状を1個足す" );
+
+		TArray<ANode*> Hits;
+		Harness.Check( Collision.TryOverlapSphere(
+			FSphere{ FVec3{ 1.0f, 2.0f, 3.0f }, 0.1f }, Hits, {}, 0x2u ),
+			"指定レイヤーの形状を問い合わせられる" );
+		Harness.Check( Hits.Num() == 1u && Hits[0] == Spawned.Node,
+			"一括生成した同じノードへ命中する" );
+	}
+
+	{
+		CSceneNodeGraph Graph;
+		CSceneCollision3D Collision{ Graph };
+		FModel3DSpawnParams Floor = FModel3DSpawnParams::FromPrimitive(
+			EMeshPrimitive3D::Plane, FVec3{} );
+		Floor.Scale = FVec3{ 8.0f, 1.0f, 8.0f };
+
+		const FCollidableModel3DSpawnResult Spawned = CModel3DSpawner::SpawnCollidableInto(
+			Graph, Collision, Floor, FCollisionShape3DParams::FromBox(
+				FVec3{ 0.0f, -0.5f, 0.0f }, FVec3{ 0.5f, 0.5f, 0.5f }, 0x4u ) );
+		Harness.Check( Spawned.Succeeded(), "薄い描画面へ厚さを持つ箱を明示できる" );
+
+		TArray<ANode*> Hits;
+		Harness.Check( Collision.TryOverlapSphere(
+			FSphere{ FVec3{ 0.0f, -0.75f, 0.0f }, 0.05f }, Hits, {}, 0x4u ),
+			"描画面より下の明示箱を問い合わせられる" );
+		Harness.Check( Hits.Num() == 1u && Hits[0] == Spawned.Node,
+			"明示箱を生成ノードへ結び付ける" );
+	}
+
+	Harness.BeginSuite( "CModel3DSpawner / 衝突登録失敗を巻き戻す" );
+
+	{
+		CSceneNodeGraph Graph;
+		CSceneNodeGraph OtherGraph;
+		CSceneCollision3D OtherCollision{ OtherGraph };
+		const FModel3DSpawnParams Cube = FModel3DSpawnParams::FromPrimitive(
+			EMeshPrimitive3D::Cube, FVec3{} );
+
+		const FCollidableModel3DSpawnResult Failed = CModel3DSpawner::SpawnCollidableInto(
+			Graph, OtherCollision, Cube, FCollisionShape3DParams::FromBounds() );
+		Harness.Check( !Failed.Succeeded(), "別グラフの衝突集合を拒む" );
+		Harness.Check( Failed.Node == nullptr && !Failed.Shape.IsValid(), "失敗時は空の結果を返す" );
+
+		Graph.ResolveStructuralChanges();
+		Harness.CheckEqualU64( Graph.Root().ChildCount(), 0u, "登録できなかった生成ノードを残さない" );
+		Harness.CheckEqualU64( Graph.RegisteredCount(), 1u, "生成ノードの識別子も解放する" );
+		Harness.CheckEqualU64( OtherCollision.ShapeCount(), 0u, "別グラフへ形状を残さない" );
+	}
+
+	{
+		CSceneNodeGraph Graph;
+		CSceneCollision3D Collision{ Graph };
+		CModelLibrary UnboundLibrary;
+		FModel3DSpawnParams ReadyModel;
+		ReadyModel.Primitive = EMeshPrimitive3D::Mesh;
+		ReadyModel.MeshAsset = TSharedPtr<AAsset>( Primitive::MakeSphere() );
+
+		const FCollidableModel3DSpawnResult Spawned = CModel3DSpawner::SpawnCollidableInto(
+			Graph, Collision, ReadyModel, UnboundLibrary,
+			FCollisionShape3DParams::FromSphere( FVec3{}, 0.5f, 0x8u ) );
+		Harness.Check( Spawned.Succeeded(), "読込済みモデルと明示球を一括登録できる" );
+		Harness.CheckEqualU64( Collision.ShapeCount(), 1u, "明示球を1個だけ登録する" );
 	}
 
 	Harness.BeginSuite( "CModel3DSpawner / 置けないときは何も足さない" );

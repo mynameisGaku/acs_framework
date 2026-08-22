@@ -11,6 +11,23 @@ CSceneCollision3D::CSceneCollision3D( CSceneNodeGraph& Graph ) noexcept
 }
 
 
+FCollisionShapeId3D CSceneCollision3D::TryAdd( ANode& Node,
+	const FCollisionShape3DParams& Params ) noexcept
+{
+	switch ( Params.Kind )
+	{
+	case FCollisionShape3DParams::EKind::Bounds:
+		return TryAddBounds( Node, Params.Layer );
+	case FCollisionShape3DParams::EKind::Box:
+		return TryAddBox( Node, Params.LocalCenter, Params.LocalHalfSize, Params.Layer );
+	case FCollisionShape3DParams::EKind::Sphere:
+		return TryAddSphere( Node, Params.LocalCenter, Params.LocalRadius, Params.Layer );
+	default:
+		return {};
+	}
+}
+
+
 FCollisionShapeId3D CSceneCollision3D::TryAddBounds( ANode& Node, u32 Layer ) noexcept
 {
 	FVec3 Minimum;

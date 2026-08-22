@@ -137,6 +137,26 @@ ANode* AUi3DScene::SpawnModel3D( const FModel3DSpawnParams& Params, ANode* Paren
 }
 
 
+FCollidableModel3DSpawnResult AUi3DScene::SpawnCollidableModel3D(
+	const FModel3DSpawnParams& Params, const FCollisionShape3DParams& CollisionParams,
+	ANode* Parent ) noexcept
+{
+	if ( !Params.IsValid() ) return {};
+	const bool bNeedsLoad = !Params.MeshAsset && Params.MeshPath.Data() != nullptr && Params.MeshPath.Size() > 0u;
+	if ( !bNeedsLoad ) return CModel3DSpawner::SpawnCollidableInto(
+		Graph(), m_Collision3D, Params, CollisionParams, Parent );
+
+	CAssetLoaderSubsystem* const Assets = GetSubsystem<CAssetLoaderSubsystem>();
+	if ( Assets == nullptr )
+	{
+		ACS_LOG_WARN( "AUi3DScene: 衝突付き静的3Dモデル用のasset読込窓口が無い" );
+		return {};
+	}
+	return CModel3DSpawner::SpawnCollidableInto(
+		Graph(), m_Collision3D, Params, Assets->Models(), CollisionParams, Parent );
+}
+
+
 ANode* AUi3DScene::SpawnImage3D( const FSprite3DSpawnParams& Params, ANode* Parent ) noexcept
 {
 	if ( !Params.IsValid() ) return nullptr;

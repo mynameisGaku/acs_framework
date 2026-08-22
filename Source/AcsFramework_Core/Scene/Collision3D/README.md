@@ -23,6 +23,20 @@ Collision.TrySweepSphere(
 `AUi3DScene`の`Collision3D()`は場面グラフへ接続済みで、場面終了時に全登録を自動で外す。
 `AUi3DScene`を使わない独自の所有者では、従来どおり`CSceneCollision3D{ Graph }`を直接所有できる。
 
+`FCollisionShape3DParams`は描画境界、明示箱、明示球とレイヤーを1個の値へまとめる。
+`Collision.TryAdd( Node, Params )`で個別登録でき、`AUi3DScene::SpawnCollidableModel3D`へ渡すと
+モデル生成と同時に登録する。後者は登録失敗時に生成ノードも破棄予定へ戻し、成功時はノードと
+形状番号を`FCollidableModel3DSpawnResult`で返す。
+
+```cpp
+const FCollidableModel3DSpawnResult Wall = SpawnCollidableModel3D(
+    WallModel, FCollisionShape3DParams::FromBounds( 0x2u ) );
+
+const FCollidableModel3DSpawnResult Floor = SpawnCollidableModel3D(
+    FloorPlane, FCollisionShape3DParams::FromBox(
+        FVec3{ 0.0f, -0.5f, 0.0f }, FVec3{ 0.5f, 0.5f, 0.5f }, 0x2u ) );
+```
+
 登録時の中心、半サイズ、半径はノードのローカル座標で指定する。問い合わせ前に位置、回転、拡縮を
 自動同期するため、動くノードを毎フレーム登録し直す必要はない。ノードまたは祖先を無効にすると
 判定対象から外れ、再び有効にすると元のレイヤーへ戻る。非表示は描画だけの状態なので衝突を残す。

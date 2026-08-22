@@ -451,6 +451,8 @@
     <ClInclude Include="Source\AcsFramework_Core\Scene\DebugDraw3D\DebugDraw3DLayer.h" />
     <ClInclude Include="Source\AcsFramework_Core\Scene\DebugDraw3D\DebugDraw3DQueue.h" />
     <ClInclude Include="Source\AcsFramework_Core\Scene\DebugDraw3D\DebugLine3D.h" />
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Collision3D\CollisionShape3DParams.h" />
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Model3D\CollidableModel3DSpawnResult.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Common\Pch.cpp">

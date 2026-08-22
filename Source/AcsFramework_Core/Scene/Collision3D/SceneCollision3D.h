@@ -3,6 +3,7 @@
 
 #include <acs.h>
 
+#include "AcsFramework_Core/Scene/Collision3D/CollisionShape3DParams.h"
 #include "AcsFramework_Core/Scene/Collision3D/SceneSweepHit3D.h"
 #include "AcsFramework_Core/Scene/Pick3D/SceneRay.h"
 
@@ -35,6 +36,15 @@ public:
 
 	/** 所有権の重複を防ぐためコピー代入を禁止する。 */
 	CSceneCollision3D& operator=( const CSceneCollision3D& ) = delete;
+
+	/**
+	 * 設定で選んだ描画境界、明示箱、明示球のいずれかをノードへ登録する。
+	 *
+	 * @param Node 対象グラフへ登録済みのノード。
+	 * @param Params 形状の種類、ローカル寸法、衝突レイヤー。
+	 * @return 登録形状の番号。入力不正、部品なし、二重登録では無効値。
+	 */
+	FCollisionShapeId3D TryAdd( ANode& Node, const FCollisionShape3DParams& Params ) noexcept;
 
 	/**
 	 * 描画部品のローカル境界を衝突形状として登録する。

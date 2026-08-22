@@ -1088,6 +1088,9 @@
     <ClInclude Include="Source\AcsFramework_Core\Scene\Character3D\ThirdPersonCharacter3DUpdateResult.h">
       <Filter>Source\AcsFramework_Core\Scene\Character3D</Filter>
     </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Collision3D\CollisionShape3DParams.h">
+      <Filter>Source\AcsFramework_Core\Scene\Collision3D</Filter>
+    </ClInclude>
     <ClInclude Include="Source\AcsFramework_Core\Scene\Collision3D\SceneCollision3D.h">
       <Filter>Source\AcsFramework_Core\Scene\Collision3D</Filter>
     </ClInclude>
@@ -1129,6 +1132,9 @@
     </ClInclude>
     <ClInclude Include="Source\AcsFramework_Core\Scene\Light3D\Light3DSpawnParams.h">
       <Filter>Source\AcsFramework_Core\Scene\Light3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Model3D\CollidableModel3DSpawnResult.h">
+      <Filter>Source\AcsFramework_Core\Scene\Model3D</Filter>
     </ClInclude>
     <ClInclude Include="Source\AcsFramework_Core\Scene\Model3D\Model3DSpawner.h">
       <Filter>Source\AcsFramework_Core\Scene\Model3D</Filter>

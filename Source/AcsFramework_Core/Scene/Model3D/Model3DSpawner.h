@@ -4,10 +4,14 @@
 #include <acs.h>
 
 #include "AcsFramework_Core/Assets/Model3D/ModelLibrary.h"
+#include "AcsFramework_Core/Scene/Collision3D/CollisionShape3DParams.h"
+#include "AcsFramework_Core/Scene/Model3D/CollidableModel3DSpawnResult.h"
 #include "AcsFramework_Core/Scene/Model3D/Model3DSpawnParams.h"
 
 using namespace acs;
 using namespace acs::game;
+
+class CSceneCollision3D;
 
 /**
  * 3D の見えるものをシーンへ 1 つ置く係。
@@ -55,6 +59,39 @@ public:
 		CModelLibrary& Library, ANode* Parent = nullptr ) noexcept;
 
 	/**
+	 * モデル生成と3D衝突登録を一括で完了する。
+	 *
+	 * @details 衝突登録に失敗した場合は生成ノードを破棄予定へ戻し、半端な物を残さない。
+	 * @param Graph 置くシーンのノードグラフ。
+	 * @param Collision `Graph`へ接続済みの衝突集合。
+	 * @param Params 何をどこへ置くか。
+	 * @param CollisionParams 描画境界、明示箱、明示球とレイヤーの指定。
+	 * @param Parent 繋ぐ先。nullptrならルート。
+	 * @return 置いたノードと登録形状。生成または登録に失敗したら空の結果。
+	 */
+	static FCollidableModel3DSpawnResult SpawnCollidableInto( CSceneNodeGraph& Graph,
+		CSceneCollision3D& Collision, const FModel3DSpawnParams& Params,
+		const FCollisionShape3DParams& CollisionParams = FCollisionShape3DParams{},
+		ANode* Parent = nullptr ) noexcept;
+
+	/**
+	 * 必要ならモデルを読み、生成と3D衝突登録を一括で完了する。
+	 *
+	 * @details 読込、生成、衝突登録のいずれかに失敗した場合は、場面へ有効な半端物を残さない。
+	 * @param Graph 置くシーンのノードグラフ。
+	 * @param Collision `Graph`へ接続済みの衝突集合。
+	 * @param Params 何をどこへ置くか。
+	 * @param Library モデル読み込みを頼む先。
+	 * @param CollisionParams 描画境界、明示箱、明示球とレイヤーの指定。
+	 * @param Parent 繋ぐ先。nullptrならルート。
+	 * @return 置いたノードと登録形状。読込、生成、登録に失敗したら空の結果。
+	 */
+	static FCollidableModel3DSpawnResult SpawnCollidableInto( CSceneNodeGraph& Graph,
+		CSceneCollision3D& Collision, const FModel3DSpawnParams& Params, CModelLibrary& Library,
+		const FCollisionShape3DParams& CollisionParams = FCollisionShape3DParams{},
+		ANode* Parent = nullptr ) noexcept;
+
+	/**
 	 * 指定どおりに置く。
 	 *
 	 * @param Parent 繋ぐ先。置いたものはこの下にぶら下がる。
@@ -82,6 +119,11 @@ public:
 		CModelLibrary& Library ) noexcept;
 
 private:
+	/** 衝突登録に失敗した生成ノードを破棄予定へ戻し、成功結果だけを作る。 */
+	static FCollidableModel3DSpawnResult RegisterCollisionOrRollback_Internal(
+		CSceneNodeGraph& Graph, CSceneCollision3D& Collision, ANode* Node,
+		const FCollisionShape3DParams& CollisionParams ) noexcept;
+
 	/**
 	 * 場所・向き・大きさを入れる。
 	 *

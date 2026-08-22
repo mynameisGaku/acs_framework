@@ -29,7 +29,8 @@ UIはHDR描画、トーンマップ、TAAまたはFXAAが終わった後のLDR�
 bloomや輪郭補正の影響を受けず、3D場面より手前、ポーズ・デバッグ・ロード表示より奥に出る。
 
 同じ基底は、3Dの見える物を少ない手数で置く窓口も持つ。`SpawnModel3D`はプリミティブまたは静的
-モデル、`SpawnImage3D`は向き固定の画像板、`SpawnBillboard3D`はカメラ追従画像板、
+モデル、`SpawnCollidableModel3D`は静的モデルと衝突形状の一括生成、`SpawnImage3D`は向き固定の
+画像板、`SpawnBillboard3D`はカメラ追従画像板、
 `SpawnAnimatedModel3D`は骨付きモデル、`SpawnLight3D`は太陽または点光源、`SpawnWater3D`は
 水面を扱う。パスを渡した場合だけ場面共通のasset窓口で読み、読込済みassetはそのまま使う。
 
@@ -39,6 +40,11 @@ SpawnModel3D( FModel3DSpawnParams::FromMesh(
 SpawnImage3D( FSprite3DSpawnParams::FromImage(
     FStringView( "Textures/Sign.png" ), FVec3{ 0.0f, 2.0f, 3.0f }, FVec2{ 1.2f, 0.6f } ) );
 SpawnLight3D( FLight3DSpawnParams::Sun( FVec3{ -0.47f, 0.58f, 0.66f } ) );
+
+const FCollidableModel3DSpawnResult Wall = SpawnCollidableModel3D(
+    FModel3DSpawnParams::FromMesh(
+        FStringView( "Models/Wall.fbx" ), FVec3{ 0.0f, 0.0f, 8.0f } ),
+    FCollisionShape3DParams::FromBounds( 0x2u ) );
 
 FWater3DSpawnParams Water;
 Water.Position = FVec3{ 2.5f, 0.1f, -1.0f };
@@ -56,6 +62,10 @@ const FSceneRayHit Picked = PickScreen3D( FVec2{ 0.5f, 0.5f }, 100.0f );
 `Collision3D()`はこの場面専用の3D衝突集合を返す。ノードへ球・箱・描画境界を登録すると、
 問い合わせ時に現在位置へ同期し、破棄済みノードと場面終了時の登録を自動で外す。場面側で
 `CSceneCollision3D{ Graph() }`を別途所有する必要はない。
+
+`SpawnCollidableModel3D`はモデル生成とこの衝突登録を一括で行い、ノードと形状番号を返す。
+描画境界、明示箱、明示球を選べ、登録できなければ生成ノードも破棄予定へ戻す。厚さのない
+`Plane`を床にする場合は`FCollisionShape3DParams::FromBox`で歩ける厚みを明示する。
 
 `BindThirdPersonCharacter3D`へ呼出側所有の制御と自場面ノードを渡すと、この衝突集合と現在場面の
 追従カメラへまとめて接続する。低水準の`Controller.Bind( Collision3D(), *this, Node, Params )`を

@@ -261,17 +261,18 @@ namespace
 	}
 
 	/**
-	 * デモ用の平面を識別子付きで置く。
+	 * デモ用の平面と歩ける厚みを一括で置く。
 	 *
-	 * @param Graph 置くシーン。
+	 * @param Scene 生成と衝突登録を受け持つ3D場面。
 	 * @param Position 平面の中心。
 	 * @param Scale X/Z方向の広さ。
 	 * @param Color 表面色。
 	 * @param Roughness 表面の粗さ。
 	 * @param Name ノード名。
-	 * @return 置いた平面ノード。生成に失敗したらnullptr。
+	 * @return 置いた平面ノードと衝突形状。どちらかに失敗したら空の結果。
 	 */
-	ANode* SpawnDemoPlane( CSceneNodeGraph& Graph, FVec3 Position, FVec3 Scale, FVec4 Color,
+	FCollidableModel3DSpawnResult SpawnDemoPlane( AUi3DScene& Scene, FVec3 Position,
+		FVec3 Scale, FVec4 Color,
 		f32 Roughness, FStringView Name ) noexcept
 	{
 		FModel3DSpawnParams Plane = FModel3DSpawnParams::FromPrimitive( EMeshPrimitive3D::Plane, Position );
@@ -280,19 +281,8 @@ namespace
 		Plane.Roughness = Roughness;
 		Plane.bCastsShadow = false;
 		Plane.Name = Name;
-		return CModel3DSpawner::SpawnInto( Graph, Plane );
-	}
-
-	/**
-	 * 描画平面の直下へ厚さ1の歩ける箱を登録する。
-	 *
-	 * @param Collision 登録先の場面衝突集合。
-	 * @param Plane 描画平面ノード。
-	 * @return 平面の現在拡縮に追従する箱を登録できたらtrue。
-	 */
-	bool TryAddWalkablePlane( CSceneCollision3D& Collision, ANode* Plane ) noexcept
-	{
-		return Plane != nullptr && Collision.TryAddBox( *Plane, FVec3{ 0.0f, -0.5f, 0.0f }, FVec3{ 0.5f, 0.5f, 0.5f }, kCharacterCollisionLayer ).IsValid();
+		return Scene.SpawnCollidableModel3D( Plane, FCollisionShape3DParams::FromBox(
+			FVec3{ 0.0f, -0.5f, 0.0f }, FVec3{ 0.5f, 0.5f, 0.5f }, kCharacterCollisionLayer ) );
 	}
 
 	/**
@@ -351,34 +341,28 @@ void ADemo3DScene::OnEnter() noexcept
 	m_DynamicBillboard = nullptr;
 	m_WaterSurfaceId = FNodeId{};
 	m_ThirdPersonCharacter.Unbind();
-	CSceneCollision3D& Collision = Collision3D();
 	m_CharacterNode = nullptr;
 	m_CharacterActionBindings.Clear();
 	m_PreviousCharacterInput = FActionInput{};
 
 	// 磨いた床。水面の直下だけ穴を空け、屈折が極浅い床を拾って白くならないようにする。
 	constexpr FVec4 FloorColor{ 0.55f, 0.56f, 0.58f, 1.0f };
-	ANode* const FloorLeft = SpawnDemoPlane( Graph(), FVec3{ -1.75f, 0.0f, 0.0f }, FVec3{ 5.5f, 1.0f, kFloorSize },
+	const FCollidableModel3DSpawnResult FloorLeft = SpawnDemoPlane( *this, FVec3{ -1.75f, 0.0f, 0.0f }, FVec3{ 5.5f, 1.0f, kFloorSize },
 		FloorColor, 0.10f, FStringView( "FloorLeft" ) );
-	ANode* const FloorFront = SpawnDemoPlane( Graph(), FVec3{ 2.7f, 0.0f, -3.625f }, FVec3{ 3.4f, 1.0f, 1.75f },
+	const FCollidableModel3DSpawnResult FloorFront = SpawnDemoPlane( *this, FVec3{ 2.7f, 0.0f, -3.625f }, FVec3{ 3.4f, 1.0f, 1.75f },
 		FloorColor, 0.10f, FStringView( "FloorFront" ) );
-	ANode* const FloorBack = SpawnDemoPlane( Graph(), FVec3{ 2.7f, 0.0f, 2.275f }, FVec3{ 3.4f, 1.0f, 4.45f },
+	const FCollidableModel3DSpawnResult FloorBack = SpawnDemoPlane( *this, FVec3{ 2.7f, 0.0f, 2.275f }, FVec3{ 3.4f, 1.0f, 4.45f },
 		FloorColor, 0.10f, FStringView( "FloorBack" ) );
-	ANode* const FloorRight = SpawnDemoPlane( Graph(), FVec3{ 4.45f, 0.0f, 0.0f }, FVec3{ 0.10f, 1.0f, kFloorSize },
+	const FCollidableModel3DSpawnResult FloorRight = SpawnDemoPlane( *this, FVec3{ 4.45f, 0.0f, 0.0f }, FVec3{ 0.10f, 1.0f, kFloorSize },
 		FloorColor, 0.10f, FStringView( "FloorRight" ) );
 
 	// 水底。水面から十分離し、ACSの吸収と散乱が色として現れる深さを作る。
-	ANode* const PoolBottom = SpawnDemoPlane( Graph(), FVec3{ kWaterPosition.x, -0.76f, kWaterPosition.z },
+	const FCollidableModel3DSpawnResult PoolBottom = SpawnDemoPlane( *this, FVec3{ kWaterPosition.x, -0.76f, kWaterPosition.z },
 		FVec3{ kWaterSize.x, 1.0f, kWaterSize.y }, FVec4{ 0.08f, 0.16f, 0.20f, 1.0f },
 		0.82f, FStringView( "PoolBottom" ) );
 
-	// 描画面と同じ拡縮を持つ箱を直下へ置き、床の穴と水底の深さも実際の移動へ反映する。
-	const bool bFloorLeftWalkable = TryAddWalkablePlane( Collision, FloorLeft );
-	const bool bFloorFrontWalkable = TryAddWalkablePlane( Collision, FloorFront );
-	const bool bFloorBackWalkable = TryAddWalkablePlane( Collision, FloorBack );
-	const bool bFloorRightWalkable = TryAddWalkablePlane( Collision, FloorRight );
-	const bool bPoolBottomWalkable = TryAddWalkablePlane( Collision, PoolBottom );
-	const bool bCharacterWorldReady = bFloorLeftWalkable && bFloorFrontWalkable && bFloorBackWalkable && bFloorRightWalkable && bPoolBottomWalkable;
+	// 描画面と同じ拡縮を持つ箱を直下へ一括登録し、床の穴と水底の深さも実際の移動へ反映する。
+	const bool bCharacterWorldReady = FloorLeft && FloorFront && FloorBack && FloorRight && PoolBottom;
 
 	// ACSの屈折、反射、泡、動的波紋を使う水面。位置と広さを決めるだけで置ける。
 	FWater3DSpawnParams Water;
@@ -406,8 +390,8 @@ void ADemo3DScene::OnEnter() noexcept
 	WaterStone.Color = FVec4{ 0.32f, 0.36f, 0.39f, 1.0f };
 	WaterStone.Roughness = 0.72f;
 	WaterStone.Name = FStringView( "WaterStone" );
-	ANode* const WaterStoneNode = CModel3DSpawner::SpawnInto( Graph(), WaterStone );
-	if ( WaterStoneNode != nullptr ) Collision.TryAddBounds( *WaterStoneNode, kCharacterCollisionLayer );
+	(void)SpawnCollidableModel3D(
+		WaterStone, FCollisionShape3DParams::FromBounds( kCharacterCollisionLayer ) );
 
 	// 並べた球。色違いで陰りの出方を見比べられるようにする。
 	// 立方体より手前 (z = +1.6) へ置く。同じ列だと真ん中の球が立方体に隠れる。
@@ -426,8 +410,8 @@ void ADemo3DScene::OnEnter() noexcept
 		Ball.Color = Colors[Index];
 		// 粗さを 3 つで振る。同じ色でも «艶» が違うと材質の違いとして読める。
 		Ball.Roughness = 0.12f + static_cast<f32>( Index ) * 0.34f;
-		ANode* const BallNode = CModel3DSpawner::SpawnInto( Graph(), Ball );
-		if ( BallNode != nullptr ) Collision.TryAddBounds( *BallNode, kCharacterCollisionLayer );
+		(void)SpawnCollidableModel3D(
+			Ball, FCollisionShape3DParams::FromBounds( kCharacterCollisionLayer ) );
 	}
 
 	// 回す立方体。動いていることと、面ごとの陰りの差が分かる。
@@ -437,8 +421,8 @@ void ADemo3DScene::OnEnter() noexcept
 	Cube.Metallic = 1.0f;      // 金属。拡散反射が消えるので、環境光と反射が要る
 	Cube.Roughness = 0.28f;
 	Cube.Name = FStringView( "Spinner" );
-	m_Spinner = CModel3DSpawner::SpawnInto( Graph(), Cube );
-	if ( m_Spinner != nullptr ) Collision.TryAddBounds( *m_Spinner, kCharacterCollisionLayer );
+	m_Spinner = SpawnCollidableModel3D(
+		Cube, FCollisionShape3DParams::FromBounds( kCharacterCollisionLayer ) ).Node;
 
 	// Assets に置いた FBX。**置き場からモデルを読む道が通っていることの確認**でもある。
 	// 読めなければ置かずに nullptr が返り、理由が 1 行出る (黙って消えない)。
@@ -448,8 +432,8 @@ void ADemo3DScene::OnEnter() noexcept
 	Model.Color = FVec4{ 0.92f, 0.62f, 0.28f, 1.0f };
 	Model.Roughness = 0.40f;
 	Model.Name = FStringView( "ImportedModel" );
-	m_Mover = SpawnModel3D( Model );
-	if ( m_Mover != nullptr ) Collision.TryAddBounds( *m_Mover, kCharacterCollisionLayer );
+	m_Mover = SpawnCollidableModel3D(
+		Model, FCollisionShape3DParams::FromBounds( kCharacterCollisionLayer ) ).Node;
 
 	// 透過PNGをカメラへ向く3D板として置く。画像読込、ノード、追従登録を1回へまとめる。
 	FSprite3DSpawnParams ImageMarker = FSprite3DSpawnParams::FromImage(

@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: Apache-2.0
 #include "AcsFramework_Core/Scene/Model3D/Model3DSpawner.h"
 
+#include "AcsFramework_Core/Scene/Collision3D/SceneCollision3D.h"
+
 namespace
 {
 	/** 度をラジアンへ直す係数。 */
@@ -38,6 +40,24 @@ ANode* CModel3DSpawner::SpawnInto( CSceneNodeGraph& Graph, const FModel3DSpawnPa
 	if ( !Loaded.MeshAsset ) return nullptr;
 
 	return SpawnInto( Graph, Loaded, Parent );
+}
+
+
+FCollidableModel3DSpawnResult CModel3DSpawner::SpawnCollidableInto( CSceneNodeGraph& Graph,
+	CSceneCollision3D& Collision, const FModel3DSpawnParams& Params,
+	const FCollisionShape3DParams& CollisionParams, ANode* Parent ) noexcept
+{
+	ANode* const Node = SpawnInto( Graph, Params, Parent );
+	return RegisterCollisionOrRollback_Internal( Graph, Collision, Node, CollisionParams );
+}
+
+
+FCollidableModel3DSpawnResult CModel3DSpawner::SpawnCollidableInto( CSceneNodeGraph& Graph,
+	CSceneCollision3D& Collision, const FModel3DSpawnParams& Params, CModelLibrary& Library,
+	const FCollisionShape3DParams& CollisionParams, ANode* Parent ) noexcept
+{
+	ANode* const Node = SpawnInto( Graph, Params, Library, Parent );
+	return RegisterCollisionOrRollback_Internal( Graph, Collision, Node, CollisionParams );
 }
 
 
@@ -79,6 +99,21 @@ ANode* CModel3DSpawner::SpawnInto( ANode& Parent, const FModel3DSpawnParams& Par
 	if ( !Loaded.MeshAsset ) return nullptr;
 
 	return SpawnInto( Parent, Loaded );
+}
+
+
+FCollidableModel3DSpawnResult CModel3DSpawner::RegisterCollisionOrRollback_Internal(
+	CSceneNodeGraph& Graph, CSceneCollision3D& Collision, ANode* Node,
+	const FCollisionShape3DParams& CollisionParams ) noexcept
+{
+	if ( Node == nullptr ) return {};
+
+	const FCollisionShapeId3D Shape = Collision.TryAdd( *Node, CollisionParams );
+	if ( Shape.IsValid() ) return FCollidableModel3DSpawnResult{ Node, Shape };
+
+	const FNodeId NodeId = Graph.IdOf( Node );
+	if ( NodeId.IsValid() ) (void)Graph.Destroy( NodeId );
+	return {};
 }
 
 
