@@ -137,6 +137,18 @@ ANode* AUi3DScene::SpawnAnimatedModel3D( const FAnimatedModel3DSpawnParams& Para
 }
 
 
+bool AUi3DScene::DestroyNode3D( ANode*& Node ) noexcept
+{
+	if ( Node == nullptr ) return false;
+	const FNodeId NodeId = Graph().IdOf( Node );
+	if ( !NodeId.IsValid() || Graph().Get( NodeId ) != Node ) return false;
+	if ( !Node->IsPendingDestroy() && !Graph().Destroy( NodeId ) ) return false;
+
+	Node = nullptr;
+	return true;
+}
+
+
 bool AUi3DScene::DrawLine3D( FVec3 Start, FVec3 End, FVec4 Color ) noexcept
 {
 	return m_DebugDraw3D.DrawLine( Start, End, Color );

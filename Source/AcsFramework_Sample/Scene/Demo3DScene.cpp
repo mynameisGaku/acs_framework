@@ -1129,10 +1129,7 @@ void ADemo3DScene::ToggleDemoBillboard3D() noexcept
 {
 	if ( m_DynamicBillboard != nullptr )
 	{
-		const FNodeId NodeId = m_DynamicBillboard->Id();
-		(void)Billboards().Remove( *m_DynamicBillboard );
-		if ( !Graph().Destroy( NodeId ) ) ACS_LOG_WARN( "Demo3D: 動的ビルボードを破棄予定にできなかった" );
-		m_DynamicBillboard = nullptr;
+		if ( !DestroyNode3D( m_DynamicBillboard ) ) ACS_LOG_WARN( "Demo3D: 動的ビルボードを破棄予定にできなかった" );
 		return;
 	}
 

@@ -96,6 +96,9 @@ Node->RotateDeg( FVec3{ 0, 90.0f * DeltaSeconds, 0 } );
 Node->MoveToward( Target, Speed * DeltaSeconds );
 Node->LookAt( Target );
 
+// 消す。成功時はNodeもnullptrになるので、破棄予定ノードを触り続けない
+DestroyNode3D( Node );
+
 // 画面上の位置から、実際の3D表面へ当てる
 const FSceneRay Ray = FSceneRay::FromScreen( Camera, MouseX, MouseY, W, H );
 const FSceneRayHit Hit = CScenePicker::RaycastGeometry( *this, Ray );

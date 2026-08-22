@@ -40,6 +40,11 @@ SpawnImage3D( FSprite3DSpawnParams::FromImage(
     FStringView( "Textures/Sign.png" ), FVec3{ 0.0f, 2.0f, 3.0f }, FVec2{ 1.2f, 0.6f } ) );
 ```
 
+返ったノードは`RotateDeg`、`MoveToward`、`LookAt`で動かせる。不要になったら
+`DestroyNode3D( Node )`へ生ポインタを渡す。自場面のノードだけを破棄予定にし、成功時は
+呼出側のポインタも`nullptr`へ戻す。ビルボードやワールドラベルの追従は世代付き識別子で
+自動的に外れるため、追従レイヤーを先に手作業で掃除する必要はない。
+
 3Dノードへ文字を追従させる場合は`WorldLabels()`を使う。場面グラフへの接続、現在カメラからの
 射影、ノード破棄と表示状態の確認を基底が受け持つ。
 
