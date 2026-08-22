@@ -205,6 +205,21 @@ public:
 		ANode* Parent = nullptr ) noexcept;
 
 	/**
+	 * 骨付き3Dモデルの読込、初期再生、衝突登録を1回で完了する。
+	 *
+	 * @details 衝突登録に失敗した場合は生成ノードも破棄予定へ戻す。既定は読込時の
+	 * 描画境界を使う。大きく姿勢が変わる人物には明示箱または明示球を渡す。
+	 * @param Params 骨付きモデルの相対path、位置、大きさ、初期animation。
+	 * @param CollisionParams 登録形状と衝突レイヤー。
+	 * @param Parent この場面が所有する親。空ならroot直下。
+	 * @return 置いたノードと形状番号。読込、生成、再生、登録に失敗したら空の結果。
+	 */
+	FCollidableModel3DSpawnResult SpawnCollidableAnimatedModel3D(
+		const FAnimatedModel3DSpawnParams& Params,
+		const FCollisionShape3DParams& CollisionParams = FCollisionShape3DParams{},
+		ANode* Parent = nullptr ) noexcept;
+
+	/**
 	 * 太陽または点光源を、光の種類に応じた位置・向きと部品を含めて1回で場面へ置く。
 	 *
 	 * @param Params 光の種類、位置または方向、色、明るさ、届く距離。

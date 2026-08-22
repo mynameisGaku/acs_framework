@@ -450,7 +450,9 @@ void ADemo3DScene::OnEnter() noexcept
 	Animated.Scale = FVec3{ 0.02f, 0.02f, 0.02f };   // 書き出し単位がセンチメートル
 	Animated.Color = FVec3{ 0.72f, 0.78f, 0.86f };
 	Animated.Name = FStringView( "Animated" );
-	SpawnAnimatedModel3D( Animated );
+	if ( !SpawnCollidableAnimatedModel3D(
+		Animated, FCollisionShape3DParams::FromBounds( kCharacterCollisionLayer ) ) )
+		ACS_LOG_WARN( "Demo3D: 衝突付き骨格3Dモデルを配置できなかった" );
 
 	// 太陽。
 	//

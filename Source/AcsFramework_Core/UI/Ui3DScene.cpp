@@ -194,6 +194,9 @@ ANode* AUi3DScene::SpawnBillboard3D( const FSprite3DSpawnParams& Params,
 
 ANode* AUi3DScene::SpawnAnimatedModel3D( const FAnimatedModel3DSpawnParams& Params, ANode* Parent ) noexcept
 {
+	if ( !Params.IsValid() ) return nullptr;
+	if ( Params.MeshAsset ) return CAnimatedModel3DSpawner::SpawnInto( Graph(), Params, Parent );
+
 	CAssetLoaderSubsystem* const Assets = GetSubsystem<CAssetLoaderSubsystem>();
 	if ( Assets == nullptr )
 	{
@@ -201,6 +204,25 @@ ANode* AUi3DScene::SpawnAnimatedModel3D( const FAnimatedModel3DSpawnParams& Para
 		return nullptr;
 	}
 	return CAnimatedModel3DSpawner::SpawnInto( Graph(), Params, Assets->Models(), Parent );
+}
+
+
+FCollidableModel3DSpawnResult AUi3DScene::SpawnCollidableAnimatedModel3D(
+	const FAnimatedModel3DSpawnParams& Params,
+	const FCollisionShape3DParams& CollisionParams, ANode* Parent ) noexcept
+{
+	if ( !Params.IsValid() ) return {};
+	if ( Params.MeshAsset ) return CAnimatedModel3DSpawner::SpawnCollidableInto(
+		Graph(), m_Collision3D, Params, CollisionParams, Parent );
+
+	CAssetLoaderSubsystem* const Assets = GetSubsystem<CAssetLoaderSubsystem>();
+	if ( Assets == nullptr )
+	{
+		ACS_LOG_WARN( "AUi3DScene: 衝突付き骨格3Dモデル用のasset読込窓口が無い" );
+		return {};
+	}
+	return CAnimatedModel3DSpawner::SpawnCollidableInto(
+		Graph(), m_Collision3D, Params, Assets->Models(), CollisionParams, Parent );
 }
 
 

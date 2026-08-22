@@ -37,7 +37,7 @@ WASDで移動、左Shiftで走行、矢印キーで視点、Spaceでジャンプ
 
 | | |
 |---|---|
-| 3D を置く | `SpawnNode3D()`、`SpawnModel3D()`、`SpawnCollidableModel3D()`、`SpawnAnimatedModel3D()`、FBX の取り込み、材質 (metallic / roughness) |
+| 3D を置く | `SpawnNode3D()`、`SpawnModel3D()`、`SpawnCollidableModel3D()`、`SpawnAnimatedModel3D()`、`SpawnCollidableAnimatedModel3D()`、FBX の取り込み、材質 (metallic / roughness) |
 | 3D画像を置く | `SpawnImage3D()`の固定板、`SpawnBillboard3D()`のカメラ追従板、透過PNG、深度判定、HDR合成 |
 | 3D を照らす | `SpawnLight3D()`、方向だけで置ける太陽、位置と距離だけで置ける点光源 |
 | 動かす | `BindThirdPersonCharacter3D()`で場面へ接続し、既定のWASD・パッド入力から移動・向き・追従カメラを一括化 |
@@ -101,7 +101,9 @@ SpawnLight3D( FLight3DSpawnParams::Sun( FVec3{ -0.47f, 0.58f, 0.66f } ) );
 FAnimatedModel3DSpawnParams Hero = FAnimatedModel3DSpawnParams::FromModel(
     FStringView( "Models/Hero.fbx" ), Position );
 Hero.InitialAnimation = FStringView( "Idle" );
-ANode* const HeroNode = SpawnAnimatedModel3D( Hero );
+const FCollidableModel3DSpawnResult HeroSpawn = SpawnCollidableAnimatedModel3D(
+    Hero, FCollisionShape3DParams::FromSphere( FVec3{ 0.0f, 0.9f, 0.0f }, 0.45f, 0x1u ) );
+ANode* const HeroNode = HeroSpawn.Node;
 
 // HeroAnimatorはキャラクターと同じ場所で所有し、毎フレーム速度と接地状態だけを渡す
 CCharacterAnimator3D HeroAnimator;

@@ -31,8 +31,9 @@ bloomや輪郭補正の影響を受けず、3D場面より手前、ポーズ・�
 同じ基底は、3Dの見える物を少ない手数で置く窓口も持つ。`SpawnNode3D`は複数の見た目をまとめる
 空ノード、`SpawnModel3D`はプリミティブまたは静的モデル、`SpawnCollidableModel3D`は静的モデルと
 衝突形状の一括生成、`SpawnImage3D`は向き固定の画像板、`SpawnBillboard3D`はカメラ追従画像板、
-`SpawnAnimatedModel3D`は骨付きモデル、`SpawnLight3D`は太陽または点光源、`SpawnWater3D`は
-水面を扱う。パスを渡した場合だけ場面共通のasset窓口で読み、読込済みassetはそのまま使う。
+`SpawnAnimatedModel3D`は骨付きモデル、`SpawnCollidableAnimatedModel3D`は骨付きモデルと衝突形状、
+`SpawnLight3D`は太陽または点光源、`SpawnWater3D`は水面を扱う。パスを渡した場合だけ場面共通の
+asset窓口で読み、読込済みassetはそのまま使う。
 
 ```cpp
 SpawnModel3D( FModel3DSpawnParams::FromMesh(
@@ -49,6 +50,11 @@ const FCollidableModel3DSpawnResult Wall = SpawnCollidableModel3D(
     FModel3DSpawnParams::FromMesh(
         FStringView( "Models/Wall.fbx" ), FVec3{ 0.0f, 0.0f, 8.0f } ),
     FCollisionShape3DParams::FromBounds( 0x2u ) );
+
+const FCollidableModel3DSpawnResult Enemy = SpawnCollidableAnimatedModel3D(
+    FAnimatedModel3DSpawnParams::FromModel(
+        FStringView( "Models/Enemy.fbx" ), FVec3{ 2.0f, 0.0f, 6.0f } ),
+    FCollisionShape3DParams::FromSphere( FVec3{ 0.0f, 0.9f, 0.0f }, 0.45f, 0x2u ) );
 
 FWater3DSpawnParams Water;
 Water.Position = FVec3{ 2.5f, 0.1f, -1.0f };
@@ -70,6 +76,8 @@ const FSceneRayHit Picked = PickScreen3D( FVec2{ 0.5f, 0.5f }, 100.0f );
 `SpawnCollidableModel3D`はモデル生成とこの衝突登録を一括で行い、ノードと形状番号を返す。
 描画境界、明示箱、明示球を選べ、登録できなければ生成ノードも破棄予定へ戻す。厚さのない
 `Plane`を床にする場合は`FCollisionShape3DParams::FromBox`で歩ける厚みを明示する。
+`SpawnCollidableAnimatedModel3D`は同じ失敗時巻き戻しを骨付きモデルへ適用し、初期animation再生も
+成功したノードだけを返す。大きく姿勢が変わる人物には、読込時の境界より明示箱または明示球を使う。
 
 `SpawnNode3D`は見た目を持たない世代付きノードを作る。車体と車輪、人物の胴体と頭などを
 同じ親の下へ`SpawnModel3D( Params, Parent )`で置くと、親の移動・回転だけで全体を動かせる。

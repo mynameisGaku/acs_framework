@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: Apache-2.0
 #include "AcsFramework_Core/Scene/Animation3D/AnimatedModel3DSpawner.h"
+#include "AcsFramework_Core/Scene/Collision3D/SceneCollision3D.h"
 #include "Common/Test/TestHarness.h"
 
 #include <limits>
@@ -117,6 +118,53 @@ void RunAnimatedModel3DSpawnerTests( CTestHarness& Harness )
 			Harness.Check( !Skin->Player().IsPlaying(), "選んだ非ループクリップが終端で止まる" );
 			Harness.CheckEqualF32( Skin->Player().Time(), 0.5f, "選んだクリップの長さで止まる" );
 		}
+	}
+
+	Harness.BeginSuite( "CAnimatedModel3DSpawner / 再生と衝突登録を一括で完了する" );
+
+	{
+		CSceneNodeGraph Graph;
+		CSceneCollision3D Collision{ Graph };
+		FAnimatedModel3DSpawnParams Params;
+		Params.MeshAsset = MakeAnimatedMesh();
+		Params.Position = FVec3{ 2.0f, 1.0f, 3.0f };
+		Params.InitialAnimation = FStringView( "Wave" );
+
+		const FCollidableModel3DSpawnResult Spawned =
+			CAnimatedModel3DSpawner::SpawnCollidableInto( Graph, Collision, Params,
+				FCollisionShape3DParams::FromSphere( FVec3{}, 0.5f, 0x4u ) );
+		Harness.Check( Spawned.Succeeded(), "骨付きモデルと明示球を一括配置できる" );
+		Harness.Check( SkinOf( Spawned.Node ) != nullptr && SkinOf( Spawned.Node )->Player().IsPlaying(),
+			"衝突登録後も指定クリップを再生している" );
+		Harness.CheckEqualU64( Collision.ShapeCount(), 1u, "形状を1個だけ登録する" );
+
+		TArray<ANode*> Hits;
+		Harness.Check( Collision.TryOverlapSphere(
+			FSphere{ Params.Position, 0.1f }, Hits, {}, 0x4u ), "指定レイヤーを問い合わせられる" );
+		Harness.Check( Hits.Num() == 1u && Hits[0] == Spawned.Node,
+			"生成した骨付きノードへ命中する" );
+	}
+
+	Harness.BeginSuite( "CAnimatedModel3DSpawner / 衝突登録失敗を巻き戻す" );
+
+	{
+		CSceneNodeGraph Graph;
+		CSceneNodeGraph OtherGraph;
+		CSceneCollision3D OtherCollision{ OtherGraph };
+		CModelLibrary UnboundLibrary;
+		FAnimatedModel3DSpawnParams Params;
+		Params.MeshAsset = MakeAnimatedMesh();
+
+		const FCollidableModel3DSpawnResult Failed =
+			CAnimatedModel3DSpawner::SpawnCollidableInto( Graph, OtherCollision, Params,
+				UnboundLibrary, FCollisionShape3DParams::FromSphere( FVec3{}, 0.5f ) );
+		Harness.Check( !Failed.Succeeded(), "別グラフの衝突集合を拒む" );
+		Harness.Check( Failed.Node == nullptr && !Failed.Shape.IsValid(), "失敗時は空の結果を返す" );
+
+		Graph.ResolveStructuralChanges();
+		Harness.CheckEqualU64( Graph.Root().ChildCount(), 0u, "登録できなかった骨付きノードを残さない" );
+		Harness.CheckEqualU64( Graph.RegisteredCount(), 1u, "生成ノードの識別子も解放する" );
+		Harness.CheckEqualU64( OtherCollision.ShapeCount(), 0u, "別グラフへ形状を残さない" );
 	}
 
 	Harness.BeginSuite( "CAnimatedModel3DSpawner / 失敗時は木を変えない" );

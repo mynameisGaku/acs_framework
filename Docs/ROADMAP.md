@@ -124,7 +124,8 @@ cameraからの距離に応じて大気へ馴染み、雲も実距離まで同�
   **FBX から骨付きメッシュを作るローダだけが無かった**。`LoadSkinnedMeshFromFbxMemory`
   として ufbx で実装 (骨・祖先・逆バインド・重み 4 本・クリップを 30Hz で焼く)。
 	枠組み側は`AUi3DScene::SpawnAnimatedModel3D`へパス、位置、初期クリップを渡すだけで、読み込み、
-  識別子付きノード、部品追加、再生まで行う。`CCharacterAnimator3D`へ速度と接地状態を渡せば、
+  識別子付きノード、部品追加、再生まで行う。`SpawnCollidableAnimatedModel3D`は明示箱・球または
+  読込境界の登録も一括化し、登録失敗時は生成ノードを巻き戻す。`CCharacterAnimator3D`へ速度と接地状態を渡せば、
   待機・歩き・走り・ジャンプを速度境界の揺れに強い規則で選び、ローカル骨姿勢を滑らかに繋ぐ。
   描画 (`ASkinnedMeshComponent3D` +
   `DrawSkinnedScene`) も繋がり、**デモで実際に骨が動いている。**
