@@ -68,6 +68,11 @@ Subsystemにはしない。`AEffect3DScene`がscene単位で`CEffect3DPlayer`を
 位置または光源方向、色、強さ、到達距離から、識別子付きノードと`ALightComponent3D`を作るだけに
 留める。光の収集、上限選択、PBR描画、影はACSへ任せ、Framework側へ照明計算を複製しない。
 
+固定向きの3D画像配置は`FSprite3DSpawnParams`を検証可能な値、`CSprite3DSpawner`を状態なしの
+接続層とする。`CImageLibrary`は`Assets`相対名をACSの`CAssetRegistry`へ渡し、配置層は
+識別子付きノードと`ASprite3DComponent`だけを作る。画像デコード、GPU画像所有、深度判定、
+HDR透過描画はACSへ任せる。カメラへ自動で向くビルボードとは契約を分ける。
+
 3Dアニメーション配置は`FAnimatedModel3DSpawnParams`を検証可能な値、
 `CAnimatedModel3DSpawner`を状態なしの接続層とする。骨付きFBXの読み込み、識別子付きノード、
 `ASkinnedMeshComponent3D`、初期クリップ再生だけをまとめ、姿勢計算と描画はACSへ任せる。

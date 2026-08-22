@@ -158,6 +158,10 @@ cameraからの距離に応じて大気へ馴染み、雲も実距離まで同�
   `AEffect3DScene` を継承し、`PlayEffect3D( 素材名, 位置 )` で再生する。最初の描画前でも
   指定でき、D3D12 の準備後に自動開始する。ACS の HDR 透明3Dパス内で描くため、scene depthで
   隠れ、露出・bloom・tonemapも同じ経路を通る。backend固有型は`CEffect3DPlayer`の実装へ隠した
+- ~~固定向き3D画像の簡単配置~~ → **実装済み** (2026-08-22)。
+  `FSprite3DSpawnParams::FromImage`へ画像名、位置、大きさを渡し、`CSprite3DSpawner`で置く。
+  `CImageLibrary`は`Assets`相対名をACSの画像ローダへ渡し、深度判定とHDR透過描画も既存の
+  `ASprite3DComponent`経路を使う。カメラ追従のビルボードは別の向き契約として後続へ分ける
 - ~~遊ぶ人向け UI の土台 (`UiLayer`、`Widget`)~~ → **配線済み** (2026-08-22)。
   `AUi3DScene` を継承し、`Ui().AddText` / `Ui().AddButton` で置く。UIの初期化、入力、更新、
   終了は場面寿命へまとまり、HDR、tonemap、TAAまたはFXAAが終わった後のLDR画面へ描く。

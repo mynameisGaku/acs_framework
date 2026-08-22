@@ -25,6 +25,21 @@ CModel3DSpawner::SpawnInto( Root(), Params, Models );
 `.gltf` `.glb` `.obj` も読める。ACS 側にローダが在るので通しているだけで、
 **この枠組みが薦めるのは FBX**。
 
+## 3D画像は透過PNG
+
+看板、印、カードなどを固定向きの3D板として置く画像は`Textures/`へ置く。透明部分を持つ
+素材は`png`を使う。
+
+```cpp
+FSprite3DSpawnParams Marker = FSprite3DSpawnParams::FromImage(
+    FStringView( "Textures/Marker.png" ), FVec3{ 0, 2, 3 }, FVec2{ 0.8f, 0.8f } );
+CSprite3DSpawner::SpawnInto( Graph(), Marker, Assets->Images() );
+```
+
+画像板はローカルXY面に固定される。カメラへ自動で向くビルボードではないため、必要なら
+`RotationDeg`で向きを指定する。対応形式と失敗条件は
+`Source/AcsFramework_Core/Assets/Image/README.md`にまとめている。
+
 ## 3D エフェクトは efkefc
 
 Effekseerで書き出した`.efkefc`を`Effects/`へ置く。`AEffect3DScene`を継承した場面なら、
@@ -72,4 +87,5 @@ PlayEffect3D( FStringView( "Effects/hit.efkefc" ), FVec3{ 0, 1, 0 } );
 - 巨大なもの。git に入るので、100 MB を超えるなら置き方から考え直す
 - 生成できるもの (焼いたライトマップなど)
 
-詳しくは `Source/AcsFramework_Core/Assets/Model3D/README.md`。
+詳しくは`Source/AcsFramework_Core/Assets/Model3D/README.md`と
+`Source/AcsFramework_Core/Assets/Image/README.md`。

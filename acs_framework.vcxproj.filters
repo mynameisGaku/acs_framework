@@ -31,6 +31,12 @@
     <Filter Include="Source\AcsFramework_Core\Assets">
       <UniqueIdentifier>{e03abc72-4d81-b01f-8a6f-64022d98d25f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\AcsFramework_Core\Assets\Image">
+      <UniqueIdentifier>{2d2efc11-2b90-45c5-b730-4d30bc2ba8c4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\AcsFramework_Core\Assets\Image\Test">
+      <UniqueIdentifier>{5f9748cf-a5fb-4d5e-9fa4-cb4b6ce8bb4a}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Source\AcsFramework_Core\Assets\Model3D">
       <UniqueIdentifier>{db8c8ef9-7bae-1287-6a8c-282199630be9}</UniqueIdentifier>
     </Filter>
@@ -150,6 +156,12 @@
     </Filter>
     <Filter Include="Source\AcsFramework_Core\Scene\Snapshot\Test">
       <UniqueIdentifier>{37058ff1-369f-5831-9a78-e55bb24db45b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\AcsFramework_Core\Scene\Sprite3D">
+      <UniqueIdentifier>{c06d668a-dc64-4e37-ad5e-ec60171dc8a0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\AcsFramework_Core\Scene\Sprite3D\Test">
+      <UniqueIdentifier>{74af0ac3-913a-436c-80e3-c844ad144540}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source\AcsFramework_Core\Scene\Water3D">
       <UniqueIdentifier>{8f50d5d4-8947-4505-aa02-c19d5b0ebea1}</UniqueIdentifier>
@@ -326,6 +338,9 @@
     </ClCompile>
     <ClCompile Include="Source\AcsFramework_Core\Assets\AssetLoadScope.cpp">
       <Filter>Source\AcsFramework_Core\Assets</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Assets\Image\ImageLibrary.cpp">
+      <Filter>Source\AcsFramework_Core\Assets\Image</Filter>
     </ClCompile>
     <ClCompile Include="Source\AcsFramework_Core\Assets\Model3D\AssetRoot.cpp">
       <Filter>Source\AcsFramework_Core\Assets\Model3D</Filter>
@@ -524,6 +539,12 @@
     </ClCompile>
     <ClCompile Include="Source\AcsFramework_Core\Scene\Snapshot\SceneSnapshotWriter.cpp">
       <Filter>Source\AcsFramework_Core\Scene\Snapshot</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Scene\Sprite3D\Sprite3DSpawner.cpp">
+      <Filter>Source\AcsFramework_Core\Scene\Sprite3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Scene\Sprite3D\Sprite3DSpawnParams.cpp">
+      <Filter>Source\AcsFramework_Core\Scene\Sprite3D</Filter>
     </ClCompile>
     <ClCompile Include="Source\AcsFramework_Core\Scene\Water3D\Water3DSpawner.cpp">
       <Filter>Source\AcsFramework_Core\Scene\Water3D</Filter>
@@ -896,6 +917,9 @@
     <ClInclude Include="Source\AcsFramework_Core\Assets\AssetLoadScope.h">
       <Filter>Source\AcsFramework_Core\Assets</Filter>
     </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Assets\Image\ImageLibrary.h">
+      <Filter>Source\AcsFramework_Core\Assets\Image</Filter>
+    </ClInclude>
     <ClInclude Include="Source\AcsFramework_Core\Assets\Model3D\AssetRoot.h">
       <Filter>Source\AcsFramework_Core\Assets\Model3D</Filter>
     </ClInclude>
@@ -1144,6 +1168,12 @@
     </ClInclude>
     <ClInclude Include="Source\AcsFramework_Core\Scene\Snapshot\SceneSnapshotWriter.h">
       <Filter>Source\AcsFramework_Core\Scene\Snapshot</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Sprite3D\Sprite3DSpawner.h">
+      <Filter>Source\AcsFramework_Core\Scene\Sprite3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Sprite3D\Sprite3DSpawnParams.h">
+      <Filter>Source\AcsFramework_Core\Scene\Sprite3D</Filter>
     </ClInclude>
     <ClInclude Include="Source\AcsFramework_Core\Scene\Water3D\Water3DSpawner.h">
       <Filter>Source\AcsFramework_Core\Scene\Water3D</Filter>
@@ -1576,6 +1606,9 @@
     <None Include="Assets\Audio\SpatialPulse.wav">
       <Filter>Assets\Audio</Filter>
     </None>
+    <None Include="Assets\circle.png">
+      <Filter>Assets</Filter>
+    </None>
     <None Include="Assets\Models\README.md">
       <Filter>Assets\Models</Filter>
     </None>
@@ -1593,6 +1626,12 @@
     </None>
     <None Include="Docs\ROADMAP.md">
       <Filter>Docs</Filter>
+    </None>
+    <None Include="Source\AcsFramework_Core\Assets\Image\README.md">
+      <Filter>Source\AcsFramework_Core\Assets\Image</Filter>
+    </None>
+    <None Include="Source\AcsFramework_Core\Assets\Image\Test\ImageLibraryTest.cpp">
+      <Filter>Source\AcsFramework_Core\Assets\Image\Test</Filter>
     </None>
     <None Include="Source\AcsFramework_Core\Assets\Model3D\README.md">
       <Filter>Source\AcsFramework_Core\Assets\Model3D</Filter>
@@ -1710,6 +1749,12 @@
     </None>
     <None Include="Source\AcsFramework_Core\Scene\Snapshot\Test\SceneSnapshotTest.cpp">
       <Filter>Source\AcsFramework_Core\Scene\Snapshot\Test</Filter>
+    </None>
+    <None Include="Source\AcsFramework_Core\Scene\Sprite3D\README.md">
+      <Filter>Source\AcsFramework_Core\Scene\Sprite3D</Filter>
+    </None>
+    <None Include="Source\AcsFramework_Core\Scene\Sprite3D\Test\Sprite3DSpawnerTest.cpp">
+      <Filter>Source\AcsFramework_Core\Scene\Sprite3D\Test</Filter>
     </None>
     <None Include="Source\AcsFramework_Core\Scene\Water3D\README.md">
       <Filter>Source\AcsFramework_Core\Scene\Water3D</Filter>

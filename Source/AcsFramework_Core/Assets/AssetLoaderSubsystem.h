@@ -5,6 +5,7 @@
 
 #include "AcsFramework_Core/Assets/AssetLoadBatch.h"
 #include "AcsFramework_Core/Assets/AssetLoadRequest.h"
+#include "AcsFramework_Core/Assets/Image/ImageLibrary.h"
 #include "AcsFramework_Core/Assets/Model3D/ModelLibrary.h"
 
 using namespace acs;
@@ -20,8 +21,16 @@ public:
 	void Bind( CAssetRegistry& Registry ) noexcept
 	{
 		m_Registry = &Registry;
+		m_Images.Bind( Registry );
 		m_Models.Bind( Registry );
 	}
+
+	/**
+	 * `Assets`から画像を読む窓口。
+	 *
+	 * @return 画像の同期読み込み口。
+	 */
+	CImageLibrary& Images() noexcept { return m_Images; }
 
 	/**
 	 * `Assets` からモデルを読む窓口。
@@ -102,6 +111,9 @@ private:
 
 	/** Assets からモデルを読む窓口。登録簿は Bind で渡す。 */
 	CModelLibrary m_Models;
+
+	/** Assetsから画像を読む窓口。登録簿はBindで渡す。 */
+	CImageLibrary m_Images;
 
 	/** 現在観測している1件のbatch。 */
 	FAssetLoadBatch m_Batch;

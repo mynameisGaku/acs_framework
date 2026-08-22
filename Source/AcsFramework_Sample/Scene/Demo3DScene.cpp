@@ -5,6 +5,7 @@
 #include "AcsFramework_Core/Scene/Light3D/Light3DSpawner.h"
 #include "AcsFramework_Core/Scene/Model3D/Model3DSpawner.h"
 #include "AcsFramework_Core/Scene/Pick3D/ScenePicker.h"
+#include "AcsFramework_Core/Scene/Sprite3D/Sprite3DSpawner.h"
 #include "AcsFramework_Core/Scene/Water3D/Water3DSpawner.h"
 #include "AcsFramework_Core/UI/WorldLabel3D/WorldLabel3DParams.h"
 
@@ -453,6 +454,13 @@ void ADemo3DScene::OnEnter() noexcept
 		Model.Name = FStringView( "ImportedModel" );
 		m_Mover = CModel3DSpawner::SpawnInto( Graph(), Model, Assets->Models() );
 		if ( m_CharacterCollision && m_Mover != nullptr ) m_CharacterCollision->TryAddBounds( *m_Mover, kCharacterCollisionLayer );
+
+		// 透過PNGを固定向きの3D板として置く。画像読込、ノード、部品追加を1回へまとめる。
+		FSprite3DSpawnParams ImageMarker = FSprite3DSpawnParams::FromImage(
+			FStringView( "circle.png" ), FVec3{ -3.4f, 2.45f, 2.4f }, FVec2{ 0.72f, 0.72f } );
+		ImageMarker.Name = FStringView( "ImageMarker" );
+		if ( CSprite3DSpawner::SpawnInto( Graph(), ImageMarker, Assets->Images() ) == nullptr )
+			ACS_LOG_WARN( "Demo3D: 3D画像マーカーを配置できなかった" );
 
 		// 骨で動くモデル。読み込み、部品追加、最初のクリップ再生までを1回で行う。
 		// **骨の入っていないFBXを渡すと読めない。** そのときは1行出て、何も置かれない。
