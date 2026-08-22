@@ -46,17 +46,20 @@ public class AcsCapture {
     [DllImport("user32.dll")] public static extern bool EnumWindows(EnumProc cb, IntPtr l);
     [DllImport("user32.dll")] public static extern uint GetWindowThreadProcessId(IntPtr h, out uint pid);
     [DllImport("user32.dll")] public static extern int GetWindowText(IntPtr h, StringBuilder s, int n);
-    [DllImport("user32.dll")] public static extern bool IsWindowVisible(IntPtr h);
-    [DllImport("user32.dll")] public static extern bool SetForegroundWindow(IntPtr h);
+    [DllImport("user32.dll")] public static extern bool ShowWindow(IntPtr h, int command);
+    [DllImport("user32.dll")] public static extern bool SetWindowPos(IntPtr h, IntPtr after, int x, int y, int width, int height, uint flags);
     [DllImport("user32.dll")] public static extern bool GetWindowRect(IntPtr h, out RECT r);
     public struct RECT { public int Left, Top, Right, Bottom; }
+    public const int ShowNormally = 5;
+    public const uint KeepPositionAndSize = 0x43;
+    public static readonly IntPtr TopMost = new IntPtr(-1);
 
-    // Pick the visible top-level window of this process whose title contains the marker.
+    // Pick the top-level window of this process whose title contains the marker.
     public static IntPtr FindRenderWindow(uint pid, string marker) {
         IntPtr hit = IntPtr.Zero;
         EnumWindows((h, l) => {
             uint owner; GetWindowThreadProcessId(h, out owner);
-            if (owner != pid || !IsWindowVisible(h)) return true;
+            if (owner != pid) return true;
             var sb = new StringBuilder(256); GetWindowText(h, sb, 256);
             if (sb.ToString().Contains(marker)) { hit = h; return false; }
             return true;
@@ -68,7 +71,8 @@ public class AcsCapture {
 Add-Type -AssemblyName System.Windows.Forms, System.Drawing
 
 $workDir = Split-Path $Exe -Parent
-$proc = Start-Process $Exe -WorkingDirectory $workDir -PassThru
+# ログ用consoleは隠し、アプリが明示表示する描画windowだけを撮影対象にする。
+$proc = Start-Process $Exe -WorkingDirectory $workDir -WindowStyle Hidden -PassThru
 
 try {
     Start-Sleep -Seconds $Wait
@@ -76,10 +80,11 @@ try {
     if ($proc.HasExited) { throw "the application exited before it could be captured (exit=$($proc.ExitCode))" }
 
     $window = [AcsCapture]::FindRenderWindow([uint32]$proc.Id, $Title)
-    if ($window -eq [IntPtr]::Zero) { throw "no visible window whose title contains '$Title'" }
+    if ($window -eq [IntPtr]::Zero) { throw "no window whose title contains '$Title'" }
 
-    # Bring it forward, otherwise the capture shows whatever overlaps it.
-    [void][AcsCapture]::SetForegroundWindow($window)
+    # 起動時に隠したconsoleの影響を受けず、描画windowだけを表示して手前へ出す。
+    [void][AcsCapture]::ShowWindow($window, [AcsCapture]::ShowNormally)
+    [void][AcsCapture]::SetWindowPos($window, [AcsCapture]::TopMost, 0, 0, 0, 0, [AcsCapture]::KeepPositionAndSize)
     Start-Sleep -Seconds 2
 
     $rect = New-Object AcsCapture+RECT
