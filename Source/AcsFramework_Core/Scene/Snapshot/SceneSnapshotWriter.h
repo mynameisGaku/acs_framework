@@ -9,12 +9,12 @@ using namespace acs;
 using namespace acs::game;
 
 /**
- * ノードの木をバイト列へ落とす係。
+ * ノードの木と名前をバイト列へ落とす係。
  *
  * @details
- * 落とすのはエンジン (`TrySaveNodeTree`) が行う。ここが引き受けるのは、**必要な大きさが
- * 事前に分からない**という一点。エンジンは足りないときに «あと何バイト要るか» を返すので、
- * 受けて広げてもう一度呼ぶ。この繰り返しを呼ぶ側に書かせない。
+ * 親子関係、変換、描画状態、コンポーネントはエンジン (`TrySaveNodeTree`) に任せ、その
+ * バイト列を変更せず Framework 形式へ内包する。ACS 形式 v4 に無いノード名は、同じ DFS
+ * 先行順の名前表として後ろへ添える。
  */
 class CSceneSnapshotWriter
 {
@@ -22,20 +22,10 @@ public:
 	/**
 	 * 木をバイト列へ落とす。
 	 *
-	 * @details 入れ物が足りなければ、必要な大きさまで広げて一度だけやり直す。
+	 * @details ACS が測った大きさと名前表の大きさを合わせ、使い回す入れ物を必要分だけ広げる。
 	 * @param Root 起点のノード。
 	 * @param Buffer 落とす先。
-	 * @return エンジンの結果 (Succeeded() で成否、BytesWritten で書けた大きさ)。
+	 * @return 保存結果 (Succeeded() で成否、BytesWritten で Framework 形式全体の大きさ)。
 	 */
 	static FSceneSaveResult WriteTo( const ANode& Root, CSceneSnapshotBuffer& Buffer ) noexcept;
-
-private:
-	/**
-	 * 一度だけ落としてみる。
-	 *
-	 * @param Root 起点のノード。
-	 * @param Buffer 落とす先。
-	 * @return エンジンの結果。
-	 */
-	static FSceneSaveResult TryWriteOnce( const ANode& Root, CSceneSnapshotBuffer& Buffer ) noexcept;
 };

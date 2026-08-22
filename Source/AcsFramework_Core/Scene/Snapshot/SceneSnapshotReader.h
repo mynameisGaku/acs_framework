@@ -9,12 +9,13 @@ using namespace acs;
 using namespace acs::game;
 
 /**
- * バイト列からノードの木を起こす係。
+ * バイト列からノードの木と名前を起こす係。
  *
  * @details
- * 起こすのはエンジン (`TryLoadNodeTree`) が行う。ここは入れ物から先頭と大きさを取り出して
- * 渡すだけ。**コンポーネントは名前から作り直される** (`CreateComponentByName`) ので、
- * ゲーム固有のコンポーネントは、その名前でエンジンに知られていなければ復元されない。
+ * Framework 形式なら内包した ACS バイト列をエンジン (`TryLoadNodeTree`) で起こし、検証済みの
+ * 名前表を DFS 先行順で戻す。目印が無い従来の ACS v2/v3/v4 生バイト列も読み込める。
+ * **コンポーネントは名前から作り直される** (`CreateComponentByName`) ので、ゲーム固有の
+ * コンポーネントは、その名前でエンジンに知られていなければ復元されない。
  */
 class CSceneSnapshotReader
 {

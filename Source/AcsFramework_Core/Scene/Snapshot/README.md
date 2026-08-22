@@ -10,8 +10,8 @@
 
 | ACS | 役割 |
 |---|---|
-| `TrySaveNodeTree(root, buf, cap)` | 木 → バイト列。足りなければ必要な大きさを返す |
-| `TryLoadNodeTree(data, size)` | バイト列 → 木。コンポーネントは名前から作り直す |
+| `TrySaveNodeTree(root, buf, cap)` | 名前以外の木 → ACS バイト列。足りなければ必要な大きさを返す |
+| `TryLoadNodeTree(data, size)` | ACS バイト列 → 名前以外の木。コンポーネントは名前から作り直す |
 | `CSaveArchive::WriteToFile / ReadFromFile` | 一時ファイル → 置き換え。CRC 付き |
 | `ESceneSerializeError` | 何が起きたか |
 
@@ -24,8 +24,7 @@
 
 ```
   木 ──▶ CSceneSnapshotWriter ──▶ CSceneSnapshotBuffer ──▶ CSceneSnapshotFile ──▶ ファイル
-         (足りなければ広げて                (使い回す)              (置き換え)
-          もう一度)
+         (ACS バイト列 + 名前表)             (使い回す)              (置き換え)
 
   ファイル ──▶ CSceneSnapshotFile ──▶ CSceneSnapshotBuffer ──▶ CSceneSnapshotReader ──▶ 木
 ```
@@ -63,11 +62,11 @@ if ( !Restored ) ACS_LOG_WARN( "%s", Snapshot->MakeLastErrorMessage().Data() );
 
 ## 気をつけること
 
-- **ノード名は保存されない。** Engine の形式 (version 4) に名前の欄が無く、保存されるのは
-  親子関係・変換・enabled/visible/drawLayer/drawPriority/ySort とコンポーネントだけ。
-  復元すると全ノードが**無名**になるので、**名前で引くゲームは静かに壊れる**。
-  どれがどれかを見分けるには、並び順かコンポーネントの中身を使うこと
-  (自己テストでこの前提を毎回確かめている。通らなくなったら Engine が名前を持った合図)。
+- **ノード名は Framework 形式で保存する。** Engine の形式 v4 自体には名前欄が無いため、
+  `FSceneSnapshotFormat` が ACS バイト列を変更せず内包し、その後ろへ DFS 先行順の UTF-8
+  名前表を添える。1 ノード名は 64 KiB まで。名前表を全て検証してから木へ反映する。
+- 旧 Framework が保存した **ACS v2/v3/v4 の生バイト列も読み込める**。その形式に名前は無いので、
+  従来ファイルから復元したノード名だけは空になる。新形式から旧形式への読み込みはできない。
 - **コンポーネントは名前から作り直される** (`CreateComponentByName`)。ゲーム固有の
   コンポーネントは、その名前でエンジンに知られていなければ復元されない。復元したい型が
   出てこないときは、まずここを疑うこと。

@@ -465,6 +465,9 @@
     <ClCompile Include="Source\AcsFramework_Core\Scene\Snapshot\SceneSnapshotFile.cpp">
       <Filter>Source\AcsFramework_Core\Scene\Snapshot</Filter>
     </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Scene\Snapshot\SceneSnapshotFormat.cpp">
+      <Filter>Source\AcsFramework_Core\Scene\Snapshot</Filter>
+    </ClCompile>
     <ClCompile Include="Source\AcsFramework_Core\Scene\Snapshot\SceneSnapshotReader.cpp">
       <Filter>Source\AcsFramework_Core\Scene\Snapshot</Filter>
     </ClCompile>
@@ -1035,6 +1038,9 @@
       <Filter>Source\AcsFramework_Core\Scene\Snapshot</Filter>
     </ClInclude>
     <ClInclude Include="Source\AcsFramework_Core\Scene\Snapshot\SceneSnapshotFile.h">
+      <Filter>Source\AcsFramework_Core\Scene\Snapshot</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Snapshot\SceneSnapshotFormat.h">
       <Filter>Source\AcsFramework_Core\Scene\Snapshot</Filter>
     </ClInclude>
     <ClInclude Include="Source\AcsFramework_Core\Scene\Snapshot\SceneSnapshotReader.h">

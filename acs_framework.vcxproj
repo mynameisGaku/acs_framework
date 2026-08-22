@@ -235,6 +235,7 @@
     <None Include="Source\AcsFramework_Core\Scene\Snapshot\README.md" />
     <ClInclude Include="Source\AcsFramework_Core\Scene\Snapshot\SceneSnapshotBuffer.h" />
     <ClInclude Include="Source\AcsFramework_Core\Scene\Snapshot\SceneSnapshotFile.h" />
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Snapshot\SceneSnapshotFormat.h" />
     <ClInclude Include="Source\AcsFramework_Core\Scene\Snapshot\SceneSnapshotReader.h" />
     <ClInclude Include="Source\AcsFramework_Core\Scene\Snapshot\SceneSnapshotStatus.h" />
     <ClInclude Include="Source\AcsFramework_Core\Scene\Snapshot\SceneSnapshotSubsystem.h" />
@@ -513,6 +514,7 @@
     <ClCompile Include="Source\AcsFramework_Core\Scene\Prefab\PrefabSubsystem.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Scene\Snapshot\SceneSnapshotBuffer.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Scene\Snapshot\SceneSnapshotFile.cpp" />
+    <ClCompile Include="Source\AcsFramework_Core\Scene\Snapshot\SceneSnapshotFormat.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Scene\Snapshot\SceneSnapshotReader.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Scene\Snapshot\SceneSnapshotStatus.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Scene\Snapshot\SceneSnapshotSubsystem.cpp" />

@@ -141,6 +141,7 @@ $sources = @(
     'AcsFramework_Core\Scene\Snapshot\SceneSnapshotStatus.cpp',
     'AcsFramework_Core\Scene\Snapshot\SceneSnapshotBuffer.cpp',
     'AcsFramework_Core\Scene\Snapshot\SceneSnapshotWriter.cpp',
+    'AcsFramework_Core\Scene\Snapshot\SceneSnapshotFormat.cpp',
     'AcsFramework_Core\Scene\Snapshot\SceneSnapshotReader.cpp',
     'AcsFramework_Core\Scene\Snapshot\SceneSnapshotFile.cpp',
     'AcsFramework_Core\Scene\Snapshot\Test\SceneSnapshotTest.cpp',
