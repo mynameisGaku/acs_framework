@@ -337,7 +337,7 @@ void ADemo3DScene::OnEnter() noexcept
 	FInteractionFocus3DParams InteractionParams;
 	InteractionParams.MaximumDistance = 8.0f;
 	if ( !InteractionFocus().SetParams( InteractionParams ) ) ACS_LOG_WARN( "Demo3D: 視線フォーカス距離を設定できなかった" );
-	m_Spinner = nullptr;
+	m_Spinner = FCollidableModel3DSpawnResult{};
 	m_Mover = nullptr;
 	m_DynamicBillboard = nullptr;
 	m_WaterSurfaceId = FNodeId{};
@@ -415,16 +415,11 @@ void ADemo3DScene::OnEnter() noexcept
 			Ball, FCollisionShape3DParams::FromBounds( kCharacterCollisionLayer ) );
 	}
 
-	// 回す立方体。衝突と視線操作も同時に登録し、1個の実形状で両方を試せるようにする。
-	FModel3DSpawnParams Cube = FModel3DSpawnParams::FromPrimitive( EMeshPrimitive3D::Cube, FVec3{ 0.0f, 1.2f, -3.0f } );
-	Cube.Scale = FVec3{ 1.4f, 1.4f, 1.4f };
-	Cube.Color = FVec4{ 0.90f, 0.75f, 0.30f, 1.0f };
-	Cube.Metallic = 1.0f;      // 金属。拡散反射が消えるので、環境光と反射が要る
-	Cube.Roughness = 0.28f;
-	Cube.Name = FStringView( "Spinner" );
-	m_Spinner = SpawnInteractableCollidableModel3D(
-		Cube, FStringView( "ENTER: INSPECT" ),
-		FCollisionShape3DParams::FromBounds( kCharacterCollisionLayer ) ).Node;
+	// 回す立方体。Xキーで全登録ごとの破棄と再生成も試せるようにする。
+	if ( !TrySpawnDemoSpinner3D_Internal() )
+	{
+		ACS_LOG_WARN( "Demo3D: 衝突付き操作対象の回転立方体を配置できなかった" );
+	}
 
 	// Assets に置いた FBX。**置き場からモデルを読む道が通っていることの確認**でもある。
 	// 読めなければ置かずに nullptr が返り、理由が 1 行出る (黙って消えない)。
@@ -538,7 +533,7 @@ void ADemo3DScene::OnEnter() noexcept
 	m_WeatherStatusText = Ui().AddText( "WEATHER: CLEAR", FVec2{ kUiLeft + 16.0f, kUiTop + 556.0f } );
 	m_GeometryPickButton = Ui().AddButton( "PICK EXACT SHAPE", FVec2{ kUiLeft + 16.0f, kUiTop + 582.0f }, FVec2{ kUiWidth - 32.0f, 44.0f } );
 	m_GeometryPickStatusText = Ui().AddText( "PICK: READY", FVec2{ kUiLeft + 16.0f, kUiTop + 640.0f } );
-	m_InteractionStatusText = Ui().AddText( "FOCUS: LOOK AT PLAYER", FVec2{ kUiLeft + 16.0f, kUiTop + 666.0f } );
+	m_InteractionStatusText = Ui().AddText( "FOCUS: LOOK AT PLAYER / SPINNER", FVec2{ kUiLeft + 16.0f, kUiTop + 666.0f } );
 	m_bNextSpatialSoundRight = false;
 	m_NextWeatherIndex = 0u;
 	SetWeather( EWeatherKind::Clear, 0.0f );
@@ -645,7 +640,7 @@ void ADemo3DScene::OnExit() noexcept
 	m_PreviousCharacterInput = FActionInput{};
 	m_GeometryPickDebugRemainingSeconds = 0.0f;
 	m_CharacterNode = nullptr;
-	m_Spinner = nullptr;
+	m_Spinner = FCollidableModel3DSpawnResult{};
 	m_Mover = nullptr;
 	m_WaterSurfaceId = FNodeId{};
 	m_bInteractionRequested = false;
@@ -804,7 +799,7 @@ void ADemo3DScene::OnUpdate( f32 DeltaSeconds ) noexcept
 	const FInteractionFocus3DUpdateResult InteractionResult = UpdateInteractionFocus( bActivateInteraction );
 	if ( InteractionResult.Activated() )
 	{
-		const bool bSpinnerActivated = m_Spinner != nullptr && InteractionResult.ActivatedNode == m_Spinner->Id();
+		const bool bSpinnerActivated = m_Spinner && InteractionResult.ActivatedNode == m_Spinner.Node->Id();
 		const char* const InteractionText = bSpinnerActivated ? "INTERACT: SPINNER" : "INTERACT: PLAYER";
 		SetUiTextIfChanged( Ui(), m_InteractionStatusText, InteractionText );
 	}
@@ -854,7 +849,7 @@ void ADemo3DScene::OnUpdate( f32 DeltaSeconds ) noexcept
 	}
 
 	// 回す。度のまま足せる (ラジアンへ直す必要は無い)。
-	if ( m_Spinner != nullptr ) m_Spinner->RotateDeg( FVec3{ 0.0f, kSpinSpeed * DeltaSeconds, 0.0f } );
+	if ( m_Spinner ) m_Spinner.Node->RotateDeg( FVec3{ 0.0f, kSpinSpeed * DeltaSeconds, 0.0f } );
 
 	// 取り込んだモデルを 2 点のあいだで往復させ、進む先を向かせる。
 	// **«動かす» のに要るのはこれだけ**、というのを見せるための最小の動き。
@@ -871,6 +866,7 @@ void ADemo3DScene::OnUpdate( f32 DeltaSeconds ) noexcept
 void ADemo3DScene::OnEvent( const FEvent& Event ) noexcept
 {
 	if ( Event.type == EEventType::KeyPressed && Event.key.key == EKey::B && !IsInputCaptureActive() ) ToggleDemoBillboard3D();
+	if ( Event.type == EEventType::KeyPressed && Event.key.key == EKey::X && !IsInputCaptureActive() ) ToggleDemoInteractable3D_Internal();
 
 	if ( Event.type == EEventType::KeyPressed && Event.key.key == EKey::Enter && !IsInputCaptureActive() ) m_bInteractionRequested = true;
 
@@ -1070,6 +1066,46 @@ void ADemo3DScene::AddDemoWaterRipple() noexcept
 	m_WaterRippleIndex = ( m_WaterRippleIndex + 1u ) % kWaterRipplePointCount;
 	const FVec3 Point{ kWaterPosition.x + Offset.x, kWaterPosition.y, kWaterPosition.z + Offset.y };
 	AddWaterDisturbance( m_WaterSurfaceId, Point, 0.24f, 0.30f );
+}
+
+
+bool ADemo3DScene::TrySpawnDemoSpinner3D_Internal() noexcept
+{
+	if ( m_Spinner ) return false;
+
+	FModel3DSpawnParams Cube = FModel3DSpawnParams::FromPrimitive(
+		EMeshPrimitive3D::Cube, FVec3{ 0.0f, 1.2f, -3.0f } );
+	Cube.Scale = FVec3{ 1.4f, 1.4f, 1.4f };
+	Cube.Color = FVec4{ 0.90f, 0.75f, 0.30f, 1.0f };
+	Cube.Metallic = 1.0f;
+	Cube.Roughness = 0.28f;
+	Cube.Name = FStringView( "Spinner" );
+	m_Spinner = SpawnInteractableCollidableModel3D(
+		Cube, FStringView( "ENTER: INSPECT" ),
+		FCollisionShape3DParams::FromBounds( kCharacterCollisionLayer ) );
+	return m_Spinner.Succeeded();
+}
+
+
+void ADemo3DScene::ToggleDemoInteractable3D_Internal() noexcept
+{
+	if ( m_Spinner )
+	{
+		if ( !DestroyInteractableCollidableModel3D( m_Spinner ) )
+		{
+			ACS_LOG_WARN( "Demo3D: 回転立方体を全登録ごと破棄できなかった" );
+			return;
+		}
+		SetUiTextIfChanged( Ui(), m_InteractionStatusText, "SPINNER: REMOVED" );
+		return;
+	}
+
+	if ( !TrySpawnDemoSpinner3D_Internal() )
+	{
+		ACS_LOG_WARN( "Demo3D: 回転立方体を全登録ごと再生成できなかった" );
+		return;
+	}
+	SetUiTextIfChanged( Ui(), m_InteractionStatusText, "SPINNER: ADDED" );
 }
 
 

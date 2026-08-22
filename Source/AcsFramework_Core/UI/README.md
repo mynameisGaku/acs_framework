@@ -96,6 +96,8 @@ const FSceneRayHit Picked = PickScreen3D( FVec2{ 0.5f, 0.5f }, 100.0f );
 衝突も必要な単一モデルには`SpawnInteractableCollidableModel3D`または
 `SpawnInteractableCollidableAnimatedModel3D`を使う。モデル生成、場面所有の衝突集合、視線操作を
 同じノードへ接続し、最後の対象登録に失敗しても形状とノードを両方巻き戻す。
+場面途中では`DestroyInteractableModel3D`または`DestroyInteractableCollidableModel3D`へ生成結果を
+渡すと、操作案内と登録を直ちに外し、衝突付きなら形状も外してから呼出側の結果を空に戻す。
 
 `SpawnNode3D`は見た目を持たない世代付きノードを作る。車体と車輪、人物の胴体と頭などを
 同じ親の下へ`SpawnModel3D( Params, Parent )`で置くと、親の移動・回転だけで全体を動かせる。

@@ -4,6 +4,7 @@
 #include "AcsFramework_Core/Scene/Character3D/ThirdPersonCharacter3D.h"
 #include "AcsFramework_Core/Scene/Character3D/ThirdPersonCharacter3DControlPreset.h"
 #include "AcsFramework_Core/Scene/Collision3D/SceneCollision3D.h"
+#include "AcsFramework_Core/Scene/Model3D/CollidableModel3DSpawnResult.h"
 #include "AcsFramework_Core/Scene/Weather3D/Weather3DScene.h"
 #include "AcsFramework_Core/Simulation/Input/ActionBindingTable.h"
 #include "AcsFramework_Core/Simulation/Input/ActionGamepadRebindState.h"
@@ -95,6 +96,12 @@ private:
 	/** 固定された次の位置へ、ACSの動的な水面波紋を1つ追加する。 */
 	void AddDemoWaterRipple() noexcept;
 
+	/** デモ用の回転立方体を、衝突と視線操作を含めて1回で置く。 */
+	bool TrySpawnDemoSpinner3D_Internal() noexcept;
+
+	/** Xキーで回転立方体を全登録ごと破棄または再生成する。 */
+	void ToggleDemoInteractable3D_Internal() noexcept;
+
 	/** Bキーで3D画像板を実行中に追加または破棄し、資源同期を見せる。 */
 	void ToggleDemoBillboard3D() noexcept;
 
@@ -120,8 +127,8 @@ private:
 	/** 明示秒と実機入力から操作キャラクターを1回更新する。 */
 	void UpdateThirdPersonCharacter( f32 DeltaSeconds ) noexcept;
 
-	/** 回す対象。所有はしない (木が持っている)。 */
-	ANode* m_Spinner = nullptr;
+	/** 回す操作対象と衝突形状。ノード所有は場面グラフが持つ。 */
+	FCollidableModel3DSpawnResult m_Spinner;
 
 	/** 往復させる取り込みモデル。所有はしない (木が持っている)。 */
 	ANode* m_Mover = nullptr;

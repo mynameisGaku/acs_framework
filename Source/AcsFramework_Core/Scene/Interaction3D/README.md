@@ -40,6 +40,10 @@ if ( Result.Activated() )
 1回で行い、成功したノードと形状番号を`FCollidableModel3DSpawnResult`で返す。最後の操作登録に
 失敗した場合も衝突形状を外してからノードを破棄予定へ戻す。
 
+実行中に消す場合は、通常版の結果を`DestroyInteractableModel3D`、衝突付き結果を
+`DestroyInteractableCollidableModel3D`へ渡す。ノード破棄予約、現在の操作案内、対象登録、任意の
+衝突形状を同じ呼び出しで外し、成功時は呼出側のポインタまたは結果も空に戻す。
+
 ## 分解
 
 `AdvanceInteractionFocus3D(State, Input)`は値だけを受け取り、次の対象とイベントだけを返す。
@@ -54,7 +58,7 @@ if ( Result.Activated() )
 
 `CInteractableModel3DSpawner`も状態を持たず、既存の静的・骨付きモデル生成器を呼んだ後に
 `CInteractionFocus3D::RegisterTarget`へ渡すだけの接続層とする。衝突付きでは既存生成器が返した
-形状番号も受け取り、後段失敗時の解除順だけを追加する。
+形状番号も受け取り、後段失敗と明示破棄の解除順だけを追加する。
 
 `AUi3DScene`は描画直前に現在の有効対象だけをACSの`SetSelectionHighlight`へ渡す。
 輪郭マスク、手前の物による遮蔽、ポスト処理での合成はACSが持ち、Frameworkは

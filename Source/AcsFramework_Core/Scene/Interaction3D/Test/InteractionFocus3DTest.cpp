@@ -157,7 +157,7 @@ void RunInteractionFocus3DTests( CTestHarness& Harness )
 
 		const FModel3DSpawnParams Params = FModel3DSpawnParams::FromPrimitive(
 			EMeshPrimitive3D::Cube, FVec3{ 0.0f, 0.0f, 4.0f } );
-		ANode* const Target = CInteractableModel3DSpawner::SpawnInto(
+		ANode* Target = CInteractableModel3DSpawner::SpawnInto(
 			Graph, Focus, Params, FStringView( "ENTER: USE" ), FVec3{} );
 		Harness.Check( Target != nullptr, "立方体の生成と操作対象登録を1回で完了する" );
 		Harness.CheckEqualU64( Graph.RegisteredCount(), 2u,
@@ -174,6 +174,24 @@ void RunInteractionFocus3DTests( CTestHarness& Harness )
 				"一括生成した対象への決定を返す" );
 			Harness.CheckEqualU64( Labels.LabelCount(), 1u,
 				"一括登録した操作案内をフォーカス中だけ表示する" );
+
+			ANode* const DestroyedTarget = Target;
+			Harness.Check( CInteractableModel3DSpawner::Destroy( Graph, Focus, Target ),
+				"操作対象モデルを登録ごと破棄予定へ移す" );
+			Harness.Check( Target == nullptr,
+				"破棄成功時は呼出側のモデルポインタを空にする" );
+			Harness.Check( DestroyedTarget->IsPendingDestroy(),
+				"操作対象モデルを構造反映前から誤操作できないようにする" );
+			Harness.CheckEqualU64( Focus.TargetCount(), 0u,
+				"破棄したモデルを操作対象から直ちに外す" );
+			Harness.CheckEqualU64( Labels.LabelCount(), 0u,
+				"破棄した現在対象の操作案内を直ちに消す" );
+			Harness.Check( !CInteractableModel3DSpawner::Destroy( Graph, Focus, Target ),
+				"空へ戻した結果の再破棄を拒否する" );
+
+			Graph.ResolveStructuralChanges();
+			Harness.CheckEqualU64( Graph.RegisteredCount(), 1u,
+				"破棄した操作対象の識別子を構造反映で解放する" );
 		}
 	}
 
@@ -212,7 +230,7 @@ void RunInteractionFocus3DTests( CTestHarness& Harness )
 
 		const FModel3DSpawnParams Params = FModel3DSpawnParams::FromPrimitive(
 			EMeshPrimitive3D::Cube, FVec3{ 0.0f, 0.0f, 4.0f } );
-		const FCollidableModel3DSpawnResult Spawned =
+		FCollidableModel3DSpawnResult Spawned =
 			CInteractableModel3DSpawner::SpawnCollidableInto(
 				Graph, Collision, Focus, Params, FStringView( "ENTER: USE" ),
 				FCollisionShape3DParams::FromBounds( 0x4u ), FVec3{} );
@@ -237,6 +255,31 @@ void RunInteractionFocus3DTests( CTestHarness& Harness )
 			const FInteractionFocus3DUpdateResult Result = Focus.Update( MakeCamera(), true );
 			Harness.Check( Result.ActivatedNode == Spawned.Node->Id(),
 				"衝突する同じモデルへの視線決定を返す" );
+			Harness.CheckEqualU64( Labels.LabelCount(), 1u,
+				"衝突付きモデルの操作案内を表示する" );
+
+			ANode* const DestroyedNode = Spawned.Node;
+			Harness.Check( CInteractableModel3DSpawner::Destroy(
+				Graph, Collision, Focus, Spawned ),
+				"衝突付き操作対象を全登録ごと破棄予定へ移す" );
+			Harness.Check( !Spawned.Succeeded() && Spawned.Node == nullptr
+				&& !Spawned.Shape.IsValid(),
+				"破棄成功時はノードと形状の結果を空にする" );
+			Harness.Check( DestroyedNode->IsPendingDestroy(),
+				"衝突付きモデルを構造反映前から誤操作できないようにする" );
+			Harness.CheckEqualU64( Collision.ShapeCount(), 0u,
+				"破棄したモデルの衝突形状を直ちに外す" );
+			Harness.CheckEqualU64( Focus.TargetCount(), 0u,
+				"破棄したモデルを操作対象から直ちに外す" );
+			Harness.CheckEqualU64( Labels.LabelCount(), 0u,
+				"破棄した衝突付き対象の案内を直ちに消す" );
+			Harness.Check( !CInteractableModel3DSpawner::Destroy(
+				Graph, Collision, Focus, Spawned ),
+				"空へ戻した衝突付き結果の再破棄を拒否する" );
+
+			Graph.ResolveStructuralChanges();
+			Harness.CheckEqualU64( Graph.RegisteredCount(), 1u,
+				"破棄した衝突付きモデルの識別子を構造反映で解放する" );
 		}
 	}
 
@@ -264,6 +307,47 @@ void RunInteractionFocus3DTests( CTestHarness& Harness )
 			"操作対象登録に失敗したモデルを場面へ残さない" );
 		Harness.CheckEqualU64( Graph.RegisteredCount(), 1u,
 			"完全巻き戻し後に生成モデルの識別子も解放する" );
+	}
+
+	{
+		CSceneNodeGraph OwnerGraph;
+		CSceneCollision3D OwnerCollision{ OwnerGraph };
+		CWorldLabel3DLayer OwnerLabels;
+		OwnerLabels.Bind( OwnerGraph );
+		CInteractionFocus3D OwnerFocus;
+		Harness.Check( OwnerFocus.Bind( OwnerGraph, OwnerLabels ),
+			"別場面破棄を調べる所有側フォーカスを接続できる" );
+
+		const FModel3DSpawnParams Params = FModel3DSpawnParams::FromPrimitive(
+			EMeshPrimitive3D::Cube, FVec3{ 0.0f, 0.0f, 4.0f } );
+		FCollidableModel3DSpawnResult Spawned =
+			CInteractableModel3DSpawner::SpawnCollidableInto(
+				OwnerGraph, OwnerCollision, OwnerFocus, Params,
+				FStringView( "ENTER: USE" ) );
+		Harness.Check( Spawned.Succeeded(),
+			"所有側へ別場面破棄を調べるモデルを置ける" );
+		ANode* const OriginalNode = Spawned.Node;
+		const FCollisionShapeId3D OriginalShape = Spawned.Shape;
+
+		CSceneNodeGraph OtherGraph;
+		CSceneCollision3D OtherCollision{ OtherGraph };
+		CWorldLabel3DLayer OtherLabels;
+		OtherLabels.Bind( OtherGraph );
+		CInteractionFocus3D OtherFocus;
+		Harness.Check( OtherFocus.Bind( OtherGraph, OtherLabels ),
+			"破棄を拒否する別場面フォーカスを接続できる" );
+
+		Harness.Check( !CInteractableModel3DSpawner::Destroy(
+			OtherGraph, OtherCollision, OtherFocus, Spawned ),
+			"別場面の生成結果を破棄しない" );
+		Harness.Check( Spawned.Node == OriginalNode && Spawned.Shape == OriginalShape,
+			"別場面破棄の拒否時は呼出側の結果を変えない" );
+		Harness.Check( OriginalNode != nullptr && !OriginalNode->IsPendingDestroy(),
+			"別場面破棄の拒否時は所有側ノードを生存させる" );
+		Harness.CheckEqualU64( OwnerCollision.ShapeCount(), 1u,
+			"別場面破棄の拒否時は所有側の衝突形状を保つ" );
+		Harness.CheckEqualU64( OwnerFocus.TargetCount(), 1u,
+			"別場面破棄の拒否時は所有側の操作対象を保つ" );
 	}
 
 	Harness.BeginSuite( "CInteractionFocus3D / 破棄予定の対象と案内を更新時に外す" );

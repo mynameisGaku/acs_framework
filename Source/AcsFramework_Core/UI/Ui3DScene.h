@@ -211,6 +211,14 @@ public:
 		ANode* Parent = nullptr ) noexcept;
 
 	/**
+	 * `SpawnInteractableModel3D`または骨付き版で生成した操作対象を安全に破棄する。
+	 *
+	 * @param Model この場面が所有する一括生成モデル。成功時はnullptrになる。
+	 * @return 有効な自場面モデルを破棄予定にして操作対象を直ちに外せたらtrue。
+	 */
+	bool DestroyInteractableModel3D( ANode*& Model ) noexcept;
+
+	/**
 	 * 静的3Dモデルの生成、衝突登録、視線フォーカス対象登録を1回で完了する。
 	 *
 	 * @param Params 形またはモデル名、位置、材質、ノード名。
@@ -225,6 +233,15 @@ public:
 		const FCollisionShape3DParams& CollisionParams = FCollisionShape3DParams{},
 		FVec3 WorldOffset = FVec3{ 0.0f, 1.8f, 0.0f },
 		ANode* Parent = nullptr ) noexcept;
+
+	/**
+	 * 衝突付き操作対象モデルを、操作登録と衝突形状ごと安全に破棄する。
+	 *
+	 * @param Model この場面が所有する一括生成結果。成功時は空の結果になる。
+	 * @return 有効な自場面モデルを破棄予定にして2登録を直ちに外せたらtrue。
+	 */
+	bool DestroyInteractableCollidableModel3D(
+		FCollidableModel3DSpawnResult& Model ) noexcept;
 
 	/**
 	 * 静的3Dモデルの生成と衝突登録を1回で完了する。

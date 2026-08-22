@@ -85,6 +85,36 @@ FCollidableModel3DSpawnResult CInteractableModel3DSpawner::SpawnCollidableInto(
 }
 
 
+bool CInteractableModel3DSpawner::Destroy( CSceneNodeGraph& Graph,
+	CInteractionFocus3D& Focus, ANode*& Model ) noexcept
+{
+	if ( Model == nullptr ) return false;
+	const FNodeId NodeId = Graph.IdOf( Model );
+	if ( !NodeId.IsValid() || Graph.Get( NodeId ) != Model ) return false;
+	if ( !Model->IsPendingDestroy() && !Graph.Destroy( NodeId ) ) return false;
+
+	(void)Focus.UnregisterTarget( *Model );
+	Model = nullptr;
+	return true;
+}
+
+
+bool CInteractableModel3DSpawner::Destroy( CSceneNodeGraph& Graph,
+	CSceneCollision3D& Collision, CInteractionFocus3D& Focus,
+	FCollidableModel3DSpawnResult& Model ) noexcept
+{
+	if ( !Model ) return false;
+	const FNodeId NodeId = Graph.IdOf( Model.Node );
+	if ( !NodeId.IsValid() || Graph.Get( NodeId ) != Model.Node ) return false;
+	if ( !Model.Node->IsPendingDestroy() && !Graph.Destroy( NodeId ) ) return false;
+
+	(void)Focus.UnregisterTarget( *Model.Node );
+	(void)Collision.Remove( Model.Shape );
+	Model = FCollidableModel3DSpawnResult{};
+	return true;
+}
+
+
 ANode* CInteractableModel3DSpawner::SpawnInto( CSceneNodeGraph& Graph,
 	CInteractionFocus3D& Focus, const FAnimatedModel3DSpawnParams& ModelParams,
 	FStringView Prompt, FVec3 WorldOffset, ANode* Parent ) noexcept

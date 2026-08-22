@@ -28,6 +28,7 @@ Collision.TrySweepSphere(
 モデル生成と同時に登録する。後者は登録失敗時に生成ノードも破棄予定へ戻し、成功時はノードと
 形状番号を`FCollidableModel3DSpawnResult`で返す。
 さらに視線操作も必要な単一モデルは`SpawnInteractableCollidableModel3D`で3処理を一括化できる。
+実行中の破棄は、その結果を`DestroyInteractableCollidableModel3D`へ渡すと形状も直ちに外れる。
 
 ```cpp
 const FCollidableModel3DSpawnResult Wall = SpawnCollidableModel3D(

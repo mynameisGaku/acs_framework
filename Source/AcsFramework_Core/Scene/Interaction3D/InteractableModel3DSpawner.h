@@ -172,6 +172,32 @@ public:
 		FVec3 WorldOffset = FVec3{ 0.0f, 1.8f, 0.0f },
 		ANode* Parent = nullptr ) noexcept;
 
+	/**
+	 * 一括生成した操作対象モデルを、対象登録ごと安全に破棄する。
+	 *
+	 * @details ノード破棄を受け付けてから操作対象を外し、成功時だけ呼出側のポインタを空にする。
+	 * @param Graph モデルノードを所有する場面グラフ。
+	 * @param Focus 生成時に登録した、または既に登録解除済みの視線フォーカス。
+	 * @param Model `SpawnInto`が返したモデル。成功時はnullptrへ置き換える。
+	 * @return 自場面の有効なモデルを破棄予定にして対象登録を外せたらtrue。
+	 */
+	static bool Destroy( CSceneNodeGraph& Graph, CInteractionFocus3D& Focus,
+		ANode*& Model ) noexcept;
+
+	/**
+	 * 一括生成した衝突付き操作対象を、2登録ごと安全に破棄する。
+	 *
+	 * @details ノード破棄を受け付けてから操作対象と衝突形状を外し、成功時だけ結果を空にする。
+	 * @param Graph モデルノードを所有する場面グラフ。
+	 * @param Collision 生成時に形状を登録した場面の衝突集合。
+	 * @param Focus 生成時に登録した、または既に登録解除済みの視線フォーカス。
+	 * @param Model `SpawnCollidableInto`が返したモデルと形状。成功時は空の結果へ置き換える。
+	 * @return 自場面の有効な生成結果を破棄予定にして2登録を外せたらtrue。
+	 */
+	static bool Destroy( CSceneNodeGraph& Graph, CSceneCollision3D& Collision,
+		CInteractionFocus3D& Focus,
+		FCollidableModel3DSpawnResult& Model ) noexcept;
+
 private:
 	/** 生成ノードを対象登録し、失敗時はノードを破棄予定へ戻す。 */
 	static ANode* RegisterOrRollback_Internal( CSceneNodeGraph& Graph,

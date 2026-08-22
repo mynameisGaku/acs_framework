@@ -60,7 +60,8 @@ Subsystemにはしない。`AEffect3DScene`がscene単位で`CEffect3DPlayer`を
 状態なしアダプターとし、対象登録に失敗した生成ノードは破棄予定へ戻す。複合ノードを登録する
 低水準の窓口はそのまま残し、作品固有の操作内容や入力割り当ては所有しない。衝突付き入口は
 `CModel3DSpawner`または`CAnimatedModel3DSpawner`が返す形状を引き継ぎ、後段失敗時だけ
-`CSceneCollision3D`から形状を外して生成ノードを巻き戻す。
+`CSceneCollision3D`から形状を外して生成ノードを巻き戻す。場面途中の破棄では、ノード破棄を
+受け付けてから対象登録と任意の衝突形状を外し、成功した呼出側の結果だけを空に戻す。
 
 3Dの重なりと移動判定は、場面側が`CSceneCollision3D`を所有する。ACSの`CCollisionWorld3D`へ
 ノードとローカル形状を登録し、問い合わせ時に現在Transformへ同期して、結果をノードポインタへ

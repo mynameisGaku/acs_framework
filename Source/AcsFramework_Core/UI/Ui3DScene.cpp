@@ -217,6 +217,13 @@ ANode* AUi3DScene::SpawnInteractableModel3D( const FModel3DSpawnParams& Params,
 }
 
 
+bool AUi3DScene::DestroyInteractableModel3D( ANode*& Model ) noexcept
+{
+	return CInteractableModel3DSpawner::Destroy(
+		Graph(), m_InteractionFocus, Model );
+}
+
+
 FCollidableModel3DSpawnResult AUi3DScene::SpawnInteractableCollidableModel3D(
 	const FModel3DSpawnParams& Params, FStringView Prompt,
 	const FCollisionShape3DParams& CollisionParams, FVec3 WorldOffset,
@@ -238,6 +245,14 @@ FCollidableModel3DSpawnResult AUi3DScene::SpawnInteractableCollidableModel3D(
 	return CInteractableModel3DSpawner::SpawnCollidableInto(
 		Graph(), m_Collision3D, m_InteractionFocus, Params, Assets->Models(),
 		Prompt, CollisionParams, WorldOffset, Parent );
+}
+
+
+bool AUi3DScene::DestroyInteractableCollidableModel3D(
+	FCollidableModel3DSpawnResult& Model ) noexcept
+{
+	return CInteractableModel3DSpawner::Destroy(
+		Graph(), m_Collision3D, m_InteractionFocus, Model );
 }
 
 

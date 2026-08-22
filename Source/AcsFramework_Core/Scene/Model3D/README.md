@@ -64,6 +64,7 @@ Hero->Local().position.x += 1.0f;
 破棄予定へ戻すため、「見えるが当たらない」半端な配置を成功として残さない。
 同じ単一モデルを視線操作へも登録する場合は`SpawnInteractableCollidableModel3D`を使うと、
 3処理の途中失敗をまとめて巻き戻せる。
+場面途中では結果を`DestroyInteractableCollidableModel3D`へ渡し、形状と操作対象ごと安全に消せる。
 
 `SpawnNode3D`は`AUi3DScene`のグラフへ空ノードを置く。複数の`SpawnModel3D`へ同じ親を渡せば、
 人物、車、武器などを1個の親Transformで動かせる。途中失敗時は親を`DestroyNode3D`へ渡す。

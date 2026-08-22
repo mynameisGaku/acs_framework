@@ -29,6 +29,7 @@ WASDで移動、左Shiftで走行、矢印キーで視点、Spaceでジャンプ
 
 デモ中に `B` を押すと、カメラ追従する3D画像板を実行中に追加し、もう一度押すと安全に破棄する。
 描画開始後の追加・削除でも、ACSのGPU資源同期を通ることを確認できる。
+`X`では回転立方体を操作対象・衝突形状ごと破棄し、もう一度押すと3登録をまとめて再生成する。
 
 > `FetchAcs.ps1` がまだ Release を落とせない段階なら、エンジンをローカルでビルドして
 > `.\Tools\FetchAcs.ps1 -FromLocal C:\acs_dev` で持ってくる (`ThirdParty/acs/README.md`)。
@@ -70,7 +71,7 @@ FModel3DSpawnParams Model = FModel3DSpawnParams::FromMesh( FStringView( "Models/
 SpawnModel3D( Model );
 
 // FBXを置くと同時に衝突と視線操作へ登録する。途中失敗時はモデルも形状も残らない
-const FCollidableModel3DSpawnResult Door = SpawnInteractableCollidableModel3D(
+FCollidableModel3DSpawnResult Door = SpawnInteractableCollidableModel3D(
     FModel3DSpawnParams::FromMesh(
         FStringView( "Models/Door.fbx" ), FVec3{ 0.0f, 0.0f, 4.0f } ),
     FStringView( "E: OPEN" ), FCollisionShape3DParams::FromBounds( 0x2u ) );
@@ -125,6 +126,9 @@ Node->LookAt( Target );
 
 // 消す。成功時はNodeもnullptrになるので、破棄予定ノードを触り続けない
 DestroyNode3D( Node );
+
+// 一括生成した扉は、操作案内と衝突形状も同じ呼び出しで直ちに外す
+DestroyInteractableCollidableModel3D( Door );
 
 // 左上を0、右下を1とした画面位置から、実際の3D表面へ当てる
 const FSceneRay Ray = MakeScreenRay3D( FVec2{ MouseX / static_cast<f32>( W ), MouseY / static_cast<f32>( H ) } );

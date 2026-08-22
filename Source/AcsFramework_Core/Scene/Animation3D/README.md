@@ -32,6 +32,8 @@ HeroAnimator.Update( FCharacterAnimation3DInput{ HorizontalSpeed, bGrounded } );
 破棄予定へ戻し、「動いて見えるが当たらない」状態を成功として残さない。読込時の描画境界も
 選べるが、手足が大きく動く人物では`FCollisionShape3DParams::FromBox`または`FromSphere`で
 ゲーム用の安定した形状を明示する。
+操作対象として一括生成した骨付きモデルは、`DestroyInteractableModel3D`または衝突付き版へ
+結果を渡すと、対象、案内、任意の形状も同じ呼び出しで外せる。
 
 `FCharacterAnimation3DProfile`で4つのクリップ名、歩きと走りの開始・終了速度、姿勢を混ぜる秒数を
 変更できる。開始と終了に別の速度を使うため、速度が境界付近で揺れても状態が細かく往復しない。
