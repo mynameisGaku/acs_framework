@@ -56,7 +56,8 @@ FSpatialPlayRequest -> CSpatialAudio -----------+-> ComputeSpatialSfxMix
 
 | やり方 | 向く場面 |
 |---|---|
-| `PlayOnce` | 着弾・足音など、その瞬間の場所から1回だけ鳴らす |
+| `AUi3DScene::PlaySound3D` | 現在カメラを基準に、着弾・足音などを1回だけ鳴らす |
+| `CSpatialAudioSubsystem::PlayOnce` | 独自の聴取位置を使い、その瞬間の場所から1回だけ鳴らす |
 | `AcquireSource` -> `UpdateSource` -> `PlayFromSource` -> `ReleaseSource` | 同じ物体から銃声などを繰り返し鳴らす |
 
 どちらも、再生を始めた瞬間の距離と左右位置をvoiceへ設定する。すでに鳴っている長い音を
@@ -78,17 +79,24 @@ FSpatialPlayRequest -> CSpatialAudio -----------+-> ComputeSpatialSfxMix
 ## 使い方
 
 ```cpp
+PlaySound3D( FStringView( "Audio/SpatialPulse.wav" ), HitPoint );
+```
+
+`AUi3DScene`を使わず、聴取位置をプレイヤーノードへ固定する場合は低水準の窓口も使える。
+
+```cpp
 Spatial->SetListenerNode( PlayerNode );
 
 FSpatialPlayRequest Request;
 Request.AssetPath = FString( "Audio/SpatialPulse.wav" );
 Request.Position = HitPoint;
-Request.MaxDistance = 20.0f;
 Spatial->PlayOnce( Request );
 ```
 
 素材名は`Assets`からの相対名。`Assets/Audio/...`と`Audio/...`のどちらも受け付け、実行時の
 作業フォルダに依存せず`CAssetRoot`から解決する。
+`PlayOnce`と`PlayFromSource`は再生直前に最新のノードまたは手動聴取位置をACSへ反映するため、
+同じ更新内でカメラや聴取ノードを動かした直後でも1フレーム前の左右位置を使わない。
 
 ---
 

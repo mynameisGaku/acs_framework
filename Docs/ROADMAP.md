@@ -27,7 +27,7 @@ ACS のモジュールは **438 個**ある。この枠組みが窓口を用意�
 |---|---|
 | 起動・シーン遷移・状態 | `CAppSubsystem`、`CSceneTravelSubsystem`、`CAppStateSubsystem` |
 | アセット読み込み | `CAssetLoaderSubsystem` |
-| 音 (BGM・効果音・位置) | `CAudioSubsystem`、`CMusicSubsystem`、`CSpatialAudioSubsystem` |
+| 音 (BGM・効果音・位置) | `CAudioSubsystem`、`CMusicSubsystem`、`AUi3DScene::PlaySound3D` |
 | セーブ・設定 | `CSaveSubsystem`、`CGameSettingsSubsystem` |
 | 時間・待機 | `CTimeSubsystem`、`CTimerSubsystem` |
 | 入力の割り当て | `CActionBindingTable`、`FActionKeyRebindState`、`CBoundActionSource` |
@@ -206,8 +206,9 @@ cameraからの距離に応じて大気へ馴染み、雲も実距離まで同�
   `FActionKeyRebindState`と`FActionGamepadRebindState`で入力待ち・確定・取消を決定論的に処理し、
   `CActionBindingTable`はキーボード、プレイヤー別ゲームパッドボタン、軸を他の割り当てを
   維持したまま差し替える。Demo3DでUI操作、設定保存、次回起動時の復元まで確認できる
-- ~~位置のある効果音の左右定位~~ → **実装済み** (2026-08-22)。Engine発行の音源番号、
-  距離減衰、要求音量、再生速度を同じvoiceへ合成し、モノラル素材の左右位置をXAudio2へ渡す。
+- ~~位置のある効果音の左右定位~~ → **実装済み** (2026-08-22、場面窓口は2026-08-23)。
+  `AUi3DScene::PlaySound3D`は現在カメラ、素材名、world位置を1回の呼出しへまとめる。
+  Engine発行の音源番号、距離減衰、要求音量、再生速度を同じvoiceへ合成し、モノラル素材の左右位置をXAudio2へ渡す。
   Demo3Dのボタンで左・右を交互に実行できる
 - ~~対話できる3D水面の配置~~ → **実装済み** (2026-08-22、場面窓口は2026-08-23)。
   `AUi3DScene::SpawnWater3D`へ位置と広さを

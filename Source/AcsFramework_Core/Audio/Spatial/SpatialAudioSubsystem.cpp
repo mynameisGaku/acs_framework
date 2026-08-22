@@ -46,6 +46,7 @@ bool CSpatialAudioSubsystem::PlayFromSource( u32 SourceId, const FSpatialPlayReq
 {
 	if ( m_Audio == nullptr ) return false;
 
+	RefreshListener_Internal();
 	return m_Router.Route( m_Spatial, *m_Audio, SourceId, Request );
 }
 
@@ -57,7 +58,7 @@ bool CSpatialAudioSubsystem::PlayOnce( const FSpatialPlayRequest& Request ) noex
 	const u32 SourceId = AcquireSource( Request.Position, Request.Velocity, Request.MaxDistance, Request.AttenuationCurve );
 	if ( SourceId == 0u ) return false;
 
-	const bool bPlayed = m_Router.Route( m_Spatial, *m_Audio, SourceId, Request );
+	const bool bPlayed = PlayFromSource( SourceId, Request );
 
 	// 鳴らし終わりを待つ必要はない。音量はこの瞬間の距離で決まっており、
 	// 場所を残しておくと «鳴っていないのに数だけ増える» ことになる。
@@ -69,6 +70,12 @@ bool CSpatialAudioSubsystem::PlayOnce( const FSpatialPlayRequest& Request ) noex
 
 void CSpatialAudioSubsystem::Update( f32 UnscaledDeltaSeconds ) noexcept
 {
-	m_Spatial.SetListener( m_Listener.MakeListener() );
+	RefreshListener_Internal();
 	m_Spatial.Tick( UnscaledDeltaSeconds );
+}
+
+
+void CSpatialAudioSubsystem::RefreshListener_Internal() noexcept
+{
+	m_Spatial.SetListener( m_Listener.MakeListener() );
 }

@@ -16,6 +16,7 @@ using namespace acs::game;
 struct FAnimatedModel3DSpawnParams;
 struct FLight3DSpawnParams;
 struct FModel3DSpawnParams;
+struct FSpatialPlayRequest;
 struct FSprite3DSpawnParams;
 struct FWater3DSpawnParams;
 
@@ -155,6 +156,34 @@ public:
 	bool DestroyNode3D( ANode*& Node ) noexcept;
 
 	/**
+	 * 現在カメラを聴取位置として、指定したworld位置から短い3D効果音を1回鳴らす。
+	 *
+	 * @param AssetPath `Assets`からの相対音声名。
+	 * @param WorldPosition 音を鳴らすworld位置。
+	 * @param Volume 距離減衰前の音量。0より大きい有限値。
+	 * @param MaximumDistance この距離以上で聞こえなくする距離。
+	 * @return カメラ、指定、音声窓口、再生の全てが有効ならtrue。
+	 */
+	bool PlaySound3D( FStringView AssetPath, FVec3 WorldPosition, f32 Volume = 1.0f,
+		f32 MaximumDistance = 20.0f ) noexcept;
+
+	/**
+	 * 現在カメラを聴取位置として、詳細指定の短い3D効果音を1回鳴らす。
+	 *
+	 * @param Request 音声名、world位置、速度、音量、距離、減衰、再生速度。
+	 * @return カメラ、指定、音声窓口、再生の全てが有効ならtrue。
+	 */
+	bool PlaySound3D( const FSpatialPlayRequest& Request ) noexcept;
+
+	/**
+	 * 現在の3Dカメラを空間音響の聴取位置へ反映する。
+	 *
+	 * @details ノード追従中の聴取位置は解除し、以後は呼ぶたびに現在カメラへ更新する。
+	 * @return カメラ姿勢と空間音響窓口が利用できればtrue。
+	 */
+	bool RefreshSpatialAudioListener() noexcept;
+
+	/**
 	 * 登録対象の視線判定と操作案内を扱う3Dインタラクション窓口を返す。
 	 *
 	 * @return この場面のグラフとワールドラベルへ接続済みのアダプター。
@@ -243,6 +272,14 @@ public:
 	void OnEvent( const FEvent& Event ) noexcept override;
 
 protected:
+	/**
+	 * 現在カメラから空間音響へ渡せる聴取位置を作る。
+	 *
+	 * @param OutListener 作成結果。失敗時は変更しない。
+	 * @return カメラ姿勢から有限かつ左右を求められる値を作れたらtrue。
+	 */
+	bool TryMakeCameraAudioListener( FAudioListener& OutListener ) noexcept;
+
 	/**
 	 * 登録済みの3Dデバッグ線をACSのHDR透明3Dパスへ描く。
 	 *

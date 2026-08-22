@@ -89,17 +89,6 @@ private:
 	/** キー、ゲームパッドボタン、ゲームパッド軸のいずれかを待っていればtrueを返す。 */
 	bool IsInputCaptureActive() const noexcept;
 
-	/**
-	 * 現在の3Dカメラから、空間音響が使う聴く位置と向きを作る。
-	 *
-	 * @param OutListener 作れた聴く位置と向き。
-	 * @return 有効なカメラ姿勢を作れたらtrue。
-	 */
-	bool TryMakeCameraAudioListener( FAudioListener& OutListener ) const noexcept;
-
-	/** 現在の3Dカメラを空間音響の聴く位置へ反映する。 */
-	void RefreshSpatialAudioListener() noexcept;
-
 	/** UIに表示中の左右どちらかから、短い3D効果音を鳴らす。 */
 	void PlaySpatialDemoSound() noexcept;
 

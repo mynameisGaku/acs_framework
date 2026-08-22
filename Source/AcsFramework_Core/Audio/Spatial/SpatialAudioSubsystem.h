@@ -134,6 +134,9 @@ public:
 	u64 GetFailedCount() const noexcept { return m_Router.GetFailedCount(); }
 
 private:
+	/** ノードまたは手動指定から最新の聴取位置をACSへ反映する。 */
+	void RefreshListener_Internal() noexcept;
+
 	/** 距離と向きを計算するエンジン側。 */
 	CSpatialAudio m_Spatial;
 

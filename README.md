@@ -47,7 +47,7 @@ WASDで移動、左Shiftで走行、矢印キーで視点、Spaceでジャンプ
 | 3D 天候 | `AWeather3DScene`、晴天・曇天・雨・雪・嵐・霧・砂嵐の滑らかな遷移 |
 | 3D 水面 | `SpawnWater3D()`、屈折・反射・泡・動的な波紋 |
 | 3D 演出 | `AEffect3DScene`、Effekseer、depth 遮蔽、HDR・bloom への自動合成 |
-| 3D 音響 | `CSpatialAudioSubsystem`、距離減衰、モノラル効果音の左右定位 |
+| 3D 音響 | `PlaySound3D()`、現在カメラ基準の距離減衰、モノラル効果音の左右定位 |
 | 遊ぶ人向け UI | `AUi3DScene`、文字・ボタン・入力、ポスト処理後の鮮明なHUD合成 |
 | 3D位置の文字 | `WorldLabels()`、ノード破棄と画面外を安全に扱う敵名・目的地表示 |
 | 3Dデバッグ描画 | `DrawLine3D()`、`DrawAabb3D()`、`DrawSphere3D()`、深度を無視して常に確認できる1フレーム線 |
@@ -167,11 +167,8 @@ SetAerialPerspectiveEnabled( true );
 // 3D effectを出す (AWeather3DSceneにもAEffect3DSceneが含まれる)
 PlayEffect3D( FStringView( "Effects/hit.efkefc" ), FVec3{ 0, 1, 0 } );
 
-// カメラの左から3D効果音を鳴らす
-FSpatialPlayRequest Sound;
-Sound.AssetPath = FString( "Audio/SpatialPulse.wav" );
-Sound.Position = CameraPosition - CameraRight * 4.0f;
-SpatialAudio->PlayOnce( Sound );
+// 現在カメラの左から3D効果音を鳴らす
+PlaySound3D( FStringView( "Audio/SpatialPulse.wav" ), CameraPosition - CameraRight * 4.0f );
 
 // 遊ぶ人向けのボタンを置く (AUi3DSceneとAEffect3DSceneのどちらでも使える)
 const u32 StartButton = Ui().AddButton( "START", FVec2{ 32, 88 }, FVec2{ 180, 44 } );

@@ -43,7 +43,13 @@ SpawnLight3D( FLight3DSpawnParams::Sun( FVec3{ -0.47f, 0.58f, 0.66f } ) );
 FWater3DSpawnParams Water;
 Water.Position = FVec3{ 2.5f, 0.1f, -1.0f };
 SpawnWater3D( Water );
+
+PlaySound3D( FStringView( "Audio/Hit.wav" ), FVec3{ 1.0f, 0.5f, 3.0f } );
 ```
+
+`PlaySound3D`は現在カメラを聴取位置へ同期してから、その瞬間の距離と左右位置で短い効果音を
+鳴らす。持続する音源を個別管理する場合は`RefreshSpatialAudioListener`をカメラ更新後に呼び、
+`CSpatialAudioSubsystem`の`AcquireSource`と`PlayFromSource`を使う。
 
 返ったノードは`RotateDeg`、`MoveToward`、`LookAt`で動かせる。不要になったら
 `DestroyNode3D( Node )`へ生ポインタを渡す。自場面のノードだけを破棄予定にし、成功時は

@@ -2,6 +2,7 @@
 #include "AcsFramework_Core/UI/Ui3DScene.h"
 
 #include "AcsFramework_Core/Assets/AssetLoaderSubsystem.h"
+#include "AcsFramework_Core/Audio/Spatial/SpatialAudioSubsystem.h"
 #include "AcsFramework_Core/Scene/Animation3D/AnimatedModel3DSpawner.h"
 #include "AcsFramework_Core/Scene/Light3D/Light3DSpawner.h"
 #include "AcsFramework_Core/Scene/Model3D/Model3DSpawner.h"
@@ -160,6 +161,45 @@ bool AUi3DScene::DestroyNode3D( ANode*& Node ) noexcept
 
 	Node = nullptr;
 	return true;
+}
+
+
+bool AUi3DScene::PlaySound3D( FStringView AssetPath, FVec3 WorldPosition, f32 Volume, f32 MaximumDistance ) noexcept
+{
+	FSpatialPlayRequest Request;
+	Request.AssetPath = FString( AssetPath );
+	Request.Position = WorldPosition;
+	Request.BaseVolume = Volume;
+	Request.MaxDistance = MaximumDistance;
+	return PlaySound3D( Request );
+}
+
+
+bool AUi3DScene::PlaySound3D( const FSpatialPlayRequest& Request ) noexcept
+{
+	if ( !Request.IsValid() || !RefreshSpatialAudioListener() ) return false;
+	CSpatialAudioSubsystem* const Spatial = GetSubsystem<CSpatialAudioSubsystem>();
+	return Spatial != nullptr && Spatial->PlayOnce( Request );
+}
+
+
+bool AUi3DScene::RefreshSpatialAudioListener() noexcept
+{
+	CSpatialAudioSubsystem* const Spatial = GetSubsystem<CSpatialAudioSubsystem>();
+	if ( Spatial == nullptr ) return false;
+
+	FAudioListener Listener;
+	if ( !TryMakeCameraAudioListener( Listener ) ) return false;
+	Spatial->SetListenerNode( nullptr );
+	Spatial->SetListener( Listener );
+	return true;
+}
+
+
+bool AUi3DScene::TryMakeCameraAudioListener( FAudioListener& OutListener ) noexcept
+{
+	(void)RefreshActiveCamera();
+	return CSpatialListenerBinder::TryMakeFromCamera( *this, OutListener );
 }
 
 

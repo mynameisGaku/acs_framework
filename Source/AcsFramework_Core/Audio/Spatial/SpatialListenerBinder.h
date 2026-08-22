@@ -19,6 +19,15 @@ class CSpatialListenerBinder
 {
 public:
 	/**
+	 * 3D場面の現在カメラから聴く位置と向きを作る。
+	 *
+	 * @param Scene カメラを持つ3D場面。
+	 * @param OutListener 作成結果。失敗時は変更しない。
+	 * @return 位置・前・上が有限で、左右方向を作れるならtrue。
+	 */
+	static bool TryMakeFromCamera( const ALegacyScene3DAdapter& Scene, FAudioListener& OutListener ) noexcept;
+
+	/**
 	 * 追いかける相手を差す。
 	 *
 	 * @param Node 追いかけるノード。nullptr を渡すと追いかけるのをやめる。

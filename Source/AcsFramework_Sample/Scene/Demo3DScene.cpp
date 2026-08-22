@@ -9,7 +9,6 @@
 #include "AcsFramework_Core/Scene/Water3D/Water3DSpawnParams.h"
 #include "AcsFramework_Core/UI/WorldLabel3D/WorldLabel3DParams.h"
 
-#include "AcsFramework_Core/Audio/Spatial/SpatialAudioSubsystem.h"
 #include "AcsFramework_Core/Settings/GameSettingsSubsystem.h"
 #include "Common/Compat/AcsEnumReflection.h"
 
@@ -1044,44 +1043,10 @@ bool ADemo3DScene::IsInputCaptureActive() const noexcept
 }
 
 
-bool ADemo3DScene::TryMakeCameraAudioListener( FAudioListener& OutListener ) const noexcept
-{
-	OutListener.position = Camera().Eye();
-
-	if ( const FScene3DCameraState* const Authored = AuthoredCamera() )
-	{
-		if ( LengthSq( Authored->Forward ) <= 0.000001f || LengthSq( Authored->Up ) <= 0.000001f ) return false;
-		OutListener.forward = Normalize( Authored->Forward );
-		OutListener.up = Normalize( Authored->Up );
-		return true;
-	}
-
-	COrbitCameraController3D::FOrbitCameraFixedStepSnapshot3D Snapshot;
-	if ( !TryCaptureOrbitCameraSnapshot( Snapshot ) ) return false;
-
-	const FVec3 Forward = Snapshot.current.target - OutListener.position;
-	if ( LengthSq( Forward ) <= 0.000001f ) return false;
-
-	OutListener.forward = Normalize( Forward );
-	OutListener.up = FVec3::Up();
-	return true;
-}
-
-
-void ADemo3DScene::RefreshSpatialAudioListener() noexcept
-{
-	FAudioListener Listener;
-	if ( !TryMakeCameraAudioListener( Listener ) ) return;
-
-	if ( CSpatialAudioSubsystem* const Spatial = GetSubsystem<CSpatialAudioSubsystem>() ) Spatial->SetListener( Listener );
-}
-
-
 void ADemo3DScene::PlaySpatialDemoSound() noexcept
 {
-	CSpatialAudioSubsystem* const Spatial = GetSubsystem<CSpatialAudioSubsystem>();
 	FAudioListener Listener;
-	if ( Spatial == nullptr || !TryMakeCameraAudioListener( Listener ) )
+	if ( !TryMakeCameraAudioListener( Listener ) )
 	{
 		Ui().SetText( m_SpatialSoundStatusText, "SOUND: UNAVAILABLE" );
 		return;
@@ -1095,14 +1060,8 @@ void ADemo3DScene::PlaySpatialDemoSound() noexcept
 	}
 	const FVec3 Right = Normalize( RightDirection );
 
-	Spatial->SetListener( Listener );
-	FSpatialPlayRequest Request;
-	Request.AssetPath = FString( kSpatialSoundAsset );
-	Request.Position = Listener.position + Listener.forward * kSpatialSoundForwardDistance + Right * ( m_bNextSpatialSoundRight ? kSpatialSoundSideDistance : -kSpatialSoundSideDistance );
-	Request.BaseVolume = 0.85f;
-	Request.MaxDistance = 18.0f;
-
-	if ( !Spatial->PlayOnce( Request ) )
+	const FVec3 SoundPosition = Listener.position + Listener.forward * kSpatialSoundForwardDistance + Right * ( m_bNextSpatialSoundRight ? kSpatialSoundSideDistance : -kSpatialSoundSideDistance );
+	if ( !PlaySound3D( FStringView( kSpatialSoundAsset ), SoundPosition, 0.85f, 18.0f ) )
 	{
 		Ui().SetText( m_SpatialSoundStatusText, "SOUND: UNAVAILABLE" );
 		return;
