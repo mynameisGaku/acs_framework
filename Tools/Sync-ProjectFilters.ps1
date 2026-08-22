@@ -68,16 +68,19 @@ function Sort-PathList([string[]]$Values) {
 }
 
 function Get-ProjectItemNodes($Document, $NamespaceManager, [string[]]$Types) {
+    if ($null -eq $Document -or $null -eq $NamespaceManager -or $Types.Count -eq 0) {
+        throw 'project item scan requires a document, namespace manager, and item types'
+    }
     $nodes = New-Object System.Collections.ArrayList
-    foreach ($type in $Types) {
+    foreach ($itemType in $Types) {
         foreach ($node in $Document.SelectNodes(
-                "/msb:Project/msb:ItemGroup/msb:$type", $NamespaceManager)) {
+                "/msb:Project/msb:ItemGroup/msb:$itemType", $NamespaceManager)) {
             $include = $node.GetAttribute('Include')
             if ([string]::IsNullOrWhiteSpace($include)) { continue }
             # Wildcards and property references are not fixed paths.
             if ($include.Contains('*') -or $include.Contains('$(')) { continue }
             $null = $nodes.Add([pscustomobject]@{
-                Type = $type
+                Type = $itemType
                 Include = $include
                 Node = $node
             })
@@ -138,10 +141,14 @@ $itemsAdded = @()
 $itemsRemoved = @()
 $projectWouldChange = $false
 if (-not $FiltersOnly) {
-    $sourceNodes = Get-ProjectItemNodes $document $namespaceManager @('ClCompile', 'ClInclude')
+    # Files intentionally shown as None are already registered project items.
+    # Looking only at compile items would add unit tests to the app a second time.
+    [object[]]$registeredNodes = @()
+    $registeredNodes = @(Get-ProjectItemNodes -Document $document -NamespaceManager $namespaceManager -Types $itemTypeOrder)
+    if ($registeredNodes.Count -eq 0) { throw 'project item scan returned no fixed-path items' }
     $knownPaths = New-Object System.Collections.Generic.HashSet[string](
         [System.StringComparer]::OrdinalIgnoreCase)
-    foreach ($item in $sourceNodes) {
+    foreach ($item in $registeredNodes) {
         $null = $knownPaths.Add(
             [System.IO.Path]::GetFullPath(([System.IO.Path]::Combine($projectDirectory, $item.Include))))
     }
@@ -188,7 +195,8 @@ if (-not $FiltersOnly) {
         $itemsAdded += $relative
     }
 
-    foreach ($item in $sourceNodes) {
+    foreach ($item in $registeredNodes) {
+        if ($item.Type -ne 'ClCompile' -and $item.Type -ne 'ClInclude') { continue }
         $full = [System.IO.Path]::GetFullPath(([System.IO.Path]::Combine($projectDirectory, $item.Include)))
         if (Test-Path -LiteralPath $full -PathType Leaf) { continue }
         $node = $item.Node
@@ -229,7 +237,8 @@ if (-not $FiltersOnly) {
 }
 
 # ---- collect the items that need a filter ----------------------------------
-$items = Get-ProjectItemNodes $document $namespaceManager $itemTypeOrder
+[object[]]$items = @()
+$items = @(Get-ProjectItemNodes -Document $document -NamespaceManager $namespaceManager -Types $itemTypeOrder)
 $itemFilters = @{}
 foreach ($item in $items) {
     $relative = Resolve-ProjectRelativePath $projectDirectory $item.Include

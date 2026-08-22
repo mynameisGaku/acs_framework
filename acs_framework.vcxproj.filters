@@ -154,12 +154,6 @@
     <Filter Include="Source\Debug\DebugTop">
       <UniqueIdentifier>{5affac60-4ca5-6091-7653-c6f0d33a876b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\Debug\DebugTopSample">
-      <UniqueIdentifier>{69521ce9-8112-d19f-0cf6-1bd294361bb4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source\Debug\DebugTopSample\Pages">
-      <UniqueIdentifier>{e22da821-a2bd-5f84-fdbe-62fd2a584152}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source\Debug\DebugTop\Builtin">
       <UniqueIdentifier>{43a270f2-8657-1674-b44b-de7bf7d70a06}</UniqueIdentifier>
     </Filter>
@@ -1035,6 +1029,9 @@
       <Filter>Source\Debug\DebugTop\Element</Filter>
     </ClInclude>
     <ClInclude Include="Source\Debug\DebugTop\Element\DebugTopElementWatch.h">
+      <Filter>Source\Debug\DebugTop\Element</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Debug\DebugTop\Element\DebugTopEnum.h">
       <Filter>Source\Debug\DebugTop\Element</Filter>
     </ClInclude>
     <ClInclude Include="Source\Debug\DebugTop\Input\DebugTopCursor.h">

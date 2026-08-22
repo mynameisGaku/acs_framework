@@ -137,6 +137,7 @@
     <ClInclude Include="Source\AcsFramework_Core\Scene\SceneTravelSubsystem.h" />
     <ClInclude Include="Source\Debug\DebugTop\DebugTopHUD.h" />
     <ClInclude Include="Source\Debug\DebugTop\Element\DebugTopElement.h" />
+    <ClInclude Include="Source\Debug\DebugTop\Element\DebugTopEnum.h" />
     <ClInclude Include="Source\Debug\DebugTop\Input\DebugTopCursor.h" />
     <ClInclude Include="Source\Debug\DebugTop\Input\DebugTopGamepad.h" />
     <ClInclude Include="Source\Debug\DebugTop\Input\DebugTopTextEdit.h" />

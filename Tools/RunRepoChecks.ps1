@@ -27,9 +27,9 @@ function Section([string]$Name) { Write-Host "-- $Name" -ForegroundColor Cyan }
 # against the schema, so Visual Studio silently discarded it and showed every
 # file at the root. Regenerating is the only supported way to change it.
 Section 'project filters are up to date'
-& (Join-Path $PSScriptRoot 'Sync-ProjectFilters.ps1') -FiltersOnly -Check *> $null
+& (Join-Path $PSScriptRoot 'Sync-ProjectFilters.ps1') -Check *> $null
 if ($LASTEXITCODE -eq 2) {
-    Fail 'filters' 'acs_framework.vcxproj.filters is stale. Run: .\Tools\Sync-ProjectFilters.ps1 -FiltersOnly'
+    Fail 'filters' 'project items or acs_framework.vcxproj.filters are stale. Run: .\Tools\Sync-ProjectFilters.ps1'
 } else {
     Pass 'filters match the project'
 }
