@@ -74,7 +74,7 @@ CSimulationEventQueue → 読む側 (Actor / Audio / VFX)
 | 直下 | 部品 | `CFixedStepDriver`、`CDeterministicRandom`、`CActionInputTape`、`CSimulationEventQueue`、`CReplayFile` |
 | 直下 | 途中から始める | `CSimulationSnapshot`、`CSimulationSnapshotFile` |
 | 直下 | 所有と順番 | `CSimulationSubsystem` |
-| `Input/` | 装置 → アクションの変換 | `IActionDeviceReader`、`CActionBindingTable`、`FActionKeyRebindState`、`CDeviceActionReader`、`CBoundActionSource` |
+| `Input/` | 装置 → アクションの変換 | `IActionDeviceReader`、`CActionBindingTable`、`FActionKeyRebindState`、`FActionGamepadRebindState`、`CDeviceActionReader`、`CBoundActionSource` |
 | `Test/` | ゲーム抜きで回す自己テスト | `SimulationDeterminismTest.cpp` |
 
 **ゲームのルールはここへ置かない。** `ISimulationRule` を実装するのはゲーム側。
@@ -173,6 +173,30 @@ if ( Result == FActionKeyRebindState::EResult::Applied )
 設定から戻す値は `FActionKeyRebindState::IsValidKey` で検証してから使う。`CActionBindingTable` の
 `ReplaceKeyBinding` は同じアクションのキーボード割り当てだけを1つへまとめ、ゲームパッドの
 割り当てを維持する。Demo3Dではこの形でFXAA操作を変更し、自動保存される設定へ値を残している。
+
+### ゲームパッド割り当てを変える
+
+`FActionGamepadRebindState`は実機を読まず、明示されたボタンまたは軸だけで状態を進める。
+`CDeviceActionReader`が押下開始のボタンと、指定しきい値以上で最も大きく動いた軸を読む薄い
+境界になる。割り当て確定に使った操作をゲームへ重ねて渡さない処理と、設定保存は呼び出し側が担う。
+
+```cpp
+FActionGamepadRebindState Rebind;
+Rebind.SetCurrentButton( EGamepadButton::South );
+Rebind.BeginButtonCapture();
+
+EGamepadButton Pressed = EGamepadButton::_Count;
+if ( Device.TryReadPressedGamepadButton( 0u, Pressed )
+    && Rebind.HandlePressedButton( Pressed ) == FActionGamepadRebindState::EResult::Applied )
+{
+    Bindings.ReplaceGamepadButtonBinding( kActionJump, Rebind.CurrentButton(), 0u );
+}
+```
+
+軸は`BeginAxisCapture`と`HandleActiveAxis`を使う。`ReplaceGamepadButtonBinding`と
+`ReplaceGamepadAxisBinding`は同じアクションまたは軸番号、同じプレイヤーの重複だけを1つへ
+まとめ、キーボードと別プレイヤーを維持する。Demo3Dではジャンプボタンと前後移動軸をUIから
+選び、確定値を自動保存する。
 
 ---
 

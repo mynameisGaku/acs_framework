@@ -12,6 +12,7 @@
 #include "AcsFramework_Core/Settings/GameSettingsSubsystem.h"
 #include "Common/Compat/AcsEnumReflection.h"
 
+#include <cmath>
 #include <cstring>
 
 namespace
@@ -53,7 +54,7 @@ namespace
 	constexpr f32 kUiWidth = 260.0f;
 
 	/** プレイヤーUIのカード高さ。 */
-	constexpr f32 kUiHeight = 504.0f;
+	constexpr f32 kUiHeight = 668.0f;
 
 	/** FXAA切り替えに使うアクション番号。 */
 	constexpr u32 kFxaaActionIndex = 0u;
@@ -63,6 +64,30 @@ namespace
 
 	/** 設定ファイルへ保存するFXAAキーの名前。 */
 	constexpr const char* kFxaaKeySetting = "Input.FxaaToggleKey";
+
+	/** デモで操作するゲームパッド番号。 */
+	constexpr u32 kGamepadPlayerIndex = 0u;
+
+	/** 初回起動時の第三者視点ジャンプボタン。 */
+	constexpr EGamepadButton kDefaultJumpButton = EGamepadButton::South;
+
+	/** 初回起動時の第三者視点前後移動軸。 */
+	constexpr EGamepadAxis kDefaultMoveAxis = EGamepadAxis::LeftY;
+
+	/** 第三者視点のゲームパッド軸へ適用する遊び。 */
+	constexpr f32 kGamepadDeadZone = 0.15f;
+
+	/** 軸の選択操作とみなす最小絶対値。 */
+	constexpr f32 kGamepadAxisCaptureThreshold = 0.65f;
+
+	/** 新しい軸入力を待つ前に中立へ戻ったとみなす最大絶対値。 */
+	constexpr f32 kGamepadAxisCenterThreshold = 0.25f;
+
+	/** 設定ファイルへ保存するジャンプボタンの名前。 */
+	constexpr const char* kJumpButtonSetting = "Input.ThirdPersonJumpGamepadButton";
+
+	/** 設定ファイルへ保存する前後移動軸の名前。 */
+	constexpr const char* kMoveAxisSetting = "Input.ThirdPersonMoveGamepadAxis";
 
 	/** 左右定位デモで鳴らす、短いモノラル効果音。 */
 	constexpr const char* kSpatialSoundAsset = "Audio/SpatialPulse.wav";
@@ -135,6 +160,61 @@ namespace
 		}
 
 		Label.TryAppend( FStringView( Name.Data, Name.Size ) );
+		return Label;
+	}
+
+	/** ゲームパッドボタンをUI用の短い物理名へ変える。 */
+	const char* GamepadButtonLabel( EGamepadButton Button ) noexcept
+	{
+		switch ( Button )
+		{
+		case EGamepadButton::South: return "SOUTH";
+		case EGamepadButton::East: return "EAST";
+		case EGamepadButton::West: return "WEST";
+		case EGamepadButton::North: return "NORTH";
+		case EGamepadButton::Up: return "DPAD UP";
+		case EGamepadButton::Down: return "DPAD DOWN";
+		case EGamepadButton::Left: return "DPAD LEFT";
+		case EGamepadButton::Right: return "DPAD RIGHT";
+		case EGamepadButton::LeftBumper: return "LEFT BUMPER";
+		case EGamepadButton::RightBumper: return "RIGHT BUMPER";
+		case EGamepadButton::LeftStick: return "LEFT STICK";
+		case EGamepadButton::RightStick: return "RIGHT STICK";
+		case EGamepadButton::Start: return "START";
+		case EGamepadButton::Back: return "BACK";
+		case EGamepadButton::Guide: return "GUIDE";
+		default: return "UNKNOWN";
+		}
+	}
+
+	/** ゲームパッド軸をUI用の短い物理名へ変える。 */
+	const char* GamepadAxisLabel( EGamepadAxis Axis ) noexcept
+	{
+		switch ( Axis )
+		{
+		case EGamepadAxis::LeftX: return "LEFT X";
+		case EGamepadAxis::LeftY: return "LEFT Y";
+		case EGamepadAxis::RightX: return "RIGHT X";
+		case EGamepadAxis::RightY: return "RIGHT Y";
+		case EGamepadAxis::LeftTrigger: return "LEFT TRIGGER";
+		case EGamepadAxis::RightTrigger: return "RIGHT TRIGGER";
+		default: return "UNKNOWN";
+		}
+	}
+
+	/** ジャンプボタンをUI用のNUL終端文字列へ写す。 */
+	FString MakeJumpButtonLabel( EGamepadButton Button ) noexcept
+	{
+		FString Label( "JUMP PAD: " );
+		Label.TryAppend( FStringView( GamepadButtonLabel( Button ) ) );
+		return Label;
+	}
+
+	/** 前後移動軸をUI用のNUL終端文字列へ写す。 */
+	FString MakeMoveAxisLabel( EGamepadAxis Axis ) noexcept
+	{
+		FString Label( "MOVE PAD: " );
+		Label.TryAppend( FStringView( GamepadAxisLabel( Axis ) ) );
 		return Label;
 	}
 
@@ -446,12 +526,16 @@ void ADemo3DScene::OnEnter() noexcept
 	m_FxaaStatusText = Ui().AddText( "FXAA: ON", FVec2{ kUiLeft + 16.0f, kUiTop + 132.0f } );
 	m_FxaaRebindButton = Ui().AddButton( "CHANGE FXAA KEY", FVec2{ kUiLeft + 16.0f, kUiTop + 158.0f }, FVec2{ kUiWidth - 32.0f, 44.0f } );
 	m_FxaaKeyText = Ui().AddText( "KEYBOARD: F", FVec2{ kUiLeft + 16.0f, kUiTop + 216.0f } );
-	m_SpatialSoundButton = Ui().AddButton( "PLAY 3D SOUND: LEFT", FVec2{ kUiLeft + 16.0f, kUiTop + 246.0f }, FVec2{ kUiWidth - 32.0f, 44.0f } );
-	m_SpatialSoundStatusText = Ui().AddText( "HEADPHONES RECOMMENDED", FVec2{ kUiLeft + 16.0f, kUiTop + 304.0f } );
-	m_WeatherButton = Ui().AddButton( "SET WEATHER: STORM", FVec2{ kUiLeft + 16.0f, kUiTop + 330.0f }, FVec2{ kUiWidth - 32.0f, 44.0f } );
-	m_WeatherStatusText = Ui().AddText( "WEATHER: CLEAR", FVec2{ kUiLeft + 16.0f, kUiTop + 388.0f } );
-	m_GeometryPickButton = Ui().AddButton( "PICK EXACT SHAPE", FVec2{ kUiLeft + 16.0f, kUiTop + 414.0f }, FVec2{ kUiWidth - 32.0f, 44.0f } );
-	m_GeometryPickStatusText = Ui().AddText( "PICK: READY", FVec2{ kUiLeft + 16.0f, kUiTop + 472.0f } );
+	m_GamepadJumpRebindButton = Ui().AddButton( "CHANGE JUMP PAD", FVec2{ kUiLeft + 16.0f, kUiTop + 246.0f }, FVec2{ kUiWidth - 32.0f, 44.0f } );
+	m_GamepadJumpText = Ui().AddText( "JUMP PAD: SOUTH", FVec2{ kUiLeft + 16.0f, kUiTop + 304.0f } );
+	m_GamepadMoveRebindButton = Ui().AddButton( "CHANGE MOVE AXIS", FVec2{ kUiLeft + 16.0f, kUiTop + 330.0f }, FVec2{ kUiWidth - 32.0f, 44.0f } );
+	m_GamepadMoveText = Ui().AddText( "MOVE PAD: LEFT Y", FVec2{ kUiLeft + 16.0f, kUiTop + 388.0f } );
+	m_SpatialSoundButton = Ui().AddButton( "PLAY 3D SOUND: LEFT", FVec2{ kUiLeft + 16.0f, kUiTop + 414.0f }, FVec2{ kUiWidth - 32.0f, 44.0f } );
+	m_SpatialSoundStatusText = Ui().AddText( "HEADPHONES RECOMMENDED", FVec2{ kUiLeft + 16.0f, kUiTop + 472.0f } );
+	m_WeatherButton = Ui().AddButton( "SET WEATHER: STORM", FVec2{ kUiLeft + 16.0f, kUiTop + 498.0f }, FVec2{ kUiWidth - 32.0f, 44.0f } );
+	m_WeatherStatusText = Ui().AddText( "WEATHER: CLEAR", FVec2{ kUiLeft + 16.0f, kUiTop + 556.0f } );
+	m_GeometryPickButton = Ui().AddButton( "PICK EXACT SHAPE", FVec2{ kUiLeft + 16.0f, kUiTop + 582.0f }, FVec2{ kUiWidth - 32.0f, 44.0f } );
+	m_GeometryPickStatusText = Ui().AddText( "PICK: READY", FVec2{ kUiLeft + 16.0f, kUiTop + 640.0f } );
 	m_bNextSpatialSoundRight = false;
 	m_NextWeatherIndex = 0u;
 	SetWeather( EWeatherKind::Clear, 0.0f );
@@ -460,10 +544,10 @@ void ADemo3DScene::OnEnter() noexcept
 
 	// 設定は整数として保存し、EKeyの実キー範囲へ戻せる値だけを採用する。
 	CGameSettingsSubsystem* const Settings = GetSubsystem<CGameSettingsSubsystem>();
-	const i32 StoredValue = Settings != nullptr
+	const i32 StoredKeyValue = Settings != nullptr
 		? Settings->GetInt( FString( kFxaaKeySetting ), static_cast<i32>( kDefaultFxaaKey ) )
 		: static_cast<i32>( kDefaultFxaaKey );
-	EKey LoadedKey = static_cast<EKey>( StoredValue );
+	EKey LoadedKey = static_cast<EKey>( StoredKeyValue );
 	if ( !IsDemoFxaaKey( LoadedKey ) )
 	{
 		LoadedKey = kDefaultFxaaKey;
@@ -473,6 +557,8 @@ void ADemo3DScene::OnEnter() noexcept
 	m_ActionBindings.Clear();
 	m_PreviousActionInput = FActionInput{};
 	m_bSuppressBoundActionPress = false;
+	m_bSuppressJumpButtonUntilReleased = false;
+	m_bSuppressMoveAxisUntilCentered = false;
 	m_bRestoreFreeCameraAfterUpdate = false;
 	m_FxaaKeyRebind.SetCurrentKey( LoadedKey );
 	if ( !m_ActionBindings.ReplaceKeyBinding( kFxaaActionIndex, LoadedKey ) )
@@ -480,6 +566,32 @@ void ADemo3DScene::OnEnter() noexcept
 		ACS_LOG_WARN( "Demo3D: FXAAキー割り当ての初期化に失敗" );
 	}
 	RefreshFxaaKeyText();
+
+	const i32 StoredJumpValue = Settings != nullptr
+		? Settings->GetInt( FString( kJumpButtonSetting ), static_cast<i32>( kDefaultJumpButton ) )
+		: static_cast<i32>( kDefaultJumpButton );
+	const bool bStoredJumpValid = StoredJumpValue >= 0 && StoredJumpValue < static_cast<i32>( EGamepadButton::_Count );
+	EGamepadButton LoadedJumpButton = bStoredJumpValid ? static_cast<EGamepadButton>( StoredJumpValue ) : kDefaultJumpButton;
+	if ( !bStoredJumpValid )
+	{
+		LoadedJumpButton = kDefaultJumpButton;
+		if ( Settings != nullptr ) Settings->SetInt( FString( kJumpButtonSetting ), static_cast<i32>( LoadedJumpButton ) );
+	}
+
+	const i32 StoredMoveValue = Settings != nullptr
+		? Settings->GetInt( FString( kMoveAxisSetting ), static_cast<i32>( kDefaultMoveAxis ) )
+		: static_cast<i32>( kDefaultMoveAxis );
+	const bool bStoredMoveValid = StoredMoveValue >= 0 && StoredMoveValue < static_cast<i32>( EGamepadAxis::_Count );
+	EGamepadAxis LoadedMoveAxis = bStoredMoveValid ? static_cast<EGamepadAxis>( StoredMoveValue ) : kDefaultMoveAxis;
+	if ( !bStoredMoveValid )
+	{
+		LoadedMoveAxis = kDefaultMoveAxis;
+		if ( Settings != nullptr ) Settings->SetInt( FString( kMoveAxisSetting ), static_cast<i32>( LoadedMoveAxis ) );
+	}
+
+	m_JumpGamepadRebind.SetCurrentButton( LoadedJumpButton );
+	m_MoveGamepadRebind.SetCurrentAxis( LoadedMoveAxis );
+	RefreshGamepadRebindText();
 
 	// 反射。磨いた床と金属に、画面に映っているものを映す。
 	// **画面に映っていないものは映せない** ので、切っておく方が素直な場面もある。
@@ -517,6 +629,10 @@ void ADemo3DScene::OnEnter() noexcept
 
 void ADemo3DScene::OnExit() noexcept
 {
+	m_JumpGamepadRebind.CancelCapture();
+	m_MoveGamepadRebind.CancelCapture();
+	m_bSuppressJumpButtonUntilReleased = false;
+	m_bSuppressMoveAxisUntilCentered = false;
 	m_ThirdPersonCharacter.Unbind();
 	m_CharacterActionBindings.Clear();
 	m_PreviousCharacterInput = FActionInput{};
@@ -535,6 +651,9 @@ bool ADemo3DScene::TryInitializeThirdPersonCharacter() noexcept
 
 	CActionBindingTable BuiltBindings;
 	if ( !FThirdPersonCharacter3DControlPreset{}.TryBuildBindings( BuiltBindings ) ) return false;
+
+	const FThirdPersonCharacter3DActionSet Actions;
+	if ( !BuiltBindings.ReplaceGamepadButtonBinding( Actions.JumpAction, m_JumpGamepadRebind.CurrentButton(), kGamepadPlayerIndex ) || !BuiltBindings.ReplaceGamepadAxisBinding( Actions.MoveForwardAxis, m_MoveGamepadRebind.CurrentAxis(), kGamepadPlayerIndex, kGamepadDeadZone, 1.0f ) ) return false;
 
 	ANode* const Character = SpawnThirdPersonCharacter( Graph() );
 	if ( Character == nullptr ) return false;
@@ -577,7 +696,19 @@ void ADemo3DScene::UpdateThirdPersonCharacter( f32 DeltaSeconds ) noexcept
 	if ( !m_ThirdPersonCharacter.IsBound() || m_CharacterNode == nullptr ) return;
 
 	FActionInput CurrentInput = m_CharacterActionBindings.Resolve( m_ActionReader );
-	if ( m_FxaaKeyRebind.IsCapturing() || m_bSuppressBoundActionPress ) CurrentInput = FActionInput{};
+	bool bSuppressInput = IsInputCaptureActive() || m_bSuppressBoundActionPress;
+	if ( m_bSuppressJumpButtonUntilReleased )
+	{
+		if ( m_ActionReader.IsGamepadButtonDown( kGamepadPlayerIndex, m_JumpGamepadRebind.CurrentButton() ) ) bSuppressInput = true;
+		else m_bSuppressJumpButtonUntilReleased = false;
+	}
+	if ( m_bSuppressMoveAxisUntilCentered )
+	{
+		const f32 MoveValue = m_ActionReader.GetGamepadAxis( kGamepadPlayerIndex, m_MoveGamepadRebind.CurrentAxis() );
+		if ( std::isfinite( MoveValue ) && std::abs( MoveValue ) >= kGamepadDeadZone ) bSuppressInput = true;
+		else m_bSuppressMoveAxisUntilCentered = false;
+	}
+	if ( bSuppressInput ) CurrentInput = FActionInput{};
 	m_ThirdPersonCharacter.Update( CurrentInput, m_PreviousCharacterInput, DeltaSeconds );
 	m_PreviousCharacterInput = CurrentInput;
 }
@@ -612,16 +743,35 @@ void ADemo3DScene::OnUpdate( f32 DeltaSeconds ) noexcept
 		m_bRestoreFreeCameraAfterUpdate = false;
 	}
 
+	// 既に待機中の実機入力を先に処理する。UIを決定した同じ押下を割り当てへ使わないため、
+	// 新しい待機の開始はこの処理より後に行う。
+	UpdateGamepadRebinding();
+	const bool bFxaaRebindPressed = Ui().ConsumeButtonPress( m_FxaaRebindButton );
+	const bool bJumpRebindPressed = Ui().ConsumeButtonPress( m_GamepadJumpRebindButton );
+	const bool bMoveRebindPressed = Ui().ConsumeButtonPress( m_GamepadMoveRebindButton );
+
 	// キー変更ボタンは状態を開始するだけ。次のキーはOnEventで明示的に1件ずつ処理する。
-	if ( Ui().ConsumeButtonPress( m_FxaaRebindButton ) && m_FxaaKeyRebind.BeginCapture( EKey::Escape ) )
+	if ( !IsInputCaptureActive() && bFxaaRebindPressed && m_FxaaKeyRebind.BeginCapture( EKey::Escape ) )
 	{
 		m_bFreeCameraWasEnabledBeforeCapture = FreeCameraEnabled();
 		SetFreeCameraEnabled( false );
 		RefreshFxaaKeyText();
 	}
+	if ( !IsInputCaptureActive() && bJumpRebindPressed && m_JumpGamepadRebind.BeginButtonCapture() )
+	{
+		m_bFreeCameraWasEnabledBeforeCapture = FreeCameraEnabled();
+		SetFreeCameraEnabled( false );
+		RefreshGamepadRebindText();
+	}
+	if ( !IsInputCaptureActive() && bMoveRebindPressed && m_MoveGamepadRebind.BeginAxisCapture() )
+	{
+		m_bFreeCameraWasEnabledBeforeCapture = FreeCameraEnabled();
+		SetFreeCameraEnabled( false );
+		RefreshGamepadRebindText();
+	}
 
 	const FActionInput CurrentActionInput = m_ActionBindings.Resolve( m_ActionReader );
-	bool bBoundActionPressed = !m_FxaaKeyRebind.IsCapturing()
+	bool bBoundActionPressed = !IsInputCaptureActive()
 		&& CurrentActionInput.IsDown( kFxaaActionIndex )
 		&& !m_PreviousActionInput.IsDown( kFxaaActionIndex );
 	m_PreviousActionInput = CurrentActionInput;
@@ -683,6 +833,18 @@ void ADemo3DScene::OnUpdate( f32 DeltaSeconds ) noexcept
 
 void ADemo3DScene::OnEvent( const FEvent& Event ) noexcept
 {
+	if ( Event.type == EEventType::KeyPressed && Event.key.key == EKey::Escape )
+	{
+		const bool bCancelledButton = m_JumpGamepadRebind.CancelCapture();
+		const bool bCancelledAxis = m_MoveGamepadRebind.CancelCapture();
+		if ( bCancelledButton || bCancelledAxis )
+		{
+			// 基底場面が同じEscapeを終了操作へ使い終えるまで自由カメラを止めておく。
+			m_bRestoreFreeCameraAfterUpdate = true;
+			RefreshGamepadRebindText();
+		}
+	}
+
 	if ( m_FxaaKeyRebind.IsCapturing() && Event.type == EEventType::KeyPressed )
 	{
 		const EKey PreviousKey = m_FxaaKeyRebind.CurrentKey();
@@ -738,6 +900,94 @@ void ADemo3DScene::RefreshFxaaKeyText() noexcept
 	SetUiTextIfChanged( Ui(), m_FxaaRebindButton, "CHANGE FXAA KEY" );
 	const FString KeyLabel = MakeKeyLabel( m_FxaaKeyRebind.CurrentKey() );
 	SetUiTextIfChanged( Ui(), m_FxaaKeyText, KeyLabel.Data() );
+}
+
+
+void ADemo3DScene::RefreshGamepadRebindText() noexcept
+{
+	if ( m_JumpGamepadRebind.IsCapturing() )
+	{
+		SetUiTextIfChanged( Ui(), m_GamepadJumpRebindButton, "PRESS PAD BUTTON..." );
+		SetUiTextIfChanged( Ui(), m_GamepadJumpText, "ESC: CANCEL" );
+	}
+	else
+	{
+		SetUiTextIfChanged( Ui(), m_GamepadJumpRebindButton, "CHANGE JUMP PAD" );
+		const FString JumpLabel = MakeJumpButtonLabel( m_JumpGamepadRebind.CurrentButton() );
+		SetUiTextIfChanged( Ui(), m_GamepadJumpText, JumpLabel.Data() );
+	}
+
+	if ( m_MoveGamepadRebind.IsCapturing() )
+	{
+		SetUiTextIfChanged( Ui(), m_GamepadMoveRebindButton, "MOVE ANY PAD AXIS" );
+		SetUiTextIfChanged( Ui(), m_GamepadMoveText, "ESC: CANCEL" );
+	}
+	else
+	{
+		SetUiTextIfChanged( Ui(), m_GamepadMoveRebindButton, "CHANGE MOVE AXIS" );
+		const FString MoveLabel = MakeMoveAxisLabel( m_MoveGamepadRebind.CurrentAxis() );
+		SetUiTextIfChanged( Ui(), m_GamepadMoveText, MoveLabel.Data() );
+	}
+}
+
+
+void ADemo3DScene::UpdateGamepadRebinding() noexcept
+{
+	const FThirdPersonCharacter3DActionSet Actions;
+	if ( m_JumpGamepadRebind.CaptureKind() == FActionGamepadRebindState::ECaptureKind::Button )
+	{
+		EGamepadButton PressedButton = EGamepadButton::_Count;
+		if ( !m_ActionReader.TryReadPressedGamepadButton( kGamepadPlayerIndex, PressedButton ) ) return;
+
+		const EGamepadButton PreviousButton = m_JumpGamepadRebind.CurrentButton();
+		if ( m_JumpGamepadRebind.HandlePressedButton( PressedButton ) != FActionGamepadRebindState::EResult::Applied ) return;
+		const EGamepadButton AppliedButton = m_JumpGamepadRebind.CurrentButton();
+		if ( !m_CharacterActionBindings.ReplaceGamepadButtonBinding( Actions.JumpAction, AppliedButton, kGamepadPlayerIndex ) )
+		{
+			m_JumpGamepadRebind.SetCurrentButton( PreviousButton );
+			ACS_LOG_WARN( "Demo3D: ジャンプボタン割り当てを適用できなかった" );
+		}
+		else
+		{
+			if ( CGameSettingsSubsystem* const Settings = GetSubsystem<CGameSettingsSubsystem>() ) Settings->SetInt( FString( kJumpButtonSetting ), static_cast<i32>( AppliedButton ) );
+			m_bSuppressJumpButtonUntilReleased = true;
+		}
+		SetFreeCameraEnabled( m_bFreeCameraWasEnabledBeforeCapture );
+		RefreshGamepadRebindText();
+		return;
+	}
+
+	if ( m_MoveGamepadRebind.CaptureKind() != FActionGamepadRebindState::ECaptureKind::Axis ) return;
+	if ( !m_MoveGamepadRebind.IsAxisCaptureReady() )
+	{
+		if ( m_ActionReader.AreGamepadAxesCentered( kGamepadPlayerIndex, kGamepadAxisCenterThreshold ) ) m_MoveGamepadRebind.ConfirmAxesCentered();
+		return;
+	}
+
+	EGamepadAxis ActiveAxis = EGamepadAxis::_Count;
+	if ( !m_ActionReader.TryReadActiveGamepadAxis( kGamepadPlayerIndex, kGamepadAxisCaptureThreshold, ActiveAxis ) ) return;
+
+	const EGamepadAxis PreviousAxis = m_MoveGamepadRebind.CurrentAxis();
+	if ( m_MoveGamepadRebind.HandleActiveAxis( ActiveAxis ) != FActionGamepadRebindState::EResult::Applied ) return;
+	const EGamepadAxis AppliedAxis = m_MoveGamepadRebind.CurrentAxis();
+	if ( !m_CharacterActionBindings.ReplaceGamepadAxisBinding( Actions.MoveForwardAxis, AppliedAxis, kGamepadPlayerIndex, kGamepadDeadZone, 1.0f ) )
+	{
+		m_MoveGamepadRebind.SetCurrentAxis( PreviousAxis );
+		ACS_LOG_WARN( "Demo3D: 前後移動軸割り当てを適用できなかった" );
+	}
+	else
+	{
+		if ( CGameSettingsSubsystem* const Settings = GetSubsystem<CGameSettingsSubsystem>() ) Settings->SetInt( FString( kMoveAxisSetting ), static_cast<i32>( AppliedAxis ) );
+		m_bSuppressMoveAxisUntilCentered = true;
+	}
+	SetFreeCameraEnabled( m_bFreeCameraWasEnabledBeforeCapture );
+	RefreshGamepadRebindText();
+}
+
+
+bool ADemo3DScene::IsInputCaptureActive() const noexcept
+{
+	return m_FxaaKeyRebind.IsCapturing() || m_JumpGamepadRebind.IsCapturing() || m_MoveGamepadRebind.IsCapturing();
 }
 
 

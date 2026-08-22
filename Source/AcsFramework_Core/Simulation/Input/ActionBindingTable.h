@@ -73,6 +73,28 @@ public:
 	bool BindGamepadButton( u32 ActionIndex, EGamepadButton Button, u32 PlayerIndex = 0u ) noexcept;
 
 	/**
+	 * 指定プレイヤーのゲームパッドボタン割り当てを1つへ置き換える。
+	 *
+	 * @details 同じアクションとプレイヤーに複数あれば1つへまとめる。キーボードと別プレイヤーの
+	 * 割り当ては維持する。新規追加時に領域を確保できなければ表は変えない。
+	 * @param ActionIndex アクション番号。
+	 * @param Button 新しく割り当てるボタン。
+	 * @param PlayerIndex 何番目のパッドか。
+	 * @return 置き換えられたらtrue。
+	 */
+	bool ReplaceGamepadButtonBinding( u32 ActionIndex, EGamepadButton Button, u32 PlayerIndex = 0u ) noexcept;
+
+	/**
+	 * 指定プレイヤーへ最初に割り当てられたゲームパッドボタンを返す。
+	 *
+	 * @param ActionIndex アクション番号。
+	 * @param PlayerIndex 何番目のパッドか。
+	 * @param OutBinding 見つかった割り当て。見つからない場合は変更しない。
+	 * @return ゲームパッドボタン割り当てが見つかればtrue。
+	 */
+	bool TryGetGamepadButtonBinding( u32 ActionIndex, u32 PlayerIndex, FActionButtonBinding& OutBinding ) const noexcept;
+
+	/**
 	 * キー 2 つで軸を作る。
 	 *
 	 * @details 両方押されていれば 0 になる (打ち消し合う)。
@@ -94,6 +116,30 @@ public:
 	 * @return 足せたら true。
 	 */
 	bool BindGamepadAxis( u32 AxisIndex, EGamepadAxis Axis, u32 PlayerIndex = 0u, f32 DeadZone = 0.15f, f32 Scale = 1.0f ) noexcept;
+
+	/**
+	 * 指定プレイヤーのゲームパッド軸割り当てを1つへ置き換える。
+	 *
+	 * @details 同じ軸番号とプレイヤーに複数あれば1つへまとめる。キーボードと別プレイヤーの
+	 * 割り当ては維持する。新規追加時に領域を確保できなければ表は変えない。
+	 * @param AxisIndex アクション入力の軸番号。
+	 * @param Axis 新しく割り当てるパッドの軸。
+	 * @param PlayerIndex 何番目のパッドか。
+	 * @param DeadZone これを下回る入力を0にする。
+	 * @param Scale 得られた値へ掛ける倍率。
+	 * @return 置き換えられたらtrue。
+	 */
+	bool ReplaceGamepadAxisBinding( u32 AxisIndex, EGamepadAxis Axis, u32 PlayerIndex = 0u, f32 DeadZone = 0.15f, f32 Scale = 1.0f ) noexcept;
+
+	/**
+	 * 指定プレイヤーへ最初に割り当てられたゲームパッド軸を返す。
+	 *
+	 * @param AxisIndex アクション入力の軸番号。
+	 * @param PlayerIndex 何番目のパッドか。
+	 * @param OutBinding 見つかった割り当て。見つからない場合は変更しない。
+	 * @return ゲームパッド軸割り当てが見つかればtrue。
+	 */
+	bool TryGetGamepadAxisBinding( u32 AxisIndex, u32 PlayerIndex, FActionAxisBinding& OutBinding ) const noexcept;
 
 	/**
 	 * 装置を読んで 1 ティックぶんの入力を作る。

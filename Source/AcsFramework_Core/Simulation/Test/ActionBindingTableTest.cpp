@@ -2,6 +2,8 @@
 #include "AcsFramework_Core/Simulation/Input/ActionBindingTable.h"
 #include "Common/Test/TestHarness.h"
 
+#include <limits>
+
 namespace
 {
 	/** 押している状態を直接指定できる、装置の代わり。 */
@@ -151,10 +153,16 @@ void RunActionBindingTableTests( CTestHarness& Harness )
 		Harness.Check( !Table.BindKey( 0u, EKey::Unknown ), "Unknown キーは弾く" );
 		Harness.Check( !Table.BindKey( 0u, EKey::_Count ), "キーの番兵値は弾く" );
 		Harness.Check( !Table.BindGamepadButton( 0u, EGamepadButton::_Count ), "パッドボタンの番兵値は弾く" );
+		Harness.Check( !Table.BindGamepadButton( 0u, EGamepadButton::South, 4u ), "範囲外プレイヤーは弾く" );
 		Harness.Check( !Table.BindAxisKeys( kActionAxisCount, EKey::A, EKey::D ), "範囲外の軸は弾く" );
 		Harness.Check( !Table.BindAxisKeys( 0u, EKey::Unknown, EKey::Unknown ), "両方 Unknown は弾く" );
 		Harness.Check( !Table.BindAxisKeys( 0u, EKey::_Count, EKey::D ), "軸キーの番兵値は弾く" );
 		Harness.Check( !Table.BindGamepadAxis( 0u, EGamepadAxis::_Count ), "パッド軸の番兵値は弾く" );
+		Harness.Check( !Table.BindGamepadAxis( 0u, EGamepadAxis::LeftX, 4u ), "軸の範囲外プレイヤーは弾く" );
+		Harness.Check( !Table.BindGamepadAxis( 0u, EGamepadAxis::LeftX, 0u, -0.1f ), "負の遊びは弾く" );
+		Harness.Check( !Table.BindGamepadAxis( 0u, EGamepadAxis::LeftX, 0u, 1.1f ), "1を越える遊びは弾く" );
+		Harness.Check( !Table.BindGamepadAxis( 0u, EGamepadAxis::LeftX, 0u, std::numeric_limits<f32>::quiet_NaN() ), "非有限の遊びは弾く" );
+		Harness.Check( !Table.BindGamepadAxis( 0u, EGamepadAxis::LeftX, 0u, 0.15f, std::numeric_limits<f32>::infinity() ), "非有限の倍率は弾く" );
 		Harness.CheckEqualU64( Table.GetButtonBindingCount(), 0u, "弾いたぶんは入っていない" );
 		Harness.CheckEqualU64( Table.GetAxisBindingCount(), 0u, "軸も入っていない" );
 	}
@@ -197,5 +205,53 @@ void RunActionBindingTableTests( CTestHarness& Harness )
 		Harness.Check( !Table.ReplaceKeyBinding( 2u, EKey::_Count ), "番兵値への置換は拒否する" );
 		Harness.Check( !Table.ReplaceKeyBinding( kActionButtonCount, EKey::A ), "範囲外アクションへの置換は拒否する" );
 		Harness.CheckEqualU64( Table.GetButtonBindingCount(), CountBeforeInvalid, "拒否した置換で表を変えない" );
+	}
+
+	Harness.BeginSuite( "CActionBindingTable / ゲームパッドボタン割り当ての置換" );
+
+	{
+		CActionBindingTable Table;
+		Table.BindKey( 2u, EKey::Space );
+		Table.BindGamepadButton( 2u, EGamepadButton::South, 0u );
+		Table.BindGamepadButton( 2u, EGamepadButton::East, 0u );
+		Table.BindGamepadButton( 2u, EGamepadButton::North, 1u );
+
+		Harness.Check( Table.ReplaceGamepadButtonBinding( 2u, EGamepadButton::West, 0u ), "指定プレイヤーのボタンを置き換えられる" );
+		Harness.CheckEqualU64( Table.GetButtonBindingCount(), 3u, "同じプレイヤーの余分なボタンだけをまとめる" );
+
+		FActionButtonBinding Found;
+		Harness.Check( Table.TryGetGamepadButtonBinding( 2u, 0u, Found ), "置換後のボタンを取得できる" );
+		Harness.Check( Found.Button == EGamepadButton::West && Found.PlayerIndex == 0u, "指定プレイヤーへ置換値を保存する" );
+		Harness.Check( Table.TryGetGamepadButtonBinding( 2u, 1u, Found ), "別プレイヤーのボタンを取得できる" );
+		Harness.Check( Found.Button == EGamepadButton::North, "別プレイヤーの割り当てを維持する" );
+
+		Found.Button = EGamepadButton::Back;
+		Harness.Check( !Table.TryGetGamepadButtonBinding( 7u, 0u, Found ), "未割り当てボタンは見つからない" );
+		Harness.Check( Found.Button == EGamepadButton::Back, "見つからないとき出力を変えない" );
+		Harness.Check( !Table.ReplaceGamepadButtonBinding( 2u, EGamepadButton::_Count, 0u ), "無効ボタンへの置換を拒否する" );
+	}
+
+	Harness.BeginSuite( "CActionBindingTable / ゲームパッド軸割り当ての置換" );
+
+	{
+		CActionBindingTable Table;
+		Table.BindAxisKeys( 1u, EKey::S, EKey::W );
+		Table.BindGamepadAxis( 1u, EGamepadAxis::LeftY, 0u, 0.15f, 1.0f );
+		Table.BindGamepadAxis( 1u, EGamepadAxis::RightY, 0u, 0.2f, -1.0f );
+		Table.BindGamepadAxis( 1u, EGamepadAxis::LeftX, 1u, 0.1f, 0.5f );
+
+		Harness.Check( Table.ReplaceGamepadAxisBinding( 1u, EGamepadAxis::RightX, 0u, 0.3f, -1.0f ), "指定プレイヤーの軸を置き換えられる" );
+		Harness.CheckEqualU64( Table.GetAxisBindingCount(), 3u, "同じプレイヤーの余分な軸だけをまとめる" );
+
+		FActionAxisBinding Found;
+		Harness.Check( Table.TryGetGamepadAxisBinding( 1u, 0u, Found ), "置換後の軸を取得できる" );
+		Harness.Check( Found.Axis == EGamepadAxis::RightX && Found.DeadZone == 0.3f && Found.Scale == -1.0f, "軸と調整値をまとめて置換する" );
+		Harness.Check( Table.TryGetGamepadAxisBinding( 1u, 1u, Found ), "別プレイヤーの軸を取得できる" );
+		Harness.Check( Found.Axis == EGamepadAxis::LeftX && Found.Scale == 0.5f, "別プレイヤーの軸を維持する" );
+
+		Found.Axis = EGamepadAxis::LeftTrigger;
+		Harness.Check( !Table.TryGetGamepadAxisBinding( 7u, 0u, Found ), "未割り当て軸は見つからない" );
+		Harness.Check( Found.Axis == EGamepadAxis::LeftTrigger, "見つからないとき軸出力を変えない" );
+		Harness.Check( !Table.ReplaceGamepadAxisBinding( 1u, EGamepadAxis::_Count, 0u ), "無効軸への置換を拒否する" );
 	}
 }

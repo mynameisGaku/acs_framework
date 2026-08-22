@@ -6,6 +6,7 @@
 #include "AcsFramework_Core/Scene/Collision3D/SceneCollision3D.h"
 #include "AcsFramework_Core/Scene/Weather3D/Weather3DScene.h"
 #include "AcsFramework_Core/Simulation/Input/ActionBindingTable.h"
+#include "AcsFramework_Core/Simulation/Input/ActionGamepadRebindState.h"
 #include "AcsFramework_Core/Simulation/Input/ActionKeyRebindState.h"
 #include "AcsFramework_Core/Simulation/Input/DeviceActionReader.h"
 
@@ -78,6 +79,15 @@ private:
 
 	/** 現在のキーまたは入力待ちをUIへ反映する。 */
 	void RefreshFxaaKeyText() noexcept;
+
+	/** 現在のジャンプボタン、前後移動軸、入力待ちをUIへ反映する。 */
+	void RefreshGamepadRebindText() noexcept;
+
+	/** 実機から押下開始ボタンまたは大きく動いた軸を1件読み、割り当てと保存へ反映する。 */
+	void UpdateGamepadRebinding() noexcept;
+
+	/** キー、ゲームパッドボタン、ゲームパッド軸のいずれかを待っていればtrueを返す。 */
+	bool IsInputCaptureActive() const noexcept;
 
 	/**
 	 * 現在の3Dカメラから、空間音響が使う聴く位置と向きを作る。
@@ -169,6 +179,18 @@ private:
 	/** 現在のキーボード割り当てまたは入力待ちを示す文字。 */
 	u32 m_FxaaKeyText = 0u;
 
+	/** 第三者視点ジャンプのゲームパッドボタンを変更するボタン。 */
+	u32 m_GamepadJumpRebindButton = 0u;
+
+	/** 現在のジャンプボタンまたは入力待ちを示す文字。 */
+	u32 m_GamepadJumpText = 0u;
+
+	/** 第三者視点前後移動のゲームパッド軸を変更するボタン。 */
+	u32 m_GamepadMoveRebindButton = 0u;
+
+	/** 現在の前後移動軸または入力待ちを示す文字。 */
+	u32 m_GamepadMoveText = 0u;
+
 	/** 左右定位を交互に試すボタン。 */
 	u32 m_SpatialSoundButton = 0u;
 
@@ -202,8 +224,20 @@ private:
 	/** FXAA操作の現在キーと、次のキーを待つ状態。 */
 	FActionKeyRebindState m_FxaaKeyRebind;
 
+	/** 第三者視点ジャンプの現在ボタンと、次のボタンを待つ状態。 */
+	FActionGamepadRebindState m_JumpGamepadRebind;
+
+	/** 第三者視点前後移動の現在軸と、次の軸を待つ状態。 */
+	FActionGamepadRebindState m_MoveGamepadRebind;
+
 	/** 割り当て確定に使った押下をFXAA切り替えへ重ねて使わないための印。 */
 	bool m_bSuppressBoundActionPress = false;
+
+	/** 割り当て確定に使ったジャンプボタンを、離すまで移動処理へ渡さないための印。 */
+	bool m_bSuppressJumpButtonUntilReleased = false;
+
+	/** 割り当て確定に使った移動軸を、中立へ戻すまで移動処理へ渡さないための印。 */
+	bool m_bSuppressMoveAxisUntilCentered = false;
 
 	/** 取消キーを基底場面が処理し終えた後に自由カメラを戻すための印。 */
 	bool m_bRestoreFreeCameraAfterUpdate = false;

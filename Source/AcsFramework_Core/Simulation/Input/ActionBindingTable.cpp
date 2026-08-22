@@ -1,8 +1,13 @@
 // SPDX-License-Identifier: Apache-2.0
 #include "AcsFramework_Core/Simulation/Input/ActionBindingTable.h"
 
+#include <cmath>
+
 namespace
 {
+	/** ACSが同時に扱うゲームパッド数。 */
+	constexpr u32 kGamepadPlayerCount = 4u;
+
 	/** 実キーとして割り当てられる値かを返す。 */
 	bool IsBindableKey( EKey Key ) noexcept
 	{
@@ -18,6 +23,18 @@ namespace
 	f32 AbsoluteOf( f32 Value ) noexcept
 	{
 		return ( Value < 0.0f ) ? -Value : Value;
+	}
+
+	/** ゲームパッドのボタン指定が利用可能か返す。 */
+	bool IsBindableGamepadButton( EGamepadButton Button, u32 PlayerIndex ) noexcept
+	{
+		return Button < EGamepadButton::_Count && PlayerIndex < kGamepadPlayerCount;
+	}
+
+	/** ゲームパッドの軸指定と調整値が利用可能か返す。 */
+	bool IsBindableGamepadAxis( EGamepadAxis Axis, u32 PlayerIndex, f32 DeadZone, f32 Scale ) noexcept
+	{
+		return Axis < EGamepadAxis::_Count && PlayerIndex < kGamepadPlayerCount && std::isfinite( DeadZone ) && DeadZone >= 0.0f && DeadZone <= 1.0f && std::isfinite( Scale );
 	}
 }
 
@@ -86,7 +103,7 @@ bool CActionBindingTable::TryGetKeyBinding( u32 ActionIndex, EKey& OutKey ) cons
 
 bool CActionBindingTable::BindGamepadButton( u32 ActionIndex, EGamepadButton Button, u32 PlayerIndex ) noexcept
 {
-	if ( ActionIndex >= kActionButtonCount || Button >= EGamepadButton::_Count ) return false;
+	if ( ActionIndex >= kActionButtonCount || !IsBindableGamepadButton( Button, PlayerIndex ) ) return false;
 
 	FActionButtonBinding Binding;
 	Binding.ActionIndex = ActionIndex;
@@ -95,6 +112,52 @@ bool CActionBindingTable::BindGamepadButton( u32 ActionIndex, EGamepadButton But
 	Binding.bUseGamepad = true;
 
 	return m_ButtonBindings.TryAdd( Binding );
+}
+
+
+bool CActionBindingTable::ReplaceGamepadButtonBinding( u32 ActionIndex, EGamepadButton Button, u32 PlayerIndex ) noexcept
+{
+	if ( ActionIndex >= kActionButtonCount || !IsBindableGamepadButton( Button, PlayerIndex ) ) return false;
+
+	usize FirstIndex = m_ButtonBindings.Num();
+	for ( usize Index = 0u; Index < m_ButtonBindings.Num(); ++Index )
+	{
+		const FActionButtonBinding& Binding = m_ButtonBindings[Index];
+		if ( Binding.bUseGamepad && Binding.ActionIndex == ActionIndex && Binding.PlayerIndex == PlayerIndex )
+		{
+			FirstIndex = Index;
+			break;
+		}
+	}
+
+	if ( FirstIndex == m_ButtonBindings.Num() ) return BindGamepadButton( ActionIndex, Button, PlayerIndex );
+
+	m_ButtonBindings[FirstIndex].Button = Button;
+	for ( usize Index = m_ButtonBindings.Num(); Index > FirstIndex + 1u; --Index )
+	{
+		const usize CandidateIndex = Index - 1u;
+		const FActionButtonBinding& Binding = m_ButtonBindings[CandidateIndex];
+		if ( Binding.bUseGamepad && Binding.ActionIndex == ActionIndex && Binding.PlayerIndex == PlayerIndex ) m_ButtonBindings.RemoveAt( CandidateIndex );
+	}
+
+	return true;
+}
+
+
+bool CActionBindingTable::TryGetGamepadButtonBinding( u32 ActionIndex, u32 PlayerIndex, FActionButtonBinding& OutBinding ) const noexcept
+{
+	if ( ActionIndex >= kActionButtonCount || PlayerIndex >= kGamepadPlayerCount ) return false;
+
+	for ( usize Index = 0u; Index < m_ButtonBindings.Num(); ++Index )
+	{
+		const FActionButtonBinding& Binding = m_ButtonBindings[Index];
+		if ( !Binding.bUseGamepad || Binding.ActionIndex != ActionIndex || Binding.PlayerIndex != PlayerIndex ) continue;
+
+		OutBinding = Binding;
+		return true;
+	}
+
+	return false;
 }
 
 
@@ -117,7 +180,7 @@ bool CActionBindingTable::BindAxisKeys( u32 AxisIndex, EKey NegativeKey, EKey Po
 
 bool CActionBindingTable::BindGamepadAxis( u32 AxisIndex, EGamepadAxis Axis, u32 PlayerIndex, f32 DeadZone, f32 Scale ) noexcept
 {
-	if ( AxisIndex >= kActionAxisCount || Axis >= EGamepadAxis::_Count ) return false;
+	if ( AxisIndex >= kActionAxisCount || !IsBindableGamepadAxis( Axis, PlayerIndex, DeadZone, Scale ) ) return false;
 
 	FActionAxisBinding Binding;
 	Binding.AxisIndex = AxisIndex;
@@ -128,6 +191,55 @@ bool CActionBindingTable::BindGamepadAxis( u32 AxisIndex, EGamepadAxis Axis, u32
 	Binding.bUseGamepad = true;
 
 	return m_AxisBindings.TryAdd( Binding );
+}
+
+
+bool CActionBindingTable::ReplaceGamepadAxisBinding( u32 AxisIndex, EGamepadAxis Axis, u32 PlayerIndex, f32 DeadZone, f32 Scale ) noexcept
+{
+	if ( AxisIndex >= kActionAxisCount || !IsBindableGamepadAxis( Axis, PlayerIndex, DeadZone, Scale ) ) return false;
+
+	usize FirstIndex = m_AxisBindings.Num();
+	for ( usize Index = 0u; Index < m_AxisBindings.Num(); ++Index )
+	{
+		const FActionAxisBinding& Binding = m_AxisBindings[Index];
+		if ( Binding.bUseGamepad && Binding.AxisIndex == AxisIndex && Binding.PlayerIndex == PlayerIndex )
+		{
+			FirstIndex = Index;
+			break;
+		}
+	}
+
+	if ( FirstIndex == m_AxisBindings.Num() ) return BindGamepadAxis( AxisIndex, Axis, PlayerIndex, DeadZone, Scale );
+
+	FActionAxisBinding& First = m_AxisBindings[FirstIndex];
+	First.Axis = Axis;
+	First.DeadZone = DeadZone;
+	First.Scale = Scale;
+	for ( usize Index = m_AxisBindings.Num(); Index > FirstIndex + 1u; --Index )
+	{
+		const usize CandidateIndex = Index - 1u;
+		const FActionAxisBinding& Binding = m_AxisBindings[CandidateIndex];
+		if ( Binding.bUseGamepad && Binding.AxisIndex == AxisIndex && Binding.PlayerIndex == PlayerIndex ) m_AxisBindings.RemoveAt( CandidateIndex );
+	}
+
+	return true;
+}
+
+
+bool CActionBindingTable::TryGetGamepadAxisBinding( u32 AxisIndex, u32 PlayerIndex, FActionAxisBinding& OutBinding ) const noexcept
+{
+	if ( AxisIndex >= kActionAxisCount || PlayerIndex >= kGamepadPlayerCount ) return false;
+
+	for ( usize Index = 0u; Index < m_AxisBindings.Num(); ++Index )
+	{
+		const FActionAxisBinding& Binding = m_AxisBindings[Index];
+		if ( !Binding.bUseGamepad || Binding.AxisIndex != AxisIndex || Binding.PlayerIndex != PlayerIndex ) continue;
+
+		OutBinding = Binding;
+		return true;
+	}
+
+	return false;
 }
 
 
