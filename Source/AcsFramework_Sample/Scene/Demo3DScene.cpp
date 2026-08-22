@@ -351,6 +351,7 @@ void ADemo3DScene::OnEnter() noexcept
 	if ( !InteractionFocus().SetParams( InteractionParams ) ) ACS_LOG_WARN( "Demo3D: 視線フォーカス距離を設定できなかった" );
 	m_Spinner = nullptr;
 	m_Mover = nullptr;
+	m_DynamicBillboard = nullptr;
 	m_WaterSurfaceId = FNodeId{};
 	m_ThirdPersonCharacter.Unbind();
 	m_CharacterCollision = MakeUnique<CSceneCollision3D>( Graph() );
@@ -885,6 +886,8 @@ void ADemo3DScene::OnUpdate( f32 DeltaSeconds ) noexcept
 
 void ADemo3DScene::OnEvent( const FEvent& Event ) noexcept
 {
+	if ( Event.type == EEventType::KeyPressed && Event.key.key == EKey::B && !IsInputCaptureActive() ) ToggleDemoBillboard3D();
+
 	if ( Event.type == EEventType::KeyPressed && Event.key.key == EKey::Enter && !IsInputCaptureActive() ) m_bInteractionRequested = true;
 
 	if ( Event.type == EEventType::KeyPressed && Event.key.key == EKey::Escape )
@@ -1123,6 +1126,25 @@ void ADemo3DScene::AddDemoWaterRipple() noexcept
 	m_WaterRippleIndex = ( m_WaterRippleIndex + 1u ) % kWaterRipplePointCount;
 	const FVec3 Point{ kWaterPosition.x + Offset.x, kWaterPosition.y, kWaterPosition.z + Offset.y };
 	AddWaterDisturbance( m_WaterSurfaceId, Point, 0.24f, 0.30f );
+}
+
+
+void ADemo3DScene::ToggleDemoBillboard3D() noexcept
+{
+	if ( m_DynamicBillboard != nullptr )
+	{
+		const FNodeId NodeId = m_DynamicBillboard->Id();
+		(void)Billboards().Remove( *m_DynamicBillboard );
+		if ( !Graph().Destroy( NodeId ) ) ACS_LOG_WARN( "Demo3D: 動的ビルボードを破棄予定にできなかった" );
+		m_DynamicBillboard = nullptr;
+		return;
+	}
+
+	FSprite3DSpawnParams Params = FSprite3DSpawnParams::FromImage(
+		FStringView( "circle.png" ), FVec3{ 2.4f, 2.35f, 2.4f }, FVec2{ 0.72f, 0.72f } );
+	Params.Name = FStringView( "DynamicImageMarker" );
+	m_DynamicBillboard = SpawnBillboard3D( Params );
+	if ( m_DynamicBillboard == nullptr ) ACS_LOG_WARN( "Demo3D: 実行中の3D画像板を追加できなかった" );
 }
 
 

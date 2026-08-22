@@ -106,6 +106,9 @@ private:
 	/** 固定された次の位置へ、ACSの動的な水面波紋を1つ追加する。 */
 	void AddDemoWaterRipple() noexcept;
 
+	/** Bキーで3D画像板を実行中に追加または破棄し、資源同期を見せる。 */
+	void ToggleDemoBillboard3D() noexcept;
+
 	/** デモ用の次天候へ遷移し、ボタンの行き先を進める。 */
 	void AdvanceDemoWeather() noexcept;
 
@@ -133,6 +136,9 @@ private:
 
 	/** 往復させる取り込みモデル。所有はしない (木が持っている)。 */
 	ANode* m_Mover = nullptr;
+
+	/** Bキーで追加した3D画像板。所有は場面グラフが持つ。 */
+	ANode* m_DynamicBillboard = nullptr;
 
 	/** 場面グラフより短く所有する、操作キャラクター用の衝突集合。 */
 	TUniquePtr<CSceneCollision3D> m_CharacterCollision;
