@@ -1,4 +1,32 @@
-# 3Dキャラクター移動
+# 第三者視点3Dキャラクター操作
+
+`CThirdPersonCharacter3D`は、カメラ基準の移動、ジャンプ、移動方向への向き変更、ノード追従カメラを
+1回の`Update()`へまとめる。骨付きモデルがある場合だけ、待機・歩き・走り・ジャンプも接続できる。
+
+```cpp
+CSceneCollision3D Collision{ Graph() };
+Collision.TryAddBox( *Floor, FVec3{}, FVec3{ 10.0f, 0.5f, 10.0f }, 0x1u );
+
+CThirdPersonCharacter3D HeroController;
+FThirdPersonCharacter3DParams Params;
+Params.CollisionMask = 0x1u;
+HeroController.Bind( Collision, *this, *Hero, Params );
+HeroController.TryBindAnimation();
+
+FThirdPersonCharacter3DInput Input;
+Input.MoveAxes = FVec2{ MoveX, MoveForward };
+Input.LookAxes = FVec2{ LookX, LookY };
+Input.ZoomAxis = Zoom;
+Input.bJumpRequested = bJumpPressed;
+const FThirdPersonCharacter3DUpdateResult Result = HeroController.Update( Input, DeltaSeconds );
+```
+
+入力装置と時刻は内部取得しない。`FThirdPersonCharacter3DUpdateResult`は視点、移動、向き、追従点、
+任意アニメーションの各段階を分けて返すため、途中まで反映された失敗を隠さない。`Mover()`、
+`OrbitCamera()`、`Animator()`から個別機能も操作でき、たとえば被弾時は
+`HeroController.OrbitCamera().TryShakePreset(EShakePreset::HitImpact)`で揺らせる。
+
+## 移動だけを個別に使う
 
 `CCharacterMover3D`は、希望する世界X/Z速度とジャンプ要求をACSの球型移動計算へ渡し、
 成功した移動だけをシーンノードへ反映する。重力、床への接地、壁沿いの移動、天井、

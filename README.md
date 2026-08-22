@@ -92,19 +92,23 @@ TArray<ANode*> Nearby;
 Collision.TryOverlapSphere(
     FSphere{ HeroNode->World().position, 2.0f }, Nearby, PlayerShape, 0x2u );
 
-// 球中心と希望する世界X/Z速度だけで、床・壁・重力・ジャンプをノードへ反映する
-CCharacterMover3D HeroMover;
-HeroMover.Bind( Collision, *HeroNode, FVec3{ 0.0f, 0.45f, 0.0f } );
-HeroMover.SetCollisionFilter( PlayerShape, 0x2u );
-HeroMover.MoveFromCamera(
-    Camera(), FVec2{ MoveX, MoveForward }, 4.0f, bJumpPressed, DeltaSeconds );
-HeroMover.TurnTowardMovement( 540.0f, DeltaSeconds );
+// 移動、ジャンプ、向き、追従カメラを1回の明示入力で進める
+CThirdPersonCharacter3D HeroController;
+FThirdPersonCharacter3DParams CharacterParams;
+CharacterParams.LocalCollisionCenter = FVec3{ 0.0f, 0.45f, 0.0f };
+CharacterParams.Movement.Radius = 0.45f;
+CharacterParams.SelfShape = PlayerShape;
+CharacterParams.CollisionMask = 0x2u;
+HeroController.Bind( Collision, *this, *HeroNode, CharacterParams );
+HeroController.TryBindAnimation();
 
-// 人物の少し上を追い、明示した視点操作で回る。間の壁には自動で寄る
-CNodeOrbitCamera3D HeroCamera;
-HeroCamera.Bind( *this, *HeroNode );
-HeroCamera.Update( FVec2{ LookX, LookY }, Zoom, DeltaSeconds );
-HeroCamera.TryShakePreset( EShakePreset::HitImpact ); // 被弾時は1行で揺らす
+FThirdPersonCharacter3DInput CharacterInput;
+CharacterInput.MoveAxes = FVec2{ MoveX, MoveForward };
+CharacterInput.LookAxes = FVec2{ LookX, LookY };
+CharacterInput.ZoomAxis = Zoom;
+CharacterInput.bJumpRequested = bJumpPressed;
+HeroController.Update( CharacterInput, DeltaSeconds );
+HeroController.OrbitCamera().TryShakePreset( EShakePreset::HitImpact ); // 被弾時
 
 // 反射・屈折・泡を持つ水面を置き、波紋を起こす
 FWater3DSpawnParams Water;

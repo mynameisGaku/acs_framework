@@ -411,6 +411,12 @@
     <ClCompile Include="Source\AcsFramework_Core\Scene\Character3D\CharacterMover3D.cpp">
       <Filter>Source\AcsFramework_Core\Scene\Character3D</Filter>
     </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Scene\Character3D\ThirdPersonCharacter3D.cpp">
+      <Filter>Source\AcsFramework_Core\Scene\Character3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Scene\Character3D\ThirdPersonCharacter3DInput.cpp">
+      <Filter>Source\AcsFramework_Core\Scene\Character3D</Filter>
+    </ClCompile>
     <ClCompile Include="Source\AcsFramework_Core\Scene\Collision3D\SceneCollision3D.cpp">
       <Filter>Source\AcsFramework_Core\Scene\Collision3D</Filter>
     </ClCompile>
@@ -942,6 +948,18 @@
       <Filter>Source\AcsFramework_Core\Scene\Camera3D</Filter>
     </ClInclude>
     <ClInclude Include="Source\AcsFramework_Core\Scene\Character3D\CharacterMover3D.h">
+      <Filter>Source\AcsFramework_Core\Scene\Character3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Character3D\ThirdPersonCharacter3D.h">
+      <Filter>Source\AcsFramework_Core\Scene\Character3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Character3D\ThirdPersonCharacter3DInput.h">
+      <Filter>Source\AcsFramework_Core\Scene\Character3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Character3D\ThirdPersonCharacter3DParams.h">
+      <Filter>Source\AcsFramework_Core\Scene\Character3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Character3D\ThirdPersonCharacter3DUpdateResult.h">
       <Filter>Source\AcsFramework_Core\Scene\Character3D</Filter>
     </ClInclude>
     <ClInclude Include="Source\AcsFramework_Core\Scene\Collision3D\SceneCollision3D.h">
@@ -1496,6 +1514,9 @@
       <Filter>Source\AcsFramework_Core\Scene\Character3D</Filter>
     </None>
     <None Include="Source\AcsFramework_Core\Scene\Character3D\Test\CharacterMover3DTest.cpp">
+      <Filter>Source\AcsFramework_Core\Scene\Character3D\Test</Filter>
+    </None>
+    <None Include="Source\AcsFramework_Core\Scene\Character3D\Test\ThirdPersonCharacter3DTest.cpp">
       <Filter>Source\AcsFramework_Core\Scene\Character3D\Test</Filter>
     </None>
     <None Include="Source\AcsFramework_Core\Scene\Collision3D\README.md">

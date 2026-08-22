@@ -396,8 +396,13 @@
     <None Include="Source\AcsFramework_Core\Scene\Collision3D\README.md" />
     <None Include="Source\AcsFramework_Core\Scene\Collision3D\Test\SceneCollision3DTest.cpp" />
     <ClInclude Include="Source\AcsFramework_Core\Scene\Character3D\CharacterMover3D.h" />
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Character3D\ThirdPersonCharacter3D.h" />
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Character3D\ThirdPersonCharacter3DInput.h" />
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Character3D\ThirdPersonCharacter3DParams.h" />
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Character3D\ThirdPersonCharacter3DUpdateResult.h" />
     <None Include="Source\AcsFramework_Core\Scene\Character3D\README.md" />
     <None Include="Source\AcsFramework_Core\Scene\Character3D\Test\CharacterMover3DTest.cpp" />
+    <None Include="Source\AcsFramework_Core\Scene\Character3D\Test\ThirdPersonCharacter3DTest.cpp" />
     <ClInclude Include="Source\AcsFramework_Core\Scene\Camera3D\NodeOrbitCamera3D.h" />
     <ClInclude Include="Source\AcsFramework_Core\Scene\Camera3D\NodeOrbitCamera3DParams.h" />
     <None Include="Source\AcsFramework_Core\Scene\Camera3D\README.md" />
@@ -573,6 +578,8 @@
       <ClCompile Include="Source\AcsFramework_Sample\Scene\MinimalScene.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Scene\Collision3D\SceneCollision3D.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Scene\Character3D\CharacterMover3D.cpp" />
+    <ClCompile Include="Source\AcsFramework_Core\Scene\Character3D\ThirdPersonCharacter3D.cpp" />
+    <ClCompile Include="Source\AcsFramework_Core\Scene\Character3D\ThirdPersonCharacter3DInput.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Scene\Camera3D\NodeOrbitCamera3D.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
