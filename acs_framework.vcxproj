@@ -405,6 +405,7 @@
       <None Include="Source\AcsFramework_Core\Scene\Pick3D\README.md" />
       <None Include="Source\AcsFramework_Core\Scene\Pick3D\Test\ScenePickerTest.cpp" />
       <ClInclude Include="Source\AcsFramework_Core\Scene\Interaction3D\InteractionHighlight3DParams.h" />
+      <ClInclude Include="Source\AcsFramework_Core\Scene\Interaction3D\InteractableModel3DSpawner.h" />
       <ClInclude Include="Source\AcsFramework_Core\Scene\Interaction3D\InteractionFocus3D.h" />
       <ClInclude Include="Source\AcsFramework_Core\Scene\Interaction3D\InteractionFocus3DInput.h" />
       <ClInclude Include="Source\AcsFramework_Core\Scene\Interaction3D\InteractionFocus3DParams.h" />
@@ -635,6 +636,7 @@
       <ClCompile Include="Source\AcsFramework_Core\Scene\Pick3D\SceneRay.cpp" />
       <ClCompile Include="Source\AcsFramework_Core\Scene\Pick3D\ScenePicker.cpp" />
       <ClCompile Include="Source\AcsFramework_Core\Scene\Interaction3D\InteractionHighlight3DParams.cpp" />
+      <ClCompile Include="Source\AcsFramework_Core\Scene\Interaction3D\InteractableModel3DSpawner.cpp" />
       <ClCompile Include="Source\AcsFramework_Core\Scene\Interaction3D\InteractionFocus3D.cpp" />
       <ClCompile Include="Source\AcsFramework_Core\Scene\Interaction3D\InteractionFocus3DParams.cpp" />
       <ClCompile Include="Source\AcsFramework_Core\Scene\Interaction3D\InteractionFocus3DTransition.cpp" />

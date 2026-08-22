@@ -2,6 +2,7 @@
 #include "AcsFramework_Core/Scene/Interaction3D/InteractionFocus3D.h"
 #include "AcsFramework_Core/Scene/Interaction3D/InteractionFocus3DInput.h"
 #include "AcsFramework_Core/Scene/Interaction3D/InteractionFocus3DTransition.h"
+#include "AcsFramework_Core/Scene/Interaction3D/InteractableModel3DSpawner.h"
 #include "AcsFramework_Core/Scene/Model3D/Model3DSpawner.h"
 #include "Common/Test/TestHarness.h"
 
@@ -138,5 +139,59 @@ void RunInteractionFocus3DTests( CTestHarness& Harness )
 
 		Focus.Unbind();
 		Harness.Check( !Focus.IsBound(), "退場時に全接続を外す" );
+	}
+
+	Harness.BeginSuite( "CInteractableModel3DSpawner / 生成と操作対象登録を一括化する" );
+
+	{
+		CSceneNodeGraph Graph;
+		CWorldLabel3DLayer Labels;
+		Labels.Bind( Graph );
+
+		CInteractionFocus3D Focus;
+		FInteractionFocus3DParams FocusParams;
+		FocusParams.MaximumDistance = 8.0f;
+		Harness.Check( Focus.Bind( Graph, Labels, FocusParams ),
+			"一括生成先の視線フォーカスを場面へ接続できる" );
+
+		const FModel3DSpawnParams Params = FModel3DSpawnParams::FromPrimitive(
+			EMeshPrimitive3D::Cube, FVec3{ 0.0f, 0.0f, 4.0f } );
+		ANode* const Target = CInteractableModel3DSpawner::SpawnInto(
+			Graph, Focus, Params, FStringView( "ENTER: USE" ), FVec3{} );
+		Harness.Check( Target != nullptr, "立方体の生成と操作対象登録を1回で完了する" );
+		Harness.CheckEqualU64( Graph.RegisteredCount(), 2u,
+			"rootと生成モデルだけを場面へ登録する" );
+		Harness.CheckEqualU64( Focus.TargetCount(), 1u,
+			"生成モデルを操作対象として1件登録する" );
+
+		if ( Target != nullptr )
+		{
+			const FInteractionFocus3DUpdateResult Result = Focus.Update( MakeCamera(), true );
+			Harness.Check( Result.FocusEntered() && Result.FocusedNode == Target->Id(),
+				"一括生成した実形状を視線で捉える" );
+			Harness.Check( Result.ActivatedNode == Target->Id(),
+				"一括生成した対象への決定を返す" );
+			Harness.CheckEqualU64( Labels.LabelCount(), 1u,
+				"一括登録した操作案内をフォーカス中だけ表示する" );
+		}
+	}
+
+	{
+		CSceneNodeGraph Graph;
+		CInteractionFocus3D UnboundFocus;
+		const FModel3DSpawnParams Params = FModel3DSpawnParams::FromPrimitive(
+			EMeshPrimitive3D::Cube, FVec3{ 0.0f, 0.0f, 4.0f } );
+
+		ANode* const Failed = CInteractableModel3DSpawner::SpawnInto(
+			Graph, UnboundFocus, Params, FStringView( "ENTER: USE" ) );
+		Harness.Check( Failed == nullptr, "未接続の視線フォーカスでは一括生成を失敗にする" );
+		Harness.CheckEqualU64( UnboundFocus.TargetCount(), 0u,
+			"登録失敗時は操作対象を残さない" );
+
+		Graph.ResolveStructuralChanges();
+		Harness.CheckEqualU64( Graph.Root().ChildCount(), 0u,
+			"登録できなかった生成モデルを場面へ残さない" );
+		Harness.CheckEqualU64( Graph.RegisteredCount(), 1u,
+			"巻き戻した生成モデルの識別子も解放する" );
 	}
 }

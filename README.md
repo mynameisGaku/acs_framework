@@ -37,7 +37,7 @@ WASDで移動、左Shiftで走行、矢印キーで視点、Spaceでジャンプ
 
 | | |
 |---|---|
-| 3D を置く | `SpawnNode3D()`、`SpawnModel3D()`、`SpawnCollidableModel3D()`、`SpawnAnimatedModel3D()`、`SpawnCollidableAnimatedModel3D()`、FBX の取り込み、材質 (metallic / roughness) |
+| 3D を置く | `SpawnNode3D()`、`SpawnModel3D()`、`SpawnInteractableModel3D()`、`SpawnCollidableModel3D()`、`SpawnAnimatedModel3D()`、`SpawnInteractableAnimatedModel3D()`、`SpawnCollidableAnimatedModel3D()`、FBX の取り込み、材質 (metallic / roughness) |
 | 3D画像を置く | `SpawnImage3D()`の固定板、`SpawnBillboard3D()`のカメラ追従板、透過PNG、深度判定、HDR合成 |
 | 3D を照らす | `SpawnLight3D()`、方向だけで置ける太陽、位置と距離だけで置ける点光源 |
 | 動かす | `SpawnThirdPersonCharacter3D()`でモデル生成・自己衝突・移動・向き・追従カメラを一括化。既存ノードには`BindThirdPersonCharacter3D()` |
@@ -68,6 +68,12 @@ SpawnModel3D( Ball );
 // FBX を置く (Assets からの相対名)
 FModel3DSpawnParams Model = FModel3DSpawnParams::FromMesh( FStringView( "Models/Robot.fbx" ), Position );
 SpawnModel3D( Model );
+
+// FBXを置くと同時に視線操作へ登録する。登録失敗時は生成モデルも残らない
+ANode* const Door = SpawnInteractableModel3D(
+    FModel3DSpawnParams::FromMesh(
+        FStringView( "Models/Door.fbx" ), FVec3{ 0.0f, 0.0f, 4.0f } ),
+    FStringView( "E: OPEN" ) );
 
 // 別の立体を置くと同時に描画境界を衝突へ登録する。両方成功した結果だけが返る
 FModel3DSpawnParams Wall = FModel3DSpawnParams::FromPrimitive(

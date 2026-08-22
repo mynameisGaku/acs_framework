@@ -198,8 +198,10 @@ cameraからの距離に応じて大気へ馴染み、雲も実距離まで同�
   `WorldLabels().AddNodeLabel( Node, Params )`で敵名、会話対象、目的地をworld位置へ置ける。
   ACSの`WorldToScreen`と共有HUDフォントを使い、ノード破棄、scene読込後の識別子再利用、非表示の
   祖先、カメラ後方、画面外、最大距離を毎描画で確認する。固定world位置と公開射影adapterも持つ
-- ~~3Dの視線フォーカスと決定~~ → **実装済み** (2026-08-22)。`InteractionFocus().RegisterTarget`
-  で人物や扉の親を1件登録し、`UpdateInteractionFocus( bPressed )`をカメラ更新後に呼ぶだけで、
+- ~~3Dの視線フォーカスと決定~~ → **実装済み** (2026-08-23)。`SpawnInteractableModel3D`または
+  `SpawnInteractableAnimatedModel3D`でモデル読込、生成、対象登録を1回で行える。登録失敗時は
+  生成ノードも巻き戻す。既存の人物や扉の親は`InteractionFocus().RegisterTarget`で1件登録し、
+  `UpdateInteractionFocus( bPressed )`をカメラ更新後に呼ぶだけで、
   最前面の実形状から対象への進入、退出、切替、決定を世代付きIDで返す。命中した子から登録親を
   探し、未登録形状は遮蔽物として扱う。状態遷移は場面・入力装置・描画から分けて単体検証する。
   対象登録中は判定と同じ正規化画面位置へ照準を自動表示し、対象を捉えると色と大きさを変える。

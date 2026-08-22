@@ -111,6 +111,7 @@ $sources = @(
 	'AcsFramework_Core\Scene\Interaction3D\InteractionFocus3DParams.cpp',
 	'AcsFramework_Core\Scene\Interaction3D\InteractionFocus3DTransition.cpp',
 	'AcsFramework_Core\Scene\Interaction3D\InteractionFocus3D.cpp',
+	'AcsFramework_Core\Scene\Interaction3D\InteractableModel3DSpawner.cpp',
 	'AcsFramework_Core\Scene\Interaction3D\InteractionHighlight3DParams.cpp',
 	'AcsFramework_Core\Scene\Interaction3D\Test\InteractionHighlight3DParamsTest.cpp',
 	'AcsFramework_Core\Scene\Interaction3D\Test\InteractionFocus3DTest.cpp',

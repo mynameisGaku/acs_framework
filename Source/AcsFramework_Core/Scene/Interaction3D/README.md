@@ -6,7 +6,18 @@
 `AUi3DScene`派生では場面接続を自動で行う。
 
 ```cpp
-InteractionFocus().RegisterTarget( *Door, FStringView( "E: OPEN" ), FVec3{ 0.0f, 2.0f, 0.0f } );
+FModel3DSpawnParams DoorParams = FModel3DSpawnParams::FromMesh(
+    FStringView( "Models/Door.fbx" ), FVec3{ 0.0f, 0.0f, 4.0f } );
+ANode* const Door = SpawnInteractableModel3D(
+    DoorParams, FStringView( "E: OPEN" ), FVec3{ 0.0f, 2.0f, 0.0f } );
+
+// 既存の親ノードや複数形状を1対象へまとめる場合は個別登録も使える。
+ANode* const GroupedNpc = SpawnNode3D( FStringView( "GroupedNpc" ) );
+ANode* const NpcBody = GroupedNpc != nullptr ? SpawnModel3D(
+    FModel3DSpawnParams::FromPrimitive(
+        EMeshPrimitive3D::Cube, FVec3{ 0.0f, 1.0f, 5.0f } ), GroupedNpc ) : nullptr;
+if ( NpcBody != nullptr ) InteractionFocus().RegisterTarget(
+    *GroupedNpc, FStringView( "E: TALK" ), FVec3{ 0.0f, 2.0f, 0.0f } );
 
 // 省略時も、捉えた対象には照準と奥行きを守る選択輪郭が自動で付く。
 InteractionHighlightParams().Color = FVec3{ 0.3f, 1.0f, 0.7f };
@@ -20,6 +31,10 @@ if ( Result.Activated() )
 }
 ```
 
+`SpawnInteractableModel3D`は静的モデル、`SpawnInteractableAnimatedModel3D`は骨付きモデルの
+読み込み、生成、操作対象登録を1回で行う。対象登録まで完了できなければ生成ノードも破棄予定へ
+戻すため、「見えるが操作できない」半端なモデルを成功として残さない。
+
 ## 分解
 
 `AdvanceInteractionFocus3D(State, Input)`は値だけを受け取り、次の対象とイベントだけを返す。
@@ -31,6 +46,9 @@ if ( Result.Activated() )
 2. `CScenePicker::RaycastGeometry`で最前面の実形状だけを取る
 3. 命中した子から登録済み祖先を探す
 4. 純粋遷移へ候補を渡し、フォーカス中だけ`CWorldLabel3DLayer`へ操作案内を置く
+
+`CInteractableModel3DSpawner`も状態を持たず、既存の静的・骨付きモデル生成器を呼んだ後に
+`CInteractionFocus3D::RegisterTarget`へ渡すだけの接続層とする。
 
 `AUi3DScene`は描画直前に現在の有効対象だけをACSの`SetSelectionHighlight`へ渡す。
 輪郭マスク、手前の物による遮蔽、ポスト処理での合成はACSが持ち、Frameworkは

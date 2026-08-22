@@ -6,6 +6,7 @@
 #include "AcsFramework_Core/Scene/Animation3D/AnimatedModel3DSpawner.h"
 #include "AcsFramework_Core/Scene/Character3D/ThirdPersonCharacter3D.h"
 #include "AcsFramework_Core/Scene/Character3D/ThirdPersonCharacter3DSpawner.h"
+#include "AcsFramework_Core/Scene/Interaction3D/InteractableModel3DSpawner.h"
 #include "AcsFramework_Core/Scene/Light3D/Light3DSpawner.h"
 #include "AcsFramework_Core/Scene/Model3D/Model3DSpawner.h"
 #include "AcsFramework_Core/Scene/Pick3D/ScenePicker.h"
@@ -195,6 +196,27 @@ ANode* AUi3DScene::SpawnModel3D( const FModel3DSpawnParams& Params, ANode* Paren
 }
 
 
+ANode* AUi3DScene::SpawnInteractableModel3D( const FModel3DSpawnParams& Params,
+	FStringView Prompt, FVec3 WorldOffset, ANode* Parent ) noexcept
+{
+	if ( !Params.IsValid() ) return nullptr;
+	const bool bNeedsLoad = !Params.MeshAsset && Params.MeshPath.Data() != nullptr
+		&& Params.MeshPath.Size() > 0u;
+	if ( !bNeedsLoad ) return CInteractableModel3DSpawner::SpawnInto(
+		Graph(), m_InteractionFocus, Params, Prompt, WorldOffset, Parent );
+
+	CAssetLoaderSubsystem* const Assets = GetSubsystem<CAssetLoaderSubsystem>();
+	if ( Assets == nullptr )
+	{
+		ACS_LOG_WARN( "AUi3DScene: 操作対象用の静的3Dモデル読込窓口が無い" );
+		return nullptr;
+	}
+	return CInteractableModel3DSpawner::SpawnInto(
+		Graph(), m_InteractionFocus, Params, Assets->Models(), Prompt,
+		WorldOffset, Parent );
+}
+
+
 FCollidableModel3DSpawnResult AUi3DScene::SpawnCollidableModel3D(
 	const FModel3DSpawnParams& Params, const FCollisionShape3DParams& CollisionParams,
 	ANode* Parent ) noexcept
@@ -255,6 +277,26 @@ ANode* AUi3DScene::SpawnAnimatedModel3D( const FAnimatedModel3DSpawnParams& Para
 		return nullptr;
 	}
 	return CAnimatedModel3DSpawner::SpawnInto( Graph(), Params, Assets->Models(), Parent );
+}
+
+
+ANode* AUi3DScene::SpawnInteractableAnimatedModel3D(
+	const FAnimatedModel3DSpawnParams& Params, FStringView Prompt,
+	FVec3 WorldOffset, ANode* Parent ) noexcept
+{
+	if ( !Params.IsValid() ) return nullptr;
+	if ( Params.MeshAsset ) return CInteractableModel3DSpawner::SpawnInto(
+		Graph(), m_InteractionFocus, Params, Prompt, WorldOffset, Parent );
+
+	CAssetLoaderSubsystem* const Assets = GetSubsystem<CAssetLoaderSubsystem>();
+	if ( Assets == nullptr )
+	{
+		ACS_LOG_WARN( "AUi3DScene: 操作対象用の骨格3Dモデル読込窓口が無い" );
+		return nullptr;
+	}
+	return CInteractableModel3DSpawner::SpawnInto(
+		Graph(), m_InteractionFocus, Params, Assets->Models(), Prompt,
+		WorldOffset, Parent );
 }
 
 

@@ -489,6 +489,9 @@
     <ClCompile Include="Source\AcsFramework_Core\Scene\DebugDraw3D\DebugLine3D.cpp">
       <Filter>Source\AcsFramework_Core\Scene\DebugDraw3D</Filter>
     </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Scene\Interaction3D\InteractableModel3DSpawner.cpp">
+      <Filter>Source\AcsFramework_Core\Scene\Interaction3D</Filter>
+    </ClCompile>
     <ClCompile Include="Source\AcsFramework_Core\Scene\Interaction3D\InteractionFocus3D.cpp">
       <Filter>Source\AcsFramework_Core\Scene\Interaction3D</Filter>
     </ClCompile>
@@ -1117,6 +1120,9 @@
     </ClInclude>
     <ClInclude Include="Source\AcsFramework_Core\Scene\DebugDraw3D\DebugLine3D.h">
       <Filter>Source\AcsFramework_Core\Scene\DebugDraw3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Interaction3D\InteractableModel3DSpawner.h">
+      <Filter>Source\AcsFramework_Core\Scene\Interaction3D</Filter>
     </ClInclude>
     <ClInclude Include="Source\AcsFramework_Core\Scene\Interaction3D\InteractionFocus3D.h">
       <Filter>Source\AcsFramework_Core\Scene\Interaction3D</Filter>

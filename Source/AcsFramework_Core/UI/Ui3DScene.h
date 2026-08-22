@@ -198,6 +198,19 @@ public:
 		ANode* Parent = nullptr ) noexcept;
 
 	/**
+	 * 静的3Dモデルの生成と視線フォーカス対象登録を1回で完了する。
+	 *
+	 * @param Params 形またはモデル名、位置、材質、ノード名。
+	 * @param Prompt フォーカス中だけ表示する1から4096byteのUTF-8文字列。
+	 * @param WorldOffset ノード位置から操作案内までのworld空間のずれ。
+	 * @param Parent この場面が所有する親。空ならroot直下。
+	 * @return 生成と対象登録を完了したノード。失敗時はnullptrで、半端な生成物を残さない。
+	 */
+	ANode* SpawnInteractableModel3D( const FModel3DSpawnParams& Params,
+		FStringView Prompt, FVec3 WorldOffset = FVec3{ 0.0f, 1.8f, 0.0f },
+		ANode* Parent = nullptr ) noexcept;
+
+	/**
 	 * 静的3Dモデルの生成と衝突登録を1回で完了する。
 	 *
 	 * @details 衝突登録に失敗した場合は生成ノードも破棄予定へ戻す。既定は描画境界を使う。
@@ -243,6 +256,20 @@ public:
 	 * @return 置いたノード。asset窓口、読み込み、検証のいずれかに失敗したらnullptr。
 	 */
 	ANode* SpawnAnimatedModel3D( const FAnimatedModel3DSpawnParams& Params,
+		ANode* Parent = nullptr ) noexcept;
+
+	/**
+	 * 骨付き3Dモデルの読込、初期再生、視線フォーカス対象登録を1回で完了する。
+	 *
+	 * @param Params 骨付きモデルの相対path、位置、大きさ、初期animation。
+	 * @param Prompt フォーカス中だけ表示する1から4096byteのUTF-8文字列。
+	 * @param WorldOffset ノード位置から操作案内までのworld空間のずれ。
+	 * @param Parent この場面が所有する親。空ならroot直下。
+	 * @return 生成、再生、対象登録を完了したノード。失敗時はnullptrで、半端な生成物を残さない。
+	 */
+	ANode* SpawnInteractableAnimatedModel3D(
+		const FAnimatedModel3DSpawnParams& Params, FStringView Prompt,
+		FVec3 WorldOffset = FVec3{ 0.0f, 1.8f, 0.0f },
 		ANode* Parent = nullptr ) noexcept;
 
 	/**

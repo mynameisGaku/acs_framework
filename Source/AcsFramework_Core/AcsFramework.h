@@ -57,6 +57,7 @@
 #include "AcsFramework_Core/Scene/DebugDraw3D/DebugDraw3DLayer.h"
 #include "AcsFramework_Core/Scene/DebugDraw3D/DebugDraw3DQueue.h"
 #include "AcsFramework_Core/Scene/DebugDraw3D/DebugLine3D.h"
+#include "AcsFramework_Core/Scene/Interaction3D/InteractableModel3DSpawner.h"
 #include "AcsFramework_Core/Scene/Light3D/Light3DSpawner.h"
 #include "AcsFramework_Core/Scene/Model3D/CollidableModel3DSpawnResult.h"
 #include "AcsFramework_Core/Scene/Model3D/Model3DSpawner.h"
