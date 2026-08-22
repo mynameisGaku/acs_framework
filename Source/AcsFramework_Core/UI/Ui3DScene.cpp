@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: Apache-2.0
 #include "AcsFramework_Core/UI/Ui3DScene.h"
 
+#include "AcsFramework_Core/UI/InteractionReticle3D/InteractionReticle3DLayout.h"
+
 void AUi3DScene::OnEnter() noexcept
 {
 	ALegacyScene3DAdapter::OnEnter();
@@ -37,6 +39,7 @@ void AUi3DScene::OnDrawHud( FRenderContext& Context, CSpriteBatch& Sprites ) noe
 {
 	ALegacyScene3DAdapter::OnDrawHud( Context, Sprites );
 	m_WorldLabels.Draw( Camera(), Context, Sprites );
+	DrawInteractionReticle_Internal( Context, Sprites );
 	m_Ui.Draw( Context );
 }
 
@@ -44,4 +47,23 @@ void AUi3DScene::OnDrawHud( FRenderContext& Context, CSpriteBatch& Sprites ) noe
 FInteractionFocus3DUpdateResult AUi3DScene::UpdateInteractionFocus( bool bActivateRequested ) noexcept
 {
 	return m_InteractionFocus.Update( Camera(), bActivateRequested );
+}
+
+
+void AUi3DScene::DrawInteractionReticle_Internal( FRenderContext& Context, CSpriteBatch& Sprites ) noexcept
+{
+	const bool bFocused = m_InteractionFocus.FocusedNode() != nullptr;
+	const FInteractionReticle3DLayout Layout = MakeInteractionReticle3DLayout( m_InteractionReticleParams, m_InteractionFocus.Params().ScreenPosition, Context.Width(), Context.Height(), bFocused, m_InteractionFocus.TargetCount() > 0u );
+	if ( !Layout.bVisible ) return;
+
+	for ( usize Index = 0u; Index < FInteractionReticle3DLayout::kRectangleCount; ++Index )
+	{
+		const FVec4& Rectangle = Layout.Rectangles[Index];
+		Sprites.DrawRect( Rectangle.x + m_InteractionReticleParams.ShadowOffset, Rectangle.y + m_InteractionReticleParams.ShadowOffset, Rectangle.z, Rectangle.w, m_InteractionReticleParams.ShadowColor );
+	}
+	for ( usize Index = 0u; Index < FInteractionReticle3DLayout::kRectangleCount; ++Index )
+	{
+		const FVec4& Rectangle = Layout.Rectangles[Index];
+		Sprites.DrawRect( Rectangle.x, Rectangle.y, Rectangle.z, Rectangle.w, Layout.Color );
+	}
 }

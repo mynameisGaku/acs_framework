@@ -371,6 +371,10 @@
     <None Include="Source\AcsFramework_Core\Effects\Effect3D\README.md" />
     <None Include="Source\AcsFramework_Core\Effects\Effect3D\Test\Effect3DPlayParamsTest.cpp" />
     <ClInclude Include="Source\AcsFramework_Core\UI\Ui3DScene.h" />
+    <ClInclude Include="Source\AcsFramework_Core\UI\InteractionReticle3D\InteractionReticle3DLayout.h" />
+    <ClInclude Include="Source\AcsFramework_Core\UI\InteractionReticle3D\InteractionReticle3DParams.h" />
+    <None Include="Source\AcsFramework_Core\UI\InteractionReticle3D\README.md" />
+    <None Include="Source\AcsFramework_Core\UI\InteractionReticle3D\Test\InteractionReticle3DParamsTest.cpp" />
     <ClInclude Include="Source\AcsFramework_Core\UI\WorldLabel3D\WorldLabel3DHandle.h" />
     <ClInclude Include="Source\AcsFramework_Core\UI\WorldLabel3D\WorldLabel3DLayer.h" />
     <ClInclude Include="Source\AcsFramework_Core\UI\WorldLabel3D\WorldLabel3DParams.h" />
@@ -595,6 +599,8 @@
     <ClCompile Include="Source\AcsFramework_Core\Effects\Effect3D\Effect3DPlayer.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Effects\Effect3D\Effect3DScene.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\UI\Ui3DScene.cpp" />
+    <ClCompile Include="Source\AcsFramework_Core\UI\InteractionReticle3D\InteractionReticle3DLayout.cpp" />
+    <ClCompile Include="Source\AcsFramework_Core\UI\InteractionReticle3D\InteractionReticle3DParams.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\UI\WorldLabel3D\WorldLabel3DLayer.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\UI\WorldLabel3D\WorldLabel3DParams.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\UI\WorldLabel3D\WorldLabelProjector3D.cpp" />

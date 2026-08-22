@@ -4,6 +4,7 @@
 #include <acs.h>
 
 #include "AcsFramework_Core/Scene/Interaction3D/InteractionFocus3D.h"
+#include "AcsFramework_Core/UI/InteractionReticle3D/InteractionReticle3DParams.h"
 #include "AcsFramework_Core/UI/WorldLabel3D/WorldLabel3DLayer.h"
 
 using namespace acs;
@@ -79,6 +80,16 @@ public:
 	 */
 	FInteractionFocus3DUpdateResult UpdateInteractionFocus( bool bActivateRequested = false ) noexcept;
 
+	/**
+	 * 視線判定と同じ画面位置へ描く照準の色と寸法を返す。
+	 *
+	 * @return この場面が所有する照準設定。対象登録が0件なら設定にかかわらず描かない。
+	 */
+	FInteractionReticle3DParams& InteractionReticleParams() noexcept { return m_InteractionReticleParams; }
+
+	/** 読み取り専用の3Dインタラクション照準設定を返す。 */
+	const FInteractionReticle3DParams& InteractionReticleParams() const noexcept { return m_InteractionReticleParams; }
+
 	/** 通常の3D場面を開始してからUI層を初期化する。 */
 	void OnEnter() noexcept override;
 
@@ -105,11 +116,17 @@ protected:
 	void OnDrawHud( FRenderContext& Context, CSpriteBatch& Sprites ) noexcept override;
 
 private:
+	/** 視線判定と同じ正規化画面位置へ、対象状態に応じた照準を描く。 */
+	void DrawInteractionReticle_Internal( FRenderContext& Context, CSpriteBatch& Sprites ) noexcept;
+
 	/** この場面のノード位置をHUDへ射影するワールドラベルレイヤー。 */
 	CWorldLabel3DLayer m_WorldLabels;
 
 	/** 実形状ピックと操作案内を接続する、この場面所有の視線フォーカス。 */
 	CInteractionFocus3D m_InteractionFocus;
+
+	/** 視線位置へ重ねる照準の色とpixel寸法。 */
+	FInteractionReticle3DParams m_InteractionReticleParams;
 
 	/** この場面だけが所有する遊ぶ人向けUI層。 */
 	CUiLayer m_Ui;

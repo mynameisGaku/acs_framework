@@ -114,7 +114,8 @@ FInteractionFocus3DUpdateResult CInteractionFocus3D::Update( const CCamera& Came
 ANode* CInteractionFocus3D::FocusedNode() const noexcept
 {
 	if ( m_Graph == nullptr || !m_Graph->HasRoot() || &m_Graph->Root() != m_RootIdentity || FindTargetIndex_Internal( m_State.FocusedNode ) == kInvalidIndex ) return nullptr;
-	return m_Graph->Get( m_State.FocusedNode );
+	ANode* const Node = m_Graph->Get( m_State.FocusedNode );
+	return Node != nullptr && !Node->IsPendingDestroy() ? Node : nullptr;
 }
 
 
