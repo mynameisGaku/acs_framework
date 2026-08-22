@@ -14,6 +14,15 @@ public:
 	/** 通常の1フレームで保持する線の既定上限。 */
 	static constexpr u32 kDefaultCapacity = 16384u;
 
+	/** 球を輪として読める最小分割数。 */
+	static constexpr u32 kMinimumSphereSegments = 4u;
+
+	/** 見た目と線数の釣り合いを取った球の既定分割数。 */
+	static constexpr u32 kDefaultSphereSegments = 24u;
+
+	/** 1要求が線容量を過度に消費しない球の最大分割数。 */
+	static constexpr u32 kMaximumSphereSegments = 128u;
+
 	/**
 	 * 空のキューを作る。
 	 *
@@ -41,6 +50,15 @@ public:
 	 * @return 箱と色が有効で、12本全てを保存できたらtrue。
 	 */
 	bool TryAabb( const FAabb3& Bounds, FVec4 Color = FVec4{ 0.20f, 0.95f, 1.0f, 1.0f } ) noexcept;
+
+	/**
+	 * 球をXY、XZ、YZの3つの円で一括登録する。
+	 *
+	 * @details 3×Segments本を全て保持できない場合は1本も追加しない。
+	 * @return 球、色、分割数が有効で、全ての線を保存できたらtrue。
+	 */
+	bool TrySphere( const FSphere& Sphere, FVec4 Color = FVec4{ 0.20f, 0.95f, 1.0f, 1.0f },
+		u32 Segments = kDefaultSphereSegments ) noexcept;
 
 	/** 現在登録されている線の数を返す。 */
 	usize Num() const noexcept { return m_Lines.Num(); }

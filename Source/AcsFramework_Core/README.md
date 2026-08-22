@@ -78,7 +78,8 @@ Subsystemにはしない。`AEffect3DScene`がscene単位で`CEffect3DPlayer`を
 3Dデバッグ描画もsceneのカメラ、HDR描画先、GPU終了順へ結び付くためSubsystemにはしない。
 `FDebugLine3D`と`CDebugDraw3DQueue`はGPUなしで値と1フレーム上限を検証し、
 `CDebugDraw3DLayer`はACSの`FDebugDraw3D`を遅延初期化して`AUi3DScene`の透明3Dパスへ接続する。
-`DrawLine3D`と`DrawAabb3D`は深度を無視する確認用オーバーレイで、表示を続ける側は更新ごとに登録する。
+`DrawLine3D`、`DrawAabb3D`、`DrawSphere3D`は深度を無視する確認用オーバーレイで、
+表示を続ける側は更新ごとに登録する。球はACSの衝突判定と同じ`FSphere`をそのまま受け取る。
 
 ### Text変換の契約
 

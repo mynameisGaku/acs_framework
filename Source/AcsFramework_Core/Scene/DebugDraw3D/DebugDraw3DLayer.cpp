@@ -14,6 +14,12 @@ bool CDebugDraw3DLayer::DrawAabb( const FAabb3& Bounds, FVec4 Color ) noexcept
 }
 
 
+bool CDebugDraw3DLayer::DrawSphere( const FSphere& Sphere, FVec4 Color, u32 Segments ) noexcept
+{
+	return m_Queue.TrySphere( Sphere, Color, Segments );
+}
+
+
 bool CDebugDraw3DLayer::Render( IRhiDevice& Device, IRhiCommandList& Commands, const CCamera& Camera, IRhiTexture& ColorTarget ) noexcept
 {
 	if ( m_Queue.Num() == 0u ) return false;

@@ -30,6 +30,10 @@ public:
 	/** 軸並行境界箱の12辺を次の3D描画へ一括登録する。 */
 	bool DrawAabb( const FAabb3& Bounds, FVec4 Color = FVec4{ 0.20f, 0.95f, 1.0f, 1.0f } ) noexcept;
 
+	/** 球を3方向の円として次の3D描画へ一括登録する。 */
+	bool DrawSphere( const FSphere& Sphere, FVec4 Color = FVec4{ 0.20f, 0.95f, 1.0f, 1.0f },
+		u32 Segments = CDebugDraw3DQueue::kDefaultSphereSegments ) noexcept;
+
 	/** 次の3D描画へ登録済みの線数を返す。 */
 	usize LineCount() const noexcept { return m_Queue.Num(); }
 

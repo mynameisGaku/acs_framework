@@ -118,6 +118,15 @@ public:
 	 */
 	bool DrawAabb3D( const FAabb3& Bounds, FVec4 Color = FVec4{ 0.20f, 0.95f, 1.0f, 1.0f } ) noexcept;
 
+	/**
+	 * 球を3方向の円として次の3D描画へ一括登録する。
+	 *
+	 * @details 線は深度を無視して常に見える。表示を続ける場合は更新ごとに呼ぶ。
+	 * @return 球、色、分割数が有効で、全ての線を登録できたらtrue。
+	 */
+	bool DrawSphere3D( const FSphere& Sphere, FVec4 Color = FVec4{ 0.20f, 0.95f, 1.0f, 1.0f },
+		u32 Segments = CDebugDraw3DQueue::kDefaultSphereSegments ) noexcept;
+
 	/** 登録線の消去と拒否数の確認に使う、この場面所有の3Dデバッグ描画層を返す。 */
 	CDebugDraw3DLayer& DebugDraw3D() noexcept { return m_DebugDraw3D; }
 

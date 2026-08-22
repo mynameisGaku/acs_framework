@@ -46,7 +46,7 @@ WASDで移動、左Shiftで走行、矢印キーで視点、Spaceでジャンプ
 | 3D 音響 | `CSpatialAudioSubsystem`、距離減衰、モノラル効果音の左右定位 |
 | 遊ぶ人向け UI | `AUi3DScene`、文字・ボタン・入力、ポスト処理後の鮮明なHUD合成 |
 | 3D位置の文字 | `WorldLabels()`、ノード破棄と画面外を安全に扱う敵名・目的地表示 |
-| 3Dデバッグ描画 | `DrawLine3D()`、`DrawAabb3D()`、深度を無視して常に確認できる1フレーム線 |
+| 3Dデバッグ描画 | `DrawLine3D()`、`DrawAabb3D()`、`DrawSphere3D()`、深度を無視して常に確認できる1フレーム線 |
 | 当てる | 画面から線を飛ばし、球面や読み込みメッシュの三角形へ正確に当てる (`CScenePicker`) |
 | 重なりと移動判定 | `CSceneCollision3D`、ノード追従、球・箱の重なり、球スイープ、レイヤー |
 | 土台 | 起動・場面遷移・アセット・音・セーブ・設定・入力再割り当て・多言語・決定性・開発支援 |
@@ -94,6 +94,7 @@ if ( Hit.IsHit() )
     DrawLine3D( Ray.Origin, Hit.Point, FVec4{ 0.2f, 0.95f, 1.0f, 1.0f } );
     DrawAabb3D( FAabb3::FromCenterExtents( Hit.Point, FVec3{ 0.08f, 0.08f, 0.08f } ),
         FVec4{ 1.0f, 0.62f, 0.12f, 1.0f } );
+    DrawSphere3D( FSphere{ Hit.Point, 0.12f }, FVec4{ 1.0f, 0.28f, 0.78f, 1.0f } );
 }
 
 // ノードへ衝突形状を結び、現在位置へ自動追従させる

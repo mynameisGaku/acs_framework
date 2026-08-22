@@ -85,6 +85,12 @@ bool AUi3DScene::DrawAabb3D( const FAabb3& Bounds, FVec4 Color ) noexcept
 }
 
 
+bool AUi3DScene::DrawSphere3D( const FSphere& Sphere, FVec4 Color, u32 Segments ) noexcept
+{
+	return m_DebugDraw3D.DrawSphere( Sphere, Color, Segments );
+}
+
+
 bool AUi3DScene::OnRenderTransparent3D( const FScene3DTransparentRenderContext& Context ) noexcept
 {
 	(void)m_DebugDraw3D.Render( Context.Device, Context.Commands, Context.Camera, Context.ColorTarget );

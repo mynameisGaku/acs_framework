@@ -1192,7 +1192,9 @@ void ADemo3DScene::DrawGeometryPickDebug_Internal( f32 DeltaSeconds ) noexcept
 	const bool bZAxisQueued = DrawLine3D( m_GeometryPickDebugEnd - FVec3{ 0.0f, 0.0f, AxisExtent.z }, m_GeometryPickDebugEnd + FVec3{ 0.0f, 0.0f, AxisExtent.z }, FVec4{ 0.22f, 0.52f, 1.0f, 1.0f } );
 	/** 命中点を囲む確認箱の登録結果。 */
 	const bool bHitBoxQueued = DrawAabb3D( FAabb3::FromCenterExtents( m_GeometryPickDebugEnd, FVec3{ 0.22f, 0.22f, 0.22f } ), FVec4{ 1.0f, 0.62f, 0.12f, 1.0f } );
-	if ( !bRayQueued || !bXAxisQueued || !bYAxisQueued || !bZAxisQueued || !bHitBoxQueued )
+	/** 命中点を球形の接触範囲として読む3方向円の登録結果。 */
+	const bool bHitSphereQueued = DrawSphere3D( FSphere{ m_GeometryPickDebugEnd, 0.32f }, FVec4{ 1.0f, 0.28f, 0.78f, 1.0f } );
+	if ( !bRayQueued || !bXAxisQueued || !bYAxisQueued || !bZAxisQueued || !bHitBoxQueued || !bHitSphereQueued )
 	{
 		m_GeometryPickDebugRemainingSeconds = 0.0f;
 		ACS_LOG_WARN( "Demo3D: 実形状判定の3Dデバッグ線を登録できなかった" );

@@ -59,4 +59,33 @@ void RunDebugDraw3DQueueTests( CTestHarness& Harness )
 		Harness.Check( !InvalidBox.TryAabb( FAabb3::FromCenterExtents( FVec3{}, FVec3{ -1.0f, 1.0f, 1.0f } ) ), "負の半サイズを拒否する" );
 		Harness.CheckEqualU64( InvalidBox.Num(), 0u, "不正な箱を登録しない" );
 	}
+
+	Harness.BeginSuite( "CDebugDraw3DQueue / 球を3方向の閉じた円へ展開する" );
+
+	{
+		const FSphere Sphere{ FVec3{ 1.0f, 2.0f, 3.0f }, 2.0f };
+		CDebugDraw3DQueue Queue( 12u );
+		Harness.Check( Queue.TrySphere( Sphere, FVec4{ 1.0f, 0.2f, 0.7f, 1.0f }, 4u ), "4分割の3円を登録できる" );
+		Harness.CheckEqualU64( Queue.Num(), 12u, "分割数の3倍を線として保持する" );
+		Harness.CheckEqualF32( Queue.Get( 0u ).Start.x, 3.0f, "XY円は半径分だけXへ始まる" );
+		Harness.CheckNearF32( Queue.Get( 0u ).End.x, 1.0f, 0.00001f, "XY円の次点は中心Xへ戻る" );
+		Harness.CheckNearF32( Queue.Get( 0u ).End.y, 4.0f, 0.00001f, "XY円の次点は半径分だけYへ進む" );
+		Harness.CheckEqualF32( Queue.Get( 1u ).Start.z, 3.0f, "XZ円の開始Zは中心と同じ" );
+		Harness.CheckNearF32( Queue.Get( 11u ).End.y, 4.0f, 0.00001f, "最後のYZ辺を開始点へ閉じる" );
+
+		CDebugDraw3DQueue TooSmall( 12u );
+		Harness.Check( TooSmall.TryLine( FVec3{}, FVec3{ 1.0f, 0.0f, 0.0f } ), "容量確認前の線を登録できる" );
+		Harness.Check( !TooSmall.TrySphere( Sphere, FVec4{ 1.0f, 1.0f, 1.0f, 1.0f }, 4u ), "全円が入らない球を拒否する" );
+		Harness.CheckEqualU64( TooSmall.Num(), 1u, "容量不足でも既存線と球の原子性を保つ" );
+
+		CDebugDraw3DQueue InvalidSphere;
+		Harness.Check( !InvalidSphere.TrySphere( FSphere{ FVec3{}, 0.0f } ), "半径0の球を拒否する" );
+		Harness.Check( !InvalidSphere.TrySphere( Sphere, FVec4{ 1.0f, 1.0f, 1.0f, 1.0f }, 3u ), "小さすぎる分割数を拒否する" );
+		Harness.Check( !InvalidSphere.TrySphere( Sphere, FVec4{ 1.0f, 1.0f, 1.0f, 1.0f }, CDebugDraw3DQueue::kMaximumSphereSegments + 1u ), "大きすぎる分割数を拒否する" );
+		/** 円周計算を有限範囲外へ押し出す最大有限値。 */
+		const f32 Maximum = std::numeric_limits<f32>::max();
+		Harness.Check( !InvalidSphere.TrySphere( FSphere{ FVec3{ Maximum, 0.0f, 0.0f }, Maximum } ), "円周計算で有限範囲を超える球を拒否する" );
+		Harness.CheckEqualU64( InvalidSphere.Num(), 0u, "不正な球を途中まで登録しない" );
+		Harness.CheckEqualU64( InvalidSphere.RejectedDrawCount(), 4u, "拒否した球要求を1件ずつ数える" );
+	}
 }
