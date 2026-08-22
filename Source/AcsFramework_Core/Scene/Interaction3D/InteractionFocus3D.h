@@ -132,8 +132,14 @@ private:
 	/** 現在作っている操作案内をラベルレイヤーから外す。 */
 	void RemovePrompt_Internal() noexcept;
 
-	/** グラフroot差し替え時に古い対象と案内を消し、現在rootを記録する。 */
+	/** グラフroot差し替えと対象寿命を確認し、古い対象と案内を消す。 */
 	bool RefreshGraphIdentity_Internal() noexcept;
+
+	/** 自身または祖先が破棄予定でない有効な対象ノードならtrue。 */
+	static bool IsTargetAlive_Internal( const ANode& Node ) noexcept;
+
+	/** 消滅済みまたは破棄予定の対象を登録と操作案内から外す。 */
+	void RemoveStaleTargets_Internal() noexcept;
 
 	/** 実形状判定と識別子解決に使う場面グラフ。所有しない。 */
 	CSceneNodeGraph* m_Graph = nullptr;

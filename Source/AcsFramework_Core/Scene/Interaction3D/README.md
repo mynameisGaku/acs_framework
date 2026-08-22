@@ -56,7 +56,8 @@ if ( Result.Activated() )
 `InteractionHighlightParams().bEnabled = false`で輪郭だけを切っても、判定、案内、照準は残る。
 
 未登録の最前面形状は遮蔽物になる。壁越しに奥の対象を拾わない。ノード破棄とscene内容差し替えは
-`FNodeId`とroot同一性で検出し、古い対象や案内を再利用しない。
+`FNodeId`とroot同一性で検出し、古い対象や案内を再利用しない。対象自身だけでなく祖先が
+破棄予定になった場合も、次の`UpdateInteractionFocus`で対象登録と案内を同時に外す。
 
 `UpdateInteractionFocus`は自動では呼ばれない。入力の押した瞬間を作品側で決めて、カメラ更新後に
 1フレーム1回呼ぶ。これによりUI入力中の抑止や、キーボードとゲームパッドの割り当て方を作品側で

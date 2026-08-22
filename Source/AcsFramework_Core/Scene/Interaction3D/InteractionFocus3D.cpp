@@ -181,10 +181,44 @@ bool CInteractionFocus3D::RefreshGraphIdentity_Internal() noexcept
 {
 	if ( m_Graph == nullptr || m_Labels == nullptr || !m_Graph->HasRoot() || !m_Labels->IsBoundTo( *m_Graph ) ) return false;
 	ANode* const CurrentRoot = &m_Graph->Root();
-	if ( CurrentRoot == m_RootIdentity ) return true;
+	if ( CurrentRoot == m_RootIdentity )
+	{
+		RemoveStaleTargets_Internal();
+		return true;
+	}
 
 	RemovePrompt_Internal();
 	m_Targets.Reset();
 	m_RootIdentity = CurrentRoot;
 	return true;
+}
+
+
+bool CInteractionFocus3D::IsTargetAlive_Internal( const ANode& Node ) noexcept
+{
+	const ANode* Current = &Node;
+	while ( Current != nullptr )
+	{
+		if ( Current->IsPendingDestroy() ) return false;
+		Current = Current->Parent();
+	}
+	return true;
+}
+
+
+void CInteractionFocus3D::RemoveStaleTargets_Internal() noexcept
+{
+	if ( m_Graph == nullptr ) return;
+
+	bool bRemovePrompt = false;
+	for ( usize ReverseIndex = m_Targets.Num(); ReverseIndex > 0u; --ReverseIndex )
+	{
+		const usize Index = ReverseIndex - 1u;
+		ANode* const Node = m_Graph->Get( m_Targets[Index].Node );
+		if ( Node != nullptr && IsTargetAlive_Internal( *Node ) ) continue;
+
+		if ( m_State.FocusedNode == m_Targets[Index].Node ) bRemovePrompt = true;
+		m_Targets.RemoveAt( Index );
+	}
+	if ( bRemovePrompt ) RemovePrompt_Internal();
 }

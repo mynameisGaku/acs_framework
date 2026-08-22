@@ -194,4 +194,53 @@ void RunInteractionFocus3DTests( CTestHarness& Harness )
 		Harness.CheckEqualU64( Graph.RegisteredCount(), 1u,
 			"巻き戻した生成モデルの識別子も解放する" );
 	}
+
+	Harness.BeginSuite( "CInteractionFocus3D / 破棄予定の対象と案内を更新時に外す" );
+
+	{
+		CSceneNodeGraph Graph;
+		CWorldLabel3DLayer Labels;
+		Labels.Bind( Graph );
+
+		CInteractionFocus3D Focus;
+		FInteractionFocus3DParams FocusParams;
+		FocusParams.MaximumDistance = 8.0f;
+		Harness.Check( Focus.Bind( Graph, Labels, FocusParams ),
+			"破棄追従を調べる視線フォーカスを場面へ接続できる" );
+
+		const FScene3DSpawnResult Parent = Graph.TrySpawn( FStringView( "TargetParent" ) );
+		Harness.Check( Parent.Succeeded(), "破棄する親ノードを置ける" );
+		if ( !Parent ) return;
+
+		const FModel3DSpawnParams Params = FModel3DSpawnParams::FromPrimitive(
+			EMeshPrimitive3D::Cube, FVec3{ 0.0f, 0.0f, 4.0f } );
+		ANode* const Target = CInteractableModel3DSpawner::SpawnInto(
+			Graph, Focus, Params, FStringView( "ENTER: USE" ), FVec3{}, Parent.Node );
+		Harness.Check( Target != nullptr, "親の下へ操作対象を置ける" );
+		if ( Target == nullptr ) return;
+
+		const CCamera Camera = MakeCamera();
+		Harness.Check( Focus.Update( Camera ).FocusedNode == Target->Id(),
+			"破棄前の子モデルを捉える" );
+		Harness.CheckEqualU64( Labels.LabelCount(), 1u,
+			"破棄前の操作案内を表示する" );
+
+		Harness.Check( Graph.Destroy( Parent.Id ), "操作対象の親を破棄予定にできる" );
+		Harness.Check( !Target->IsPendingDestroy(),
+			"親破棄では子自身の破棄予定印に頼れないことを固定する" );
+
+		const FInteractionFocus3DUpdateResult Result = Focus.Update( Camera );
+		Harness.Check( Result.FocusLeft() && !Result.FocusedNode.IsValid(),
+			"破棄予定の祖先を持つ対象から退出する" );
+		Harness.CheckEqualU64( Focus.TargetCount(), 0u,
+			"破棄予定部分木の対象登録を更新時に外す" );
+		Harness.CheckEqualU64( Labels.LabelCount(), 0u,
+			"破棄予定対象の操作案内を同じ更新で外す" );
+		Harness.Check( Focus.FocusedNode() == nullptr,
+			"破棄予定対象を現在対象として解決しない" );
+
+		Graph.ResolveStructuralChanges();
+		Harness.CheckEqualU64( Graph.RegisteredCount(), 1u,
+			"親と対象の世代付き識別子を構造反映で解放する" );
+	}
 }
