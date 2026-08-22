@@ -1,7 +1,30 @@
 // SPDX-License-Identifier: Apache-2.0
 #include "AcsFramework_Core/Text/Localization/LocalizationSubsystem.h"
 
+#include "AcsFramework_Core/Text/Localization/LocalizationTableFile.h"
 #include "AcsFramework_Core/Text/Localization/TextFormatter.h"
+
+namespace
+{
+	/**
+	 * 読めなかった訳文行を共通形式で記録する。
+	 *
+	 * @param Result 表を解析した件数と失敗理由。
+	 */
+	void ReportLocalizationParseWarnings( const FLocalizationParseResult& Result ) noexcept
+	{
+		// 黙って落とさない。翻訳が出ない原因のほとんどはここ。
+		if ( Result.bMissingLocaleHeader )
+		{
+			ACS_LOG_WARN( "CLocalizationSubsystem: 言語の見出し ([ja] など) より前に書かれた行がある" );
+		}
+		if ( Result.Skipped != 0u )
+		{
+			ACS_LOG_WARN( "CLocalizationSubsystem: 表の %zu 行を読めずに飛ばした (%zu 行は読めた)",
+				Result.Skipped, Result.Registered );
+		}
+	}
+}
 
 ACS_REGISTER_SUBSYSTEM( CLocalizationSubsystem, ESubsystemScope::GameInstance )
 
@@ -21,19 +44,28 @@ bool CLocalizationSubsystem::RegisterText( ELocale Locale, const FString& Key, c
 FLocalizationParseResult CLocalizationSubsystem::LoadTable( FStringView Text ) noexcept
 {
 	const FLocalizationParseResult Result = CLocalizationTableParser::ParseInto( m_Catalog, Text );
-
-	// 黙って落とさない。翻訳が出ない原因のほとんどはここ。
-	if ( Result.bMissingLocaleHeader )
-	{
-		ACS_LOG_WARN( "CLocalizationSubsystem: 言語の見出し ([ja] など) より前に書かれた行がある" );
-	}
-	if ( Result.Skipped != 0u )
-	{
-		ACS_LOG_WARN( "CLocalizationSubsystem: 表の %zu 行を読めずに飛ばした (%zu 行は読めた)",
-			Result.Skipped, Result.Registered );
-	}
-
+	ReportLocalizationParseWarnings( Result );
 	return Result;
+}
+
+
+TResult<FLocalizationParseResult> CLocalizationSubsystem::LoadTableFile( FStringView AssetPath ) noexcept
+{
+	/** ファイル読み込みと表解析をまとめた結果。 */
+	TResult<FLocalizationParseResult> Loaded = CLocalizationTableFile::LoadInto( m_Catalog, AssetPath );
+	if ( Loaded.IsErr() )
+	{
+		/** ログへ安全に渡せるパス先頭。 */
+		const char* const Path = AssetPath.Data() != nullptr ? AssetPath.Data() : "";
+		/** 呼び出し側が直す箇所を示す静的エラーメッセージ。 */
+		const char* const Message = Loaded.Error().message != nullptr ? Loaded.Error().message : "理由不明";
+		ACS_LOG_WARN( "CLocalizationSubsystem: 訳文表を読めません: %.*s (%s)",
+			static_cast<int>( AssetPath.Size() ), Path, Message );
+		return Loaded.Error();
+	}
+
+	ReportLocalizationParseWarnings( Loaded.Value() );
+	return Loaded.Value();
 }
 
 

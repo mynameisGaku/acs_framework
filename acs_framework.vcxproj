@@ -330,6 +330,7 @@
     <ClInclude Include="Source\AcsFramework_Core\Text\Localization\TextFormatter.h" />
     <ClInclude Include="Source\AcsFramework_Core\Text\Localization\LocaleCatalog.h" />
     <ClInclude Include="Source\AcsFramework_Core\Text\Localization\LocaleName.h" />
+    <ClInclude Include="Source\AcsFramework_Core\Text\Localization\LocalizationTableFile.h" />
     <ClInclude Include="Source\AcsFramework_Core\Text\Localization\LocalizationTableParser.h" />
     <ClInclude Include="Source\AcsFramework_Core\Text\Localization\LocaleChangeBroadcaster.h" />
     <ClInclude Include="Source\AcsFramework_Core\Text\Localization\ILocaleChangeListener.h" />
@@ -557,6 +558,7 @@
     <ClCompile Include="Source\AcsFramework_Core\Text\Localization\TextFormatter.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Text\Localization\LocaleCatalog.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Text\Localization\LocaleName.cpp" />
+    <ClCompile Include="Source\AcsFramework_Core\Text\Localization\LocalizationTableFile.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Text\Localization\LocalizationTableParser.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Text\Localization\LocaleChangeBroadcaster.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Text\Localization\LocalizationSubsystem.cpp" />

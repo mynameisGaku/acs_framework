@@ -23,12 +23,16 @@ using namespace acs::game;
  * | エンジン | (言語, 鍵) → 文 の辞書、今の言語 → 既定 → 鍵 の落とし込み |
  * | `CLocaleCatalog` | 鍵と文の**寿命** (エンジンは複製しない) |
  * | `CLocalizationTableParser` | テキストの表を読む |
+ * | `CLocalizationTableFile` | `Assets`配下のUTF-8表をファイルから読む |
  * | `CTextFormatter` | `{0}` の差し込み |
  * | `CLocaleChangeBroadcaster` | 言語が変わったことを配る |
  * | ここ | 上を持ち、順番を決めるだけ |
  *
  * @code
- * Localization->LoadTable( TableText );
+ * const TResult<FLocalizationParseResult> Loaded =
+ *     Localization->LoadTableFile( FStringView( "Text/game.loc" ) );
+ * if ( Loaded.IsErr() ) return;
+ *
  * Localization->SetLocale( ELocale::Ja );
  *
  * const FString Title = Localization->GetText( FString( "ui.title" ) );
@@ -67,6 +71,15 @@ public:
 	 * @return 読めた数と落とした数。落とした数が 0 でなければ警告を出す。
 	 */
 	FLocalizationParseResult LoadTable( FStringView Text ) noexcept;
+
+	/**
+	 * `Assets`配下のUTF-8訳文表を読んで足す。
+	 *
+	 * @details UTF-8のBOMにも対応する。ファイルを開けない場合は既存の文を変更しない。
+	 * @param AssetPath `Assets`からの相対パス (`Text/game.loc`など)。
+	 * @return 成功時は解析結果。パス解決またはファイル読み込みの失敗時はエラー。
+	 */
+	TResult<FLocalizationParseResult> LoadTableFile( FStringView AssetPath ) noexcept;
 
 	/**
 	 * いまの言語で文を引く。

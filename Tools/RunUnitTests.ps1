@@ -104,6 +104,7 @@ $sources = @(
     'AcsFramework_Core\Text\Localization\TextFormatter.cpp',
     'AcsFramework_Core\Text\Localization\LocaleCatalog.cpp',
     'AcsFramework_Core\Text\Localization\LocaleName.cpp',
+    'AcsFramework_Core\Text\Localization\LocalizationTableFile.cpp',
     'AcsFramework_Core\Text\Localization\LocalizationTableParser.cpp',
     'AcsFramework_Core\Text\Localization\LocaleChangeBroadcaster.cpp',
     'AcsFramework_Core\Text\Localization\Test\LocalizationTest.cpp',

@@ -22,7 +22,8 @@
 |---|---|
 | 文字列の寿命 (`const char*` を複製しない) | `CLocaleCatalog` |
 | `{0}` の差し込み | `CTextFormatter` |
-| 表の読み込み | `CLocalizationTableParser` |
+| 表の解析 | `CLocalizationTableParser` |
+| `Assets`配下のUTF-8表の読み込み | `CLocalizationTableFile` |
 
 ---
 
@@ -40,12 +41,12 @@
 ## 分け方
 
 ```
-  表 (テキスト) ──▶ CLocalizationTableParser ──┐
-                                                ├──▶ CLocaleCatalog ──▶ 文
-  コードからの登録 ─────────────────────────────┘         (寿命を持つ)      │
-                                                                            ▼
-                                                                     CTextFormatter
-                                                                      ({0} を差し替え)
+  Assetsの表 ──▶ CLocalizationTableFile ──▶ CLocalizationTableParser ──┐
+                                                                      ├──▶ CLocaleCatalog ──▶ 文
+  コードからの登録 ───────────────────────────────────────────────────┘         (寿命を持つ)      │
+                                                                                                  ▼
+                                                                                           CTextFormatter
+                                                                                            ({0} を差し替え)
 
   言語が変わった ──▶ CLocaleChangeBroadcaster ──▶ ILocaleChangeListener (張り替える側)
 ```
@@ -60,7 +61,7 @@
 |---|---|---|
 | 直下 | 文を持つ / 引く | `CLocaleCatalog` |
 | 直下 | 文を組み立てる | `CTextFormatter`、`FTextArgument` |
-| 直下 | 外から読む | `CLocalizationTableParser`、`CLocaleName` |
+| 直下 | 外から読む | `CLocalizationTableFile`、`CLocalizationTableParser`、`CLocaleName` |
 | 直下 | 変わったことを配る | `CLocaleChangeBroadcaster`、`ILocaleChangeListener` |
 | 直下 | 所有と順番 | `CLocalizationSubsystem` |
 
@@ -99,7 +100,10 @@ battle.damage = {1} damage to {0}
 ## 使い方
 
 ```cpp
-Localization->LoadTable( TableText );
+const TResult<FLocalizationParseResult> Loaded =
+    Localization->LoadTableFile( FStringView( "Text/game.loc" ) );
+if ( Loaded.IsErr() ) return;
+
 Localization->SetLocale( ELocale::Ja );
 
 const FString Title = Localization->GetText( FString( "ui.title" ) );
@@ -108,6 +112,10 @@ const FTextArgument Args[] = { FTextArgument::FromText( FStringView( "スライ�
                                FTextArgument::FromInteger( 12 ) };
 const FString Line = Localization->FormatText( FString( "battle.damage" ), Args, 2u );
 ```
+
+訳文表はUTF-8で`Assets/Text`などへ置く。BOMの有無はどちらでもよい。パスは他の素材と同じく
+`Assets`からの相対名だけを受け付け、絶対パスと`..`は拒否する。文字列を既に持っている場合は
+従来どおり`LoadTable(TableText)`へ直接渡せる。
 
 ---
 
@@ -119,5 +127,4 @@ const FString Line = Localization->FormatText( FString( "battle.damage" ), Args,
 - 言語を変えたら、既に引いてある文は**古いまま**。`ILocaleChangeListener` で張り替えること。
   同じ言語を渡したときは配らない（変わっていないのに張り替えさせない）。
 - 配る相手は**所有しない**。相手が先に消えるなら、消える前に外すこと。
-- **まだ無いもの**: ファイルからの読み込み（いまは文字列を渡す形だけ）、複数形・性別の扱い、
-  右から書く言語、言語に合わせたフォント切り替え。
+- **まだ無いもの**: 複数形・性別の扱い、右から書く言語、言語に合わせたフォント切り替え。

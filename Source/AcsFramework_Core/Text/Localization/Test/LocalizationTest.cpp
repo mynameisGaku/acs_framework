@@ -1,7 +1,9 @@
 // SPDX-License-Identifier: Apache-2.0
+#include "AcsFramework_Core/Assets/Model3D/AssetRoot.h"
 #include "AcsFramework_Core/Text/Localization/LocaleCatalog.h"
 #include "AcsFramework_Core/Text/Localization/LocaleChangeBroadcaster.h"
 #include "AcsFramework_Core/Text/Localization/LocaleName.h"
+#include "AcsFramework_Core/Text/Localization/LocalizationTableFile.h"
 #include "AcsFramework_Core/Text/Localization/LocalizationTableParser.h"
 #include "AcsFramework_Core/Text/Localization/TextFormatter.h"
 #include "Common/Test/TestHarness.h"
@@ -197,6 +199,67 @@ void RunLocalizationTests( CTestHarness& Harness )
 		Harness.Check( Result.bMissingLocaleHeader, "見出しより前の行に気付く" );
 		Harness.CheckEqualU64( Result.Registered, 1u, "見出しの後は読める" );
 		Harness.Check( !Catalog.Has( FString( "ui.orphan" ) ), "決まらない行は入れない" );
+	}
+
+	Harness.BeginSuite( "CLocalizationTableFile / AssetsからUTF-8表を読む" );
+
+	{
+		/** 試験用Assets内で訳文表を置くフォルダ。 */
+		constexpr const wchar_t* kTableDirectory = L"TestOutput\\LocalizationAssets\\Text";
+		/** 書き込みと後片付けに使う訳文表の実パス。 */
+		constexpr const wchar_t* kTablePath = L"TestOutput\\LocalizationAssets\\Text\\game.loc";
+		/** `CAssetRoot`へ一時指定する試験用素材ルート。 */
+		constexpr const char* kAssetRoot = "TestOutput/LocalizationAssets";
+		/** BOM、日本語、英語を含むUTF-8訳文表。 */
+		const char TableBytes[] =
+			"\xef\xbb\xbf"
+			"[ja]\n"
+			"ui.start = はじめる\n"
+			"[en]\n"
+			"ui.start = Start\n";
+
+		/** 試験用素材フォルダの作成結果。 */
+		const TResult<void> Directory = CFileSystem::CreateDirectory( kTableDirectory );
+		Harness.Check( Directory.IsOk(), "試験用Assetsを作れる" );
+		/** BOM付き表の書き込み結果。 */
+		const TResult<void> Written = CFileSystem::WriteAllBytes(
+			kTablePath, reinterpret_cast<const byte*>( TableBytes ), sizeof( TableBytes ) - 1u );
+		Harness.Check( Written.IsOk(), "BOM付きUTF-8表を置ける" );
+
+		CAssetRoot::Override( FStringView( kAssetRoot ) );
+		/** ファイルから登録された文を持つ試験用辞書。 */
+		CLocaleCatalog Catalog;
+		/** 相対パスから訳文表を読んだ結果。 */
+		TResult<FLocalizationParseResult> Loaded = CLocalizationTableFile::LoadInto(
+			Catalog, FStringView( "Text/game.loc" ) );
+		Harness.Check( Loaded.IsOk(), "Assetsから相対名だけで読める" );
+		if ( Loaded.IsOk() )
+		{
+			Harness.Check( Loaded.Value().Succeeded(), "BOMを表の一部として誤解析しない" );
+			Harness.CheckEqualU64( Loaded.Value().Registered, 2u, "両言語を足す" );
+		}
+
+		Catalog.SetLocale( ELocale::Ja );
+		Harness.Check( TextIs( Catalog.Find( FString( "ui.start" ) ), "はじめる" ), "日本語を引ける" );
+		Catalog.SetLocale( ELocale::En );
+		Harness.Check( TextIs( Catalog.Find( FString( "ui.start" ) ), "Start" ), "英語を引ける" );
+
+		/** 失敗時に維持されるべき既存の英語鍵数。 */
+		const usize EnglishCount = Catalog.KeyCount( ELocale::En );
+		/** 素材ルート外を指す入力の拒否結果。 */
+		const TResult<FLocalizationParseResult> Traversal = CLocalizationTableFile::LoadInto(
+			Catalog, FStringView( "../outside.loc" ) );
+		Harness.Check( Traversal.IsErr(), "Assetsの外は読まない" );
+		/** 存在しない表の読み込み結果。 */
+		const TResult<FLocalizationParseResult> Missing = CLocalizationTableFile::LoadInto(
+			Catalog, FStringView( "Text/missing.loc" ) );
+		Harness.Check( Missing.IsErr(), "無いファイルは失敗として返す" );
+		Harness.CheckEqualU64( Catalog.KeyCount( ELocale::En ), EnglishCount, "読み込み失敗で既存の文を変えない" );
+
+		CAssetRoot::Override( FStringView() );
+		/** 試験用ファイルだけを削除した結果。 */
+		const TResult<void> Deleted = CFileSystem::Delete( kTablePath );
+		Harness.Check( Deleted.IsOk(), "試験用ファイルを片付けられる" );
 	}
 
 	Harness.BeginSuite( "CTextFormatter / 値を差し込む" );

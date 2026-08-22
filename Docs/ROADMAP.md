@@ -167,7 +167,9 @@ cameraからの距離に応じて大気へ馴染み、雲も実距離まで同�
 
 ### v0.4 — 残りと品質
 
-- 訳文のファイル読み込み
+- ~~訳文のファイル読み込み~~ → **実装済み** (2026-08-22)。
+  `CLocalizationSubsystem::LoadTableFile( FStringView( "Text/game.loc" ) )`で`Assets`配下のUTF-8表を読み、
+  BOM、欠損、パス逸脱を安全に扱う。表の解析と文字列寿命は既存の部品を再利用する
 - ~~入力の再割り当て (UI + 保存)~~ → **実装済み** (2026-08-22)。
   `FActionKeyRebindState`と`FActionGamepadRebindState`で入力待ち・確定・取消を決定論的に処理し、
   `CActionBindingTable`はキーボード、プレイヤー別ゲームパッドボタン、軸を他の割り当てを

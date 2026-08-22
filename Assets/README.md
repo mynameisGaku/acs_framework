@@ -8,6 +8,7 @@ Assets/
   Effects/    3D エフェクト (.efkefc)
   Textures/   画像
   Audio/      音
+  Text/       訳文表 (UTF-8)
 ```
 
 ## モデルは FBX
@@ -46,6 +47,12 @@ PlayEffect3D( FStringView( "Effects/hit.efkefc" ), FVec3{ 0, 1, 0 } );
 ```powershell
 .\Tools\GenerateSpatialAudioDemo.ps1
 ```
+
+## 訳文表はUTF-8
+
+訳文表は`Text/`へ置き、`CLocalizationSubsystem::LoadTableFile`へ`Text/game.loc`のような
+相対名を渡す。UTF-8のBOMは有っても無くてもよい。表の書式は
+`Source/AcsFramework_Core/Text/Localization/README.md`にまとめている。
 
 ## 置き場の見つけ方
 

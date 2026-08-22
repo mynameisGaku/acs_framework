@@ -552,6 +552,9 @@
     <ClCompile Include="Source\AcsFramework_Core\Text\Localization\LocalizationSubsystem.cpp">
       <Filter>Source\AcsFramework_Core\Text\Localization</Filter>
     </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Text\Localization\LocalizationTableFile.cpp">
+      <Filter>Source\AcsFramework_Core\Text\Localization</Filter>
+    </ClCompile>
     <ClCompile Include="Source\AcsFramework_Core\Text\Localization\LocalizationTableParser.cpp">
       <Filter>Source\AcsFramework_Core\Text\Localization</Filter>
     </ClCompile>
@@ -1143,6 +1146,9 @@
       <Filter>Source\AcsFramework_Core\Text\Localization</Filter>
     </ClInclude>
     <ClInclude Include="Source\AcsFramework_Core\Text\Localization\LocalizationSubsystem.h">
+      <Filter>Source\AcsFramework_Core\Text\Localization</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Text\Localization\LocalizationTableFile.h">
       <Filter>Source\AcsFramework_Core\Text\Localization</Filter>
     </ClInclude>
     <ClInclude Include="Source\AcsFramework_Core\Text\Localization\LocalizationTableParser.h">
