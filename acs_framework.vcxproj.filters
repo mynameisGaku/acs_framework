@@ -109,6 +109,12 @@
     <Filter Include="Source\AcsFramework_Core\Scene\Collision3D\Test">
       <UniqueIdentifier>{eb51a720-5b1a-13b8-90bc-d964302b1ffb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\AcsFramework_Core\Scene\Interaction3D">
+      <UniqueIdentifier>{aad0f73b-89c8-3059-881c-96cbd9d21b27}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\AcsFramework_Core\Scene\Interaction3D\Test">
+      <UniqueIdentifier>{1e4e4b0c-2558-67e8-5cae-5b6b7dea73a9}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Source\AcsFramework_Core\Scene\Light3D">
       <UniqueIdentifier>{8b1a5568-e0a0-83ba-9b5c-33efac1dff22}</UniqueIdentifier>
     </Filter>
@@ -431,6 +437,15 @@
     </ClCompile>
     <ClCompile Include="Source\AcsFramework_Core\Scene\Collision3D\SceneCollision3D.cpp">
       <Filter>Source\AcsFramework_Core\Scene\Collision3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Scene\Interaction3D\InteractionFocus3D.cpp">
+      <Filter>Source\AcsFramework_Core\Scene\Interaction3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Scene\Interaction3D\InteractionFocus3DParams.cpp">
+      <Filter>Source\AcsFramework_Core\Scene\Interaction3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Scene\Interaction3D\InteractionFocus3DTransition.cpp">
+      <Filter>Source\AcsFramework_Core\Scene\Interaction3D</Filter>
     </ClCompile>
     <ClCompile Include="Source\AcsFramework_Core\Scene\Light3D\Light3DSpawner.cpp">
       <Filter>Source\AcsFramework_Core\Scene\Light3D</Filter>
@@ -1003,6 +1018,24 @@
     </ClInclude>
     <ClInclude Include="Source\AcsFramework_Core\Scene\Collision3D\SceneSweepHit3D.h">
       <Filter>Source\AcsFramework_Core\Scene\Collision3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Interaction3D\InteractionFocus3D.h">
+      <Filter>Source\AcsFramework_Core\Scene\Interaction3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Interaction3D\InteractionFocus3DInput.h">
+      <Filter>Source\AcsFramework_Core\Scene\Interaction3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Interaction3D\InteractionFocus3DParams.h">
+      <Filter>Source\AcsFramework_Core\Scene\Interaction3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Interaction3D\InteractionFocus3DState.h">
+      <Filter>Source\AcsFramework_Core\Scene\Interaction3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Interaction3D\InteractionFocus3DTransition.h">
+      <Filter>Source\AcsFramework_Core\Scene\Interaction3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Interaction3D\InteractionFocus3DUpdateResult.h">
+      <Filter>Source\AcsFramework_Core\Scene\Interaction3D</Filter>
     </ClInclude>
     <ClInclude Include="Source\AcsFramework_Core\Scene\Light3D\Light3DSpawner.h">
       <Filter>Source\AcsFramework_Core\Scene\Light3D</Filter>
@@ -1587,6 +1620,12 @@
     </None>
     <None Include="Source\AcsFramework_Core\Scene\Collision3D\Test\SceneCollision3DTest.cpp">
       <Filter>Source\AcsFramework_Core\Scene\Collision3D\Test</Filter>
+    </None>
+    <None Include="Source\AcsFramework_Core\Scene\Interaction3D\README.md">
+      <Filter>Source\AcsFramework_Core\Scene\Interaction3D</Filter>
+    </None>
+    <None Include="Source\AcsFramework_Core\Scene\Interaction3D\Test\InteractionFocus3DTest.cpp">
+      <Filter>Source\AcsFramework_Core\Scene\Interaction3D\Test</Filter>
     </None>
     <None Include="Source\AcsFramework_Core\Scene\Light3D\README.md">
       <Filter>Source\AcsFramework_Core\Scene\Light3D</Filter>

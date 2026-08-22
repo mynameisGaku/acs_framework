@@ -52,6 +52,14 @@ public:
 	bool IsBound() const noexcept { return m_Graph != nullptr; }
 
 	/**
+	 * 指定したノードグラフへ接続中ならtrueを返す。
+	 *
+	 * @param Graph 同じ場面か確認するグラフ。
+	 * @return 接続中の非所有ポインタが指定グラフならtrue。
+	 */
+	bool IsBoundTo( const CSceneNodeGraph& Graph ) const noexcept { return m_Graph == &Graph; }
+
+	/**
 	 * 1つのノード位置へ追従するラベルを加える。
 	 *
 	 * @param Node 接続中グラフが所有し、有効な`FNodeId`を持つノード。

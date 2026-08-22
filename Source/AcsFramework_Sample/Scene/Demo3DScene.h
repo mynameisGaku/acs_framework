@@ -212,6 +212,9 @@ private:
 	/** 実形状判定の直近結果を示す文字。 */
 	u32 m_GeometryPickStatusText = 0u;
 
+	/** 視線対象の有無と直近の決定結果を示す文字。 */
+	u32 m_InteractionStatusText = 0u;
+
 	/** 実機キーをFXAA操作へ変換する割り当て表。 */
 	CActionBindingTable m_ActionBindings;
 
@@ -247,4 +250,7 @@ private:
 
 	/** 次の3D効果音を右から鳴らすか。falseなら左。 */
 	bool m_bNextSpatialSoundRight = false;
+
+	/** 次回更新で現在の視線対象へ決定操作を送る印。 */
+	bool m_bInteractionRequested = false;
 };

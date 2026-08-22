@@ -72,6 +72,7 @@ void RunWater3DSpawnerTests( CTestHarness& Harness );
 void RunWeather3DAppearanceTests( CTestHarness& Harness );
 void RunScenePickerTests( CTestHarness& Harness );
 void RunWorldLabel3DTests( CTestHarness& Harness );
+void RunInteractionFocus3DTests( CTestHarness& Harness );
 void RunModelLibraryTests( CTestHarness& Harness );
 void RunSkinnedModelTests( CTestHarness& Harness );
 void RunSceneSnapshotTests( CTestHarness& Harness );
@@ -120,6 +121,7 @@ int main()
 	RunWeather3DAppearanceTests( Harness );
 	RunScenePickerTests( Harness );
 	RunWorldLabel3DTests( Harness );
+	RunInteractionFocus3DTests( Harness );
 	RunModelLibraryTests( Harness );
 	RunSkinnedModelTests( Harness );
 	RunSceneSnapshotTests( Harness );

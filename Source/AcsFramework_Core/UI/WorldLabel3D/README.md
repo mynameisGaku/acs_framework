@@ -21,3 +21,6 @@ WorldLabels().AddNodeLabel( *PlayerNode, Label );
 
 ラベルはdepth textureで遮蔽しない。壁越し表示を避ける必要がある作品は、`CScenePicker`でカメラから
 対象まで線を飛ばし、その結果を`SetVisible`へ渡す。
+
+会話や取得のように「見ている間だけ案内を出し、決定操作も受ける」用途は、同じ実形状判定と
+ラベルをまとめた`CInteractionFocus3D`を使う。

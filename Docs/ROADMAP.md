@@ -37,6 +37,7 @@ ACS のモジュールは **438 個**ある。この枠組みが窓口を用意�
 | 3D 天候 | `AWeather3DScene`、`FWeather3DAppearance`、ACSの`CWeatherSystem` |
 | 3D エフェクト | `AEffect3DScene`、`CEffect3DPlayer`、同梱の Effekseer |
 | 3D の形状重なり | `CSceneCollision3D`、ACSの`CCollisionWorld3D` |
+| 3D の視線操作 | `CInteractionFocus3D`、`CScenePicker`、`CWorldLabel3DLayer` |
 | 遊ぶ人向け UI | `AUi3DScene`、`CUiLayer`、ACSの `AWidget` 群 |
 | 多言語 | `CLocalizationSubsystem` |
 | 決定性 (記録と再生) | `CSimulationSubsystem` |
@@ -165,6 +166,10 @@ cameraからの距離に応じて大気へ馴染み、雲も実距離まで同�
   `WorldLabels().AddNodeLabel( Node, Params )`で敵名、会話対象、目的地をworld位置へ置ける。
   ACSの`WorldToScreen`と共有HUDフォントを使い、ノード破棄、scene読込後の識別子再利用、非表示の
   祖先、カメラ後方、画面外、最大距離を毎描画で確認する。固定world位置と公開射影adapterも持つ
+- ~~3Dの視線フォーカスと決定~~ → **実装済み** (2026-08-22)。`InteractionFocus().RegisterTarget`
+  で人物や扉の親を1件登録し、`UpdateInteractionFocus( bPressed )`をカメラ更新後に呼ぶだけで、
+  最前面の実形状から対象への進入、退出、切替、決定を世代付きIDで返す。命中した子から登録親を
+  探し、未登録形状は遮蔽物として扱う。状態遷移は場面・入力装置・描画から分けて単体検証する
 - ~~3D 素材の置き場と取り込み手順~~ → **決定・実装済み** (2026-08-18)。
   置き場は `Assets`、形式は **FBX** (`.gltf` `.glb` `.obj` も通る)。
   `CModelLibrary` が置き場を探して読み、`CModel3DSpawner::SpawnInto(..., Library)` が置く。

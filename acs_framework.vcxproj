@@ -391,6 +391,14 @@
       <ClInclude Include="Source\AcsFramework_Core\Scene\Pick3D\ScenePicker.h" />
       <None Include="Source\AcsFramework_Core\Scene\Pick3D\README.md" />
       <None Include="Source\AcsFramework_Core\Scene\Pick3D\Test\ScenePickerTest.cpp" />
+      <ClInclude Include="Source\AcsFramework_Core\Scene\Interaction3D\InteractionFocus3D.h" />
+      <ClInclude Include="Source\AcsFramework_Core\Scene\Interaction3D\InteractionFocus3DInput.h" />
+      <ClInclude Include="Source\AcsFramework_Core\Scene\Interaction3D\InteractionFocus3DParams.h" />
+      <ClInclude Include="Source\AcsFramework_Core\Scene\Interaction3D\InteractionFocus3DState.h" />
+      <ClInclude Include="Source\AcsFramework_Core\Scene\Interaction3D\InteractionFocus3DTransition.h" />
+      <ClInclude Include="Source\AcsFramework_Core\Scene\Interaction3D\InteractionFocus3DUpdateResult.h" />
+      <None Include="Source\AcsFramework_Core\Scene\Interaction3D\README.md" />
+      <None Include="Source\AcsFramework_Core\Scene\Interaction3D\Test\InteractionFocus3DTest.cpp" />
       <ClInclude Include="Source\AcsFramework_Core\Assets\Model3D\AssetRoot.h" />
       <ClInclude Include="Source\AcsFramework_Core\Assets\Model3D\ModelLibrary.h" />
       <None Include="Source\AcsFramework_Core\Assets\Model3D\README.md" />
@@ -593,6 +601,9 @@
     <ClCompile Include="Source\AcsFramework_Sample\Scene\Demo3DScene.cpp" />
       <ClCompile Include="Source\AcsFramework_Core\Scene\Pick3D\SceneRay.cpp" />
       <ClCompile Include="Source\AcsFramework_Core\Scene\Pick3D\ScenePicker.cpp" />
+      <ClCompile Include="Source\AcsFramework_Core\Scene\Interaction3D\InteractionFocus3D.cpp" />
+      <ClCompile Include="Source\AcsFramework_Core\Scene\Interaction3D\InteractionFocus3DParams.cpp" />
+      <ClCompile Include="Source\AcsFramework_Core\Scene\Interaction3D\InteractionFocus3DTransition.cpp" />
       <ClCompile Include="Source\AcsFramework_Core\Assets\Model3D\AssetRoot.cpp" />
       <ClCompile Include="Source\AcsFramework_Core\Assets\Model3D\ModelLibrary.cpp" />
       <ClCompile Include="Source\AcsFramework_Sample\Scene\MinimalScene.cpp" />

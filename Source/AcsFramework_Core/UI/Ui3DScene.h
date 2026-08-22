@@ -3,6 +3,7 @@
 
 #include <acs.h>
 
+#include "AcsFramework_Core/Scene/Interaction3D/InteractionFocus3D.h"
 #include "AcsFramework_Core/UI/WorldLabel3D/WorldLabel3DLayer.h"
 
 using namespace acs;
@@ -60,6 +61,24 @@ public:
 	 */
 	const CWorldLabel3DLayer& WorldLabels() const noexcept { return m_WorldLabels; }
 
+	/**
+	 * 登録対象の視線判定と操作案内を扱う3Dインタラクション窓口を返す。
+	 *
+	 * @return この場面のグラフとワールドラベルへ接続済みのアダプター。
+	 */
+	CInteractionFocus3D& InteractionFocus() noexcept { return m_InteractionFocus; }
+
+	/** 読み取り専用の3Dインタラクション窓口を返す。 */
+	const CInteractionFocus3D& InteractionFocus() const noexcept { return m_InteractionFocus; }
+
+	/**
+	 * 現在カメラから視線判定を1回行い、対象出入りと決定を返す。
+	 *
+	 * @param bActivateRequested 今回捉えた対象へ決定操作を要求するならtrue。
+	 * @return 更新前後の対象と、成立した決定対象。
+	 */
+	FInteractionFocus3DUpdateResult UpdateInteractionFocus( bool bActivateRequested = false ) noexcept;
+
 	/** 通常の3D場面を開始してからUI層を初期化する。 */
 	void OnEnter() noexcept override;
 
@@ -88,6 +107,9 @@ protected:
 private:
 	/** この場面のノード位置をHUDへ射影するワールドラベルレイヤー。 */
 	CWorldLabel3DLayer m_WorldLabels;
+
+	/** 実形状ピックと操作案内を接続する、この場面所有の視線フォーカス。 */
+	CInteractionFocus3D m_InteractionFocus;
 
 	/** この場面だけが所有する遊ぶ人向けUI層。 */
 	CUiLayer m_Ui;

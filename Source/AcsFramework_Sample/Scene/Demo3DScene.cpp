@@ -55,7 +55,7 @@ namespace
 	constexpr f32 kUiWidth = 260.0f;
 
 	/** プレイヤーUIのカード高さ。 */
-	constexpr f32 kUiHeight = 668.0f;
+	constexpr f32 kUiHeight = 696.0f;
 
 	/** FXAA切り替えに使うアクション番号。 */
 	constexpr u32 kFxaaActionIndex = 0u;
@@ -340,6 +340,10 @@ namespace
 void ADemo3DScene::OnEnter() noexcept
 {
 	AWeather3DScene::OnEnter();
+	m_bInteractionRequested = false;
+	FInteractionFocus3DParams InteractionParams;
+	InteractionParams.MaximumDistance = 8.0f;
+	if ( !InteractionFocus().SetParams( InteractionParams ) ) ACS_LOG_WARN( "Demo3D: 視線フォーカス距離を設定できなかった" );
 	m_Spinner = nullptr;
 	m_Mover = nullptr;
 	m_WaterSurfaceId = FNodeId{};
@@ -539,6 +543,7 @@ void ADemo3DScene::OnEnter() noexcept
 	m_WeatherStatusText = Ui().AddText( "WEATHER: CLEAR", FVec2{ kUiLeft + 16.0f, kUiTop + 556.0f } );
 	m_GeometryPickButton = Ui().AddButton( "PICK EXACT SHAPE", FVec2{ kUiLeft + 16.0f, kUiTop + 582.0f }, FVec2{ kUiWidth - 32.0f, 44.0f } );
 	m_GeometryPickStatusText = Ui().AddText( "PICK: READY", FVec2{ kUiLeft + 16.0f, kUiTop + 640.0f } );
+	m_InteractionStatusText = Ui().AddText( "FOCUS: LOOK AT PLAYER", FVec2{ kUiLeft + 16.0f, kUiTop + 666.0f } );
 	m_bNextSpatialSoundRight = false;
 	m_NextWeatherIndex = 0u;
 	SetWeather( EWeatherKind::Clear, 0.0f );
@@ -648,6 +653,7 @@ void ADemo3DScene::OnExit() noexcept
 	m_Spinner = nullptr;
 	m_Mover = nullptr;
 	m_WaterSurfaceId = FNodeId{};
+	m_bInteractionRequested = false;
 	AWeather3DScene::OnExit();
 }
 
@@ -699,6 +705,13 @@ bool ADemo3DScene::TryInitializeThirdPersonCharacter() noexcept
 	CharacterLabel.WorldOffset = FVec3{ 0.0f, 2.15f, 0.0f };
 	CharacterLabel.TextColor = FVec4{ 0.72f, 0.92f, 1.0f, 1.0f };
 	WorldLabels().AddNodeLabel( *Character, CharacterLabel );
+
+	FWorldLabel3DParams InteractionLabel;
+	InteractionLabel.Text = FStringView( "ENTER: INTERACT" );
+	InteractionLabel.WorldOffset = FVec3{ 0.0f, 2.55f, 0.0f };
+	InteractionLabel.TextColor = FVec4{ 1.0f, 0.86f, 0.35f, 1.0f };
+	InteractionLabel.MaximumDistance = 8.0f;
+	if ( !InteractionFocus().RegisterTarget( *Character, InteractionLabel ) ) ACS_LOG_WARN( "Demo3D: 操作キャラクターを視線対象へ登録できなかった" );
 	return true;
 }
 
@@ -791,6 +804,18 @@ void ADemo3DScene::OnUpdate( f32 DeltaSeconds ) noexcept
 	UpdateThirdPersonCharacter( DeltaSeconds );
 	RefreshSpatialAudioListener();
 
+	const bool bActivateInteraction = m_bInteractionRequested && !IsInputCaptureActive();
+	m_bInteractionRequested = false;
+	const FInteractionFocus3DUpdateResult InteractionResult = UpdateInteractionFocus( bActivateInteraction );
+	if ( InteractionResult.Activated() )
+	{
+		SetUiTextIfChanged( Ui(), m_InteractionStatusText, "INTERACT: PLAYER" );
+	}
+	else if ( InteractionResult.FocusChanged() )
+	{
+		SetUiTextIfChanged( Ui(), m_InteractionStatusText, InteractionResult.FocusedNode.IsValid() ? "FOCUS: ENTER TO INTERACT" : "FOCUS: LOOK AT PLAYER" );
+	}
+
 	// 割り当て確定に使った同じ押下ではFXAAを切り替えない。次の押下から通常操作になる。
 	if ( m_bSuppressBoundActionPress )
 	{
@@ -846,6 +871,8 @@ void ADemo3DScene::OnUpdate( f32 DeltaSeconds ) noexcept
 
 void ADemo3DScene::OnEvent( const FEvent& Event ) noexcept
 {
+	if ( Event.type == EEventType::KeyPressed && Event.key.key == EKey::Enter && !IsInputCaptureActive() ) m_bInteractionRequested = true;
+
 	if ( Event.type == EEventType::KeyPressed && Event.key.key == EKey::Escape )
 	{
 		const bool bCancelledButton = m_JumpGamepadRebind.CancelCapture();
