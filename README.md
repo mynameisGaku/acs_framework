@@ -35,6 +35,7 @@ msbuild acs_framework.vcxproj /p:Configuration=Release /p:Platform=x64
 | 3D を置く | `CModel3DSpawner`、FBX の取り込み、材質 (metallic / roughness) |
 | 3D を照らす | `CLight3DSpawner`、方向だけで置ける太陽、位置と距離だけで置ける点光源 |
 | 動かす | `CCharacterMover3D`による重力・接地・壁沿い移動・ジャンプ、姿勢を滑らかに繋ぐ`CCharacterAnimator3D` |
+| カメラで追う | `CNodeOrbitCamera3D`、人物の注視点追従、回転・距離操作、遮蔽物回避 |
 | 見た目 | 物理大気・ボリューム雲・影・IBL・遮蔽 (SSAO)・間接光 (SSGI)・反射 (SSR)・霧・トーンマップ・輪郭補正 (FXAA) |
 | 3D 天候 | `AWeather3DScene`、晴天・曇天・雨・雪・嵐・霧・砂嵐の滑らかな遷移 |
 | 3D 水面 | `CWater3DSpawner`、屈折・反射・泡・動的な波紋 |
@@ -98,6 +99,11 @@ HeroMover.SetCollisionFilter( PlayerShape, 0x2u );
 HeroMover.MoveFromCamera(
     Camera(), FVec2{ MoveX, MoveForward }, 4.0f, bJumpPressed, DeltaSeconds );
 HeroMover.TurnTowardMovement( 540.0f, DeltaSeconds );
+
+// 人物の少し上を追い、明示した視点操作で回る。間の壁には自動で寄る
+CNodeOrbitCamera3D HeroCamera;
+HeroCamera.Bind( *this, *HeroNode );
+HeroCamera.Update( FVec2{ LookX, LookY }, Zoom, DeltaSeconds );
 
 // 反射・屈折・泡を持つ水面を置き、波紋を起こす
 FWater3DSpawnParams Water;

@@ -398,6 +398,10 @@
     <ClInclude Include="Source\AcsFramework_Core\Scene\Character3D\CharacterMover3D.h" />
     <None Include="Source\AcsFramework_Core\Scene\Character3D\README.md" />
     <None Include="Source\AcsFramework_Core\Scene\Character3D\Test\CharacterMover3DTest.cpp" />
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Camera3D\NodeOrbitCamera3D.h" />
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Camera3D\NodeOrbitCamera3DParams.h" />
+    <None Include="Source\AcsFramework_Core\Scene\Camera3D\README.md" />
+    <None Include="Source\AcsFramework_Core\Scene\Camera3D\Test\NodeOrbitCamera3DTest.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Common\Pch.cpp">
@@ -569,6 +573,7 @@
       <ClCompile Include="Source\AcsFramework_Sample\Scene\MinimalScene.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Scene\Collision3D\SceneCollision3D.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Scene\Character3D\CharacterMover3D.cpp" />
+    <ClCompile Include="Source\AcsFramework_Core\Scene\Camera3D\NodeOrbitCamera3D.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

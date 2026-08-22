@@ -97,7 +97,8 @@ IBLへ反映する。残りは空を焼くIBLへ雲の形そのものを含め�
 - 3D シーンの窓口 — モデルを置く / 動かす / 消す
 - ~~カメラ~~ → **ACS 側へ実装済み** (`FCamera3D`、`acs_temp_doc/0004`)。
   `CCameraStack` は 2D 専用だったので使えず、`FCamera2D` の 3D 版を ACS に足した。
-  枠組みからは配布物の再生成後に使える
+  Frameworkでは`CNodeOrbitCamera3D`が人物などのノードを注視点として追い、明示した回転・距離
+  操作をACSの軌道計算へ渡す。場面の描画形状による遮蔽物回避も既定で有効にする。
 - ライティング — **ACS側とFramework側へ実装済み**: 光のコンポーネント
   (`ALightComponent3D`) と木から集める層 (`CLightCollector3D`) を描画へ接続し、Frameworkでは
   `CLight3DSpawner`へ方向または位置を渡すだけで置ける。光が無い場面も既定の太陽 + IBL + 影 +
@@ -209,7 +210,7 @@ IBLへ反映する。残りは空を焼くIBLへ雲の形そのものを含め�
 | v1.0.0 の意味 | 他人が使える形で配れる | 2026-08-17 |
 | ACS 配布物 | GitHub Releases + 取得スクリプト | 2026-08-17 |
 | 3D の剛体物理 | ACS 側へ入れる (枠組みには書かない) | 2026-08-17 |
-| 3D カメラ (追従・揺れ) | ACS 側へ実装済み (`FCamera3D`) | 2026-08-17 |
+| 3D カメラ (追従・揺れ) | ACSの`FCamera3D`とFrameworkの`CNodeOrbitCamera3D`を実装済み | 2026-08-22 |
 | 3D の光 | ACS 側へ実装済み (`ALightComponent3D`) | 2026-08-17 |
 | 光を集める層 | ACS 側へ実装済み (`CLightCollector3D`) | 2026-08-17 |
 | 3D の光を置く窓口 | Framework側へ実装済み (`CLight3DSpawner`) | 2026-08-22 |

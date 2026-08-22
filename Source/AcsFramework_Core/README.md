@@ -60,6 +60,10 @@ Subsystemにはしない。`AEffect3DScene`がscene単位で`CEffect3DPlayer`を
 `CCharacterMover3D`はその結果を親座標へ戻してノードへ反映し、速度と接地状態だけを保持する。
 固定更新と入力寿命は所有せず、キャラクターごとの短い寿命なのでsubsystemにはしない。
 
+3Dの人物追従カメラは`CNodeOrbitCamera3D`を場面または人物が所有する。ACSの軌道カメラ計算と
+場面描画形状の遮蔽物回避を使い、明示した操作量と時刻から注視点、角度、距離を更新する。
+入力装置と追従ノードは所有せず、場面ごとの短い寿命なのでsubsystemにはしない。
+
 3Dライト配置は`FLight3DSpawnParams`を検証可能な値、`CLight3DSpawner`を状態なしの接続層とする。
 位置または光源方向、色、強さ、到達距離から、識別子付きノードと`ALightComponent3D`を作るだけに
 留める。光の収集、上限選択、PBR描画、影はACSへ任せ、Framework側へ照明計算を複製しない。
