@@ -17,7 +17,7 @@ on:
 jobs:
   checks:
     name: repository checks
-    runs-on: windows-latest
+    runs-on: windows-2025-vs2026
     steps:
       - uses: actions/checkout@v4
 
@@ -29,7 +29,7 @@ jobs:
 
   build:
     name: build and test
-    runs-on: windows-latest
+    runs-on: windows-2025-vs2026
     needs: checks
     steps:
       - uses: actions/checkout@v4
@@ -48,32 +48,9 @@ jobs:
               "Tools/acs-version.json の sha256 を埋めると、この job が自動で走り始めます。"
           }
 
-      - name: fetch ACS distribution
+      # ACS取得、v145のDebug/Releaseビルド、両構成のテストをローカルと同じ入口で行う。
+      # 窓とGPUを使う見た目の確認だけは実機のTools\CaptureApp.ps1へ残す。
+      - name: run full CI checks
         if: steps.pin.outputs.ready == 'true'
         shell: pwsh
-        run: .\Tools\FetchAcs.ps1
-
-      - name: add msbuild
-        if: steps.pin.outputs.ready == 'true'
-        uses: microsoft/setup-msbuild@v2
-
-      - name: build
-        if: steps.pin.outputs.ready == 'true'
-        shell: pwsh
-        run: |
-          foreach ($c in @('Debug', 'Release')) {
-            msbuild acs_framework.vcxproj /p:Configuration=$c /p:Platform=x64 /m /nologo /v:minimal
-            if ($LASTEXITCODE -ne 0) { throw "build failed: $c" }
-          }
-
-      # 窓も音も GPU も要らないテスト。CI の走者に GPU は無いので、ここまでが限界。
-      # 画が正しいかは人が見るしかない (Tools\CaptureApp.ps1)。
-      - name: unit tests
-        if: steps.pin.outputs.ready == 'true'
-        shell: pwsh
-        run: .\Tools\RunUnitTests.ps1
-
-      - name: determinism test
-        if: steps.pin.outputs.ready == 'true'
-        shell: pwsh
-        run: .\Tools\RunSimulationDeterminismTest.ps1
+        run: .\Tools\RunCiChecks.ps1

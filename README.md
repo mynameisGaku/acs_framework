@@ -13,7 +13,8 @@
 
 ## 動かす
 
-必要なもの: Windows / Visual Studio 2022 以降 (C++20) / DirectX 12 が動く GPU。
+必要なもの: Windows x64 / Visual Studio 2026 (MSVC v145、C++20) / DirectX 12 が動くGPU。
+保証範囲と対象外の環境は[`Docs/SUPPORTED_PLATFORMS.md`](Docs/SUPPORTED_PLATFORMS.md)にまとめている。
 
 ```powershell
 git clone https://github.com/mynameisGaku/acs_framework
@@ -64,6 +65,8 @@ WASDで移動、左Shiftで走行、矢印キーで視点、Spaceでジャンプ
 詳しくは [`Docs/ROADMAP.md`](Docs/ROADMAP.md)。**v1.0.0 で何を入れて何を入れないか**もそこに書いてある。
 失敗時の出力、ログ、スレッド安全性、セーブ互換性の共通規則は
 [`Docs/RUNTIME_CONTRACTS.md`](Docs/RUNTIME_CONTRACTS.md)を正本とする。
+対応OS、コンパイラ、GPUとCIの検証範囲は
+[`Docs/SUPPORTED_PLATFORMS.md`](Docs/SUPPORTED_PLATFORMS.md)を正本とする。
 
 ## 書き味
 
@@ -241,6 +244,7 @@ DestroyThirdPersonCharacter3D( HeroController, HeroSpawn );
 ## 確かめる
 
 ```powershell
+.\Tools\RunCiChecks.ps1                    # CIと同じDebug/Release完全検証
 .\Tools\RunUnitTests.ps1                    # 窓も音も要らない単体テスト
 .\Tools\RunSimulationDeterminismTest.ps1    # 記録と再生が一致するか
 .\Tools\CaptureApp.ps1 -Out shot.png        # 起動して 1 枚撮って閉じる
@@ -261,7 +265,7 @@ Source/
   EntryPoint/          入口
 Assets/                素材
 Tools/                 ビルド・テスト・撮影・配布物の取得
-Docs/                  ロードマップ、実行時契約と画
+Docs/                  ロードマップ、実行時契約、対応環境と画
 ```
 
 各フォルダに README がある。**「なぜそうなっているか」はそちらに書いてある。**

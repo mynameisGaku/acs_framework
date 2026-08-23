@@ -195,6 +195,73 @@ if ($threadCreationFindings.Count -gt 0) {
     Pass 'Framework Sourceに直接スレッド生成なし'
 }
 
+# ---- 10. CIと対応環境の正本 ----------------------------------------------
+# GitHubだけ別手順にするとRelease検証が抜けやすい。対応環境もREADMEの一文へ閉じず、
+# 共通入口、ワークフロー、正本文書、プロジェクト登録を一緒に検査する。
+Section 'CIと対応環境の正本'
+$ciScriptPath = Join-Path $PSScriptRoot 'RunCiChecks.ps1'
+$platformDocumentPath = Join-Path $repo 'Docs\SUPPORTED_PLATFORMS.md'
+$workflowPath = Join-Path $repo '.github\workflows\ci.yml'
+
+if (-not (Test-Path -LiteralPath $ciScriptPath -PathType Leaf)) {
+    Fail 'ci-contract' 'Tools/RunCiChecks.ps1 がありません'
+} else {
+    $ciScript = Get-Content -LiteralPath $ciScriptPath -Raw
+    $requiredCiFragments = @(
+        "@('Debug', 'Release')",
+        'RunUnitTests.ps1',
+        'RunSimulationDeterminismTest.ps1',
+        '/p:PlatformToolset=v145')
+    $missingCiFragments = @($requiredCiFragments | Where-Object {
+        -not $ciScript.Contains($_)
+    })
+    if ($missingCiFragments.Count -gt 0) {
+        Fail 'ci-contract' "完全検証の必須処理がありません: $($missingCiFragments[0])"
+    } else {
+        Pass 'Debug/Releaseのビルドとテストを共通入口へ統一済み'
+    }
+}
+
+if (-not (Test-Path -LiteralPath $platformDocumentPath -PathType Leaf)) {
+    Fail 'platform-contract' 'Docs/SUPPORTED_PLATFORMS.md がありません'
+} else {
+    $platformDocument = Get-Content -LiteralPath $platformDocumentPath -Raw
+    $requiredPlatformHeadings = @('## 対応対象', '## 対象外', '## 検証方法')
+    $missingPlatformHeadings = @($requiredPlatformHeadings | Where-Object {
+        -not $platformDocument.Contains($_)
+    })
+    if ($missingPlatformHeadings.Count -gt 0) {
+        Fail 'platform-contract' "対応環境の必須章がありません: $($missingPlatformHeadings[0])"
+    } else {
+        Pass '対応対象、対象外、検証方法を明記済み'
+    }
+}
+
+$workflowText = Get-Content -LiteralPath $workflowPath -Raw
+if (-not $workflowText.Contains('windows-2025-vs2026') -or
+    -not $workflowText.Contains('.\Tools\RunCiChecks.ps1')) {
+    Fail 'ci-contract' 'GitHub ActionsがVS 2026走者と共通検証入口を使っていません'
+} elseif ($workflowText.Contains('.\Tools\RunUnitTests.ps1') -or
+          $workflowText.Contains('.\Tools\RunSimulationDeterminismTest.ps1')) {
+    Fail 'ci-contract' 'GitHub Actionsに共通入口と重複する個別テスト手順があります'
+} else {
+    Pass 'GitHub ActionsをVS 2026走者と共通入口へ固定済み'
+}
+
+if (-not $topReadme.Contains('Docs/SUPPORTED_PLATFORMS.md') -or
+    -not $topReadme.Contains('.\Tools\RunCiChecks.ps1')) {
+    Fail 'platform-contract' 'READMEから対応環境または完全検証へ辿れません'
+} else {
+    Pass 'READMEから対応環境と完全検証へ接続済み'
+}
+
+if (-not $projectText.Contains('Docs\SUPPORTED_PLATFORMS.md') -or
+    -not $projectText.Contains('Tools\RunCiChecks.ps1')) {
+    Fail 'platform-contract' '対応環境または完全検証がVisual Studio projectへ登録されていません'
+} else {
+    Pass '対応環境と完全検証をVisual Studio projectへ登録済み'
+}
+
 # ---- result ----------------------------------------------------------------
 Write-Host ''
 if ($failures.Count -gt 0) {

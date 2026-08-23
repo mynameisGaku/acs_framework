@@ -266,15 +266,20 @@ cameraからの距離に応じて大気へ馴染み、雲も実距離まで同�
 **判定基準: 別マシンで clone → 1 コマンド → ビルド → サンプルが動く。**
 
 - ~~`LICENSE` (Apache-2.0) と、トップの `README.md`~~ **済** (2026-08-18)
-- ~~取得スクリプトと sha256 の照合~~ **済**: `Tools\FetchAcs.ps1` + `Toolscs-version.json`。
-  配布物は `ThirdPartycs` へ入り、**環境変数も /p: も無しでビルドが通る**ことを確認済み
+- ~~取得スクリプトと sha256 の照合~~ **済**: `Tools\FetchAcs.ps1` + `Tools\acs-version.json`。
+  配布物は `ThirdParty\acs` へ入り、**環境変数も /p: も無しでビルドが通る**ことを確認済み
   (Debug/Release、単体テスト 538 件、サンプル起動)
 - ~~入門ドキュメントと 3D の最小サンプル~~ **済**: トップ README とデモ 1 本
 - **残り: ACS 側の GitHub Release を実際に publish する。** いまは `-FromLocal` で
   ローカルビルドから持ってくる道しか通っていない。`acs-version.json` の `sha256` が空なのは
   そのため (資産が無いので照合対象が無い)
-- 残り: CI (Windows x64: 取得 → ビルド → テスト)
-- 残り: 対応プラットフォームの宣言 (Windows x64 のみ)
+- ~~CI定義とローカル再現コマンド~~ **実装済み** (2026-08-23)。
+  `Tools\RunCiChecks.ps1`がACS配布物の解決、v145のDebug/Releaseアプリビルド、両構成の単体・決定性テストを
+  順番に実行し、GitHub Actionsも同じ入口を使う。GitHub上の実行はアカウントの課金ロック解除までHOLD、
+  配布物を使うジョブはReleaseのSHA-256登録まで意図的にスキップする
+- ~~対応プラットフォームの宣言~~ **実装済み** (2026-08-23)。
+  `Docs/SUPPORTED_PLATFORMS.md`を正本としてWindows x64、MSVC v145、DirectX 12を保証範囲にし、
+  未検証のx86、ARM64、Linux、macOSを対象外として明記する
 
 ### v1.0.0 — 凍結
 

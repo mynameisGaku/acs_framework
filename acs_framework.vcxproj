@@ -282,6 +282,7 @@
     <None Include="Source\AcsFramework_Core\Simulation\README.md" />
     <None Include="Source\AcsFramework_Core\Simulation\Test\SimulationDeterminismTest.cpp" />
     <None Include="Tools\RunSimulationDeterminismTest.ps1" />
+    <None Include="Tools\RunCiChecks.ps1" />
     <ClInclude Include="Source\AcsFramework_Core\Simulation\Input\IActionDeviceReader.h" />
     <ClInclude Include="Source\AcsFramework_Core\Simulation\Input\ActionBinding.h" />
     <ClInclude Include="Source\AcsFramework_Core\Simulation\Input\ActionBindingTable.h" />
@@ -339,6 +340,7 @@
     <None Include="Source\AcsFramework_Core\Text\Localization\README.md" />
     <None Include="Source\AcsFramework_Core\Text\Localization\Test\LocalizationTest.cpp" />
     <None Include="Docs\RUNTIME_CONTRACTS.md" />
+    <None Include="Docs\SUPPORTED_PLATFORMS.md" />
     <None Include="Docs\ROADMAP.md" />
     <ClInclude Include="Source\AcsFramework_Core\Scene\Model3D\Model3DSpawnParams.h" />
     <ClInclude Include="Source\AcsFramework_Core\Scene\Model3D\Model3DSpawner.h" />

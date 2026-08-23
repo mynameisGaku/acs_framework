@@ -27,16 +27,23 @@ $out  = Join-Path $repo "x64\UnitTest\$Configuration"
 
 New-Item -ItemType Directory -Force -Path $out | Out-Null
 
-# Visual Studio 2026 の launcher は日本語の vswhere JSON を誤解析することがあるため、
-# install pathを直接選び、VsDevCmdが作るx64 compiler環境を現在processへ取り込む (VS 2026対応).
-& "$PSScriptRoot\Get-MsvcEnvironment.ps1" | ForEach-Object {
-    $line = $_
-    $separator = $line.IndexOf('=')
-    if ($separator -gt 0) {
-        Set-Item -LiteralPath ("Env:" + $line.Substring(0, $separator)) -Value $line.Substring($separator + 1)
-    }
+# Visual Studio 2026のlauncherは日本語のvswhere JSONを誤解析することがあるため、
+# install pathを直接選ぶ。同じプロセスで複数構成を検証するときは、PATHを重複追加しない。
+$compilerPath = ''
+if (-not [string]::IsNullOrWhiteSpace($env:VCToolsInstallDir)) {
+    $compilerPath = Join-Path $env:VCToolsInstallDir 'bin\HostX64\x64\cl.exe'
 }
-$compilerPath = Join-Path $env:VCToolsInstallDir 'bin\HostX64\x64\cl.exe'
+if ([string]::IsNullOrWhiteSpace($compilerPath) -or
+    -not (Test-Path -LiteralPath $compilerPath -PathType Leaf)) {
+    & "$PSScriptRoot\Get-MsvcEnvironment.ps1" | ForEach-Object {
+        $line = $_
+        $separator = $line.IndexOf('=')
+        if ($separator -gt 0) {
+            Set-Item -LiteralPath ("Env:" + $line.Substring(0, $separator)) -Value $line.Substring($separator + 1)
+        }
+    }
+    $compilerPath = Join-Path $env:VCToolsInstallDir 'bin\HostX64\x64\cl.exe'
+}
 if (-not (Test-Path -LiteralPath $compilerPath -PathType Leaf)) {
     throw 'x64 MSVC compiler environment could not be initialized.'
 }

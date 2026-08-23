@@ -1717,6 +1717,9 @@
     <None Include="Docs\RUNTIME_CONTRACTS.md">
       <Filter>Docs</Filter>
     </None>
+    <None Include="Docs\SUPPORTED_PLATFORMS.md">
+      <Filter>Docs</Filter>
+    </None>
     <None Include="Source\AcsFramework_Core\Assets\Image\README.md">
       <Filter>Source\AcsFramework_Core\Assets\Image</Filter>
     </None>
@@ -1982,6 +1985,9 @@
       <Filter>Tools</Filter>
     </None>
     <None Include="Tools\RunAcsTests.ps1">
+      <Filter>Tools</Filter>
+    </None>
+    <None Include="Tools\RunCiChecks.ps1">
       <Filter>Tools</Filter>
     </None>
     <None Include="Tools\RunSimulationDeterminismTest.ps1">
