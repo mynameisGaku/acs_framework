@@ -17,8 +17,14 @@ public:
 	/** 方向と先端を立体的に読める矢印の固定線数。 */
 	static constexpr u32 kArrowLineCount = 5u;
 
+	/** X、Y、Zの3本の矢印で構成する座標軸の固定線数。 */
+	static constexpr u32 kAxesLineCount = kArrowLineCount * 3u;
+
 	/** world単位で指定する矢尻長の既定値。 */
 	static constexpr f32 kDefaultArrowHeadSize = 0.25f;
+
+	/** world単位で指定する各座標軸長の既定値。 */
+	static constexpr f32 kDefaultAxisLength = 1.0f;
 
 	/** 球を輪として読める最小分割数。 */
 	static constexpr u32 kMinimumSphereSegments = 4u;
@@ -61,6 +67,20 @@ public:
 		f32 HeadSize = kDefaultArrowHeadSize ) noexcept;
 
 	/**
+	 * 指定位置と回転のローカルX、Y、Z軸を3本の矢印として一括登録する。
+	 *
+	 * @details Xは赤、Yは緑、Zは青で固定する。15本全てを保持できない場合は1本も追加しない。
+	 * @param Origin 3軸が始まるworld座標。
+	 * @param Rotation 3軸へ適用する有限で正規化可能なworld回転。
+	 * @param AxisLength 各軸のworld長。0より大きい有限値。
+	 * @param HeadSize 各矢尻のworld長。0より大きく、AxisLength以下でなければならない。
+	 * @return 位置、回転、寸法が有効で、15本全てを保存できたらtrue。
+	 */
+	bool TryAxes( FVec3 Origin, FQuat Rotation = FQuat::Identity(),
+		f32 AxisLength = kDefaultAxisLength,
+		f32 HeadSize = kDefaultArrowHeadSize ) noexcept;
+
+	/**
 	 * 軸並行境界箱の12辺を一括登録する。
 	 *
 	 * @details 12本全てを保持できない場合は1本も追加しない。
@@ -93,6 +113,9 @@ public:
 	u64 RejectedDrawCount() const noexcept { return m_RejectedDrawCount; }
 
 private:
+	/** 検証済みの複数線を、容量不足や確保失敗で途中状態を残さず追加する。 */
+	bool TryAppendLines_Internal( const FDebugLine3D* Lines, usize LineCount ) noexcept;
+
 	/** 指定本数を一括追加できる空きがあるならtrue。 */
 	bool HasRoom_Internal( usize LineCount ) const noexcept;
 

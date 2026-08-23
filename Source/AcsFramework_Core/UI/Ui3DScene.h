@@ -464,6 +464,20 @@ public:
 		f32 HeadSize = CDebugDraw3DQueue::kDefaultArrowHeadSize ) noexcept;
 
 	/**
+	 * 指定位置と回転のローカルX、Y、Z軸を次の3D描画へ一括登録する。
+	 *
+	 * @details Xは赤、Yは緑、Zは青の立体矢印で固定する。表示を続ける場合は更新ごとに呼ぶ。
+	 * @param Origin 3軸が始まるworld座標。
+	 * @param Rotation 3軸へ適用する有限で正規化可能なworld回転。
+	 * @param AxisLength 各軸のworld長。0より大きい有限値。
+	 * @param HeadSize 各矢尻のworld長。0より大きく、AxisLength以下でなければならない。
+	 * @return 位置、回転、寸法が有効で、15本全てを登録できたらtrue。
+	 */
+	bool DrawAxes3D( FVec3 Origin, FQuat Rotation = FQuat::Identity(),
+		f32 AxisLength = CDebugDraw3DQueue::kDefaultAxisLength,
+		f32 HeadSize = CDebugDraw3DQueue::kDefaultArrowHeadSize ) noexcept;
+
+	/**
 	 * 軸並行境界箱の12辺を次の3D描画へ一括登録する。
 	 *
 	 * @details 線は深度を無視して常に見える。表示を続ける場合は更新ごとに呼ぶ。

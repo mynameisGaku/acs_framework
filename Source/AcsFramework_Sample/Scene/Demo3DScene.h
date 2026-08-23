@@ -137,7 +137,7 @@ private:
 	/** 回転立方体を基準に、往復モデルの進入と退出を追跡する。 */
 	CProximityTrigger3D m_SpinnerProximityTrigger;
 
-	/** Vキーで全衝突形状と回転立方体の近接範囲を1フレーム線として表示するならtrue。 */
+	/** Vキーで全衝突形状、近接範囲、回転立方体の座標軸を1フレーム線として表示するならtrue。 */
 	bool m_bShowCollisionDebug = false;
 
 	/** 往復させる取り込みモデル。所有はしない (木が持っている)。 */

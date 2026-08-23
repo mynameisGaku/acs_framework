@@ -75,6 +75,51 @@ void RunDebugDraw3DQueueTests( CTestHarness& Harness )
 		Harness.CheckEqualU64( InvalidArrow.RejectedDrawCount(), 5u, "拒否した矢印要求を1件ずつ数える" );
 	}
 
+	Harness.BeginSuite( "CDebugDraw3DQueue / 回転した3D座標軸を原子的に扱う" );
+
+	{
+		const FVec3 Origin{ 1.0f, 2.0f, 3.0f };
+		CDebugDraw3DQueue Queue( CDebugDraw3DQueue::kAxesLineCount );
+		Harness.Check( Queue.TryAxes( Origin, FQuat::Identity(), 2.0f, 0.5f ), "world座標軸を登録できる" );
+		Harness.CheckEqualU64( Queue.Num(), CDebugDraw3DQueue::kAxesLineCount, "3本の矢印を15本の線へ展開する" );
+		Harness.CheckEqualF32( Queue.Get( 0u ).End.x, 3.0f, "最初の胴体を正のX軸へ伸ばす" );
+		Harness.CheckEqualF32( Queue.Get( 0u ).Color.x, 1.0f, "X軸を赤で登録する" );
+		Harness.CheckEqualF32( Queue.Get( CDebugDraw3DQueue::kArrowLineCount ).End.y, 4.0f, "2本目の胴体を正のY軸へ伸ばす" );
+		Harness.CheckEqualF32( Queue.Get( CDebugDraw3DQueue::kArrowLineCount ).Color.y, 1.0f, "Y軸を緑で登録する" );
+		Harness.CheckEqualF32( Queue.Get( CDebugDraw3DQueue::kArrowLineCount * 2u ).End.z, 5.0f, "3本目の胴体を正のZ軸へ伸ばす" );
+		Harness.CheckEqualF32( Queue.Get( CDebugDraw3DQueue::kArrowLineCount * 2u ).Color.z, 1.0f, "Z軸を青で登録する" );
+
+		CDebugDraw3DQueue NormalizedQueue( CDebugDraw3DQueue::kAxesLineCount );
+		Harness.Check( NormalizedQueue.TryAxes( FVec3{}, FQuat{ 0.0f, 0.0f, 0.0f, 2.0f }, 1.0f, 0.2f ), "正規化されていない有限回転を受け付ける" );
+		Harness.CheckNearF32( NormalizedQueue.Get( 0u ).End.x, 1.0f, 0.00001f, "回転を正規化して座標軸へ使う" );
+
+		CDebugDraw3DQueue RotatedQueue( CDebugDraw3DQueue::kAxesLineCount );
+		const FQuat HalfTurn = FQuat::AxisAngle( FVec3::Up(), 3.14159265358979323846f );
+		Harness.Check( RotatedQueue.TryAxes( FVec3{}, HalfTurn, 1.0f, 0.2f ), "回転したローカル座標軸を登録できる" );
+		Harness.CheckNearF32( RotatedQueue.Get( 0u ).End.x, -1.0f, 0.00001f, "Y軸半回転をローカルX軸へ反映する" );
+		Harness.CheckNearF32( RotatedQueue.Get( CDebugDraw3DQueue::kArrowLineCount * 2u ).End.z, -1.0f, 0.00001f, "Y軸半回転をローカルZ軸へ反映する" );
+
+		CDebugDraw3DQueue TooSmall( CDebugDraw3DQueue::kAxesLineCount );
+		Harness.Check( TooSmall.TryLine( FVec3{}, FVec3{ 0.0f, 0.0f, 1.0f } ), "容量確認前の線を登録できる" );
+		Harness.Check( !TooSmall.TryAxes( FVec3{}, FQuat::Identity(), 1.0f, 0.2f ), "15本分の空きがない座標軸を拒否する" );
+		Harness.CheckEqualU64( TooSmall.Num(), 1u, "容量不足でも既存線と座標軸の原子性を保つ" );
+
+		CDebugDraw3DQueue InvalidAxes;
+		const f32 NotANumber = std::numeric_limits<f32>::quiet_NaN();
+		Harness.Check( !InvalidAxes.TryAxes( FVec3{ NotANumber, 0.0f, 0.0f } ), "有限でない原点を拒否する" );
+		Harness.Check( !InvalidAxes.TryAxes( FVec3{}, FQuat{ 0.0f, 0.0f, 0.0f, 0.0f } ), "長さ0の回転を拒否する" );
+		Harness.Check( !InvalidAxes.TryAxes( FVec3{}, FQuat{ NotANumber, 0.0f, 0.0f, 1.0f } ), "有限でない回転を拒否する" );
+		Harness.Check( !InvalidAxes.TryAxes( FVec3{}, FQuat::Identity(), 0.0f, 0.2f ), "長さ0の軸を拒否する" );
+		Harness.Check( !InvalidAxes.TryAxes( FVec3{}, FQuat::Identity(), 1.0f, 0.0f ), "長さ0の矢尻を拒否する" );
+		Harness.Check( !InvalidAxes.TryAxes( FVec3{}, FQuat::Identity(), 1.0f, 1.01f ), "軸より長い矢尻を拒否する" );
+		Harness.Check( !InvalidAxes.TryAxes( FVec3{}, FQuat::Identity(), NotANumber, 0.2f ), "有限でない軸長を拒否する" );
+		/** 軸終点の計算を有限範囲外へ押し出す最大有限値。 */
+		const f32 Maximum = std::numeric_limits<f32>::max();
+		Harness.Check( !InvalidAxes.TryAxes( FVec3{ Maximum, 0.0f, 0.0f }, FQuat::Identity(), Maximum, 0.2f ), "終点計算で有限範囲を超える座標軸を拒否する" );
+		Harness.CheckEqualU64( InvalidAxes.Num(), 0u, "不正な座標軸を途中まで登録しない" );
+		Harness.CheckEqualU64( InvalidAxes.RejectedDrawCount(), 8u, "拒否した座標軸要求を1件ずつ数える" );
+	}
+
 	Harness.BeginSuite( "CDebugDraw3DQueue / AABBを12辺まとめて扱う" );
 
 	{

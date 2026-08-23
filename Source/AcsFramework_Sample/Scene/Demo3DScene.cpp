@@ -145,6 +145,12 @@ namespace
 	/** 表面法線の先端を読み取る矢尻のworld長。 */
 	constexpr f32 kGeometryPickNormalHeadSize = 0.22f;
 
+	/** 命中位置で表示するworld座標軸の各長さ。 */
+	constexpr f32 kGeometryPickAxisLength = 0.52f;
+
+	/** 命中位置の座標軸へ使う矢尻のworld長。 */
+	constexpr f32 kGeometryPickAxisHeadSize = 0.14f;
+
 	/** 見た目の差が読みやすい順に巡回する天候。 */
 	constexpr EWeatherKind kDemoWeatherCycle[] =
 	{
@@ -1159,6 +1165,10 @@ void ADemo3DScene::UpdateDemoProximityTrigger_Internal() noexcept
 			? kProximityInsideColor : kProximityOutsideColor;
 		(void)DrawCollisionShapes3D( CSceneCollision3D::kAllLayers, kCollisionShapeColor );
 		(void)DrawProximityTrigger3D( m_SpinnerProximityTrigger, Color );
+		if ( m_Spinner )
+		{
+			(void)DrawAxes3D( m_Spinner.Node->World().position, m_Spinner.Node->World().rotation, 1.1f, 0.24f );
+		}
 	}
 	if ( Result.DidEnter( MoverId ) )
 	{
@@ -1251,14 +1261,9 @@ void ADemo3DScene::DrawGeometryPickDebug_Internal( f32 DeltaSeconds ) noexcept
 
 	/** 視線方向の判定線が投影で点に潰れても、元のレイを確認できる登録結果。 */
 	const bool bRayQueued = DrawLine3D( m_GeometryPickDebugStart, m_GeometryPickDebugEnd, FVec4{ 0.20f, 0.95f, 1.0f, 1.0f } );
-	/** どのカメラ角度でも命中点を見分けられる各軸の半分の長さ。 */
-	const FVec3 AxisExtent{ 0.42f, 0.42f, 0.42f };
-	/** 命中点を通るworld X軸線の登録結果。 */
-	const bool bXAxisQueued = DrawLine3D( m_GeometryPickDebugEnd - FVec3{ AxisExtent.x, 0.0f, 0.0f }, m_GeometryPickDebugEnd + FVec3{ AxisExtent.x, 0.0f, 0.0f }, FVec4{ 1.0f, 0.24f, 0.18f, 1.0f } );
-	/** 命中点を通るworld Y軸線の登録結果。 */
-	const bool bYAxisQueued = DrawLine3D( m_GeometryPickDebugEnd - FVec3{ 0.0f, AxisExtent.y, 0.0f }, m_GeometryPickDebugEnd + FVec3{ 0.0f, AxisExtent.y, 0.0f }, FVec4{ 0.34f, 1.0f, 0.24f, 1.0f } );
-	/** 命中点を通るworld Z軸線の登録結果。 */
-	const bool bZAxisQueued = DrawLine3D( m_GeometryPickDebugEnd - FVec3{ 0.0f, 0.0f, AxisExtent.z }, m_GeometryPickDebugEnd + FVec3{ 0.0f, 0.0f, AxisExtent.z }, FVec4{ 0.22f, 0.52f, 1.0f, 1.0f } );
+	/** 命中点を赤X、緑Y、青Zで見分けるworld座標軸の登録結果。 */
+	const bool bAxesQueued = DrawAxes3D( m_GeometryPickDebugEnd, FQuat::Identity(),
+		kGeometryPickAxisLength, kGeometryPickAxisHeadSize );
 	/** 命中点を囲む確認箱の登録結果。 */
 	const bool bHitBoxQueued = DrawAabb3D( FAabb3::FromCenterExtents( m_GeometryPickDebugEnd, FVec3{ 0.22f, 0.22f, 0.22f } ), FVec4{ 1.0f, 0.62f, 0.12f, 1.0f } );
 	/** 命中点を球形の接触範囲として読む3方向円の登録結果。 */
@@ -1267,8 +1272,7 @@ void ADemo3DScene::DrawGeometryPickDebug_Internal( f32 DeltaSeconds ) noexcept
 	const bool bNormalQueued = DrawArrow3D( m_GeometryPickDebugEnd,
 		m_GeometryPickDebugEnd + m_GeometryPickDebugNormal * kGeometryPickNormalLength,
 		FVec4{ 1.0f, 0.86f, 0.18f, 1.0f }, kGeometryPickNormalHeadSize );
-	if ( !bRayQueued || !bXAxisQueued || !bYAxisQueued || !bZAxisQueued
-		|| !bHitBoxQueued || !bHitSphereQueued || !bNormalQueued )
+	if ( !bRayQueued || !bAxesQueued || !bHitBoxQueued || !bHitSphereQueued || !bNormalQueued )
 	{
 		m_GeometryPickDebugRemainingSeconds = 0.0f;
 		ACS_LOG_WARN( "Demo3D: 実形状判定の3Dデバッグ線を登録できなかった" );
