@@ -74,6 +74,20 @@ struct FModel3DSpawnParams
 	f32 Roughness = 0.5f;
 
 	/**
+	 * 照明を受けずに加算する自己発光色。
+	 *
+	 * @details 各成分は0から1。`EmissiveStrength`が0なら発光しない。
+	 */
+	FVec3 EmissiveColor{ 0.0f, 0.0f, 0.0f };
+
+	/**
+	 * 自己発光色へ掛けるHDR強度。
+	 *
+	 * @details 1を超えるとbloomへ光が広がる。0から10の範囲で指定する。
+	 */
+	f32 EmissiveStrength = 0.0f;
+
+	/**
 	 * 読み込み済みのモデル。
 	 *
 	 * @details
@@ -111,14 +125,27 @@ struct FModel3DSpawnParams
 	static FModel3DSpawnParams FromPrimitive( EMeshPrimitive3D InPrimitive, FVec3 InPosition ) noexcept;
 
 	/**
+	 * 自己発光する形を色、位置、強度から作る。
+	 *
+	 * @param InPrimitive 使う形。
+	 * @param InPosition 置く場所。
+	 * @param InColor 表面色と自己発光へ使う0から1のRGB。
+	 * @param InStrength bloomへ渡す0から10のHDR強度。
+	 * @return そのまま配置へ渡せる自己発光形の指定。不正値はIsValidで拒否される。
+	 */
+	static FModel3DSpawnParams FromEmissivePrimitive( EMeshPrimitive3D InPrimitive, FVec3 InPosition, FVec3 InColor, f32 InStrength = 3.0f ) noexcept;
+
+	/**
 	 * 置ける指定かどうかを返す。
 	 *
 	 * @details
-	 * 置けないのは次の3つ。どれも**何も見えないのに失敗もしない**という、
+	 * 置けないのは次の条件。どれも**何も見えないのに失敗もしない**、または描画値を壊すため、
 	 * 一番たちの悪い形になるので、置く前に弾く。
 	 * - 大きさに 0 が入っている
 	 * - 形として `Mesh` を指しているのに、モデルの場所も読込済みモデルも無い
 	 * - 読込済みモデルが `AMeshAsset` ではない
+	 * - 自己発光色が0から1の有限RGBではない
+	 * - 自己発光強度が0から10の有限値ではない
 	 */
 	bool IsValid() const noexcept;
 };

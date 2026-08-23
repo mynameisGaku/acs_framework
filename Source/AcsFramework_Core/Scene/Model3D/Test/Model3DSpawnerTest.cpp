@@ -3,6 +3,8 @@
 #include "AcsFramework_Core/Scene/Model3D/Model3DSpawner.h"
 #include "Common/Test/TestHarness.h"
 
+#include <limits>
+
 namespace
 {
 	/** 置いたノードから見た目の部品を取り出す。 */
@@ -26,7 +28,21 @@ void RunModel3DSpawnerTests( CTestHarness& Harness )
 		Harness.Check( Params.Primitive == EMeshPrimitive3D::Cube, "既定の形は立方体" );
 		Harness.CheckEqualF32( Params.Scale.x, 1.0f, "既定は等倍" );
 		Harness.CheckEqualF32( Params.Color.w, 1.0f, "既定は不透明" );
+		Harness.CheckEqualF32( Params.EmissiveStrength, 0.0f, "既定では自己発光しない" );
 		Harness.Check( Params.bCastsShadow, "既定で影を落とす" );
+	}
+
+	Harness.BeginSuite( "FModel3DSpawnParams / 自己発光形を一呼出しで作る" );
+
+	{
+		const FVec3 GlowColor{ 0.12f, 0.45f, 1.0f };
+		const FModel3DSpawnParams Glow = FModel3DSpawnParams::FromEmissivePrimitive( EMeshPrimitive3D::Sphere, FVec3{ 1.0f, 2.0f, 3.0f }, GlowColor, 4.0f );
+		Harness.Check( Glow.IsValid(), "自己発光形を作れる" );
+		Harness.Check( Glow.Primitive == EMeshPrimitive3D::Sphere, "指定した形を使う" );
+		Harness.CheckEqualF32( Glow.Position.y, 2.0f, "指定した位置を使う" );
+		Harness.CheckEqualF32( Glow.Color.z, 1.0f, "表面色も同じ色にする" );
+		Harness.CheckEqualF32( Glow.EmissiveColor.y, 0.45f, "自己発光色を設定する" );
+		Harness.CheckEqualF32( Glow.EmissiveStrength, 4.0f, "HDR強度を設定する" );
 	}
 
 	Harness.BeginSuite( "FModel3DSpawnParams / 見えなくなる指定を弾く" );
@@ -53,6 +69,18 @@ void RunModel3DSpawnerTests( CTestHarness& Harness )
 		FModel3DSpawnParams WrongAsset = FromMesh;
 		WrongAsset.MeshAsset = MakeShared<ABinaryAsset>();
 		Harness.Check( !WrongAsset.IsValid(), "静的モデル以外のアセットは拒む" );
+
+		FModel3DSpawnParams NegativeEmission;
+		NegativeEmission.EmissiveStrength = -0.1f;
+		Harness.Check( !NegativeEmission.IsValid(), "負の自己発光強度を弾く" );
+
+		FModel3DSpawnParams ExcessiveEmission;
+		ExcessiveEmission.EmissiveStrength = 10.01f;
+		Harness.Check( !ExcessiveEmission.IsValid(), "上限を超える自己発光強度を弾く" );
+
+		FModel3DSpawnParams InvalidEmissionColor;
+		InvalidEmissionColor.EmissiveColor = FVec3{ 0.0f, std::numeric_limits<f32>::quiet_NaN(), 0.0f };
+		Harness.Check( !InvalidEmissionColor.IsValid(), "有限でない自己発光色を弾く" );
 	}
 
 	Harness.BeginSuite( "CModel3DSpawner / 置く" );
@@ -87,6 +115,21 @@ void RunModel3DSpawnerTests( CTestHarness& Harness )
 			Harness.Check( Mesh->Primitive() == EMeshPrimitive3D::Sphere, "形が入る" );
 			Harness.CheckEqualF32( Mesh->Color().y, 0.2f, "色が入る" );
 			Harness.Check( !Mesh->CastsShadow(), "影の指定が入る" );
+		}
+	}
+
+	Harness.BeginSuite( "CModel3DSpawner / 自己発光をACSのPBR材質へ渡す" );
+
+	{
+		TObjectPtr<ANode> Parent = NewObject<ANode>();
+		const FModel3DSpawnParams Params = FModel3DSpawnParams::FromEmissivePrimitive( EMeshPrimitive3D::Sphere, FVec3{}, FVec3{ 0.20f, 0.55f, 1.0f }, 3.5f );
+		const AMeshComponent3D* const Mesh = MeshOf( CModel3DSpawner::SpawnInto( *Parent, Params ) );
+		Harness.Check( Mesh != nullptr, "自己発光形を置ける" );
+		Harness.Check( Mesh != nullptr && Mesh->MaterialLoaded(), "PBR材質を確定する" );
+		if ( Mesh != nullptr )
+		{
+			Harness.CheckEqualF32( Mesh->Material().pbr.emissive.y, 0.55f, "自己発光色を渡す" );
+			Harness.CheckEqualF32( Mesh->Material().pbr.emissiveStrength, 3.5f, "HDR強度を渡す" );
 		}
 	}
 

@@ -157,6 +157,8 @@ void CModel3DSpawner::ApplyMaterial( AMeshComponent3D& Mesh, const FModel3DSpawn
 	FMaterial2D Material{};
 	Material.pbr.metallic = Clamp( Params.Metallic, 0.0f, 1.0f );
 	Material.pbr.roughness = Clamp( Params.Roughness, 0.0f, 1.0f );
+	Material.pbr.emissive = Params.EmissiveColor;
+	Material.pbr.emissiveStrength = Params.EmissiveStrength;
 
 	Mesh.SetMaterial( Material );
 }

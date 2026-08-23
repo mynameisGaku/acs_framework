@@ -1,6 +1,20 @@
 // SPDX-License-Identifier: Apache-2.0
 #include "AcsFramework_Core/Scene/Model3D/Model3DSpawnParams.h"
 
+#include <cmath>
+
+namespace
+{
+	/** 自己発光色として使える有限な0から1のRGBか返す。 */
+	bool IsEmissiveColorValid_Internal( FVec3 Color ) noexcept
+	{
+		return std::isfinite( Color.x ) && std::isfinite( Color.y ) && std::isfinite( Color.z )
+			&& Color.x >= 0.0f && Color.x <= 1.0f
+			&& Color.y >= 0.0f && Color.y <= 1.0f
+			&& Color.z >= 0.0f && Color.z <= 1.0f;
+	}
+}
+
 FModel3DSpawnParams FModel3DSpawnParams::FromMesh( FStringView Path, FVec3 InPosition ) noexcept
 {
 	FModel3DSpawnParams Params;
@@ -22,6 +36,16 @@ FModel3DSpawnParams FModel3DSpawnParams::FromPrimitive( EMeshPrimitive3D InPrimi
 }
 
 
+FModel3DSpawnParams FModel3DSpawnParams::FromEmissivePrimitive( EMeshPrimitive3D InPrimitive, FVec3 InPosition, FVec3 InColor, f32 InStrength ) noexcept
+{
+	FModel3DSpawnParams Params = FromPrimitive( InPrimitive, InPosition );
+	Params.Color = FVec4{ InColor.x, InColor.y, InColor.z, 1.0f };
+	Params.EmissiveColor = InColor;
+	Params.EmissiveStrength = InStrength;
+	return Params;
+}
+
+
 bool FModel3DSpawnParams::IsValid() const noexcept
 {
 	// 0 倍は「置いたのに見えない」になる。負は鏡写しとして使うので通す。
@@ -32,6 +56,8 @@ bool FModel3DSpawnParams::IsValid() const noexcept
 	const bool bHasMeshPath = MeshPath.Data() != nullptr && MeshPath.Size() > 0u;
 	if ( bWantsMesh && !bHasMeshPath && !MeshAsset ) return false;
 	if ( MeshAsset && MeshAsset->Type() != AMeshAsset::StaticType() ) return false;
+	if ( !IsEmissiveColorValid_Internal( EmissiveColor ) ) return false;
+	if ( !std::isfinite( EmissiveStrength ) || EmissiveStrength < 0.0f || EmissiveStrength > 10.0f ) return false;
 
 	return true;
 }
