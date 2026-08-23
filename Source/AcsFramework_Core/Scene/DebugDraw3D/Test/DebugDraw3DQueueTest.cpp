@@ -41,6 +41,40 @@ void RunDebugDraw3DQueueTests( CTestHarness& Harness )
 		Harness.CheckEqualU64( Queue.RejectedDrawCount(), 1u, "累計診断値はClearで消さない" );
 	}
 
+	Harness.BeginSuite( "CDebugDraw3DQueue / 方向を立体矢印として原子的に扱う" );
+
+	{
+		const FVec4 Color{ 1.0f, 0.72f, 0.16f, 1.0f };
+		CDebugDraw3DQueue Queue( CDebugDraw3DQueue::kArrowLineCount );
+		Harness.Check( Queue.TryArrow( FVec3{}, FVec3{ 1.0f, 0.0f, 0.0f }, Color, 0.25f ), "X方向の矢印を登録できる" );
+		Harness.CheckEqualU64( Queue.Num(), CDebugDraw3DQueue::kArrowLineCount, "胴体1本と矢尻4本へ展開する" );
+		Harness.CheckEqualF32( Queue.Get( 0u ).Start.x, 0.0f, "胴体を始点から登録する" );
+		Harness.CheckEqualF32( Queue.Get( 0u ).End.x, 1.0f, "胴体を終点まで登録する" );
+		Harness.CheckEqualF32( Queue.Get( 1u ).Start.x, 1.0f, "矢尻を終点から登録する" );
+		Harness.CheckNearF32( Queue.Get( 1u ).End.x, 0.75f, 0.00001f, "矢尻の根元を指定長だけ戻す" );
+		Harness.CheckNearF32( Queue.Get( 1u ).End.z, -0.125f, 0.00001f, "矢尻を進行方向と直交する向きへ開く" );
+
+		CDebugDraw3DQueue VerticalQueue( CDebugDraw3DQueue::kArrowLineCount );
+		Harness.Check( VerticalQueue.TryArrow( FVec3{}, FVec3{ 0.0f, 2.0f, 0.0f }, Color, 0.5f ), "真上方向でも矢尻の基準軸を切り替えられる" );
+		Harness.CheckNearF32( VerticalQueue.Get( 1u ).End.y, 1.5f, 0.00001f, "真上方向でも矢尻を後方へ置く" );
+
+		CDebugDraw3DQueue TooSmall( CDebugDraw3DQueue::kArrowLineCount );
+		Harness.Check( TooSmall.TryLine( FVec3{}, FVec3{ 0.0f, 0.0f, 1.0f } ), "容量確認前の線を登録できる" );
+		Harness.Check( !TooSmall.TryArrow( FVec3{}, FVec3{ 1.0f, 0.0f, 0.0f }, Color, 0.25f ), "5本分の空きがない矢印を拒否する" );
+		Harness.CheckEqualU64( TooSmall.Num(), 1u, "容量不足でも既存線と矢印の原子性を保つ" );
+
+		CDebugDraw3DQueue InvalidArrow;
+		Harness.Check( !InvalidArrow.TryArrow( FVec3{}, FVec3{}, Color, 0.25f ), "長さ0の矢印を拒否する" );
+		Harness.Check( !InvalidArrow.TryArrow( FVec3{}, FVec3{ 1.0f, 0.0f, 0.0f }, Color, 0.0f ), "長さ0の矢尻を拒否する" );
+		Harness.Check( !InvalidArrow.TryArrow( FVec3{}, FVec3{ 1.0f, 0.0f, 0.0f }, Color, 1.01f ), "全体より長い矢尻を拒否する" );
+		Harness.Check( !InvalidArrow.TryArrow( FVec3{}, FVec3{ 1.0f, 0.0f, 0.0f }, Color, std::numeric_limits<f32>::quiet_NaN() ), "有限でない矢尻長を拒否する" );
+		/** 差分計算を有限範囲外へ押し出す最大有限値。 */
+		const f32 Maximum = std::numeric_limits<f32>::max();
+		Harness.Check( !InvalidArrow.TryArrow( FVec3{ Maximum, 0.0f, 0.0f }, FVec3{ -Maximum, 0.0f, 0.0f }, Color, 0.25f ), "方向計算で有限範囲を超える矢印を拒否する" );
+		Harness.CheckEqualU64( InvalidArrow.Num(), 0u, "不正な矢印を途中まで登録しない" );
+		Harness.CheckEqualU64( InvalidArrow.RejectedDrawCount(), 5u, "拒否した矢印要求を1件ずつ数える" );
+	}
+
 	Harness.BeginSuite( "CDebugDraw3DQueue / AABBを12辺まとめて扱う" );
 
 	{

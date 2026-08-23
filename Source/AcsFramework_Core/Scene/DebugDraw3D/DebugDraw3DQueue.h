@@ -14,6 +14,12 @@ public:
 	/** 通常の1フレームで保持する線の既定上限。 */
 	static constexpr u32 kDefaultCapacity = 16384u;
 
+	/** 方向と先端を立体的に読める矢印の固定線数。 */
+	static constexpr u32 kArrowLineCount = 5u;
+
+	/** world単位で指定する矢尻長の既定値。 */
+	static constexpr f32 kDefaultArrowHeadSize = 0.25f;
+
 	/** 球を輪として読める最小分割数。 */
 	static constexpr u32 kMinimumSphereSegments = 4u;
 
@@ -42,6 +48,17 @@ public:
 	 * @return 値が有効で上限内に保存できたらtrue。
 	 */
 	bool TryLine( FVec3 Start, FVec3 End, FVec4 Color = FVec4{ 0.20f, 0.95f, 1.0f, 1.0f } ) noexcept;
+
+	/**
+	 * world座標の始点から終点へ向く矢印を一括登録する。
+	 *
+	 * @details 胴体1本と立体的な矢尻4本を使う。5本全てを保持できない場合は1本も追加しない。
+	 * @param HeadSize world単位の矢尻長。0より大きく、始点から終点までの長さ以下でなければならない。
+	 * @return 座標、色、長さが有効で、5本全てを保存できたらtrue。
+	 */
+	bool TryArrow( FVec3 Start, FVec3 End,
+		FVec4 Color = FVec4{ 1.0f, 0.72f, 0.16f, 1.0f },
+		f32 HeadSize = kDefaultArrowHeadSize ) noexcept;
 
 	/**
 	 * 軸並行境界箱の12辺を一括登録する。
@@ -85,6 +102,6 @@ private:
 	/** 1フレームで保持できる線の上限。 */
 	u32 m_Capacity = kDefaultCapacity;
 
-	/** 受け付けられなかった線または箱の要求数。 */
+	/** 受け付けられなかった線または形状の要求数。 */
 	u64 m_RejectedDrawCount = 0u;
 };

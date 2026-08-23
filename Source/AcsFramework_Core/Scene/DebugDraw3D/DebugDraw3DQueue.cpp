@@ -21,6 +21,26 @@ namespace
 	/** 1周を表すラジアン値。 */
 	constexpr f32 kFullTurnRadians = 6.28318530717958647692f;
 
+	/** 方向として安全に正規化できる長さの二乗。 */
+	constexpr f32 kMinimumDirectionLengthSquared = 1.0e-12f;
+
+	/** 3成分が全て有限ならtrue。 */
+	bool IsFiniteVector_Internal( FVec3 Value ) noexcept
+	{
+		return std::isfinite( Value.x ) && std::isfinite( Value.y ) && std::isfinite( Value.z );
+	}
+
+	/** ベクトルを有限な単位方向へ直せたらtrue。 */
+	bool TryNormalizeDirection_Internal( FVec3 Value, FVec3& OutDirection ) noexcept
+	{
+		/** 正規化前の長さの二乗。 */
+		const f32 LengthSquared = LengthSq( Value );
+		if ( !std::isfinite( LengthSquared ) || LengthSquared <= kMinimumDirectionLengthSquared ) return false;
+
+		OutDirection = Value * ( 1.0f / std::sqrt( LengthSquared ) );
+		return IsFiniteVector_Internal( OutDirection );
+	}
+
 	/** AABBの半サイズとして使える有限な非負値ならtrue。 */
 	bool IsValidHalfSize( FVec3 Value ) noexcept
 	{
@@ -64,6 +84,95 @@ bool CDebugDraw3DQueue::TryLine( FVec3 Start, FVec3 End, FVec4 Color ) noexcept
 	const FDebugLine3D Line{ Start, End, Color };
 	if ( !Line.IsValid() || !HasRoom_Internal( 1u ) || !m_Lines.TryAdd( Line ) )
 	{
+		++m_RejectedDrawCount;
+		return false;
+	}
+
+	return true;
+}
+
+
+bool CDebugDraw3DQueue::TryArrow( FVec3 Start, FVec3 End, FVec4 Color, f32 HeadSize ) noexcept
+{
+	/** 座標と色を既存の線契約でまとめて検証する胴体。 */
+	const FDebugLine3D Body{ Start, End, Color };
+	/** 始点から終点へ向かう未正規化の方向。 */
+	const FVec3 Delta = End - Start;
+	/** 矢印全体の長さの二乗。 */
+	const f32 ArrowLengthSquared = LengthSq( Delta );
+	if ( !Body.IsValid() || !std::isfinite( ArrowLengthSquared )
+		|| ArrowLengthSquared <= kMinimumDirectionLengthSquared
+		|| !std::isfinite( HeadSize ) || HeadSize <= 0.0f )
+	{
+		++m_RejectedDrawCount;
+		return false;
+	}
+
+	/** 矢尻長の上限確認に使う矢印全体の長さ。 */
+	const f32 ArrowLength = std::sqrt( ArrowLengthSquared );
+	if ( !std::isfinite( ArrowLength ) || HeadSize > ArrowLength )
+	{
+		++m_RejectedDrawCount;
+		return false;
+	}
+
+	/** 始点から終点へ向く有限な単位方向。 */
+	FVec3 Direction;
+	if ( !TryNormalizeDirection_Internal( Delta, Direction ) )
+	{
+		++m_RejectedDrawCount;
+		return false;
+	}
+
+	/** 真上・真下でも退化しない、矢印方向と交差させる基準軸。 */
+	const FVec3 ReferenceAxis = std::abs( Direction.y ) < 0.999f ? FVec3::Up() : FVec3::Forward();
+	/** 矢尻を左右へ開く単位方向。 */
+	FVec3 Right;
+	/** 矢尻を上下へ開く単位方向。 */
+	FVec3 Up;
+	if ( !TryNormalizeDirection_Internal( Cross( ReferenceAxis, Direction ), Right )
+		|| !TryNormalizeDirection_Internal( Cross( Direction, Right ), Up ) )
+	{
+		++m_RejectedDrawCount;
+		return false;
+	}
+
+	/** 矢尻4本の根元を置く中心。 */
+	const FVec3 HeadBase = End - Direction * HeadSize;
+	/** 矢尻を中心から4方向へ広げる半幅。 */
+	const f32 HeadHalfWidth = HeadSize * 0.5f;
+	/** 全検証後に一括登録する胴体と4方向の矢尻。 */
+	const FDebugLine3D Lines[kArrowLineCount] =
+	{
+		Body,
+		FDebugLine3D{ End, HeadBase + Right * HeadHalfWidth, Color },
+		FDebugLine3D{ End, HeadBase - Right * HeadHalfWidth, Color },
+		FDebugLine3D{ End, HeadBase + Up * HeadHalfWidth, Color },
+		FDebugLine3D{ End, HeadBase - Up * HeadHalfWidth, Color },
+	};
+	for ( const FDebugLine3D& Line : Lines )
+	{
+		if ( Line.IsValid() ) continue;
+
+		++m_RejectedDrawCount;
+		return false;
+	}
+
+	/** 矢印全体を構成する固定線数。 */
+	constexpr usize LineCount = static_cast<usize>( kArrowLineCount );
+	if ( !HasRoom_Internal( LineCount ) || !m_Lines.TryReserve( m_Lines.Num() + LineCount ) )
+	{
+		++m_RejectedDrawCount;
+		return false;
+	}
+
+	/** 予期しない追加失敗時に戻す登録前の本数。 */
+	const usize OriginalCount = m_Lines.Num();
+	for ( const FDebugLine3D& Line : Lines )
+	{
+		if ( m_Lines.TryAdd( Line ) ) continue;
+
+		m_Lines.SetNum( OriginalCount );
 		++m_RejectedDrawCount;
 		return false;
 	}

@@ -473,6 +473,12 @@ bool AUi3DScene::DrawLine3D( FVec3 Start, FVec3 End, FVec4 Color ) noexcept
 }
 
 
+bool AUi3DScene::DrawArrow3D( FVec3 Start, FVec3 End, FVec4 Color, f32 HeadSize ) noexcept
+{
+	return m_DebugDraw3D.DrawArrow( Start, End, Color, HeadSize );
+}
+
+
 bool AUi3DScene::DrawAabb3D( const FAabb3& Bounds, FVec4 Color ) noexcept
 {
 	return m_DebugDraw3D.DrawAabb( Bounds, Color );

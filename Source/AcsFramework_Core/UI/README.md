@@ -98,6 +98,7 @@ if ( DoorTrigger.Update( Result ) && Result.DidEnter( PlayerNode->Id() ) ) OpenD
 DrawCollisionShape3D( DoorShape ); // 登録した衝突形状を表示し続ける場合
 DrawCollisionShapes3D( DoorLayer ); // 同じレイヤーの有効形状を一括表示する場合
 DrawProximityTrigger3D( DoorTrigger ); // 判定範囲を表示し続ける場合
+DrawArrow3D( DoorNode->World().position, DoorNode->World().position + FVec3::Up() ); // 方向を表示する場合
 ```
 
 `DrawCollisionShape3D`は`Collision3D()`へ登録済みで現在問い合わせ対象の形状番号だけを受け付け、
@@ -105,6 +106,7 @@ DrawProximityTrigger3D( DoorTrigger ); // 判定範囲を表示し続ける場�
 `DrawCollisionShapes3D`は同じ処理をレイヤーマスクへ一致する全有効形状へ行い、表示できた形状数を返す。
 `DrawProximityTrigger3D`はこの場面へ接続済みのトリガーだけを受け付け、判定と同じworld球または
 world軸平行箱を既存デバッグ線へ一括登録する。線は次の透明3D描画後に消える。
+`DrawArrow3D`は胴体1本と矢尻4本を原子的に登録し、法線、移動方向、光の向きを素材なしで表示する。
 
 `SpawnCollidableModel3D`はモデル生成とこの衝突登録を一括で行い、ノードと形状番号を返す。
 描画境界、明示箱、明示球を選べ、登録できなければ生成ノードも破棄予定へ戻す。厚さのない

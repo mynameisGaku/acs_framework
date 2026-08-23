@@ -453,6 +453,17 @@ public:
 	bool DrawLine3D( FVec3 Start, FVec3 End, FVec4 Color = FVec4{ 0.20f, 0.95f, 1.0f, 1.0f } ) noexcept;
 
 	/**
+	 * world座標の始点から終点へ向く矢印を次の3D描画へ一括登録する。
+	 *
+	 * @details 胴体1本と立体的な矢尻4本を使う。表示を続ける場合は更新ごとに呼ぶ。
+	 * @param HeadSize world単位の矢尻長。0より大きく、矢印全体の長さ以下でなければならない。
+	 * @return 座標、色、長さが有効で、5本全てを登録できたらtrue。
+	 */
+	bool DrawArrow3D( FVec3 Start, FVec3 End,
+		FVec4 Color = FVec4{ 1.0f, 0.72f, 0.16f, 1.0f },
+		f32 HeadSize = CDebugDraw3DQueue::kDefaultArrowHeadSize ) noexcept;
+
+	/**
 	 * 軸並行境界箱の12辺を次の3D描画へ一括登録する。
 	 *
 	 * @details 線は深度を無視して常に見える。表示を続ける場合は更新ごとに呼ぶ。

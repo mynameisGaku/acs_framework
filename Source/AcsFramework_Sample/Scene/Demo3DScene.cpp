@@ -136,8 +136,14 @@ namespace
 	/** デモの天候が次の状態へ移り切るまでの秒数。 */
 	constexpr f32 kWeatherTransitionSeconds = 2.5f;
 
-	/** 実形状判定の線と命中箱を見せ続ける秒数。 */
+	/** 実形状判定の線、形状、表面法線を見せ続ける秒数。 */
 	constexpr f32 kGeometryPickDebugSeconds = 2.5f;
+
+	/** 命中点から伸ばす表面法線のworld長。 */
+	constexpr f32 kGeometryPickNormalLength = 0.85f;
+
+	/** 表面法線の先端を読み取る矢尻のworld長。 */
+	constexpr f32 kGeometryPickNormalHeadSize = 0.22f;
 
 	/** 見た目の差が読みやすい順に巡回する天候。 */
 	constexpr EWeatherKind kDemoWeatherCycle[] =
@@ -1231,6 +1237,7 @@ void ADemo3DScene::PickVisibleGeometry_Internal() noexcept
 	Ui().SetText( m_GeometryPickStatusText, "PICK: VISIBLE SURFACE" );
 	m_GeometryPickDebugStart = Ray.Origin;
 	m_GeometryPickDebugEnd = Hit.Point;
+	m_GeometryPickDebugNormal = Hit.Normal;
 	m_GeometryPickDebugRemainingSeconds = kGeometryPickDebugSeconds;
 	FEffect3DPlayParams Marker = FEffect3DPlayParams::At( Hit.Point + Hit.Normal * 0.03f );
 	Marker.Scale = FVec3{ 0.18f, 0.18f, 0.18f };
@@ -1256,7 +1263,12 @@ void ADemo3DScene::DrawGeometryPickDebug_Internal( f32 DeltaSeconds ) noexcept
 	const bool bHitBoxQueued = DrawAabb3D( FAabb3::FromCenterExtents( m_GeometryPickDebugEnd, FVec3{ 0.22f, 0.22f, 0.22f } ), FVec4{ 1.0f, 0.62f, 0.12f, 1.0f } );
 	/** 命中点を球形の接触範囲として読む3方向円の登録結果。 */
 	const bool bHitSphereQueued = DrawSphere3D( FSphere{ m_GeometryPickDebugEnd, 0.32f }, FVec4{ 1.0f, 0.28f, 0.78f, 1.0f } );
-	if ( !bRayQueued || !bXAxisQueued || !bYAxisQueued || !bZAxisQueued || !bHitBoxQueued || !bHitSphereQueued )
+	/** 実形状から得た表面の向きを読み取る矢印の登録結果。 */
+	const bool bNormalQueued = DrawArrow3D( m_GeometryPickDebugEnd,
+		m_GeometryPickDebugEnd + m_GeometryPickDebugNormal * kGeometryPickNormalLength,
+		FVec4{ 1.0f, 0.86f, 0.18f, 1.0f }, kGeometryPickNormalHeadSize );
+	if ( !bRayQueued || !bXAxisQueued || !bYAxisQueued || !bZAxisQueued
+		|| !bHitBoxQueued || !bHitSphereQueued || !bNormalQueued )
 	{
 		m_GeometryPickDebugRemainingSeconds = 0.0f;
 		ACS_LOG_WARN( "Demo3D: 実形状判定の3Dデバッグ線を登録できなかった" );

@@ -10,6 +10,12 @@ bool CDebugDraw3DLayer::DrawLine( FVec3 Start, FVec3 End, FVec4 Color ) noexcept
 }
 
 
+bool CDebugDraw3DLayer::DrawArrow( FVec3 Start, FVec3 End, FVec4 Color, f32 HeadSize ) noexcept
+{
+	return m_Queue.TryArrow( Start, End, Color, HeadSize );
+}
+
+
 bool CDebugDraw3DLayer::DrawAabb( const FAabb3& Bounds, FVec4 Color ) noexcept
 {
 	return m_Queue.TryAabb( Bounds, Color );

@@ -230,6 +230,9 @@ private:
 	/** 直近の実形状判定を表示するworld命中点。 */
 	FVec3 m_GeometryPickDebugEnd;
 
+	/** 直近の実形状判定で得たworld表面法線。 */
+	FVec3 m_GeometryPickDebugNormal;
+
 	/** 直近の実形状判定を3Dデバッグ表示する残り秒数。 */
 	f32 m_GeometryPickDebugRemainingSeconds = 0.0f;
 

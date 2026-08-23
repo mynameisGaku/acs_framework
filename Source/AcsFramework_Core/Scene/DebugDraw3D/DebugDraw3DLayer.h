@@ -29,6 +29,11 @@ public:
 	/** world座標の線を次の3D描画へ1本登録する。 */
 	bool DrawLine( FVec3 Start, FVec3 End, FVec4 Color = FVec4{ 0.20f, 0.95f, 1.0f, 1.0f } ) noexcept;
 
+	/** 始点から終点へ向く矢印を次の3D描画へ一括登録する。 */
+	bool DrawArrow( FVec3 Start, FVec3 End,
+		FVec4 Color = FVec4{ 1.0f, 0.72f, 0.16f, 1.0f },
+		f32 HeadSize = CDebugDraw3DQueue::kDefaultArrowHeadSize ) noexcept;
+
 	/** 軸並行境界箱の12辺を次の3D描画へ一括登録する。 */
 	bool DrawAabb( const FAabb3& Bounds, FVec4 Color = FVec4{ 0.20f, 0.95f, 1.0f, 1.0f } ) noexcept;
 
