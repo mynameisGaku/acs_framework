@@ -35,6 +35,13 @@ bool CDebugDraw3DLayer::DrawCircle( FVec3 Center, FVec3 Normal, f32 Radius,
 }
 
 
+bool CDebugDraw3DLayer::DrawCone( FVec3 Apex, FVec3 Direction, f32 Length,
+	f32 BaseRadius, FVec4 Color, u32 Segments ) noexcept
+{
+	return m_Queue.TryCone( Apex, Direction, Length, BaseRadius, Color, Segments );
+}
+
+
 bool CDebugDraw3DLayer::DrawAabb( const FAabb3& Bounds, FVec4 Color ) noexcept
 {
 	return m_Queue.TryAabb( Bounds, Color );

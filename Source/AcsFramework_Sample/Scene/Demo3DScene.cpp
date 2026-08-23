@@ -58,6 +58,18 @@ namespace
 	/** 形状表示を邪魔せず床面を読める水平グリッド色。 */
 	constexpr FVec4 kDebugGridColor{ 0.24f, 0.32f, 0.46f, 0.82f };
 
+	/** Vデバッグで回転立方体の正面へ伸ばす円錐のworld長。 */
+	constexpr f32 kSpinnerDebugConeLength = 1.8f;
+
+	/** 回転立方体の正面方向を読みやすくする円錐底面のworld半径。 */
+	constexpr f32 kSpinnerDebugConeRadius = 0.58f;
+
+	/** 正面円錐の輪郭を滑らかに見せつつ線数を抑える分割数。 */
+	constexpr u32 kSpinnerDebugConeSegments = 16u;
+
+	/** 座標軸や衝突形状と区別する回転立方体の正面円錐色。 */
+	constexpr FVec4 kSpinnerDebugConeColor{ 0.72f, 0.35f, 1.0f, 0.92f };
+
 	/** 初期画面でキャラクターと展示物を同時に見せる足元位置。 */
 	constexpr FVec3 kCharacterStartPosition{ 0.0f, 0.001f, 4.2f };
 
@@ -1189,7 +1201,14 @@ void ADemo3DScene::UpdateDemoProximityTrigger_Internal() noexcept
 		(void)DrawProximityTrigger3D( m_SpinnerProximityTrigger, Color );
 		if ( m_Spinner )
 		{
-			(void)DrawAxes3D( m_Spinner.Node->World().position, m_Spinner.Node->World().rotation, 1.1f, 0.24f );
+			/** 回転中の立方体から共通して読む現在world変換。 */
+			const FTransform3D& SpinnerWorld = m_Spinner.Node->World();
+			(void)DrawAxes3D( SpinnerWorld.position, SpinnerWorld.rotation, 1.1f, 0.24f );
+			/** 回転立方体のローカル前方をworldへ移した円錐方向。 */
+			const FVec3 SpinnerForward = Rotate( SpinnerWorld.rotation, FVec3::Forward() );
+			(void)DrawCone3D( SpinnerWorld.position, SpinnerForward,
+				kSpinnerDebugConeLength, kSpinnerDebugConeRadius,
+				kSpinnerDebugConeColor, kSpinnerDebugConeSegments );
 		}
 	}
 	if ( Result.DidEnter( MoverId ) )

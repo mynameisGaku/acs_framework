@@ -50,6 +50,11 @@ public:
 		FVec4 Color = FVec4{ 1.0f, 0.58f, 0.18f, 1.0f },
 		u32 Segments = CDebugDraw3DQueue::kDefaultCircleSegments ) noexcept;
 
+	/** 指定world方向へ伸びる円錐を次の3D描画へ一括登録する。 */
+	bool DrawCone( FVec3 Apex, FVec3 Direction, f32 Length, f32 BaseRadius,
+		FVec4 Color = FVec4{ 0.72f, 0.35f, 1.0f, 1.0f },
+		u32 Segments = CDebugDraw3DQueue::kDefaultConeSegments ) noexcept;
+
 	/** 軸並行境界箱の12辺を次の3D描画へ一括登録する。 */
 	bool DrawAabb( const FAabb3& Bounds, FVec4 Color = FVec4{ 0.20f, 0.95f, 1.0f, 1.0f } ) noexcept;
 

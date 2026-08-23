@@ -212,6 +212,59 @@ void RunDebugDraw3DQueueTests( CTestHarness& Harness )
 		Harness.CheckEqualU64( InvalidCircle.RejectedDrawCount(), 8u, "拒否した円要求を1件ずつ数える" );
 	}
 
+	Harness.BeginSuite( "CDebugDraw3DQueue / 任意方向の円錐を原子的に扱う" );
+
+	{
+		const FVec3 Apex{ 1.0f, 2.0f, 3.0f };
+		const FVec4 Color{ 0.72f, 0.35f, 1.0f, 1.0f };
+		CDebugDraw3DQueue Queue( 8u );
+		Harness.Check( Queue.TryCone( Apex, FVec3::Forward(), 4.0f, 2.0f, Color, 4u ), "前向きの4分割円錐を登録できる" );
+		Harness.CheckEqualU64( Queue.Num(), 8u, "底面4本と側面4本へ展開する" );
+		Harness.CheckEqualF32( Queue.Get( 0u ).Start.x, 3.0f, "底面円を半径分だけ正のX側で始める" );
+		Harness.CheckEqualF32( Queue.Get( 0u ).Start.y, 2.0f, "底面円の開始Yを中心へ置く" );
+		Harness.CheckEqualF32( Queue.Get( 0u ).Start.z, 7.0f, "底面円を指定長だけ前へ置く" );
+		Harness.CheckNearF32( Queue.Get( 0u ).End.x, 1.0f, 0.00001f, "底面円の次点を中心Xへ戻す" );
+		Harness.CheckNearF32( Queue.Get( 0u ).End.y, 4.0f, 0.00001f, "底面円の次点を正のY側へ進める" );
+		Harness.CheckEqualF32( Queue.Get( 4u ).Start.x, Apex.x, "最初の側線を頂点から始める" );
+		Harness.CheckEqualF32( Queue.Get( 4u ).Start.z, Apex.z, "最初の側線の始点Zを保つ" );
+		Harness.CheckEqualF32( Queue.Get( 4u ).End.x, 3.0f, "最初の側線を底面円へ結ぶ" );
+		Harness.CheckEqualF32( Queue.Get( 4u ).Color.z, Color.z, "指定色を全円錐線へ使う" );
+
+		CDebugDraw3DQueue NormalizedQueue( 12u );
+		Harness.Check( NormalizedQueue.TryCone( FVec3{}, FVec3{ 0.0f, 0.0f, 2.0f }, 3.0f, 1.0f, Color, 8u ), "正規化されていない有限方向を受け付ける" );
+		Harness.CheckNearF32( NormalizedQueue.Get( 0u ).Start.z, 3.0f, 0.00001f, "方向を正規化して底面距離を保つ" );
+
+		CDebugDraw3DQueue MaximumQueue( CDebugDraw3DQueue::kMaximumConeLineCount );
+		Harness.Check( MaximumQueue.TryCone( FVec3{}, FVec3::Up(), 4.0f, 2.0f, Color,
+			CDebugDraw3DQueue::kMaximumConeSegments ), "最大分割数を受け付ける" );
+		Harness.CheckEqualU64( MaximumQueue.Num(), CDebugDraw3DQueue::kMaximumConeLineCount, "最大分割でも固定上限内の線数になる" );
+
+		CDebugDraw3DQueue TooSmall( 8u );
+		Harness.Check( TooSmall.TryLine( FVec3{}, FVec3{ 0.0f, 1.0f, 0.0f } ), "容量確認前の線を登録できる" );
+		Harness.Check( !TooSmall.TryCone( Apex, FVec3::Forward(), 4.0f, 2.0f, Color, 4u ), "全線分の空きがない円錐を拒否する" );
+		Harness.CheckEqualU64( TooSmall.Num(), 1u, "容量不足でも既存線と円錐の原子性を保つ" );
+
+		CDebugDraw3DQueue InvalidCone;
+		const f32 NotANumber = std::numeric_limits<f32>::quiet_NaN();
+		Harness.Check( !InvalidCone.TryCone( FVec3{ NotANumber, 0.0f, 0.0f }, FVec3::Forward(), 1.0f, 1.0f ), "有限でない頂点を拒否する" );
+		Harness.Check( !InvalidCone.TryCone( FVec3{}, FVec3{}, 1.0f, 1.0f ), "長さ0の方向を拒否する" );
+		Harness.Check( !InvalidCone.TryCone( FVec3{}, FVec3{ NotANumber, 0.0f, 0.0f }, 1.0f, 1.0f ), "有限でない方向を拒否する" );
+		Harness.Check( !InvalidCone.TryCone( FVec3{}, FVec3::Forward(), 0.0f, 1.0f ), "長さ0の円錐を拒否する" );
+		Harness.Check( !InvalidCone.TryCone( FVec3{}, FVec3::Forward(), NotANumber, 1.0f ), "有限でない長さを拒否する" );
+		Harness.Check( !InvalidCone.TryCone( FVec3{}, FVec3::Forward(), 1.0f, 0.0f ), "底面半径0の円錐を拒否する" );
+		Harness.Check( !InvalidCone.TryCone( FVec3{}, FVec3::Forward(), 1.0f, NotANumber ), "有限でない底面半径を拒否する" );
+		Harness.Check( !InvalidCone.TryCone( FVec3{}, FVec3::Forward(), 1.0f, 1.0f, Color, 3u ), "小さすぎる分割数を拒否する" );
+		Harness.Check( !InvalidCone.TryCone( FVec3{}, FVec3::Forward(), 1.0f, 1.0f, Color,
+			CDebugDraw3DQueue::kMaximumConeSegments + 1u ), "大きすぎる分割数を拒否する" );
+		Harness.Check( !InvalidCone.TryCone( FVec3{}, FVec3::Forward(), 1.0f, 1.0f,
+			FVec4{ 1.0f, 1.0f, 1.0f, 0.0f } ), "透明な円錐色を拒否する" );
+		/** 底面中心計算を有限範囲外へ押し出す最大有限値。 */
+		const f32 Maximum = std::numeric_limits<f32>::max();
+		Harness.Check( !InvalidCone.TryCone( FVec3{ Maximum, 0.0f, 0.0f }, FVec3::Right(), Maximum, 1.0f ), "底面計算で有限範囲を超える円錐を拒否する" );
+		Harness.CheckEqualU64( InvalidCone.Num(), 0u, "不正な円錐を途中まで登録しない" );
+		Harness.CheckEqualU64( InvalidCone.RejectedDrawCount(), 11u, "拒否した円錐要求を1件ずつ数える" );
+	}
+
 	Harness.BeginSuite( "CDebugDraw3DQueue / AABBを12辺まとめて扱う" );
 
 	{

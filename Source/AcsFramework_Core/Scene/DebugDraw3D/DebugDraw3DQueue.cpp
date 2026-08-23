@@ -138,6 +138,34 @@ namespace
 		return Center + Tangent * ( Radius * Cosine ) + Bitangent * ( Radius * Sine );
 	}
 
+	/** 指定基底の閉じた円を検証済みの線へ展開できたらtrue。 */
+	bool TryBuildCircleLines_Internal( FVec3 Center, FVec3 Tangent, FVec3 Bitangent,
+		f32 Radius, FVec4 Color, u32 Segments, FDebugLine3D* OutLines ) noexcept
+	{
+		if ( OutLines == nullptr ) return false;
+
+		/** 隣り合う円周点の角度差。 */
+		const f32 AngleStep = kFullTurnRadians / static_cast<f32>( Segments );
+		for ( u32 SegmentIndex = 0u; SegmentIndex < Segments; ++SegmentIndex )
+		{
+			/** 現在の円周点を作る角度。 */
+			const f32 CurrentAngle = AngleStep * static_cast<f32>( SegmentIndex );
+			/** 最後の辺を開始点へ厳密に閉じる次の角度。 */
+			const f32 NextAngle = SegmentIndex + 1u == Segments
+				? 0.0f
+				: AngleStep * static_cast<f32>( SegmentIndex + 1u );
+			OutLines[SegmentIndex] = FDebugLine3D{
+				CirclePoint_Internal( Center, Tangent, Bitangent, Radius,
+					std::cos( CurrentAngle ), std::sin( CurrentAngle ) ),
+				CirclePoint_Internal( Center, Tangent, Bitangent, Radius,
+					std::cos( NextAngle ), std::sin( NextAngle ) ),
+				Color,
+			};
+			if ( !OutLines[SegmentIndex].IsValid() ) return false;
+		}
+		return true;
+	}
+
 	/** 指定平面の円周上にある球の1点を返す。 */
 	FVec3 SphereCirclePoint_Internal( const FSphere& Sphere, ESphereCirclePlane Plane,
 		f32 Cosine, f32 Sine ) noexcept
@@ -328,35 +356,80 @@ bool CDebugDraw3DQueue::TryCircle( FVec3 Center, FVec3 Normal, f32 Radius,
 
 	/** 全値を検証してから一括登録する最大長の候補領域。 */
 	FDebugLine3D Lines[kMaximumCircleSegments];
-	/** 隣り合う円周点の角度差。 */
-	const f32 AngleStep = kFullTurnRadians / static_cast<f32>( Segments );
-	for ( u32 SegmentIndex = 0u; SegmentIndex < Segments; ++SegmentIndex )
+	if ( !TryBuildCircleLines_Internal( Center, Tangent, Bitangent, Radius, Color, Segments, Lines ) )
 	{
-		/** 現在の円周点を作る角度。 */
-		const f32 CurrentAngle = AngleStep * static_cast<f32>( SegmentIndex );
-		/** 最後の辺を開始点へ厳密に閉じる次の角度。 */
-		const f32 NextAngle = SegmentIndex + 1u == Segments
-			? 0.0f
-			: AngleStep * static_cast<f32>( SegmentIndex + 1u );
-		/** 現在の円周点から次の円周点へ結ぶ候補線。 */
-		const FDebugLine3D Line{
-			CirclePoint_Internal( Center, Tangent, Bitangent, Radius,
-				std::cos( CurrentAngle ), std::sin( CurrentAngle ) ),
-			CirclePoint_Internal( Center, Tangent, Bitangent, Radius,
-				std::cos( NextAngle ), std::sin( NextAngle ) ),
-			Color,
-		};
-		if ( Line.IsValid() )
-		{
-			Lines[SegmentIndex] = Line;
-			continue;
-		}
-
 		++m_RejectedDrawCount;
 		return false;
 	}
 
 	if ( TryAppendLines_Internal( Lines, Segments ) ) return true;
+
+	++m_RejectedDrawCount;
+	return false;
+}
+
+
+bool CDebugDraw3DQueue::TryCone( FVec3 Apex, FVec3 Direction, f32 Length,
+	f32 BaseRadius, FVec4 Color, u32 Segments ) noexcept
+{
+	/** 頂点と色を既存の線契約でまとめて検証するための値。 */
+	const FDebugLine3D ValidationLine{ Apex, Apex, Color };
+	/** 頂点から底面へ向かう有限な単位方向。 */
+	FVec3 NormalizedDirection;
+	if ( !ValidationLine.IsValid() || !TryNormalizeDirection_Internal( Direction, NormalizedDirection )
+		|| !std::isfinite( Length ) || Length <= 0.0f
+		|| !std::isfinite( BaseRadius ) || BaseRadius <= 0.0f
+		|| Segments < kMinimumConeSegments || Segments > kMaximumConeSegments )
+	{
+		++m_RejectedDrawCount;
+		return false;
+	}
+
+	/** 円錐の底面中心。 */
+	const FVec3 BaseCenter = Apex + NormalizedDirection * Length;
+	/** 底面上で第1成分を表す単位方向。 */
+	FVec3 Tangent;
+	/** 底面上で第2成分を表す単位方向。 */
+	FVec3 Bitangent;
+	if ( !IsFiniteVector_Internal( BaseCenter )
+		|| !TryMakePerpendicularBasis_Internal( NormalizedDirection, Tangent, Bitangent ) )
+	{
+		++m_RejectedDrawCount;
+		return false;
+	}
+
+	/** 底面円と4本の側線を全検証してから一括登録する候補領域。 */
+	FDebugLine3D Lines[kMaximumConeLineCount];
+	if ( !TryBuildCircleLines_Internal(
+		BaseCenter, Tangent, Bitangent, BaseRadius, Color, Segments, Lines ) )
+	{
+		++m_RejectedDrawCount;
+		return false;
+	}
+
+	for ( u32 SideIndex = 0u; SideIndex < kConeSideLineCount; ++SideIndex )
+	{
+		/** 円錐の周囲へ90度ずつ置く現在側線の角度。 */
+		const f32 Angle = kFullTurnRadians * static_cast<f32>( SideIndex )
+			/ static_cast<f32>( kConeSideLineCount );
+		/** 頂点から底面円へ伸ばす現在の候補側線。 */
+		const FDebugLine3D SideLine{
+			Apex,
+			CirclePoint_Internal( BaseCenter, Tangent, Bitangent, BaseRadius,
+				std::cos( Angle ), std::sin( Angle ) ),
+			Color,
+		};
+		if ( !SideLine.IsValid() )
+		{
+			++m_RejectedDrawCount;
+			return false;
+		}
+		Lines[Segments + SideIndex] = SideLine;
+	}
+
+	/** 底面円と4本の側線を合わせた総線数。 */
+	const usize LineCount = static_cast<usize>( Segments ) + kConeSideLineCount;
+	if ( TryAppendLines_Internal( Lines, LineCount ) ) return true;
 
 	++m_RejectedDrawCount;
 	return false;

@@ -508,6 +508,23 @@ public:
 		u32 Segments = CDebugDraw3DQueue::kDefaultCircleSegments ) noexcept;
 
 	/**
+	 * 指定world方向へ伸びる円錐を次の3D描画へ一括登録する。
+	 *
+	 * @details 視野、範囲、スポット方向、ノード正面を底面円と4本の側線で示す。
+	 * 表示を続ける場合は更新ごとに呼ぶ。
+	 * @param Apex 円錐のworld頂点。
+	 * @param Direction 頂点から底面へ向かう有限で正規化可能なworld方向。
+	 * @param Length 頂点から底面中心までのworld長。0より大きい有限値。
+	 * @param BaseRadius 底面円のworld半径。0より大きい有限値。
+	 * @param Color 全ての底面線と側線へ使う色。
+	 * @param Segments 底面円を等分する4から128の数。
+	 * @return 値が有効で、円錐の全線を登録できたらtrue。
+	 */
+	bool DrawCone3D( FVec3 Apex, FVec3 Direction, f32 Length, f32 BaseRadius,
+		FVec4 Color = FVec4{ 0.72f, 0.35f, 1.0f, 1.0f },
+		u32 Segments = CDebugDraw3DQueue::kDefaultConeSegments ) noexcept;
+
+	/**
 	 * 軸並行境界箱の12辺を次の3D描画へ一括登録する。
 	 *
 	 * @details 線は深度を無視して常に見える。表示を続ける場合は更新ごとに呼ぶ。

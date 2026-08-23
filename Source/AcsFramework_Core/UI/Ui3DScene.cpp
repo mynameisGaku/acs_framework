@@ -498,6 +498,13 @@ bool AUi3DScene::DrawCircle3D( FVec3 Center, FVec3 Normal, f32 Radius,
 }
 
 
+bool AUi3DScene::DrawCone3D( FVec3 Apex, FVec3 Direction, f32 Length,
+	f32 BaseRadius, FVec4 Color, u32 Segments ) noexcept
+{
+	return m_DebugDraw3D.DrawCone( Apex, Direction, Length, BaseRadius, Color, Segments );
+}
+
+
 bool AUi3DScene::DrawAabb3D( const FAabb3& Bounds, FVec4 Color ) noexcept
 {
 	return m_DebugDraw3D.DrawAabb( Bounds, Color );

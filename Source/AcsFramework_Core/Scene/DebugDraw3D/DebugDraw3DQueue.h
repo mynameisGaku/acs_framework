@@ -50,6 +50,21 @@ public:
 	/** 1要求が線容量を過度に消費しない円の最大分割数。 */
 	static constexpr u32 kMaximumCircleSegments = 128u;
 
+	/** 円錐の底面へ使う最小分割数。 */
+	static constexpr u32 kMinimumConeSegments = kMinimumCircleSegments;
+
+	/** 円錐の底面へ使う既定分割数。 */
+	static constexpr u32 kDefaultConeSegments = kDefaultCircleSegments;
+
+	/** 円錐の底面へ使う最大分割数。 */
+	static constexpr u32 kMaximumConeSegments = kMaximumCircleSegments;
+
+	/** 円錐の頂点と底面を結ぶ固定側線数。 */
+	static constexpr u32 kConeSideLineCount = 4u;
+
+	/** 最大分割の円錐を構成する線数。 */
+	static constexpr u32 kMaximumConeLineCount = kMaximumConeSegments + kConeSideLineCount;
+
 	/** 球の各円へ使う最小分割数。 */
 	static constexpr u32 kMinimumSphereSegments = kMinimumCircleSegments;
 
@@ -132,6 +147,22 @@ public:
 	bool TryCircle( FVec3 Center, FVec3 Normal, f32 Radius,
 		FVec4 Color = FVec4{ 1.0f, 0.58f, 0.18f, 1.0f },
 		u32 Segments = kDefaultCircleSegments ) noexcept;
+
+	/**
+	 * 指定world方向へ伸びる円錐を、底面円と4本の側線で一括登録する。
+	 *
+	 * @details Segments+4本を全て保持できない場合は1本も追加しない。
+	 * @param Apex 円錐のworld頂点。
+	 * @param Direction 頂点から底面へ向かう有限で正規化可能なworld方向。
+	 * @param Length 頂点から底面中心までのworld長。0より大きい有限値。
+	 * @param BaseRadius 底面円のworld半径。0より大きい有限値。
+	 * @param Color 全ての底面線と側線へ使う色。
+	 * @param Segments 底面円を等分する4から128の数。
+	 * @return 頂点、方向、寸法、色、分割数が有効で、全線を保存できたらtrue。
+	 */
+	bool TryCone( FVec3 Apex, FVec3 Direction, f32 Length, f32 BaseRadius,
+		FVec4 Color = FVec4{ 0.72f, 0.35f, 1.0f, 1.0f },
+		u32 Segments = kDefaultConeSegments ) noexcept;
 
 	/**
 	 * 軸並行境界箱の12辺を一括登録する。
