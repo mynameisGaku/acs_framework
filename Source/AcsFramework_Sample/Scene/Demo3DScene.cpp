@@ -34,6 +34,9 @@ namespace
 	/** 回転立方体の近接トリガーだけが往復モデルを選ぶ追加レイヤー。 */
 	constexpr u32 kProximityTargetLayer = 0x2u;
 
+	/** 回転立方体から見た近接箱の各軸半サイズ。 */
+	constexpr FVec3 kSpinnerProximityHalfSize{ 3.0f, 2.0f, 3.0f };
+
 	/** 初期画面でキャラクターと展示物を同時に見せる足元位置。 */
 	constexpr FVec3 kCharacterStartPosition{ 0.0f, 0.001f, 4.2f };
 
@@ -1093,7 +1096,8 @@ bool ADemo3DScene::TrySpawnDemoSpinner3D_Internal() noexcept
 		FCollisionShape3DParams::FromBounds( kCharacterCollisionLayer ) );
 	if ( !m_Spinner ) return false;
 	if ( BindProximityTrigger3D( m_SpinnerProximityTrigger, *m_Spinner.Node,
-		FProximityTrigger3DParams::Around( 3.0f, kProximityTargetLayer ) ) ) return true;
+		FProximityTrigger3DParams::Box(
+			kSpinnerProximityHalfSize, kProximityTargetLayer ) ) ) return true;
 
 	if ( !DestroyInteractableCollidableModel3D( m_Spinner ) )
 	{

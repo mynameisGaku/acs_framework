@@ -70,7 +70,7 @@ Subsystemにはしない。`AEffect3DScene`がscene単位で`CEffect3DPlayer`を
 固定更新と入力寿命は所有せず、キャラクターごとの短い寿命なのでsubsystemにはしない。
 
 3D近接トリガーは、場面またはゲーム機能が`CProximityTrigger3D`を所有する。基準ノードへ追従する
-球と`CSceneCollision3D`の既存重なり問い合わせを使い、前回からの進入、滞在、退出だけを
+球または箱と`CSceneCollision3D`の既存重なり問い合わせを使い、前回からの進入、滞在、退出だけを
 世代付きノード識別子で返す。`AUi3DScene::BindProximityTrigger3D`は場面グラフと衝突集合への
 接続をまとめる。扉、会話、チェックポイントなど作品固有の反応、入力、描画、時間は所有せず、
 短い寿命の局所状態なのでsubsystemにはしない。

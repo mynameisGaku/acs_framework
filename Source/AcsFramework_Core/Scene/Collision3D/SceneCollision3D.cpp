@@ -11,6 +11,20 @@ CSceneCollision3D::CSceneCollision3D( CSceneNodeGraph& Graph ) noexcept
 }
 
 
+bool CSceneCollision3D::TryMakeWorldBox( const ANode& Node, FVec3 LocalCenter,
+	FVec3 LocalHalfSize, FAabb3& OutBox ) noexcept
+{
+	return TryMakeWorldBox_Internal( Node, LocalCenter, LocalHalfSize, OutBox );
+}
+
+
+bool CSceneCollision3D::TryMakeWorldSphere( const ANode& Node, FVec3 LocalCenter,
+	f32 LocalRadius, FSphere& OutSphere ) noexcept
+{
+	return TryMakeWorldSphere_Internal( Node, LocalCenter, LocalRadius, OutSphere );
+}
+
+
 FCollisionShapeId3D CSceneCollision3D::TryAdd( ANode& Node,
 	const FCollisionShape3DParams& Params ) noexcept
 {

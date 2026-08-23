@@ -83,13 +83,14 @@ const FSceneRayHit Picked = PickScreen3D( FVec2{ 0.5f, 0.5f }, 100.0f );
 `CSceneCollision3D{ Graph() }`を別途所有する必要はない。
 
 呼出側所有の`CProximityTrigger3D`を`BindProximityTrigger3D`へ渡すと、基準ノードへ追従する
-球範囲をこの場面の衝突集合へ接続できる。毎更新の`Update`は、対象レイヤーに入った、滞在中、
+球または箱の範囲をこの場面の衝突集合へ接続できる。毎更新の`Update`は、対象レイヤーに入った、滞在中、
 出たノードを別々の世代付き識別子配列で返す。扉や会話などの反応は場面側で決める。
 
 ```cpp
 CProximityTrigger3D DoorTrigger;
 BindProximityTrigger3D(
-    DoorTrigger, *DoorNode, FProximityTrigger3DParams::Around( 3.0f, PlayerLayer ) );
+    DoorTrigger, *DoorNode,
+    FProximityTrigger3DParams::Box( FVec3{ 1.5f, 2.0f, 3.0f }, PlayerLayer ) );
 
 FProximityTrigger3DUpdateResult Result;
 if ( DoorTrigger.Update( Result ) && Result.DidEnter( PlayerNode->Id() ) ) OpenDoor();

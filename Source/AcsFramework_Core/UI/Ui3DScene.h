@@ -101,11 +101,11 @@ public:
 	const CSceneCollision3D& Collision3D() const noexcept { return m_Collision3D; }
 
 	/**
-	 * 呼出側所有の球型近接トリガーを、この場面の衝突集合と基準ノードへ接続する。
+	 * 呼出側所有の近接トリガーを、この場面の衝突集合と基準ノードへ接続する。
 	 *
 	 * @param Trigger 呼出側が所有する未接続の近接トリガー。
-	 * @param Origin この場面が所有する球範囲の基準ノード。
-	 * @param Params ローカル球と検出する衝突レイヤー。
+	 * @param Origin この場面が所有する近接範囲の基準ノード。
+	 * @param Params ローカル球または箱と検出する衝突レイヤー。
 	 * @return 所属と設定を確認して完全に接続できたらtrue。
 	 */
 	bool BindProximityTrigger3D( CProximityTrigger3D& Trigger, ANode& Origin,

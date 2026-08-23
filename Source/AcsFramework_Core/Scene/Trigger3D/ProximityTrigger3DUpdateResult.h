@@ -6,7 +6,7 @@
 using namespace acs;
 using namespace acs::game;
 
-/** 球型近接トリガーの前回から今回への進入、滞在、退出。 */
+/** 近接トリガーの前回から今回への進入、滞在、退出。 */
 struct FProximityTrigger3DUpdateResult
 {
 	/** 今回初めて範囲内になった世代付きノード識別子。 */

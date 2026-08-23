@@ -22,6 +22,8 @@ Collision.TrySweepSphere(
 
 `AUi3DScene`の`Collision3D()`は場面グラフへ接続済みで、場面終了時に全登録を自動で外す。
 `AUi3DScene`を使わない独自の所有者では、従来どおり`CSceneCollision3D{ Graph }`を直接所有できる。
+ローカル形状を問い合わせへ使う場合は、公開アダプターの`TryMakeWorldBox`または
+`TryMakeWorldSphere`で現在Transformを反映できる。失敗時は呼出側の出力を変更しない。
 進入、滞在、退出を前回との差として受け取る用途は、同じ集合を使う
 [`CProximityTrigger3D`](../Trigger3D/README.md)へ任せる。
 

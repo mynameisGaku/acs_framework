@@ -41,6 +41,30 @@ public:
 	bool IsBoundTo( const CSceneNodeGraph& Graph ) const noexcept { return m_Graph == &Graph; }
 
 	/**
+	 * ノード基準のローカル箱を、現在Transformで包むworld軸平行箱へ変換する。
+	 *
+	 * @param Node 位置、回転、拡縮を持つ基準ノード。
+	 * @param LocalCenter ノードから見た箱中心。
+	 * @param LocalHalfSize 各軸の0以上の半サイズ。
+	 * @param OutBox 変換後のworld軸平行箱。失敗時は変更しない。
+	 * @return 入力と変換後の8隅が全て有限ならtrue。
+	 */
+	static bool TryMakeWorldBox( const ANode& Node, FVec3 LocalCenter,
+		FVec3 LocalHalfSize, FAabb3& OutBox ) noexcept;
+
+	/**
+	 * ノード基準のローカル球を、現在Transformで包むworld球へ変換する。
+	 *
+	 * @param Node 位置、回転、拡縮を持つ基準ノード。
+	 * @param LocalCenter ノードから見た球中心。
+	 * @param LocalRadius 0より大きいローカル半径。
+	 * @param OutSphere 変換後のworld球。失敗時は変更しない。
+	 * @return 入力、中心、拡縮、world半径が全て有限ならtrue。
+	 */
+	static bool TryMakeWorldSphere( const ANode& Node, FVec3 LocalCenter,
+		f32 LocalRadius, FSphere& OutSphere ) noexcept;
+
+	/**
 	 * 設定で選んだ描画境界、明示箱、明示球のいずれかをノードへ登録する。
 	 *
 	 * @param Node 対象グラフへ登録済みのノード。

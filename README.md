@@ -56,7 +56,7 @@ WASDで移動、左Shiftで走行、矢印キーで視点、Spaceでジャンプ
 | 3Dデバッグ描画 | `DrawLine3D()`、`DrawAabb3D()`、`DrawSphere3D()`、深度を無視して常に確認できる1フレーム線 |
 | 当てる | `MakeScreenRay3D()` / `Raycast3D()` / `PickScreen3D()`で球面や読み込みメッシュへ正確に当てる |
 | 重なりと移動判定 | `CSceneCollision3D`、ノード追従、球・箱の重なり、球スイープ、レイヤー |
-| 近づきを取る | `BindProximityTrigger3D()`、ノード追従球への進入・滞在・退出、レイヤー絞り込み |
+| 近づきを取る | `BindProximityTrigger3D()`、ノード追従する球・箱への進入・滞在・退出、レイヤー絞り込み |
 | 土台 | 起動・場面遷移・アセット・音・セーブ・設定・入力再割り当て・多言語・決定性・開発支援 |
 
 詳しくは [`Docs/ROADMAP.md`](Docs/ROADMAP.md)。**v1.0.0 で何を入れて何を入れないか**もそこに書いてある。
@@ -153,10 +153,11 @@ TArray<ANode*> Nearby;
 Collision.TryOverlapSphere(
     FSphere{ HeroNode->World().position, 2.0f }, Nearby, HeroSpawn.Shape, 0x2u );
 
-// 扉へ追従する球範囲へ人物が入った瞬間だけ処理する。Triggerは場面のメンバーとして保持する
+// 扉へ追従する箱範囲へ人物が入った瞬間だけ処理する。Triggerは場面のメンバーとして保持する
 CProximityTrigger3D DoorTrigger;
 BindProximityTrigger3D(
-    DoorTrigger, *Door.Node, FProximityTrigger3DParams::Around( 3.0f, 0x1u ) );
+    DoorTrigger, *Door.Node,
+    FProximityTrigger3DParams::Box( FVec3{ 1.5f, 2.0f, 3.0f }, 0x1u ) );
 FProximityTrigger3DUpdateResult Proximity;
 if ( DoorTrigger.Update( Proximity ) && Proximity.DidEnter( HeroNode->Id() ) ) OpenDoor();
 

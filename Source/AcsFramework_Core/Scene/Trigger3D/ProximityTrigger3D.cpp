@@ -3,8 +3,6 @@
 
 #include "AcsFramework_Core/Scene/Collision3D/SceneCollision3D.h"
 
-#include <cmath>
-
 
 bool CProximityTrigger3D::Bind( CSceneNodeGraph& Graph,
 	CSceneCollision3D& Collision, ANode& Origin,
@@ -95,29 +93,6 @@ bool CProximityTrigger3D::IsInside( FNodeId Node ) const noexcept
 }
 
 
-bool CProximityTrigger3D::TryMakeWorldSphere_Internal( const ANode& Origin,
-	FSphere& OutSphere ) const noexcept
-{
-	const FTransform3D World = Origin.World();
-	const FVec3 Center = TransformPoint( m_Params.LocalCenter, World.ToMat4() );
-	if ( !std::isfinite( Center.x ) || !std::isfinite( Center.y )
-		|| !std::isfinite( Center.z ) || !std::isfinite( World.scale.x )
-		|| !std::isfinite( World.scale.y ) || !std::isfinite( World.scale.z ) ) return false;
-
-	const f32 ScaleX = std::fabs( World.scale.x );
-	const f32 ScaleY = std::fabs( World.scale.y );
-	const f32 ScaleZ = std::fabs( World.scale.z );
-	const f32 LargestScale = ScaleX > ScaleY
-		? ( ScaleX > ScaleZ ? ScaleX : ScaleZ )
-		: ( ScaleY > ScaleZ ? ScaleY : ScaleZ );
-	const f32 WorldRadius = m_Params.LocalRadius * LargestScale;
-	if ( !std::isfinite( WorldRadius ) || WorldRadius <= 0.0f ) return false;
-
-	OutSphere = FSphere{ Center, WorldRadius };
-	return true;
-}
-
-
 bool CProximityTrigger3D::TryCollectInsideNodes_Internal( const ANode& Origin,
 	TArray<FNodeId>& OutNodes ) noexcept
 {
@@ -128,11 +103,30 @@ bool CProximityTrigger3D::TryCollectInsideNodes_Internal( const ANode& Origin,
 		return true;
 	}
 
-	FSphere WorldSphere;
-	if ( !TryMakeWorldSphere_Internal( Origin, WorldSphere ) ) return false;
 	TArray<ANode*> Hits;
-	if ( !m_Collision->TryOverlapSphere(
-		WorldSphere, Hits, {}, m_Params.CollisionMask ) ) return false;
+	switch ( m_Params.Kind )
+	{
+	case FProximityTrigger3DParams::EKind::Sphere:
+	{
+		FSphere WorldSphere;
+		if ( !CSceneCollision3D::TryMakeWorldSphere(
+			Origin, m_Params.LocalCenter, m_Params.LocalRadius, WorldSphere )
+			|| !m_Collision->TryOverlapSphere(
+				WorldSphere, Hits, {}, m_Params.CollisionMask ) ) return false;
+		break;
+	}
+	case FProximityTrigger3DParams::EKind::Box:
+	{
+		FAabb3 WorldBox;
+		if ( !CSceneCollision3D::TryMakeWorldBox(
+			Origin, m_Params.LocalCenter, m_Params.LocalHalfSize, WorldBox )
+			|| !m_Collision->TryOverlapBox(
+				WorldBox, Hits, {}, m_Params.CollisionMask ) ) return false;
+		break;
+	}
+	default:
+		return false;
+	}
 
 	for ( ANode* const Hit : Hits )
 	{

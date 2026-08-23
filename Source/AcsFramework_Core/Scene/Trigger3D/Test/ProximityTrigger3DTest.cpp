@@ -8,7 +8,7 @@
 
 void RunProximityTrigger3DTests( CTestHarness& Harness )
 {
-	Harness.BeginSuite( "FProximityTrigger3DParams / 球範囲を検証する" );
+	Harness.BeginSuite( "FProximityTrigger3DParams / 球と箱の範囲を検証する" );
 
 	{
 		FProximityTrigger3DParams Params = FProximityTrigger3DParams::Around( 3.0f, 0x2u );
@@ -26,6 +26,27 @@ void RunProximityTrigger3DTests( CTestHarness& Harness )
 		Params.LocalCenter = FVec3{};
 		Params.CollisionMask = 0u;
 		Harness.Check( !Params.IsValid(), "対象の無いレイヤーマスクを拒否する" );
+	}
+
+	{
+		FProximityTrigger3DParams Params = FProximityTrigger3DParams::Box(
+			FVec3{ 2.0f, 1.0f, 3.0f }, 0x4u );
+		Harness.Check( Params.IsValid(), "有限な半サイズとレイヤーで箱範囲を作る" );
+		Harness.Check( Params.Kind == FProximityTrigger3DParams::EKind::Box,
+			"箱の形状種別を明示する" );
+		Harness.CheckEqualF32( Params.LocalHalfSize.z, 3.0f,
+			"指定したローカル半サイズを保つ" );
+		Harness.CheckEqualU64( Params.CollisionMask, 0x4u,
+			"箱でも指定した対象レイヤーを保つ" );
+
+		Params.LocalHalfSize.y = 0.0f;
+		Harness.Check( !Params.IsValid(), "厚み0の箱を問い合わせ前に拒否する" );
+		Params.LocalHalfSize.y = 1.0f;
+		Params.LocalHalfSize.z = FProximityTrigger3DParams::kMaximumLocalHalfSize + 1.0f;
+		Harness.Check( !Params.IsValid(), "極端に大きい箱を問い合わせ前に拒否する" );
+		Params.LocalHalfSize.z = 1.0f;
+		Params.Kind = static_cast<FProximityTrigger3DParams::EKind>( 255u );
+		Harness.Check( !Params.IsValid(), "未定義の近接形状を拒否する" );
 	}
 
 	Harness.BeginSuite( "CProximityTrigger3D / 進入、滞在、退出を追跡する" );
@@ -169,5 +190,55 @@ void RunProximityTrigger3DTests( CTestHarness& Harness )
 		FProximityTrigger3DUpdateResult Result;
 		Harness.Check( Trigger.Update( Result ) && Result.IsInside( TargetSpawn.Id ),
 			"位置、ローカル中心、最大拡縮率をworld球へ反映する" );
+
+		FSphere UnchangedSphere{ FVec3{ 9.0f, 8.0f, 7.0f }, 6.0f };
+		Harness.Check( !CSceneCollision3D::TryMakeWorldSphere(
+			*OriginSpawn.Node, FVec3{}, 0.0f, UnchangedSphere ),
+			"半径0を公開変換アダプターで拒否する" );
+		Harness.CheckEqualF32( UnchangedSphere.center.x, 9.0f,
+			"球変換失敗時は呼出側の中心を変えない" );
+		Harness.CheckEqualF32( UnchangedSphere.radius, 6.0f,
+			"球変換失敗時は呼出側の半径を変えない" );
+	}
+
+	Harness.BeginSuite( "CProximityTrigger3D / 回転するローカル箱をworld軸平行箱へ変換する" );
+
+	{
+		CSceneNodeGraph Graph;
+		CSceneCollision3D Collision{ Graph };
+		const FScene3DSpawnResult OriginSpawn = Graph.TrySpawn( FStringView( "RotatedBoxOrigin" ) );
+		const FScene3DSpawnResult RotatedAxisSpawn = Graph.TrySpawn( FStringView( "RotatedAxisTarget" ) );
+		const FScene3DSpawnResult OldAxisSpawn = Graph.TrySpawn( FStringView( "OldAxisTarget" ) );
+		Harness.Check( OriginSpawn && RotatedAxisSpawn && OldAxisSpawn,
+			"箱変換に使う基準と2対象を置ける" );
+		if ( !OriginSpawn || !RotatedAxisSpawn || !OldAxisSpawn ) return;
+
+		OriginSpawn.Node->RotateDeg( FVec3{ 0.0f, 90.0f, 0.0f } );
+		RotatedAxisSpawn.Node->SetPosition( FVec3{ 0.0f, 0.0f, -1.8f } );
+		OldAxisSpawn.Node->SetPosition( FVec3{ 1.8f, 0.0f, 0.0f } );
+		Harness.Check( Collision.TryAddSphere(
+			*RotatedAxisSpawn.Node, FVec3{}, 0.05f, 0x1u ).IsValid(),
+			"回転後の長軸に入る対象を登録する" );
+		Harness.Check( Collision.TryAddSphere(
+			*OldAxisSpawn.Node, FVec3{}, 0.05f, 0x1u ).IsValid(),
+			"回転前の長軸にだけ入る比較対象を登録する" );
+
+		CProximityTrigger3D Trigger;
+		Harness.Check( Trigger.Bind( Graph, Collision, *OriginSpawn.Node,
+			FProximityTrigger3DParams::Box( FVec3{ 2.0f, 0.25f, 0.25f }, 0x1u ) ),
+			"ローカル箱を持つ近接トリガーを接続する" );
+		FProximityTrigger3DUpdateResult Result;
+		Harness.Check( Trigger.Update( Result ), "回転後のworld箱で近接状態を求める" );
+		Harness.Check( Result.IsInside( RotatedAxisSpawn.Id ),
+			"回転後の長軸にいる対象を箱範囲へ含める" );
+		Harness.Check( !Result.IsInside( OldAxisSpawn.Id ),
+			"回転前の長軸位置を箱範囲へ残さない" );
+
+		FAabb3 Unchanged{ FVec3{ 9.0f, 8.0f, 7.0f }, FVec3{ 6.0f, 5.0f, 4.0f } };
+		Harness.Check( !CSceneCollision3D::TryMakeWorldBox(
+			*OriginSpawn.Node, FVec3{}, FVec3{ -1.0f, 1.0f, 1.0f }, Unchanged ),
+			"負の半サイズを公開変換アダプターで拒否する" );
+		Harness.CheckEqualF32( Unchanged.center.x, 9.0f,
+			"箱変換失敗時は呼出側の出力を変えない" );
 	}
 }
