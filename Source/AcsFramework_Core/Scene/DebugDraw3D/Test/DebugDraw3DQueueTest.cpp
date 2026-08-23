@@ -265,6 +265,60 @@ void RunDebugDraw3DQueueTests( CTestHarness& Harness )
 		Harness.CheckEqualU64( InvalidCone.RejectedDrawCount(), 11u, "拒否した円錐要求を1件ずつ数える" );
 	}
 
+	Harness.BeginSuite( "CDebugDraw3DQueue / 任意軸の円柱を原子的に扱う" );
+
+	{
+		const FVec3 Center{ 1.0f, 2.0f, 3.0f };
+		const FVec4 Color{ 0.20f, 0.95f, 0.74f, 1.0f };
+		CDebugDraw3DQueue Queue( 12u );
+		Harness.Check( Queue.TryCylinder( Center, FVec3::Up(), 4.0f, 2.0f, Color, 4u ), "上向き軸の4分割円柱を登録できる" );
+		Harness.CheckEqualU64( Queue.Num(), 12u, "両端円8本と側面4本へ展開する" );
+		Harness.CheckEqualF32( Queue.Get( 0u ).Start.x, -1.0f, "下端円を半径分だけ負のX側で始める" );
+		Harness.CheckEqualF32( Queue.Get( 0u ).Start.y, 0.0f, "下端円を中心から高さの半分だけ下へ置く" );
+		Harness.CheckEqualF32( Queue.Get( 0u ).Start.z, 3.0f, "下端円の開始Zを中心へ置く" );
+		Harness.CheckNearF32( Queue.Get( 0u ).End.x, 1.0f, 0.00001f, "下端円の次点を中心Xへ戻す" );
+		Harness.CheckNearF32( Queue.Get( 0u ).End.z, 5.0f, 0.00001f, "下端円の次点を正のZ側へ進める" );
+		Harness.CheckEqualF32( Queue.Get( 4u ).Start.x, -1.0f, "上端円を下端円と同じ半径位置で始める" );
+		Harness.CheckEqualF32( Queue.Get( 4u ).Start.y, 4.0f, "上端円を中心から高さの半分だけ上へ置く" );
+		Harness.CheckEqualF32( Queue.Get( 8u ).Start.y, 0.0f, "最初の側線を下端から始める" );
+		Harness.CheckEqualF32( Queue.Get( 8u ).End.y, 4.0f, "最初の側線を対応する上端へ結ぶ" );
+		Harness.CheckEqualF32( Queue.Get( 8u ).Color.y, Color.y, "指定色を全円柱線へ使う" );
+
+		CDebugDraw3DQueue NormalizedQueue( 20u );
+		Harness.Check( NormalizedQueue.TryCylinder( FVec3{}, FVec3{ 0.0f, 2.0f, 0.0f }, 6.0f, 1.0f, Color, 8u ), "正規化されていない有限軸を受け付ける" );
+		Harness.CheckNearF32( NormalizedQueue.Get( 0u ).Start.y, -3.0f, 0.00001f, "軸を正規化して両端間の高さを保つ" );
+
+		CDebugDraw3DQueue MaximumQueue( CDebugDraw3DQueue::kMaximumCylinderLineCount );
+		Harness.Check( MaximumQueue.TryCylinder( FVec3{}, FVec3::Forward(), 4.0f, 2.0f, Color,
+			CDebugDraw3DQueue::kMaximumCylinderSegments ), "最大分割数を受け付ける" );
+		Harness.CheckEqualU64( MaximumQueue.Num(), CDebugDraw3DQueue::kMaximumCylinderLineCount, "最大分割でも固定上限内の線数になる" );
+
+		CDebugDraw3DQueue TooSmall( 12u );
+		Harness.Check( TooSmall.TryLine( FVec3{}, FVec3{ 0.0f, 1.0f, 0.0f } ), "容量確認前の線を登録できる" );
+		Harness.Check( !TooSmall.TryCylinder( Center, FVec3::Up(), 4.0f, 2.0f, Color, 4u ), "全線分の空きがない円柱を拒否する" );
+		Harness.CheckEqualU64( TooSmall.Num(), 1u, "容量不足でも既存線と円柱の原子性を保つ" );
+
+		CDebugDraw3DQueue InvalidCylinder;
+		const f32 NotANumber = std::numeric_limits<f32>::quiet_NaN();
+		Harness.Check( !InvalidCylinder.TryCylinder( FVec3{ NotANumber, 0.0f, 0.0f }, FVec3::Up(), 1.0f, 1.0f ), "有限でない中心を拒否する" );
+		Harness.Check( !InvalidCylinder.TryCylinder( FVec3{}, FVec3{}, 1.0f, 1.0f ), "長さ0の軸を拒否する" );
+		Harness.Check( !InvalidCylinder.TryCylinder( FVec3{}, FVec3{ NotANumber, 0.0f, 0.0f }, 1.0f, 1.0f ), "有限でない軸を拒否する" );
+		Harness.Check( !InvalidCylinder.TryCylinder( FVec3{}, FVec3::Up(), 0.0f, 1.0f ), "高さ0の円柱を拒否する" );
+		Harness.Check( !InvalidCylinder.TryCylinder( FVec3{}, FVec3::Up(), NotANumber, 1.0f ), "有限でない高さを拒否する" );
+		Harness.Check( !InvalidCylinder.TryCylinder( FVec3{}, FVec3::Up(), 1.0f, 0.0f ), "半径0の円柱を拒否する" );
+		Harness.Check( !InvalidCylinder.TryCylinder( FVec3{}, FVec3::Up(), 1.0f, NotANumber ), "有限でない半径を拒否する" );
+		Harness.Check( !InvalidCylinder.TryCylinder( FVec3{}, FVec3::Up(), 1.0f, 1.0f, Color, 3u ), "小さすぎる分割数を拒否する" );
+		Harness.Check( !InvalidCylinder.TryCylinder( FVec3{}, FVec3::Up(), 1.0f, 1.0f, Color,
+			CDebugDraw3DQueue::kMaximumCylinderSegments + 1u ), "大きすぎる分割数を拒否する" );
+		Harness.Check( !InvalidCylinder.TryCylinder( FVec3{}, FVec3::Up(), 1.0f, 1.0f,
+			FVec4{ 1.0f, 1.0f, 1.0f, 0.0f } ), "透明な円柱色を拒否する" );
+		/** 端面中心計算を有限範囲外へ押し出す最大有限値。 */
+		const f32 Maximum = std::numeric_limits<f32>::max();
+		Harness.Check( !InvalidCylinder.TryCylinder( FVec3{ Maximum, 0.0f, 0.0f }, FVec3::Right(), Maximum, 1.0f ), "端面計算で有限範囲を超える円柱を拒否する" );
+		Harness.CheckEqualU64( InvalidCylinder.Num(), 0u, "不正な円柱を途中まで登録しない" );
+		Harness.CheckEqualU64( InvalidCylinder.RejectedDrawCount(), 11u, "拒否した円柱要求を1件ずつ数える" );
+	}
+
 	Harness.BeginSuite( "CDebugDraw3DQueue / AABBを12辺まとめて扱う" );
 
 	{

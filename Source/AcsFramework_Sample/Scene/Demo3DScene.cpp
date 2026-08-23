@@ -70,6 +70,18 @@ namespace
 	/** 座標軸や衝突形状と区別する回転立方体の正面円錐色。 */
 	constexpr FVec4 kSpinnerDebugConeColor{ 0.72f, 0.35f, 1.0f, 0.92f };
 
+	/** Vデバッグで回転立方体を貫くworld回転軸円柱の高さ。 */
+	constexpr f32 kSpinnerDebugAxisCylinderHeight = 2.8f;
+
+	/** 回転軸を細く読み取れる円柱のworld半径。 */
+	constexpr f32 kSpinnerDebugAxisCylinderRadius = 0.10f;
+
+	/** 細い回転軸円柱の輪郭に十分な分割数。 */
+	constexpr u32 kSpinnerDebugAxisCylinderSegments = 12u;
+
+	/** 正面円錐と区別する回転軸円柱色。 */
+	constexpr FVec4 kSpinnerDebugAxisCylinderColor{ 0.20f, 0.95f, 0.74f, 0.92f };
+
 	/** 初期画面でキャラクターと展示物を同時に見せる足元位置。 */
 	constexpr FVec3 kCharacterStartPosition{ 0.0f, 0.001f, 4.2f };
 
@@ -1209,6 +1221,9 @@ void ADemo3DScene::UpdateDemoProximityTrigger_Internal() noexcept
 			(void)DrawCone3D( SpinnerWorld.position, SpinnerForward,
 				kSpinnerDebugConeLength, kSpinnerDebugConeRadius,
 				kSpinnerDebugConeColor, kSpinnerDebugConeSegments );
+			(void)DrawCylinder3D( SpinnerWorld.position, FVec3::Up(),
+				kSpinnerDebugAxisCylinderHeight, kSpinnerDebugAxisCylinderRadius,
+				kSpinnerDebugAxisCylinderColor, kSpinnerDebugAxisCylinderSegments );
 		}
 	}
 	if ( Result.DidEnter( MoverId ) )

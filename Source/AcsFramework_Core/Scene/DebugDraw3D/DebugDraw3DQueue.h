@@ -65,6 +65,21 @@ public:
 	/** 最大分割の円錐を構成する線数。 */
 	static constexpr u32 kMaximumConeLineCount = kMaximumConeSegments + kConeSideLineCount;
 
+	/** 円柱の両端円へ使う最小分割数。 */
+	static constexpr u32 kMinimumCylinderSegments = kMinimumCircleSegments;
+
+	/** 円柱の両端円へ使う既定分割数。 */
+	static constexpr u32 kDefaultCylinderSegments = kDefaultCircleSegments;
+
+	/** 円柱の両端円へ使う最大分割数。 */
+	static constexpr u32 kMaximumCylinderSegments = kMaximumCircleSegments;
+
+	/** 円柱の両端円を結ぶ固定側線数。 */
+	static constexpr u32 kCylinderSideLineCount = 4u;
+
+	/** 最大分割の円柱を構成する線数。 */
+	static constexpr u32 kMaximumCylinderLineCount = kMaximumCylinderSegments * 2u + kCylinderSideLineCount;
+
 	/** 球の各円へ使う最小分割数。 */
 	static constexpr u32 kMinimumSphereSegments = kMinimumCircleSegments;
 
@@ -163,6 +178,22 @@ public:
 	bool TryCone( FVec3 Apex, FVec3 Direction, f32 Length, f32 BaseRadius,
 		FVec4 Color = FVec4{ 0.72f, 0.35f, 1.0f, 1.0f },
 		u32 Segments = kDefaultConeSegments ) noexcept;
+
+	/**
+	 * 指定world軸へ沿う円柱を、両端円と4本の側線で一括登録する。
+	 *
+	 * @details 2×Segments+4本を全て保持できない場合は1本も追加しない。
+	 * @param Center 円柱のworld中心。
+	 * @param Axis 一方の端から他方の端へ向かう有限で正規化可能なworld軸。
+	 * @param Height 両端中心間のworld高さ。0より大きい有限値。
+	 * @param Radius 両端円のworld半径。0より大きい有限値。
+	 * @param Color 全ての端面線と側線へ使う色。
+	 * @param Segments 各端円を等分する4から128の数。
+	 * @return 中心、軸、寸法、色、分割数が有効で、全線を保存できたらtrue。
+	 */
+	bool TryCylinder( FVec3 Center, FVec3 Axis, f32 Height, f32 Radius,
+		FVec4 Color = FVec4{ 0.20f, 0.95f, 0.74f, 1.0f },
+		u32 Segments = kDefaultCylinderSegments ) noexcept;
 
 	/**
 	 * 軸並行境界箱の12辺を一括登録する。

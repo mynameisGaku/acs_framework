@@ -103,6 +103,7 @@ DrawAxes3D( DoorNode->World().position, DoorNode->World().rotation ); // ロー�
 DrawGrid3D(); // world原点を中心に水平グリッドを表示する場合
 DrawCircle3D( DoorNode->World().position, FVec3::Up(), 0.5f ); // 水平面の向きと半径を輪で表示する場合
 DrawCone3D( DoorNode->World().position, Rotate( DoorNode->World().rotation, FVec3::Forward() ), 2.0f, 0.6f ); // 正面範囲を表示する場合
+DrawCylinder3D( DoorNode->World().position, FVec3::Up(), 2.0f, 0.4f ); // 回転軸や円柱範囲を表示する場合
 ```
 
 `DrawCollisionShape3D`は`Collision3D()`へ登録済みで現在問い合わせ対象の形状番号だけを受け付け、
@@ -115,6 +116,7 @@ world軸平行箱を既存デバッグ線へ一括登録する。線は次の透
 `DrawGrid3D`は中心のyを高さとして水平XZ面を等分し、X・Z方向の全線を原子的に登録する。
 `DrawCircle3D`は指定world法線へ直交する円を作り、接触面、半径、効果範囲を少ない線で表示する。
 `DrawCone3D`は指定world方向へ底面円と4本の側線を伸ばし、視野、範囲、ノード正面を表示する。
+`DrawCylinder3D`は指定world軸へ両端円と4本の側線を置き、回転軸、体積、センサー範囲を表示する。
 
 `SpawnCollidableModel3D`はモデル生成とこの衝突登録を一括で行い、ノードと形状番号を返す。
 描画境界、明示箱、明示球を選べ、登録できなければ生成ノードも破棄予定へ戻す。厚さのない

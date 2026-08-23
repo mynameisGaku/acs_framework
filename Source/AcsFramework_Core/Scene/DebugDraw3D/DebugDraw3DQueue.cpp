@@ -436,6 +436,81 @@ bool CDebugDraw3DQueue::TryCone( FVec3 Apex, FVec3 Direction, f32 Length,
 }
 
 
+bool CDebugDraw3DQueue::TryCylinder( FVec3 Center, FVec3 Axis, f32 Height,
+	f32 Radius, FVec4 Color, u32 Segments ) noexcept
+{
+	/** 中心と色を既存の線契約でまとめて検証するための値。 */
+	const FDebugLine3D ValidationLine{ Center, Center, Color };
+	/** 一方の端から他方の端へ向かう有限な単位軸。 */
+	FVec3 NormalizedAxis;
+	if ( !ValidationLine.IsValid() || !TryNormalizeDirection_Internal( Axis, NormalizedAxis )
+		|| !std::isfinite( Height ) || Height <= 0.0f
+		|| !std::isfinite( Radius ) || Radius <= 0.0f
+		|| Segments < kMinimumCylinderSegments || Segments > kMaximumCylinderSegments )
+	{
+		++m_RejectedDrawCount;
+		return false;
+	}
+
+	/** 中心から各端面までのworld距離。 */
+	const f32 HalfHeight = Height * 0.5f;
+	/** world軸の負側にある端面中心。 */
+	const FVec3 FirstCenter = Center - NormalizedAxis * HalfHeight;
+	/** world軸の正側にある端面中心。 */
+	const FVec3 SecondCenter = Center + NormalizedAxis * HalfHeight;
+	/** 各端面上で第1成分を表す単位方向。 */
+	FVec3 Tangent;
+	/** 各端面上で第2成分を表す単位方向。 */
+	FVec3 Bitangent;
+	if ( !std::isfinite( HalfHeight ) || HalfHeight <= 0.0f
+		|| !IsFiniteVector_Internal( FirstCenter ) || !IsFiniteVector_Internal( SecondCenter )
+		|| !TryMakePerpendicularBasis_Internal( NormalizedAxis, Tangent, Bitangent ) )
+	{
+		++m_RejectedDrawCount;
+		return false;
+	}
+
+	/** 両端円と4本の側線を全検証してから一括登録する候補領域。 */
+	FDebugLine3D Lines[kMaximumCylinderLineCount];
+	if ( !TryBuildCircleLines_Internal(
+		FirstCenter, Tangent, Bitangent, Radius, Color, Segments, Lines )
+		|| !TryBuildCircleLines_Internal(
+			SecondCenter, Tangent, Bitangent, Radius, Color, Segments, Lines + Segments ) )
+	{
+		++m_RejectedDrawCount;
+		return false;
+	}
+
+	for ( u32 SideIndex = 0u; SideIndex < kCylinderSideLineCount; ++SideIndex )
+	{
+		/** 円柱の周囲へ90度ずつ置く現在側線の角度。 */
+		const f32 Angle = kFullTurnRadians * static_cast<f32>( SideIndex )
+			/ static_cast<f32>( kCylinderSideLineCount );
+		/** 両端円の対応点を結ぶ現在の候補側線。 */
+		const FDebugLine3D SideLine{
+			CirclePoint_Internal( FirstCenter, Tangent, Bitangent, Radius,
+				std::cos( Angle ), std::sin( Angle ) ),
+			CirclePoint_Internal( SecondCenter, Tangent, Bitangent, Radius,
+				std::cos( Angle ), std::sin( Angle ) ),
+			Color,
+		};
+		if ( !SideLine.IsValid() )
+		{
+			++m_RejectedDrawCount;
+			return false;
+		}
+		Lines[Segments * 2u + SideIndex] = SideLine;
+	}
+
+	/** 両端円と4本の側線を合わせた総線数。 */
+	const usize LineCount = static_cast<usize>( Segments ) * 2u + kCylinderSideLineCount;
+	if ( TryAppendLines_Internal( Lines, LineCount ) ) return true;
+
+	++m_RejectedDrawCount;
+	return false;
+}
+
+
 bool CDebugDraw3DQueue::TryAabb( const FAabb3& Bounds, FVec4 Color ) noexcept
 {
 	if ( !IsValidHalfSize( Bounds.half_size ) )

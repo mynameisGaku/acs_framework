@@ -505,6 +505,13 @@ bool AUi3DScene::DrawCone3D( FVec3 Apex, FVec3 Direction, f32 Length,
 }
 
 
+bool AUi3DScene::DrawCylinder3D( FVec3 Center, FVec3 Axis, f32 Height,
+	f32 Radius, FVec4 Color, u32 Segments ) noexcept
+{
+	return m_DebugDraw3D.DrawCylinder( Center, Axis, Height, Radius, Color, Segments );
+}
+
+
 bool AUi3DScene::DrawAabb3D( const FAabb3& Bounds, FVec4 Color ) noexcept
 {
 	return m_DebugDraw3D.DrawAabb( Bounds, Color );

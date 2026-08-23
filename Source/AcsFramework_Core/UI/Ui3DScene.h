@@ -525,6 +525,23 @@ public:
 		u32 Segments = CDebugDraw3DQueue::kDefaultConeSegments ) noexcept;
 
 	/**
+	 * 指定world軸へ沿う円柱を次の3D描画へ一括登録する。
+	 *
+	 * @details 回転軸、体積、センサー範囲を両端円と4本の側線で示す。
+	 * 表示を続ける場合は更新ごとに呼ぶ。
+	 * @param Center 円柱のworld中心。
+	 * @param Axis 一方の端から他方の端へ向かう有限で正規化可能なworld軸。
+	 * @param Height 両端中心間のworld高さ。0より大きい有限値。
+	 * @param Radius 両端円のworld半径。0より大きい有限値。
+	 * @param Color 全ての端面線と側線へ使う色。
+	 * @param Segments 各端円を等分する4から128の数。
+	 * @return 値が有効で、円柱の全線を登録できたらtrue。
+	 */
+	bool DrawCylinder3D( FVec3 Center, FVec3 Axis, f32 Height, f32 Radius,
+		FVec4 Color = FVec4{ 0.20f, 0.95f, 0.74f, 1.0f },
+		u32 Segments = CDebugDraw3DQueue::kDefaultCylinderSegments ) noexcept;
+
+	/**
 	 * 軸並行境界箱の12辺を次の3D描画へ一括登録する。
 	 *
 	 * @details 線は深度を無視して常に見える。表示を続ける場合は更新ごとに呼ぶ。
