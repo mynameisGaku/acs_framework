@@ -77,6 +77,9 @@ SpawnModel3D( FModel3DSpawnParams::FromEmissivePrimitive( EMeshPrimitive3D::Sphe
 // 色と上塗り粗さだけで、車の塗装のような光沢コート球を置く
 SpawnModel3D( FModel3DSpawnParams::FromCoatedPrimitive( EMeshPrimitive3D::Sphere, FVec3{ 0, 1, 2 }, FVec3{ 0.8f, 0.1f, 0.06f }, 0.05f ) );
 
+// 色と位置だけで、二段影と縁光を持つトゥーン球を置く
+SpawnModel3D( FModel3DSpawnParams::FromToonPrimitive( EMeshPrimitive3D::Sphere, FVec3{ -2, 1, 2 }, FVec3{ 0.95f, 0.58f, 0.10f } ) );
+
 // FBX を置く (Assets からの相対名)
 FModel3DSpawnParams Model = FModel3DSpawnParams::FromMesh( FStringView( "Models/Robot.fbx" ), Position );
 SpawnModel3D( Model );

@@ -42,6 +42,15 @@ FModel3DSpawnParams FModel3DSpawnParams::FromPrimitive( EMeshPrimitive3D InPrimi
 }
 
 
+FModel3DSpawnParams FModel3DSpawnParams::FromToonPrimitive( EMeshPrimitive3D InPrimitive, FVec3 InPosition, FVec3 InColor ) noexcept
+{
+	FModel3DSpawnParams Params = FromPrimitive( InPrimitive, InPosition );
+	Params.Color = FVec4{ InColor.x, InColor.y, InColor.z, 1.0f };
+	Params.bToonShading = true;
+	return Params;
+}
+
+
 FModel3DSpawnParams FModel3DSpawnParams::FromCoatedPrimitive( EMeshPrimitive3D InPrimitive, FVec3 InPosition, FVec3 InColor, f32 InCoatRoughness ) noexcept
 {
 	FModel3DSpawnParams Params = FromPrimitive( InPrimitive, InPosition );

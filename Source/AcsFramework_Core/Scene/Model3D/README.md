@@ -39,6 +39,9 @@ SpawnModel3D( FModel3DSpawnParams::FromEmissivePrimitive( EMeshPrimitive3D::Sphe
 // 車の塗装やラッカーのような透明な上塗りは、色と上塗り粗さだけで作る
 SpawnModel3D( FModel3DSpawnParams::FromCoatedPrimitive( EMeshPrimitive3D::Sphere, FVec3{ 0.0f, 1.0f, 2.0f }, FVec3{ 0.78f, 0.10f, 0.06f }, 0.05f ) );
 
+// ACS既定の二段影と縁光を使うイラスト調の形も、色と位置だけで作る
+SpawnModel3D( FModel3DSpawnParams::FromToonPrimitive( EMeshPrimitive3D::Sphere, FVec3{ 2.0f, 1.0f, 2.0f }, FVec3{ 0.95f, 0.58f, 0.10f } ) );
+
 // 別の立体に見た目と衝突形状の両方が必要なら、一括生成結果を受け取る
 FModel3DSpawnParams Obstacle = FModel3DSpawnParams::FromPrimitive(
     EMeshPrimitive3D::Cube, FVec3{ 4.0f, 0.5f, 0.0f } );
@@ -84,6 +87,10 @@ Hero->Local().position.x += 1.0f;
 設定する。通常の`Roughness`は元の面、`ClearcoatRoughness`はその上へ重なる透明層だけを変える。
 車の塗装、ラッカー、濡れた面のように細い反射を残したい場合に使う。外部モデルでは2値を直接
 指定でき、どちらも0から1の有限値だけを受け付ける。
+
+`FromToonPrimitive`は`bToonShading`を有効にし、ACS既定の二段影、縁光、段階的な反射を使う。
+細かなトゥーン値をFramework側へ複製せず、ACSが調整した既定値をそのまま利用する。PBR専用の
+上塗りはトゥーン陰影では使われないため、光沢コートと同時に指定しない。
 
 シーンの物は `Scene.Graph()` へ置く。これにより有効な `FNodeId` が付き、当たり判定、
 波紋、識別子による破棄へ同じノードを渡せる。`ANode&` を受ける従来の多重定義は、

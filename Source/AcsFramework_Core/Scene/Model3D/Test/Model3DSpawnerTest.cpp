@@ -28,9 +28,21 @@ void RunModel3DSpawnerTests( CTestHarness& Harness )
 		Harness.Check( Params.Primitive == EMeshPrimitive3D::Cube, "既定の形は立方体" );
 		Harness.CheckEqualF32( Params.Scale.x, 1.0f, "既定は等倍" );
 		Harness.CheckEqualF32( Params.Color.w, 1.0f, "既定は不透明" );
+		Harness.Check( !Params.bToonShading, "既定はPBR陰影" );
 		Harness.CheckEqualF32( Params.Clearcoat, 0.0f, "既定では透明な上塗りを使わない" );
 		Harness.CheckEqualF32( Params.EmissiveStrength, 0.0f, "既定では自己発光しない" );
 		Harness.Check( Params.bCastsShadow, "既定で影を落とす" );
+	}
+
+	Harness.BeginSuite( "FModel3DSpawnParams / トゥーン形を一呼出しで作る" );
+
+	{
+		const FModel3DSpawnParams Toon = FModel3DSpawnParams::FromToonPrimitive( EMeshPrimitive3D::Sphere, FVec3{ 2.0f, 1.0f, -3.0f }, FVec3{ 0.95f, 0.62f, 0.12f } );
+		Harness.Check( Toon.IsValid(), "トゥーン形を作れる" );
+		Harness.Check( Toon.Primitive == EMeshPrimitive3D::Sphere, "指定した形を使う" );
+		Harness.CheckEqualF32( Toon.Position.z, -3.0f, "指定した位置を使う" );
+		Harness.CheckEqualF32( Toon.Color.y, 0.62f, "指定した表面色を使う" );
+		Harness.Check( Toon.bToonShading, "トゥーン陰影を有効にする" );
 	}
 
 	Harness.BeginSuite( "FModel3DSpawnParams / 光沢コート形を一呼出しで作る" );
@@ -140,6 +152,20 @@ void RunModel3DSpawnerTests( CTestHarness& Harness )
 			Harness.Check( Mesh->Primitive() == EMeshPrimitive3D::Sphere, "形が入る" );
 			Harness.CheckEqualF32( Mesh->Color().y, 0.2f, "色が入る" );
 			Harness.Check( !Mesh->CastsShadow(), "影の指定が入る" );
+		}
+	}
+
+	Harness.BeginSuite( "CModel3DSpawner / トゥーン指定をACSの材質へ渡す" );
+
+	{
+		TObjectPtr<ANode> Parent = NewObject<ANode>();
+		const FModel3DSpawnParams Params = FModel3DSpawnParams::FromToonPrimitive( EMeshPrimitive3D::Cube, FVec3{}, FVec3{ 0.90f, 0.55f, 0.12f } );
+		const AMeshComponent3D* const Mesh = MeshOf( CModel3DSpawner::SpawnInto( *Parent, Params ) );
+		Harness.Check( Mesh != nullptr, "トゥーン形を置ける" );
+		Harness.Check( Mesh != nullptr && Mesh->MaterialLoaded(), "ACS材質を確定する" );
+		if ( Mesh != nullptr )
+		{
+			Harness.Check( Mesh->Material().pbr.shadingMode == 1, "ACSのトゥーン陰影を選ぶ" );
 		}
 	}
 

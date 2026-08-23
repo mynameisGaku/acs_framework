@@ -74,6 +74,13 @@ struct FModel3DSpawnParams
 	f32 Roughness = 0.5f;
 
 	/**
+	 * PBRではなくACS既定の二段影と縁光を使うか。
+	 *
+	 * @details trueならイラスト調の陰影になる。透明な上塗りなどPBR専用の値は使われない。
+	 */
+	bool bToonShading = false;
+
+	/**
 	 * 透明な上塗り層の強さ。0で無し、1で最大。
 	 *
 	 * @details 車の塗装、ラッカー、濡れた面のように、元の材質の上へ細い反射を重ねる。
@@ -137,6 +144,16 @@ struct FModel3DSpawnParams
 	 * @param InPosition 置く場所。
 	 */
 	static FModel3DSpawnParams FromPrimitive( EMeshPrimitive3D InPrimitive, FVec3 InPosition ) noexcept;
+
+	/**
+	 * ACS既定のトゥーン陰影を使う形を、色と位置から作る。
+	 *
+	 * @param InPrimitive 使う形。
+	 * @param InPosition 置く場所。
+	 * @param InColor 表面へ使うRGB。
+	 * @return 二段影と縁光を使う形指定。
+	 */
+	static FModel3DSpawnParams FromToonPrimitive( EMeshPrimitive3D InPrimitive, FVec3 InPosition, FVec3 InColor ) noexcept;
 
 	/**
 	 * 光沢のある透明な上塗りを持つ形を、色と位置から作る。

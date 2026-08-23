@@ -500,6 +500,12 @@ void ADemo3DScene::OnEnter() noexcept
 	CoatedMarker.Name = FStringView( "CoatedMarker" );
 	if ( SpawnModel3D( CoatedMarker ) == nullptr ) ACS_LOG_WARN( "Demo3D: 光沢コートマーカーを配置できなかった" );
 
+	// ACS既定の二段影と縁光を一呼出しで選び、PBRとは異なるイラスト調の球を置く。
+	FModel3DSpawnParams ToonMarker = FModel3DSpawnParams::FromToonPrimitive( EMeshPrimitive3D::Sphere, FVec3{ 1.8f, 0.42f, -2.2f }, FVec3{ 0.95f, 0.58f, 0.10f } );
+	ToonMarker.Scale = FVec3{ 0.42f, 0.42f, 0.42f };
+	ToonMarker.Name = FStringView( "ToonMarker" );
+	if ( SpawnModel3D( ToonMarker ) == nullptr ) ACS_LOG_WARN( "Demo3D: トゥーンマーカーを配置できなかった" );
+
 	// HDR自己発光を一呼出しで作る。照明が暗くても色を保ち、bloomへ光が広がる。
 	FModel3DSpawnParams GlowMarker = FModel3DSpawnParams::FromEmissivePrimitive( EMeshPrimitive3D::Sphere, FVec3{ -1.8f, 0.34f, -2.2f }, FVec3{ 0.12f, 0.52f, 1.0f }, 4.0f );
 	GlowMarker.Scale = FVec3{ 0.28f, 0.28f, 0.28f };
