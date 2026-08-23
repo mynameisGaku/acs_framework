@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: Apache-2.0
 #include "AcsFramework_Core/Scene/DebugDraw3D/DebugDraw3DLayer.h"
 
+#include "AcsFramework_Core/Scene/Trigger3D/ProximityTrigger3D.h"
+
 
 bool CDebugDraw3DLayer::DrawLine( FVec3 Start, FVec3 End, FVec4 Color ) noexcept
 {
@@ -17,6 +19,13 @@ bool CDebugDraw3DLayer::DrawAabb( const FAabb3& Bounds, FVec4 Color ) noexcept
 bool CDebugDraw3DLayer::DrawSphere( const FSphere& Sphere, FVec4 Color, u32 Segments ) noexcept
 {
 	return m_Queue.TrySphere( Sphere, Color, Segments );
+}
+
+
+bool CDebugDraw3DLayer::DrawProximityTrigger( const CProximityTrigger3D& Trigger,
+	FVec4 Color, u32 SphereSegments ) noexcept
+{
+	return TryQueueProximityTrigger3D( Trigger, m_Queue, Color, SphereSegments );
 }
 
 

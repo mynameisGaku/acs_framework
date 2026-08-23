@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: Apache-2.0
 #include "AcsFramework_Core/Scene/Collision3D/SceneCollision3D.h"
+#include "AcsFramework_Core/Scene/DebugDraw3D/DebugDraw3DQueue.h"
 #include "AcsFramework_Core/Scene/Trigger3D/ProximityTrigger3D.h"
 #include "Common/Test/TestHarness.h"
 
@@ -49,6 +50,16 @@ void RunProximityTrigger3DTests( CTestHarness& Harness )
 		Harness.Check( !Params.IsValid(), "未定義の近接形状を拒否する" );
 	}
 
+	{
+		CProximityTrigger3D UnboundTrigger;
+		CDebugDraw3DQueue Queue;
+		Harness.Check( !TryQueueProximityTrigger3D(
+			UnboundTrigger, Queue, FVec4{ 1.0f, 1.0f, 1.0f, 1.0f }, 8u ),
+			"未接続の近接範囲をデバッグ線へ追加しない" );
+		Harness.CheckEqualU64( Queue.Num(), 0u,
+			"近接範囲を取得できないときはキューを変えない" );
+	}
+
 	Harness.BeginSuite( "CProximityTrigger3D / 進入、滞在、退出を追跡する" );
 
 	{
@@ -91,6 +102,9 @@ void RunProximityTrigger3DTests( CTestHarness& Harness )
 		Harness.Check( Trigger.Bind( Graph, Collision, *OriginSpawn.Node,
 			FProximityTrigger3DParams::Around( 2.0f, 0x2u ) ),
 			"自場面の基準ノードと衝突集合へ接続する" );
+		Harness.Check( Trigger.IsBoundTo( Graph, Collision )
+			&& !Trigger.IsBoundTo( OtherGraph, OtherCollision ),
+			"接続中の場面グラフと衝突集合だけを見分ける" );
 		Harness.Check( Trigger.Origin() == OriginSpawn.Node,
 			"接続中の基準ノードを世代付き識別子から解決する" );
 		Harness.Check( !Trigger.Bind( Graph, Collision, *FirstSpawn.Node ),
@@ -191,6 +205,34 @@ void RunProximityTrigger3DTests( CTestHarness& Harness )
 		Harness.Check( Trigger.Update( Result ) && Result.IsInside( TargetSpawn.Id ),
 			"位置、ローカル中心、最大拡縮率をworld球へ反映する" );
 
+		FSphere WorldSphere;
+		Harness.Check( Trigger.TryGetWorldSphere( WorldSphere ),
+			"判定と同じworld球をデバッグ用途へ取得する" );
+		Harness.CheckEqualF32( WorldSphere.center.x, 12.0f,
+			"world球の中心へ位置とローカル中心を反映する" );
+		Harness.CheckEqualF32( WorldSphere.radius, 2.0f,
+			"world球の半径へ最大拡縮率を反映する" );
+		FAabb3 WrongShapeBox{ FVec3{ 4.0f, 5.0f, 6.0f }, FVec3{ 1.0f, 2.0f, 3.0f } };
+		Harness.Check( !Trigger.TryGetWorldBox( WrongShapeBox ),
+			"球トリガーから箱を取得しない" );
+		Harness.CheckEqualF32( WrongShapeBox.center.x, 4.0f,
+			"異なる形状の取得失敗では出力を変えない" );
+
+		CDebugDraw3DQueue SphereQueue( 24u );
+		Harness.Check( TryQueueProximityTrigger3D(
+			Trigger, SphereQueue, FVec4{ 0.2f, 0.9f, 1.0f, 1.0f }, 8u ),
+			"world球をGPUなしで3方向の円へ変換する" );
+		Harness.CheckEqualU64( SphereQueue.Num(), 24u,
+			"指定した8分割の3円を24本の線として追加する" );
+
+		OriginSpawn.Node->SetEnabled( false );
+		FSphere InactiveSphere{ FVec3{ 3.0f, 4.0f, 5.0f }, 6.0f };
+		Harness.Check( !Trigger.TryGetWorldSphere( InactiveSphere ),
+			"無効な基準ノードの範囲を有効な判定として公開しない" );
+		Harness.CheckEqualF32( InactiveSphere.radius, 6.0f,
+			"無効な近接範囲の取得失敗では出力を変えない" );
+		OriginSpawn.Node->SetEnabled( true );
+
 		FSphere UnchangedSphere{ FVec3{ 9.0f, 8.0f, 7.0f }, 6.0f };
 		Harness.Check( !CSceneCollision3D::TryMakeWorldSphere(
 			*OriginSpawn.Node, FVec3{}, 0.0f, UnchangedSphere ),
@@ -233,6 +275,21 @@ void RunProximityTrigger3DTests( CTestHarness& Harness )
 			"回転後の長軸にいる対象を箱範囲へ含める" );
 		Harness.Check( !Result.IsInside( OldAxisSpawn.Id ),
 			"回転前の長軸位置を箱範囲へ残さない" );
+
+		FAabb3 WorldBox;
+		Harness.Check( Trigger.TryGetWorldBox( WorldBox ),
+			"判定と同じworld軸平行箱をデバッグ用途へ取得する" );
+		Harness.CheckNearF32( WorldBox.half_size.x, 0.25f, 0.00001f,
+			"90度回転後のworld X軸へ短辺を反映する" );
+		Harness.CheckNearF32( WorldBox.half_size.z, 2.0f, 0.00001f,
+			"90度回転後のworld Z軸へ長辺を反映する" );
+
+		CDebugDraw3DQueue BoxQueue( 12u );
+		Harness.Check( TryQueueProximityTrigger3D(
+			Trigger, BoxQueue, FVec4{ 1.0f, 0.7f, 0.2f, 1.0f }, 4u ),
+			"world箱をGPUなしで12辺へ変換する" );
+		Harness.CheckEqualU64( BoxQueue.Num(), 12u,
+			"球分割数に依存せず箱の12辺を追加する" );
 
 		FAabb3 Unchanged{ FVec3{ 9.0f, 8.0f, 7.0f }, FVec3{ 6.0f, 5.0f, 4.0f } };
 		Harness.Check( !CSceneCollision3D::TryMakeWorldBox(

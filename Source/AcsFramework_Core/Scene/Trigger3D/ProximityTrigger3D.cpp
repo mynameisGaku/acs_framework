@@ -2,6 +2,7 @@
 #include "AcsFramework_Core/Scene/Trigger3D/ProximityTrigger3D.h"
 
 #include "AcsFramework_Core/Scene/Collision3D/SceneCollision3D.h"
+#include "AcsFramework_Core/Scene/DebugDraw3D/DebugDraw3DQueue.h"
 
 
 bool CProximityTrigger3D::Bind( CSceneNodeGraph& Graph,
@@ -78,6 +79,14 @@ bool CProximityTrigger3D::IsBound() const noexcept
 }
 
 
+bool CProximityTrigger3D::IsBoundTo( const CSceneNodeGraph& Graph,
+	const CSceneCollision3D& Collision ) const noexcept
+{
+	return m_Graph == &Graph && m_Collision == &Collision
+		&& Collision.IsBoundTo( Graph ) && Origin() != nullptr;
+}
+
+
 ANode* CProximityTrigger3D::Origin() const noexcept
 {
 	if ( !IsBound() || !m_Graph->HasRoot()
@@ -90,6 +99,26 @@ ANode* CProximityTrigger3D::Origin() const noexcept
 bool CProximityTrigger3D::IsInside( FNodeId Node ) const noexcept
 {
 	return ContainsNode_Internal( m_InsideNodes, Node );
+}
+
+
+bool CProximityTrigger3D::TryGetWorldBox( FAabb3& OutBox ) const noexcept
+{
+	if ( m_Params.Kind != FProximityTrigger3DParams::EKind::Box ) return false;
+	ANode* const CurrentOrigin = Origin();
+	return CurrentOrigin != nullptr && IsNodeActive_Internal( *CurrentOrigin )
+		&& CSceneCollision3D::TryMakeWorldBox(
+		*CurrentOrigin, m_Params.LocalCenter, m_Params.LocalHalfSize, OutBox );
+}
+
+
+bool CProximityTrigger3D::TryGetWorldSphere( FSphere& OutSphere ) const noexcept
+{
+	if ( m_Params.Kind != FProximityTrigger3DParams::EKind::Sphere ) return false;
+	ANode* const CurrentOrigin = Origin();
+	return CurrentOrigin != nullptr && IsNodeActive_Internal( *CurrentOrigin )
+		&& CSceneCollision3D::TryMakeWorldSphere(
+		*CurrentOrigin, m_Params.LocalCenter, m_Params.LocalRadius, OutSphere );
 }
 
 
@@ -109,8 +138,7 @@ bool CProximityTrigger3D::TryCollectInsideNodes_Internal( const ANode& Origin,
 	case FProximityTrigger3DParams::EKind::Sphere:
 	{
 		FSphere WorldSphere;
-		if ( !CSceneCollision3D::TryMakeWorldSphere(
-			Origin, m_Params.LocalCenter, m_Params.LocalRadius, WorldSphere )
+		if ( !TryGetWorldSphere( WorldSphere )
 			|| !m_Collision->TryOverlapSphere(
 				WorldSphere, Hits, {}, m_Params.CollisionMask ) ) return false;
 		break;
@@ -118,8 +146,7 @@ bool CProximityTrigger3D::TryCollectInsideNodes_Internal( const ANode& Origin,
 	case FProximityTrigger3DParams::EKind::Box:
 	{
 		FAabb3 WorldBox;
-		if ( !CSceneCollision3D::TryMakeWorldBox(
-			Origin, m_Params.LocalCenter, m_Params.LocalHalfSize, WorldBox )
+		if ( !TryGetWorldBox( WorldBox )
 			|| !m_Collision->TryOverlapBox(
 				WorldBox, Hits, {}, m_Params.CollisionMask ) ) return false;
 		break;
@@ -196,4 +223,27 @@ bool CProximityTrigger3D::RefreshGraphIdentity_Internal() noexcept
 
 	Unbind();
 	return false;
+}
+
+
+bool TryQueueProximityTrigger3D( const CProximityTrigger3D& Trigger,
+	CDebugDraw3DQueue& Queue, FVec4 Color, u32 SphereSegments ) noexcept
+{
+	switch ( Trigger.Params().Kind )
+	{
+	case FProximityTrigger3DParams::EKind::Sphere:
+	{
+		FSphere WorldSphere;
+		return Trigger.TryGetWorldSphere( WorldSphere )
+			&& Queue.TrySphere( WorldSphere, Color, SphereSegments );
+	}
+	case FProximityTrigger3DParams::EKind::Box:
+	{
+		FAabb3 WorldBox;
+		return Trigger.TryGetWorldBox( WorldBox )
+			&& Queue.TryAabb( WorldBox, Color );
+	}
+	default:
+		return false;
+	}
 }

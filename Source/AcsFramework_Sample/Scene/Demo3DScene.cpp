@@ -37,6 +37,12 @@ namespace
 	/** 回転立方体から見た近接箱の各軸半サイズ。 */
 	constexpr FVec3 kSpinnerProximityHalfSize{ 3.0f, 2.0f, 3.0f };
 
+	/** 往復モデルが外側にいるときの近接範囲表示色。 */
+	constexpr FVec4 kProximityOutsideColor{ 0.20f, 0.95f, 1.0f, 1.0f };
+
+	/** 往復モデルが内側にいるときの近接範囲表示色。 */
+	constexpr FVec4 kProximityInsideColor{ 1.0f, 0.72f, 0.18f, 1.0f };
+
 	/** 初期画面でキャラクターと展示物を同時に見せる足元位置。 */
 	constexpr FVec3 kCharacterStartPosition{ 0.0f, 0.001f, 4.2f };
 
@@ -878,6 +884,7 @@ void ADemo3DScene::OnEvent( const FEvent& Event ) noexcept
 {
 	if ( Event.type == EEventType::KeyPressed && Event.key.key == EKey::B && !IsInputCaptureActive() ) ToggleDemoBillboard3D();
 	if ( Event.type == EEventType::KeyPressed && Event.key.key == EKey::X && !IsInputCaptureActive() ) ToggleDemoInteractable3D_Internal();
+	if ( Event.type == EEventType::KeyPressed && Event.key.key == EKey::V && !IsInputCaptureActive() ) m_bShowProximityTriggerDebug = !m_bShowProximityTriggerDebug;
 
 	if ( Event.type == EEventType::KeyPressed && Event.key.key == EKey::Enter && !IsInputCaptureActive() ) m_bInteractionRequested = true;
 
@@ -1137,6 +1144,12 @@ void ADemo3DScene::UpdateDemoProximityTrigger_Internal() noexcept
 	FProximityTrigger3DUpdateResult Result;
 	if ( !m_SpinnerProximityTrigger.Update( Result ) ) return;
 	const FNodeId MoverId = m_Mover->Id();
+	if ( m_bShowProximityTriggerDebug )
+	{
+		const FVec4 Color = Result.IsInside( MoverId )
+			? kProximityInsideColor : kProximityOutsideColor;
+		(void)DrawProximityTrigger3D( m_SpinnerProximityTrigger, Color );
+	}
 	if ( Result.DidEnter( MoverId ) )
 	{
 		SetUiTextIfChanged( Ui(), m_InteractionStatusText, "PROXIMITY: MOVER ENTERED" );

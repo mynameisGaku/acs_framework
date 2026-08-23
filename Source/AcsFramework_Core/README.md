@@ -73,7 +73,8 @@ Subsystemにはしない。`AEffect3DScene`がscene単位で`CEffect3DPlayer`を
 球または箱と`CSceneCollision3D`の既存重なり問い合わせを使い、前回からの進入、滞在、退出だけを
 世代付きノード識別子で返す。`AUi3DScene::BindProximityTrigger3D`は場面グラフと衝突集合への
 接続をまとめる。扉、会話、チェックポイントなど作品固有の反応、入力、描画、時間は所有せず、
-短い寿命の局所状態なのでsubsystemにはしない。
+短い寿命の局所状態なのでsubsystemにはしない。現在の判定範囲は`TryGetWorldSphere`または
+`TryGetWorldBox`で取得でき、`DrawProximityTrigger3D`なら既存の1フレーム線へそのまま表示できる。
 
 単一モデルを第三者視点キャラクターとして使う定型処理は`CThirdPersonCharacter3DSpawner`へまとめる。
 静的または骨格モデルの既存生成器、`CSceneCollision3D`、`CThirdPersonCharacter3D`を順に呼ぶだけの
@@ -105,7 +106,8 @@ HDR透過描画はACSへ任せる。カメラへ自動で向くビルボード�
 `FDebugLine3D`と`CDebugDraw3DQueue`はGPUなしで値と1フレーム上限を検証し、
 `CDebugDraw3DLayer`はACSの`FDebugDraw3D`を遅延初期化して`AUi3DScene`の透明3Dパスへ接続する。
 `DrawLine3D`、`DrawAabb3D`、`DrawSphere3D`は深度を無視する確認用オーバーレイで、
-表示を続ける側は更新ごとに登録する。球はACSの衝突判定と同じ`FSphere`をそのまま受け取る。
+`DrawProximityTrigger3D`は判定と同じ球または箱を一括登録する。表示を続ける側は更新ごとに登録する。
+球はACSの衝突判定と同じ`FSphere`をそのまま受け取る。
 
 ### Text変換の契約
 

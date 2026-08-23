@@ -94,7 +94,11 @@ BindProximityTrigger3D(
 
 FProximityTrigger3DUpdateResult Result;
 if ( DoorTrigger.Update( Result ) && Result.DidEnter( PlayerNode->Id() ) ) OpenDoor();
+DrawProximityTrigger3D( DoorTrigger ); // 判定範囲を表示し続ける場合
 ```
+
+`DrawProximityTrigger3D`はこの場面へ接続済みのトリガーだけを受け付け、判定と同じworld球または
+world軸平行箱を既存デバッグ線へ一括登録する。線は次の透明3D描画後に消える。
 
 `SpawnCollidableModel3D`はモデル生成とこの衝突登録を一括で行い、ノードと形状番号を返す。
 描画境界、明示箱、明示球を選べ、登録できなければ生成ノードも破棄予定へ戻す。厚さのない

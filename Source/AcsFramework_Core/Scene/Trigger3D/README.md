@@ -24,6 +24,10 @@ if ( DoorTrigger.Update( Result ) && Result.DidEnter( Player->Id() ) )
 基準ノードからの位置をずらせる。箱の8隅へ現在Transformを適用し、回転後の形を包むworld軸平行箱で
 問い合わせるため、ACSの既存箱衝突と同じ結果になる。
 
+調整中は`AUi3DScene::DrawProximityTrigger3D( Trigger, Color )`を毎更新で呼ぶと、判定に使った
+world球またはworld軸平行箱を深度に隠れない1フレーム線で確認できる。GPUを使わないテストでは
+`TryQueueProximityTrigger3D`へ`CDebugDraw3DQueue`を渡し、必要な線数と失敗時非変更を検証できる。
+
 最初の成功更新では現在範囲内の全対象が進入になる。同じ状態の次更新では進入・退出は空になり、
 移動、無効化、破棄、レイヤー変更で範囲外になれば退出へ移る。`ResetState`を呼ぶと、次回に現在対象を
 改めて進入として受け取れる。コールバック、入力、描画、時間進行は持たないため、成立したイベントの用途は

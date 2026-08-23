@@ -3,6 +3,8 @@
 
 #include "AcsFramework_Core/Scene/DebugDraw3D/DebugDraw3DQueue.h"
 
+class CProximityTrigger3D;
+
 /**
  * 場面の1フレーム線キューをACSのHDR透明3D描画へ接続する所有者。
  *
@@ -33,6 +35,18 @@ public:
 	/** 球を3方向の円として次の3D描画へ一括登録する。 */
 	bool DrawSphere( const FSphere& Sphere, FVec4 Color = FVec4{ 0.20f, 0.95f, 1.0f, 1.0f },
 		u32 Segments = CDebugDraw3DQueue::kDefaultSphereSegments ) noexcept;
+
+	/**
+	 * 接続済み近接トリガーの球または箱を次の3D描画へ一括登録する。
+	 *
+	 * @param Trigger 表示する有効な近接トリガー。
+	 * @param Color 全ての線へ使う色。
+	 * @param SphereSegments 球を構成する各円の分割数。箱では使わない。
+	 * @return world形状を取得し、必要な線を全て登録できたらtrue。
+	 */
+	bool DrawProximityTrigger( const CProximityTrigger3D& Trigger,
+		FVec4 Color = FVec4{ 0.20f, 0.95f, 1.0f, 1.0f },
+		u32 SphereSegments = CDebugDraw3DQueue::kDefaultSphereSegments ) noexcept;
 
 	/** 次の3D描画へ登録済みの線数を返す。 */
 	usize LineCount() const noexcept { return m_Queue.Num(); }

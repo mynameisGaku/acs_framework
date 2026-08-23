@@ -469,6 +469,19 @@ public:
 	bool DrawSphere3D( const FSphere& Sphere, FVec4 Color = FVec4{ 0.20f, 0.95f, 1.0f, 1.0f },
 		u32 Segments = CDebugDraw3DQueue::kDefaultSphereSegments ) noexcept;
 
+	/**
+	 * この場面へ接続した近接トリガーの現在範囲を次の3D描画へ一括登録する。
+	 *
+	 * @details 判定と同じworld球またはworld軸平行箱を使う。表示を続ける場合は更新ごとに呼ぶ。
+	 * @param Trigger `BindProximityTrigger3D`でこの場面へ接続済みのトリガー。
+	 * @param Color 全ての線へ使う色。
+	 * @param SphereSegments 球を構成する各円の分割数。箱では使わない。
+	 * @return 接続、world変換、線の一括登録を全て完了できたらtrue。
+	 */
+	bool DrawProximityTrigger3D( const CProximityTrigger3D& Trigger,
+		FVec4 Color = FVec4{ 0.20f, 0.95f, 1.0f, 1.0f },
+		u32 SphereSegments = CDebugDraw3DQueue::kDefaultSphereSegments ) noexcept;
+
 	/** 登録線の消去と拒否数の確認に使う、この場面所有の3Dデバッグ描画層を返す。 */
 	CDebugDraw3DLayer& DebugDraw3D() noexcept { return m_DebugDraw3D; }
 

@@ -469,6 +469,14 @@ bool AUi3DScene::DrawSphere3D( const FSphere& Sphere, FVec4 Color, u32 Segments 
 }
 
 
+bool AUi3DScene::DrawProximityTrigger3D( const CProximityTrigger3D& Trigger,
+	FVec4 Color, u32 SphereSegments ) noexcept
+{
+	return Trigger.IsBoundTo( Graph(), m_Collision3D )
+		&& m_DebugDraw3D.DrawProximityTrigger( Trigger, Color, SphereSegments );
+}
+
+
 bool AUi3DScene::OnRenderTransparent3D( const FScene3DTransparentRenderContext& Context ) noexcept
 {
 	(void)m_DebugDraw3D.Render( Context.Device, Context.Commands, Context.Camera, Context.ColorTarget );

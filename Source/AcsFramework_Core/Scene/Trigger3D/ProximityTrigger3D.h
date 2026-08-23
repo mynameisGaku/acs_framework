@@ -5,6 +5,7 @@
 #include "AcsFramework_Core/Scene/Trigger3D/ProximityTrigger3DUpdateResult.h"
 
 class CSceneCollision3D;
+class CDebugDraw3DQueue;
 
 /**
  * 1ノードへ追従する球または箱の範囲から、衝突ノードの進入、滞在、退出を求める。
@@ -50,6 +51,16 @@ public:
 	/** 場面グラフ、衝突集合、基準ノードへ接続済みならtrue。 */
 	bool IsBound() const noexcept;
 
+	/**
+	 * 指定した場面グラフと衝突集合へ接続中か確認する。
+	 *
+	 * @param Graph 確認する場面グラフ。
+	 * @param Collision `Graph`へ接続した確認対象の衝突集合。
+	 * @return 両方が接続先と一致し、基準ノードが現在も生存するならtrue。
+	 */
+	bool IsBoundTo( const CSceneNodeGraph& Graph,
+		const CSceneCollision3D& Collision ) const noexcept;
+
 	/** 現在も生存する基準ノードを返す。未接続、場面差し替え、破棄済みならnullptr。 */
 	ANode* Origin() const noexcept;
 
@@ -61,6 +72,22 @@ public:
 
 	/** 現在の近接範囲と対象レイヤーを返す。 */
 	const FProximityTrigger3DParams& Params() const noexcept { return m_Params; }
+
+	/**
+	 * 選択中の箱範囲を現在Transformでworld軸平行箱へ変換する。
+	 *
+	 * @param OutBox 変換結果。未接続、別形状、無効化、不正Transformでは変更しない。
+	 * @return 有効な箱トリガーの現在範囲を取得できたらtrue。
+	 */
+	bool TryGetWorldBox( FAabb3& OutBox ) const noexcept;
+
+	/**
+	 * 選択中の球範囲を現在Transformでworld球へ変換する。
+	 *
+	 * @param OutSphere 変換結果。未接続、別形状、無効化、不正Transformでは変更しない。
+	 * @return 有効な球トリガーの現在範囲を取得できたらtrue。
+	 */
+	bool TryGetWorldSphere( FSphere& OutSphere ) const noexcept;
 
 private:
 	/** 現在の衝突結果を重複のない世代付きノード識別子へ変換する。 */
@@ -99,3 +126,15 @@ private:
 	/** 直前の成功更新で範囲内だった世代付きノード識別子。 */
 	TArray<FNodeId> m_InsideNodes;
 };
+
+/**
+ * 接続済み近接トリガーの現在world範囲を、GPU非依存の1フレーム線キューへ追加する。
+ *
+ * @param Trigger 表示する球または箱の近接トリガー。
+ * @param Queue 検証済み線の追加先。
+ * @param Color 全ての線へ使う色。
+ * @param SphereSegments 球を構成する各円の分割数。箱では使わない。
+ * @return world形状を取得し、必要な線を全て追加できたらtrue。
+ */
+bool TryQueueProximityTrigger3D( const CProximityTrigger3D& Trigger,
+	CDebugDraw3DQueue& Queue, FVec4 Color, u32 SphereSegments ) noexcept;

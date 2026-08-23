@@ -137,6 +137,9 @@ private:
 	/** 回転立方体を基準に、往復モデルの進入と退出を追跡する。 */
 	CProximityTrigger3D m_SpinnerProximityTrigger;
 
+	/** Vキーで近接判定と同じ箱を1フレーム線として表示するならtrue。 */
+	bool m_bShowProximityTriggerDebug = false;
+
 	/** 往復させる取り込みモデル。所有はしない (木が持っている)。 */
 	ANode* m_Mover = nullptr;
 
