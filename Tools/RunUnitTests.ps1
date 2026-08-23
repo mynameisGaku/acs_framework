@@ -105,6 +105,8 @@ $sources = @(
     'AcsFramework_Core\Scene\Water3D\Test\Water3DSpawnerTest.cpp',
     'AcsFramework_Core\Scene\Weather3D\Weather3DAppearance.cpp',
     'AcsFramework_Core\Scene\Weather3D\Test\Weather3DAppearanceTest.cpp',
+	'AcsFramework_Core\Scene\Visual3D\VisualPreset3D.cpp',
+	'AcsFramework_Core\Scene\Visual3D\Test\VisualPreset3DTest.cpp',
     'AcsFramework_Core\Scene\Pick3D\SceneRay.cpp',
     'AcsFramework_Core\Scene\Pick3D\ScenePicker.cpp',
     'AcsFramework_Core\Scene\Pick3D\Test\ScenePickerTest.cpp',

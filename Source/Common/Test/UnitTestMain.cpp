@@ -74,6 +74,7 @@ void RunDebugDraw3DQueueTests( CTestHarness& Harness );
 void RunLight3DSpawnerTests( CTestHarness& Harness );
 void RunWater3DSpawnerTests( CTestHarness& Harness );
 void RunWeather3DAppearanceTests( CTestHarness& Harness );
+void RunVisualPreset3DTests( CTestHarness& Harness );
 void RunScenePickerTests( CTestHarness& Harness );
 void RunWorldLabel3DTests( CTestHarness& Harness );
 void RunInteractionFocus3DTests( CTestHarness& Harness );
@@ -130,6 +131,7 @@ int main()
 	RunLight3DSpawnerTests( Harness );
 	RunWater3DSpawnerTests( Harness );
 	RunWeather3DAppearanceTests( Harness );
+	RunVisualPreset3DTests( Harness );
 	RunScenePickerTests( Harness );
 	RunWorldLabel3DTests( Harness );
 	RunInteractionFocus3DTests( Harness );

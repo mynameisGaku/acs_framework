@@ -28,6 +28,11 @@ private:
 UIはHDR描画、トーンマップ、TAAまたはFXAAが終わった後のLDR画面へ重ねる。文字やボタンは
 bloomや輪郭補正の影響を受けず、3D場面より手前、ポーズ・デバッグ・ロード表示より奥に出る。
 
+同じ場面から`TryApplyVisualPreset3D( EVisualPreset3D::Balanced )`を呼ぶと、遮蔽、反射、
+間接光、bloom、露出、輪郭補正を標準品質へ一括設定できる。`Performance`は高価な反射と
+間接光を切り、`Cinematic`はTAAと強めの画面空間効果を使う。適用後も`PostParams()`などを
+直接調整でき、未知の値では既存設定を変更しない。
+
 同じ基底は、3Dの見える物を少ない手数で置く窓口も持つ。`SpawnNode3D`は複数の見た目をまとめる
 空ノード、`SpawnModel3D`はプリミティブまたは静的モデル、`SpawnInteractableModel3D`は静的モデルと
 視線操作登録、`SpawnCollidableModel3D`は静的モデルと衝突、

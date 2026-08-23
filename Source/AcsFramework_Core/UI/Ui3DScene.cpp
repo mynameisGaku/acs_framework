@@ -45,6 +45,13 @@ AUi3DScene::AUi3DScene() noexcept
 }
 
 
+bool AUi3DScene::TryApplyVisualPreset3D( EVisualPreset3D Preset ) noexcept
+{
+	return TryApplyVisualPreset3DSettings( Preset, AmbientOcclusion(), Reflections(),
+		GlobalIllumination(), PostParams() );
+}
+
+
 void AUi3DScene::OnEnter() noexcept
 {
 	ALegacyScene3DAdapter::OnEnter();

@@ -175,6 +175,12 @@
     <Filter Include="Source\AcsFramework_Core\Scene\Trigger3D\Test">
       <UniqueIdentifier>{e4a94b70-f1c2-4a4c-1815-5e78aa8a5e91}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\AcsFramework_Core\Scene\Visual3D">
+      <UniqueIdentifier>{f6b1d05c-5e33-8553-c2c7-dda0d017e93c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\AcsFramework_Core\Scene\Visual3D\Test">
+      <UniqueIdentifier>{7081d684-190d-177d-a342-1d9eaece87d0}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Source\AcsFramework_Core\Scene\Water3D">
       <UniqueIdentifier>{8f50d5d4-8947-4505-aa02-c19d5b0ebea1}</UniqueIdentifier>
     </Filter>
@@ -578,6 +584,9 @@
     </ClCompile>
     <ClCompile Include="Source\AcsFramework_Core\Scene\Trigger3D\ProximityTrigger3DUpdateResult.cpp">
       <Filter>Source\AcsFramework_Core\Scene\Trigger3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Scene\Visual3D\VisualPreset3D.cpp">
+      <Filter>Source\AcsFramework_Core\Scene\Visual3D</Filter>
     </ClCompile>
     <ClCompile Include="Source\AcsFramework_Core\Scene\Water3D\Water3DSpawner.cpp">
       <Filter>Source\AcsFramework_Core\Scene\Water3D</Filter>
@@ -1247,6 +1256,9 @@
     <ClInclude Include="Source\AcsFramework_Core\Scene\Trigger3D\ProximityTrigger3DUpdateResult.h">
       <Filter>Source\AcsFramework_Core\Scene\Trigger3D</Filter>
     </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Visual3D\VisualPreset3D.h">
+      <Filter>Source\AcsFramework_Core\Scene\Visual3D</Filter>
+    </ClInclude>
     <ClInclude Include="Source\AcsFramework_Core\Scene\Water3D\Water3DSpawner.h">
       <Filter>Source\AcsFramework_Core\Scene\Water3D</Filter>
     </ClInclude>
@@ -1845,6 +1857,12 @@
     </None>
     <None Include="Source\AcsFramework_Core\Scene\Trigger3D\Test\ProximityTrigger3DTest.cpp">
       <Filter>Source\AcsFramework_Core\Scene\Trigger3D\Test</Filter>
+    </None>
+    <None Include="Source\AcsFramework_Core\Scene\Visual3D\README.md">
+      <Filter>Source\AcsFramework_Core\Scene\Visual3D</Filter>
+    </None>
+    <None Include="Source\AcsFramework_Core\Scene\Visual3D\Test\VisualPreset3DTest.cpp">
+      <Filter>Source\AcsFramework_Core\Scene\Visual3D\Test</Filter>
     </None>
     <None Include="Source\AcsFramework_Core\Scene\Water3D\README.md">
       <Filter>Source\AcsFramework_Core\Scene\Water3D</Filter>

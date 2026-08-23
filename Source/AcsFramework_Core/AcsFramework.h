@@ -65,6 +65,7 @@
 #include "AcsFramework_Core/Scene/Trigger3D/ProximityTrigger3D.h"
 #include "AcsFramework_Core/Scene/Trigger3D/ProximityTrigger3DParams.h"
 #include "AcsFramework_Core/Scene/Trigger3D/ProximityTrigger3DUpdateResult.h"
+#include "AcsFramework_Core/Scene/Visual3D/VisualPreset3D.h"
 #include "AcsFramework_Core/Scene/Water3D/Water3DSpawner.h"
 #include "AcsFramework_Core/Scene/Weather3D/Weather3DAppearance.h"
 #include "AcsFramework_Core/Scene/Weather3D/Weather3DScene.h"

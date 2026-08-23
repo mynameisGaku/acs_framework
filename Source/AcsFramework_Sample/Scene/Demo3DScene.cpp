@@ -581,19 +581,15 @@ void ADemo3DScene::OnEnter() noexcept
 	// 粗く描いて誤魔化す話ではない。3.0 のまま置く。
 	Clouds().RenderScale = 3.0f;
 
-	// 遮蔽。物と床の接するところを締める。半径は場面の大きさに合わせる
-	// (ここは球の直径が 1 前後なので 0.5)。
-	AmbientOcclusion().Intensity = 1.0f;
-	AmbientOcclusion().Radius = 0.5f;
+	// 遮蔽、反射、間接光、bloom、露出、FXAAを標準品質へ一括設定する。
+	// 個別に見せたい効果だけ、この後で場面の大きさに合わせて上書きできる。
+	if ( !TryApplyVisualPreset3D( EVisualPreset3D::Balanced ) )
+		ACS_LOG_WARN( "Demo3D: 3D見た目プリセットを適用できなかった" );
 
 	// 間接光。赤い球や黄色い立方体で跳ね返った色を、近くの床や物へ薄く回す。
 	// 画面外は探せないので、広げすぎずこの場面の物同士が届く距離に留める。
 	GlobalIllumination().Intensity = 0.75f;
 	GlobalIllumination().MaxDistance = 5.0f;
-
-	// トーンマップ後の輪郭に軽いアンチエイリアスを掛け、斜め線のギザギザを抑える。
-	// このデモはTAAを使わないため、時間方向の履歴を持たないFXAAを仕上げに使う。
-	PostParams().fxaa_enabled = true;
 
 	// 遊ぶ人向けUI。初期化、入力、更新、終了、ポスト処理後の描画はAUi3DSceneが受け持つ。
 	// ここでは表示物を置き、あとでボタンの結果を読むだけにする。

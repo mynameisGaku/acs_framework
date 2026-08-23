@@ -49,7 +49,7 @@ ACS のモジュールは **438 個**ある。この枠組みが窓口を用意�
 | 分野 | ACS 側に在るもの |
 |---|---|
 | **3D 描画** | `MeshComponent3D`、`CameraComponent3D`、`Transform3D`、`PbrShader`、`StandardShader`、`ShadowMap`、`Ibl`、`Sky`、`Atmosphere`、`SceneRenderResources` |
-| **ポストプロセス** | `PostProcess`、`Ssao`、`Ssgi`、`Ssr`、`Fxaa`、`SubsurfaceScattering`、`MotionVector`、`TemporalHistory`、`HiZ` |
+| **ポストプロセスの高度な拡張** | `SubsurfaceScattering`、`MotionVector`、`TemporalHistory`、`HiZ` |
 | **アニメーション** | `AnimationGraph`、`AnimationCurve`、`SkinnedShader`、`asset/SkinnedMesh` |
 
 ### 覆えていないもの (v1.0.0 の範囲外と宣言する)
@@ -178,7 +178,9 @@ cameraからの距離に応じて大気へ馴染み、雲も実距離まで同�
   `AmbientOcclusion()` (既定 ON)、`Reflections()` (既定 OFF、映すものが要る)、
   `GlobalIllumination()` (既定 OFF、近くの色の回り込み) を場面から触れる。
   bloom と FXAA (`PostParams().fxaa_enabled`、既定 OFF) は `PostParams()` から調整でき、
-  材質も `FModel3DSpawnParams::Metallic` / `Roughness` で触れる
+  材質も `FModel3DSpawnParams::Metallic` / `Roughness` で触れる。
+  `TryApplyVisualPreset3D`なら遮蔽、反射、間接光、bloom、露出、TAAまたはFXAAを
+  `Performance`、`Balanced`、`Cinematic`の1回で揃え、適用後の個別調整も残す (2026-08-23)。
 - ~~3D エフェクトの配線 (Effekseer)~~ → **実装済み** (2026-08-21)。
   `AEffect3DScene` を継承し、`PlayEffect3D( 素材名, 位置 )` で再生する。最初の描画前でも
   指定でき、D3D12 の準備後に自動開始する。ACS の HDR 透明3Dパス内で描くため、scene depthで

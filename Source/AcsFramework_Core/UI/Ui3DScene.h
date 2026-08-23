@@ -14,6 +14,7 @@
 #include "AcsFramework_Core/Scene/Pick3D/SceneRay.h"
 #include "AcsFramework_Core/Scene/Pick3D/SceneRayHit.h"
 #include "AcsFramework_Core/Scene/Trigger3D/ProximityTrigger3D.h"
+#include "AcsFramework_Core/Scene/Visual3D/VisualPreset3D.h"
 #include "AcsFramework_Core/UI/InteractionReticle3D/InteractionReticle3DParams.h"
 #include "AcsFramework_Core/UI/WorldLabel3D/WorldLabel3DLayer.h"
 
@@ -51,6 +52,15 @@ public:
 
 	/** 場面固有のUI状態を重複所有しないためコピー代入を禁止する。 */
 	AUi3DScene& operator=( const AUi3DScene& ) = delete;
+
+	/**
+	 * 3D場面の遮蔽、反射、間接光、仕上げを一つの見た目へまとめて設定する。
+	 *
+	 * @details 適用後も個別のACS設定を上書きできる。実行中のGPU参照とフレーム時刻は維持する。
+	 * @param Preset 適用する見た目と負荷の組み合わせ。
+	 * @return 既知のプリセットを完全に反映できた場合だけtrue。未知値では現在設定を維持する。
+	 */
+	bool TryApplyVisualPreset3D( EVisualPreset3D Preset = EVisualPreset3D::Balanced ) noexcept;
 
 	/**
 	 * ボタンや文字を追加するUI層を返す。

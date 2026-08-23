@@ -50,6 +50,12 @@ Subsystemにはしない。`AEffect3DScene`がscene単位で`CEffect3DPlayer`を
 `AWeather3DScene`は派生場面が設定した晴天時の環境を基準として記録し、相対値を毎フレーム
 適用する薄いアダプターとする。雨雪の素材は固定せず、粒子密度と風向きを公開する。
 
+3D見た目プリセットもsceneごとの設定値なのでSubsystemにはしない。`EVisualPreset3D`は
+`Performance`、`Balanced`、`Cinematic`の負荷と見た目を選び、純粋な
+`TryApplyVisualPreset3DSettings`がACSの遮蔽、反射、間接光、ポスト処理設定へ原子的に反映する。
+`AUi3DScene::TryApplyVisualPreset3D`はその場面窓口だけを担う。GPU資源、描画順、実際の各効果は
+ACSへ任せ、適用後の個別調整口も残す。
+
 3D選択は`AUi3DScene::MakeScreenRay3D`と`Raycast3D`、1回で済ませる`PickScreen3D`へまとめる。
 内部では`CScenePicker`からACSの`CSceneNodeGraph`が持つ実形状判定を呼び、再実装しない。
 世代付き識別子を使いやすいノードポインタと世界座標の命中情報へ変換し、高速な境界箱判定は

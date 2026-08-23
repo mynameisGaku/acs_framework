@@ -48,7 +48,7 @@ WASDで移動、左Shiftで走行、矢印キーで視点、Spaceでジャンプ
 | 動かす | `SpawnThirdPersonCharacter3D()`でモデル生成・自己衝突・移動・向き・追従カメラを一括化。既存ノードには`BindThirdPersonCharacter3D()` |
 | 操作を変える | UIでキーボード、ゲームパッドのボタン・軸を選び、自動保存して次回起動時に復元 |
 | カメラで追う | `CNodeOrbitCamera3D`、人物の注視点追従、回転・距離操作、遮蔽物回避 |
-| 見た目 | 物理大気・空気遠近・ボリューム雲・影・IBL・遮蔽 (SSAO)・間接光 (SSGI)・反射 (SSR)・霧・トーンマップ・輪郭補正 (FXAA) |
+| 見た目 | `TryApplyVisualPreset3D()`の3段階一括設定、物理大気・空気遠近・ボリューム雲・影・IBL・遮蔽 (SSAO)・間接光 (SSGI)・反射 (SSR)・霧・トーンマップ・TAA・輪郭補正 (FXAA) |
 | 3D 天候 | `AWeather3DScene`、晴天・曇天・雨・雪・嵐・霧・砂嵐の滑らかな遷移 |
 | 3D 水面 | `SpawnWater3D()`、屈折・反射・泡・動的な波紋 |
 | 3D 演出 | `AEffect3DScene`、Effekseer、depth 遮蔽、HDR・bloom への自動合成 |
@@ -74,6 +74,9 @@ SpawnModel3D( Ball );
 // FBX を置く (Assets からの相対名)
 FModel3DSpawnParams Model = FModel3DSpawnParams::FromMesh( FStringView( "Models/Robot.fbx" ), Position );
 SpawnModel3D( Model );
+
+// 遮蔽、反射、間接光、bloom、露出、輪郭補正を標準品質へ揃える
+TryApplyVisualPreset3D( EVisualPreset3D::Balanced );
 
 // FBXを置くと同時に衝突と視線操作へ登録する。途中失敗時はモデルも形状も残らない
 FCollidableModel3DSpawnResult Door = SpawnInteractableCollidableModel3D(
