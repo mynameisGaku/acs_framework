@@ -43,8 +43,8 @@ namespace
 	/** 往復モデルが内側にいるときの近接範囲表示色。 */
 	constexpr FVec4 kProximityInsideColor{ 1.0f, 0.72f, 0.18f, 1.0f };
 
-	/** 近接範囲と比較する回転立方体の衝突形状表示色。 */
-	constexpr FVec4 kSpinnerCollisionColor{ 0.45f, 1.0f, 0.38f, 1.0f };
+	/** 近接範囲と比較する全衝突形状の表示色。 */
+	constexpr FVec4 kCollisionShapeColor{ 0.45f, 1.0f, 0.38f, 1.0f };
 
 	/** 初期画面でキャラクターと展示物を同時に見せる足元位置。 */
 	constexpr FVec3 kCharacterStartPosition{ 0.0f, 0.001f, 4.2f };
@@ -887,7 +887,7 @@ void ADemo3DScene::OnEvent( const FEvent& Event ) noexcept
 {
 	if ( Event.type == EEventType::KeyPressed && Event.key.key == EKey::B && !IsInputCaptureActive() ) ToggleDemoBillboard3D();
 	if ( Event.type == EEventType::KeyPressed && Event.key.key == EKey::X && !IsInputCaptureActive() ) ToggleDemoInteractable3D_Internal();
-	if ( Event.type == EEventType::KeyPressed && Event.key.key == EKey::V && !IsInputCaptureActive() ) m_bShowProximityTriggerDebug = !m_bShowProximityTriggerDebug;
+	if ( Event.type == EEventType::KeyPressed && Event.key.key == EKey::V && !IsInputCaptureActive() ) m_bShowCollisionDebug = !m_bShowCollisionDebug;
 
 	if ( Event.type == EEventType::KeyPressed && Event.key.key == EKey::Enter && !IsInputCaptureActive() ) m_bInteractionRequested = true;
 
@@ -1147,11 +1147,11 @@ void ADemo3DScene::UpdateDemoProximityTrigger_Internal() noexcept
 	FProximityTrigger3DUpdateResult Result;
 	if ( !m_SpinnerProximityTrigger.Update( Result ) ) return;
 	const FNodeId MoverId = m_Mover->Id();
-	if ( m_bShowProximityTriggerDebug )
+	if ( m_bShowCollisionDebug )
 	{
 		const FVec4 Color = Result.IsInside( MoverId )
 			? kProximityInsideColor : kProximityOutsideColor;
-		(void)DrawCollisionShape3D( m_Spinner.Shape, kSpinnerCollisionColor );
+		(void)DrawCollisionShapes3D( CSceneCollision3D::kAllLayers, kCollisionShapeColor );
 		(void)DrawProximityTrigger3D( m_SpinnerProximityTrigger, Color );
 	}
 	if ( Result.DidEnter( MoverId ) )

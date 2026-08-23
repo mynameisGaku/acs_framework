@@ -99,6 +99,8 @@ void RunSceneCollision3DTests( CTestHarness& Harness )
 			"登録球を移動後のworld形状として取得する" );
 		Harness.Check( WorldShape.Kind == FWorldCollisionShape3D::EKind::Sphere,
 			"登録時の球種別を返す" );
+		Harness.Check( WorldShape.Shape == Shape && WorldShape.Node == Spawned.Id,
+			"world形状へ形状番号とノード番号を添える" );
 		CheckNear( Harness, WorldShape.Sphere.center.x, 5.0f,
 			"現在位置をworld球中心へ反映する" );
 		CheckNear( Harness, WorldShape.Sphere.center.y, 6.0f,
@@ -166,6 +168,64 @@ void RunSceneCollision3DTests( CTestHarness& Harness )
 			"90度回転後の長辺をworld Z軸へ反映する" );
 		Harness.Check( WorldShape.bQueryable,
 			"有効な登録箱を問い合わせ対象として返す" );
+	}
+
+	Harness.BeginSuite( "CSceneCollision3D / 有効なworld形状をレイヤーで一括取得する" );
+
+	{
+		CSceneNodeGraph Graph;
+		CSceneCollision3D Collision{ Graph };
+		const FScene3DSpawnResult First = Graph.TrySpawn( FStringView( "BulkSphere" ) );
+		const FScene3DSpawnResult Second = Graph.TrySpawn( FStringView( "BulkBox" ) );
+		const FScene3DSpawnResult Disabled = Graph.TrySpawn( FStringView( "DisabledSphere" ) );
+		Harness.Check( First && Second && Disabled, "一括取得確認用の3ノードを置ける" );
+		if ( !First || !Second || !Disabled ) return;
+
+		const FCollisionShapeId3D FirstShape = Collision.TryAddSphere(
+			*First.Node, FVec3{}, 0.5f, 0x1u );
+		const FCollisionShapeId3D SecondShape = Collision.TryAddBox(
+			*Second.Node, FVec3{}, FVec3{ 1.0f, 2.0f, 3.0f }, 0x2u );
+		const FCollisionShapeId3D DisabledShape = Collision.TryAddSphere(
+			*Disabled.Node, FVec3{}, 0.75f, 0x1u );
+		Harness.Check( FirstShape.IsValid() && SecondShape.IsValid() && DisabledShape.IsValid(),
+			"別レイヤーと無効化用の形状を登録できる" );
+		Disabled.Node->SetEnabled( false );
+		Disabled.Node->SetPosition( FVec3{ std::numeric_limits<f32>::infinity(), 0.0f, 0.0f } );
+
+		TArray<FWorldCollisionShape3D> WorldShapes;
+		FWorldCollisionShape3D Sentinel;
+		Sentinel.Layer = 0x80u;
+		Harness.Check( WorldShapes.TryAdd( Sentinel ), "置換確認用の既存結果を用意する" );
+		Harness.Check( Collision.TryGetWorldShapes( WorldShapes, 0x1u ),
+			"指定レイヤーの有効形状だけを一括取得する" );
+		Harness.Check( WorldShapes.Num() == 1u && WorldShapes[0].Shape == FirstShape,
+			"同じレイヤーでも無効なノードを含めない" );
+		Harness.Check( WorldShapes[0].Node == First.Id && WorldShapes[0].bQueryable,
+			"一括結果へ生存ノード番号と問い合わせ状態を添える" );
+
+		Harness.Check( Collision.TryGetWorldShapes( WorldShapes ),
+			"全レイヤーの有効形状を一括取得する" );
+		Harness.Check( WorldShapes.Num() == 2u
+			&& WorldShapes[0].Shape == FirstShape && WorldShapes[1].Shape == SecondShape,
+			"球と箱を登録順で返す" );
+		Harness.Check( WorldShapes[0].Kind == FWorldCollisionShape3D::EKind::Sphere
+			&& WorldShapes[1].Kind == FWorldCollisionShape3D::EKind::Box,
+			"一括結果で各形状の種類を区別する" );
+
+		Harness.Check( Collision.TryGetWorldShapes( WorldShapes, 0u ),
+			"マスク0を空の成功結果として扱う" );
+		Harness.Check( WorldShapes.IsEmpty(), "マスク0で以前の一括結果を空へ置き換える" );
+
+		Sentinel.Layer = 0x40u;
+		Harness.Check( WorldShapes.TryAdd( Sentinel ), "失敗時確認用の既存結果を用意する" );
+		First.Node->SetPosition( FVec3{ std::numeric_limits<f32>::infinity(), 0.0f, 0.0f } );
+		Harness.Check( Collision.TryGetWorldShapes( WorldShapes, 0u ) && WorldShapes.IsEmpty(),
+			"マスク0は他形状の不正Transformに依存せず空結果を返す" );
+		Harness.Check( WorldShapes.TryAdd( Sentinel ), "同期失敗前の既存結果を再び用意する" );
+		Harness.Check( !Collision.TryGetWorldShapes( WorldShapes ),
+			"有効形状の有限でないTransformを一括取得で拒否する" );
+		Harness.Check( WorldShapes.Num() == 1u && WorldShapes[0].Layer == 0x40u,
+			"一括取得失敗時は呼出側の結果を変えない" );
 	}
 
 	Harness.BeginSuite( "CSceneCollision3D / レイヤーとノード状態を反映する" );
@@ -292,6 +352,14 @@ void RunSceneCollision3DTests( CTestHarness& Harness )
 		ANode* const NewNode = PlacePrimitive( Replacement, EMeshPrimitive3D::Sphere, FVec3{} );
 		Harness.Check( NewNode != nullptr, "交換用グラフへ別ノードを置ける" );
 		Graph.SwapContents( Replacement );
+
+		TArray<FWorldCollisionShape3D> WorldShapes;
+		Harness.Check( WorldShapes.TryAdd( FWorldCollisionShape3D{} ),
+			"全置換後の空結果確認用に既存値を用意する" );
+		Harness.Check( Collision.TryGetWorldShapes( WorldShapes, 0u ) && WorldShapes.IsEmpty(),
+			"マスク0の一括取得でもグラフ全置換を検出する" );
+		Harness.CheckEqualU64( Collision.ShapeCount(), 0u,
+			"マスク0でも交換前の登録を自動で外す" );
 
 		TArray<ANode*> Hits;
 		Harness.Check( Collision.TryOverlapSphere( FSphere{ FVec3{}, 2.0f }, Hits ),

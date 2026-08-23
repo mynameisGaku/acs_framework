@@ -24,6 +24,12 @@ struct FWorldCollisionShape3D
 		Sphere,
 	};
 
+	/** ACS衝突集合内の世代付き形状番号。 */
+	FCollisionShapeId3D Shape;
+
+	/** 形状を登録したシーングラフ内の世代付きノード番号。 */
+	FNodeId Node;
+
 	/** 現在有効なworld形状の種類。 */
 	EKind Kind = EKind::Box;
 

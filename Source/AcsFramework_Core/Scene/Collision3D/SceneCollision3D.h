@@ -138,11 +138,22 @@ public:
 	 *
 	 * @details 無効なノードでも形状を返し、現在の問い合わせ対象かどうかを`bQueryable`へ分ける。
 	 * @param Shape 調べる世代付き形状番号。
-	 * @param OutShape 種類、world形状、登録レイヤー、問い合わせ状態。失敗時は変更しない。
+	 * @param OutShape 形状・ノード番号、種類、world形状、レイヤー、問い合わせ状態。失敗時は変更しない。
 	 * @return 生存する登録、ノード、有限な現在Transformを全て確認できたらtrue。
 	 */
 	bool TryGetWorldShape( FCollisionShapeId3D Shape,
 		FWorldCollisionShape3D& OutShape ) noexcept;
+
+	/**
+	 * 現在問い合わせ対象の登録形状を、レイヤーで絞ってworld形状列へ置き換える。
+	 *
+	 * @details 無効なノードとレイヤー0は含めず、残る形状は登録順を保つ。
+	 * @param OutShapes 種類、形状番号、ノード番号、world形状を持つ列。失敗時は変更しない。
+	 * @param Mask レイヤーとのANDが0でない形状だけを含めるマスク。0なら空の成功結果。
+	 * @return 同期、全world変換、結果確保を完了できたらtrue。0件でもtrue。
+	 */
+	bool TryGetWorldShapes( TArray<FWorldCollisionShape3D>& OutShapes,
+		u32 Mask = kAllLayers ) noexcept;
 
 	/**
 	 * 生存ノードの現在Transformを反映し、破棄済みノードの登録を取り除く。

@@ -16,6 +16,22 @@
 
 namespace
 {
+	/** world衝突形状を種類に応じた既存デバッグ線へ登録する。 */
+	bool DrawWorldCollisionShape_Internal( CDebugDraw3DLayer& Layer,
+		const FWorldCollisionShape3D& WorldShape, FVec4 Color, u32 SphereSegments ) noexcept
+	{
+		if ( !WorldShape.bQueryable ) return false;
+		switch ( WorldShape.Kind )
+		{
+		case FWorldCollisionShape3D::EKind::Box:
+			return Layer.DrawAabb( WorldShape.Box, Color );
+		case FWorldCollisionShape3D::EKind::Sphere:
+			return Layer.DrawSphere( WorldShape.Sphere, Color, SphereSegments );
+		default:
+			return false;
+		}
+	}
+
 	/** ACSへ反映済みの選択輪郭設定と完全に同じならtrue。 */
 	bool IsSameInteractionHighlightParams( const FInteractionHighlight3DParams& Left, const FInteractionHighlight3DParams& Right ) noexcept
 	{
@@ -473,17 +489,24 @@ bool AUi3DScene::DrawCollisionShape3D( FCollisionShapeId3D Shape,
 	FVec4 Color, u32 SphereSegments ) noexcept
 {
 	FWorldCollisionShape3D WorldShape;
-	if ( !m_Collision3D.TryGetWorldShape( Shape, WorldShape ) || !WorldShape.bQueryable ) return false;
+	return m_Collision3D.TryGetWorldShape( Shape, WorldShape )
+		&& DrawWorldCollisionShape_Internal( m_DebugDraw3D, WorldShape, Color, SphereSegments );
+}
 
-	switch ( WorldShape.Kind )
+
+u32 AUi3DScene::DrawCollisionShapes3D( u32 CollisionMask,
+	FVec4 Color, u32 SphereSegments ) noexcept
+{
+	TArray<FWorldCollisionShape3D> WorldShapes;
+	if ( !m_Collision3D.TryGetWorldShapes( WorldShapes, CollisionMask ) ) return 0u;
+
+	u32 DrawnShapeCount = 0u;
+	for ( usize Index = 0u; Index < WorldShapes.Num(); ++Index )
 	{
-	case FWorldCollisionShape3D::EKind::Box:
-		return m_DebugDraw3D.DrawAabb( WorldShape.Box, Color );
-	case FWorldCollisionShape3D::EKind::Sphere:
-		return m_DebugDraw3D.DrawSphere( WorldShape.Sphere, Color, SphereSegments );
-	default:
-		return false;
+		if ( DrawWorldCollisionShape_Internal(
+			m_DebugDraw3D, WorldShapes[Index], Color, SphereSegments ) ) ++DrawnShapeCount;
 	}
+	return DrawnShapeCount;
 }
 
 

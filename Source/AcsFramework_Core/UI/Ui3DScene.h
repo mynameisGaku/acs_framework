@@ -483,6 +483,19 @@ public:
 		u32 SphereSegments = CDebugDraw3DQueue::kDefaultSphereSegments ) noexcept;
 
 	/**
+	 * この場面で現在問い合わせ対象の衝突形状を、レイヤーで絞って一括登録する。
+	 *
+	 * @details 各形状を判定と同じworld球またはworld軸平行箱として登録する。表示を続ける場合は更新ごとに呼ぶ。
+	 * @param CollisionMask レイヤーとのANDが0でない形状だけを表示するマスク。
+	 * @param Color 全ての線へ使う色。
+	 * @param SphereSegments 各球を構成する円の分割数。箱では使わない。
+	 * @return 線を全て登録できた形状数。同期失敗または0件では0。
+	 */
+	u32 DrawCollisionShapes3D( u32 CollisionMask = CSceneCollision3D::kAllLayers,
+		FVec4 Color = FVec4{ 0.20f, 0.95f, 1.0f, 1.0f },
+		u32 SphereSegments = CDebugDraw3DQueue::kDefaultSphereSegments ) noexcept;
+
+	/**
 	 * この場面へ接続した近接トリガーの現在範囲を次の3D描画へ一括登録する。
 	 *
 	 * @details 判定と同じworld球またはworld軸平行箱を使う。表示を続ける場合は更新ごとに呼ぶ。

@@ -96,11 +96,13 @@ BindProximityTrigger3D(
 FProximityTrigger3DUpdateResult Result;
 if ( DoorTrigger.Update( Result ) && Result.DidEnter( PlayerNode->Id() ) ) OpenDoor();
 DrawCollisionShape3D( DoorShape ); // 登録した衝突形状を表示し続ける場合
+DrawCollisionShapes3D( DoorLayer ); // 同じレイヤーの有効形状を一括表示する場合
 DrawProximityTrigger3D( DoorTrigger ); // 判定範囲を表示し続ける場合
 ```
 
 `DrawCollisionShape3D`は`Collision3D()`へ登録済みで現在問い合わせ対象の形状番号だけを受け付け、
 判定と同じworld球またはworld軸平行箱を既存デバッグ線へ一括登録する。
+`DrawCollisionShapes3D`は同じ処理をレイヤーマスクへ一致する全有効形状へ行い、表示できた形状数を返す。
 `DrawProximityTrigger3D`はこの場面へ接続済みのトリガーだけを受け付け、判定と同じworld球または
 world軸平行箱を既存デバッグ線へ一括登録する。線は次の透明3D描画後に消える。
 

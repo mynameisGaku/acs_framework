@@ -27,6 +27,8 @@ Collision.TrySweepSphere(
 登録後の形状は`TryGetWorldShape`で同じ変換結果を読み取れる。戻り値の`Kind`が球と箱を区別し、
 `Layer`と`bQueryable`が登録レイヤーと現在の問い合わせ対象状態を分けて示す。ノードを無効にしても
 形状調整用のworld値は取得できるが、実際の判定対象ではないことを`bQueryable == false`で確認できる。
+`TryGetWorldShapes`へレイヤーマスクを渡すと、現在問い合わせ対象の形状だけを登録順の値配列へ
+一括取得できる。同期、変換、確保の途中で失敗した場合は呼出側の配列を変更しない。
 進入、滞在、退出を前回との差として受け取る用途は、同じ集合を使う
 [`CProximityTrigger3D`](../Trigger3D/README.md)へ任せる。
 

@@ -147,6 +147,7 @@ cameraからの距離に応じて大気へ馴染み、雲も実距離まで同�
   `AUi3DScene::Collision3D`が場面ごとの集合を所有し、終了時の全登録解除も自動で行う。
   `TryGetWorldShape`は登録形状を現在Transformへ変換した読み取り値として返し、
   `DrawCollisionShape3D`を毎更新で呼べば実際の問い合わせ形状を深度非依存線へ表示できる。
+  `TryGetWorldShapes`と`DrawCollisionShapes3D`なら、有効形状をレイヤーで絞って一括確認できる。
 - ~~3D近接トリガー~~ → **`Scene/Trigger3D`として実装済み** (2026-08-23)。
   `BindProximityTrigger3D`へ基準ノード、ローカル球または箱、対象レイヤーを渡すと、既存の場面衝突集合から
   進入、滞在、退出を世代付きノード識別子で返す。範囲は基準ノードの位置、回転、拡縮へ追従し、

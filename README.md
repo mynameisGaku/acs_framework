@@ -31,7 +31,8 @@ WASDで移動、左Shiftで走行、矢印キーで視点、Spaceでジャンプ
 描画開始後の追加・削除でも、ACSのGPU資源同期を通ることを確認できる。
 `X`では回転立方体を操作対象・衝突形状ごと破棄し、もう一度押すと3登録をまとめて再生成する。
 往復する取り込みモデルが回転立方体の範囲へ入る、または出ると、同じ表示欄で近接トリガーの
-進入・退出も確認できる。`V`を押すと判定に使う箱を表示し、外側は水色、内側は橙色へ変わる。
+進入・退出も確認できる。`V`を押すと全コライダーを緑で一括表示し、近接箱は外側の水色から
+内側の橙色へ変わるため、実形状と検出範囲を同時に比較できる。
 
 > `FetchAcs.ps1` がまだ Release を落とせない段階なら、エンジンをローカルでビルドして
 > `.\Tools\FetchAcs.ps1 -FromLocal C:\acs_dev` で持ってくる (`ThirdParty/acs/README.md`)。
@@ -53,7 +54,7 @@ WASDで移動、左Shiftで走行、矢印キーで視点、Spaceでジャンプ
 | 3D 音響 | `PlaySound3D()`、現在カメラ基準の距離減衰、モノラル効果音の左右定位 |
 | 遊ぶ人向け UI | `AUi3DScene`、文字・ボタン・入力、ポスト処理後の鮮明なHUD合成 |
 | 3D位置の文字 | `WorldLabels()`、ノード破棄と画面外を安全に扱う敵名・目的地表示 |
-| 3Dデバッグ描画 | `DrawLine3D()`、`DrawAabb3D()`、`DrawSphere3D()`、`DrawCollisionShape3D()`、`DrawProximityTrigger3D()`、深度を無視して常に確認できる1フレーム線 |
+| 3Dデバッグ描画 | `DrawLine3D()`、`DrawAabb3D()`、`DrawSphere3D()`、単体・レイヤー一括の`DrawCollisionShape3D()` / `DrawCollisionShapes3D()`、`DrawProximityTrigger3D()`、深度を無視する1フレーム線 |
 | 当てる | `MakeScreenRay3D()` / `Raycast3D()` / `PickScreen3D()`で球面や読み込みメッシュへ正確に当てる |
 | 重なりと移動判定 | `CSceneCollision3D`、ノード追従、球・箱の重なり、球スイープ、レイヤー |
 | 近づきを取る | `BindProximityTrigger3D()`、ノード追従する球・箱への進入・滞在・退出、レイヤー絞り込み |
@@ -153,6 +154,7 @@ TArray<ANode*> Nearby;
 Collision.TryOverlapSphere(
     FSphere{ HeroNode->World().position, 2.0f }, Nearby, HeroSpawn.Shape, 0x2u );
 DrawCollisionShape3D( HeroSpawn.Shape ); // 登録形状を表示し続ける場合は毎フレーム呼ぶ
+DrawCollisionShapes3D( 0x2u ); // レイヤー2の有効コライダーを一括表示する
 
 // 扉へ追従する箱範囲へ人物が入った瞬間だけ処理する。Triggerは場面のメンバーとして保持する
 CProximityTrigger3D DoorTrigger;

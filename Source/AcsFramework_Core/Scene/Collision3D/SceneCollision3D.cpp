@@ -133,6 +133,8 @@ bool CSceneCollision3D::TryGetWorldShape( FCollisionShapeId3D Shape,
 	if ( Node == nullptr ) return false;
 
 	FWorldCollisionShape3D WorldShape;
+	WorldShape.Shape = Registration->Shape;
+	WorldShape.Node = Registration->Node;
 	WorldShape.Layer = Registration->Layer;
 	WorldShape.bQueryable = Registration->Layer != 0u && IsNodeActive_Internal( *Node );
 	if ( Registration->Kind == EShapeKind::Box )
@@ -149,6 +151,39 @@ bool CSceneCollision3D::TryGetWorldShape( FCollisionShapeId3D Shape,
 	}
 
 	OutShape = WorldShape;
+	return true;
+}
+
+
+bool CSceneCollision3D::TryGetWorldShapes(
+	TArray<FWorldCollisionShape3D>& OutShapes, u32 Mask ) noexcept
+{
+	if ( Mask == 0u )
+	{
+		if ( !RefreshGraphIdentity_Internal() ) return false;
+		TArray<FWorldCollisionShape3D> Empty;
+		OutShapes = Move( Empty );
+		return true;
+	}
+	if ( !Sync() || m_Graph == nullptr ) return false;
+
+	TArray<FWorldCollisionShape3D> WorldShapes;
+	if ( !WorldShapes.TryReserve( m_Registrations.Num() ) ) return false;
+	for ( usize Index = 0u; Index < m_Registrations.Num(); ++Index )
+	{
+		const FRegistration& Registration = m_Registrations[Index];
+		if ( ( Registration.Layer & Mask ) == 0u ) continue;
+
+		ANode* const Node = m_Graph->Get( Registration.Node );
+		if ( Node == nullptr ) return false;
+		if ( !IsNodeActive_Internal( *Node ) ) continue;
+
+		FWorldCollisionShape3D WorldShape;
+		if ( !TryGetWorldShape( Registration.Shape, WorldShape )
+			|| !WorldShape.bQueryable || !WorldShapes.TryAdd( WorldShape ) ) return false;
+	}
+
+	OutShapes = Move( WorldShapes );
 	return true;
 }
 
