@@ -66,6 +66,7 @@ $sources = @(
     'Common\Test\InternedNamePoolTest.cpp',
     'Common\Test\AcsArchiveFileTest.cpp',
     'Common\Test\EnumReflectionTest.cpp',
+    'AcsFramework_Core\Version\Test\FrameworkVersionTest.cpp',
     'AcsFramework_Core\Scene\Model3D\Model3DSpawnParams.cpp',
     'AcsFramework_Core\Scene\Model3D\Model3DSpawner.cpp',
     'AcsFramework_Core\Scene\Model3D\Test\Model3DSpawnerTest.cpp',

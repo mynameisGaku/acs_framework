@@ -262,6 +262,96 @@ if (-not $projectText.Contains('Docs\SUPPORTED_PLATFORMS.md') -or
     Pass '対応環境と完全検証をVisual Studio projectへ登録済み'
 }
 
+# ---- 11. 公開版と変更履歴 --------------------------------------------------
+# 版番号が文書とC++で食い違うと、利用側が不具合報告や互換性判断に使えない。
+Section '公開版と変更履歴'
+$versionPath = Join-Path $repo 'VERSION'
+$versionHeaderPath = Join-Path $repo 'Source\AcsFramework_Core\Version\FrameworkVersion.h'
+$versioningDocumentPath = Join-Path $repo 'Docs\VERSIONING.md'
+$changeLogPath = Join-Path $repo 'CHANGELOG.md'
+$umbrellaHeaderPath = Join-Path $repo 'Source\AcsFramework_Core\AcsFramework.h'
+$versionText = ''
+
+if (-not (Test-Path -LiteralPath $versionPath -PathType Leaf)) {
+    Fail 'version-contract' 'VERSION がありません'
+} elseif (-not (Test-Path -LiteralPath $versionHeaderPath -PathType Leaf)) {
+    Fail 'version-contract' 'FFrameworkVersionの公開ヘッダーがありません'
+} else {
+    $versionText = (Get-Content -LiteralPath $versionPath -Raw).Trim()
+    $versionMatch = [regex]::Match($versionText,
+        '^(?<major>0|[1-9][0-9]*)\.(?<minor>0|[1-9][0-9]*)\.(?<patch>0|[1-9][0-9]*)(?:-(?<pre>[0-9A-Za-z.-]+))?$')
+    if (-not $versionMatch.Success) {
+        Fail 'version-contract' "VERSIONがSemantic Versioning形式ではありません: $versionText"
+    } else {
+        $versionHeader = Get-Content -LiteralPath $versionHeaderPath -Raw
+        $preReleaseLiteral = if ($versionMatch.Groups['pre'].Success) { 'true' } else { 'false' }
+        $expectedValue = "kAcsFrameworkVersion{ $($versionMatch.Groups['major'].Value)u, $($versionMatch.Groups['minor'].Value)u, $($versionMatch.Groups['patch'].Value)u, $preReleaseLiteral }"
+        if (-not $versionHeader.Contains($expectedValue) -or
+            -not $versionHeader.Contains("`"$versionText`"")) {
+            Fail 'version-contract' 'VERSIONとC++版定数が一致しません'
+        } else {
+            Pass "現在版 $versionText をC++公開値と同期済み"
+        }
+    }
+}
+
+if (-not (Test-Path -LiteralPath $versioningDocumentPath -PathType Leaf)) {
+    Fail 'version-contract' 'Docs/VERSIONING.md がありません'
+} else {
+    $versioningDocument = Get-Content -LiteralPath $versioningDocumentPath -Raw
+    $requiredVersioningHeadings = @('## 現在版', '## 公開APIの範囲', '## 版の上げ方', '## 変更履歴', '## 公開手順')
+    $missingVersioningHeadings = @($requiredVersioningHeadings | Where-Object {
+        -not $versioningDocument.Contains($_)
+    })
+    if ($missingVersioningHeadings.Count -gt 0) {
+        Fail 'version-contract' "版管理の必須章がありません: $($missingVersioningHeadings[0])"
+    } else {
+        Pass '現在版、公開API、版更新、履歴、公開手順を明記済み'
+    }
+}
+
+if (-not (Test-Path -LiteralPath $changeLogPath -PathType Leaf)) {
+    Fail 'version-contract' 'CHANGELOG.md がありません'
+} else {
+    $changeLog = Get-Content -LiteralPath $changeLogPath -Raw
+    if ([string]::IsNullOrWhiteSpace($versionText) -or
+        -not $changeLog.Contains('## [未公開]') -or
+        -not $changeLog.Contains($versionText)) {
+        Fail 'version-contract' 'CHANGELOGに未公開欄または現在版がありません'
+    } else {
+        Pass '変更履歴に未公開欄と現在版を記録済み'
+    }
+}
+
+$umbrellaHeader = Get-Content -LiteralPath $umbrellaHeaderPath -Raw
+if (-not $umbrellaHeader.Contains('AcsFramework_Core/Version/FrameworkVersion.h')) {
+    Fail 'version-contract' 'AcsFramework.hから版情報を利用できません'
+} else {
+    Pass '共通ヘッダーから版情報を公開済み'
+}
+
+if (-not $topReadme.Contains('Docs/VERSIONING.md') -or
+    -not $topReadme.Contains('CHANGELOG.md')) {
+    Fail 'version-contract' 'READMEから版管理または変更履歴へ辿れません'
+} else {
+    Pass 'READMEから版管理と変更履歴へ接続済み'
+}
+
+$requiredVersionProjectPaths = @(
+    'Source\AcsFramework_Core\Version\FrameworkVersion.h',
+    'Source\AcsFramework_Core\Version\Test\FrameworkVersionTest.cpp',
+    'Docs\VERSIONING.md',
+    'CHANGELOG.md',
+    'VERSION')
+$missingVersionProjectPaths = @($requiredVersionProjectPaths | Where-Object {
+    -not $projectText.Contains($_)
+})
+if ($missingVersionProjectPaths.Count -gt 0) {
+    Fail 'version-contract' "版管理ファイルがVisual Studioプロジェクトへ未登録です: $($missingVersionProjectPaths[0])"
+} else {
+    Pass '版管理ファイルをVisual Studioプロジェクトへ登録済み'
+}
+
 # ---- result ----------------------------------------------------------------
 Write-Host ''
 if ($failures.Count -gt 0) {

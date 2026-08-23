@@ -5,6 +5,9 @@
 描く力は [ACS](https://github.com/mynameisGaku/ArtsCommonSystem) が持っている。この枠組みが
 足すのは**手数の少なさ**だけで、機能を作り直すことはしない。
 
+現在は開発版`0.5.0-dev`。版の意味と互換性は[`Docs/VERSIONING.md`](Docs/VERSIONING.md)、
+利用側へ影響する変更は[`CHANGELOG.md`](CHANGELOG.md)に記録する。
+
 ![3D デモ](Docs/demo3d.png)
 
 上の絵はサンプル 1 本 (`Source/AcsFramework_Sample/Scene/Demo3DScene.cpp`) の
@@ -265,7 +268,7 @@ Source/
   EntryPoint/          入口
 Assets/                素材
 Tools/                 ビルド・テスト・撮影・配布物の取得
-Docs/                  ロードマップ、実行時契約、対応環境と画
+Docs/                  ロードマップ、実行時契約、版管理、対応環境と画
 ```
 
 各フォルダに README がある。**「なぜそうなっているか」はそちらに書いてある。**

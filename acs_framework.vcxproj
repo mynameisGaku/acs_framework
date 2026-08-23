@@ -210,6 +210,8 @@
     <ClInclude Include="Source\AcsFramework_Core\Settings\GameSettingsSubsystem.h" />
     <ClInclude Include="Source\AcsFramework_Core\Audio\AudioSubsystem.h" />
     <ClInclude Include="Source\AcsFramework_Core\AcsFramework.h" />
+    <ClInclude Include="Source\AcsFramework_Core\Version\FrameworkVersion.h" />
+    <None Include="Source\AcsFramework_Core\Version\Test\FrameworkVersionTest.cpp" />
     <None Include="Source\AcsFramework_Core\README.md" />
     <ClInclude Include="Source\AcsFramework_Core\Audio\Music\IMusicStateSource.h" />
     <ClInclude Include="Source\AcsFramework_Core\Audio\Music\MusicPriority.h" />
@@ -341,7 +343,10 @@
     <None Include="Source\AcsFramework_Core\Text\Localization\Test\LocalizationTest.cpp" />
     <None Include="Docs\RUNTIME_CONTRACTS.md" />
     <None Include="Docs\SUPPORTED_PLATFORMS.md" />
+    <None Include="Docs\VERSIONING.md" />
     <None Include="Docs\ROADMAP.md" />
+    <None Include="CHANGELOG.md" />
+    <None Include="VERSION" />
     <ClInclude Include="Source\AcsFramework_Core\Scene\Model3D\Model3DSpawnParams.h" />
     <ClInclude Include="Source\AcsFramework_Core\Scene\Model3D\Model3DSpawner.h" />
     <None Include="Source\AcsFramework_Core\Scene\Model3D\README.md" />

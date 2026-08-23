@@ -244,6 +244,12 @@
     <Filter Include="Source\AcsFramework_Core\UI\WorldLabel3D\Test">
       <UniqueIdentifier>{02f069bd-5e97-91b3-d12f-73a6de207e0d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\AcsFramework_Core\Version">
+      <UniqueIdentifier>{01a057f7-959a-d84a-4fe5-549aae619168}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\AcsFramework_Core\Version\Test">
+      <UniqueIdentifier>{157deb17-ef6c-a59c-8a4f-5adad60bb0f5}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Source\AcsFramework_Sample">
       <UniqueIdentifier>{c6ca8f33-14b7-d32b-63a8-8b39066ed096}</UniqueIdentifier>
     </Filter>
@@ -1415,6 +1421,9 @@
     <ClInclude Include="Source\AcsFramework_Core\UI\WorldLabel3D\WorldLabelProjector3D.h">
       <Filter>Source\AcsFramework_Core\UI\WorldLabel3D</Filter>
     </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Version\FrameworkVersion.h">
+      <Filter>Source\AcsFramework_Core\Version</Filter>
+    </ClInclude>
     <ClInclude Include="Source\AcsFramework_Sample\Scene\Demo3DScene.h">
       <Filter>Source\AcsFramework_Sample\Scene</Filter>
     </ClInclude>
@@ -1720,6 +1729,9 @@
     <None Include="Docs\SUPPORTED_PLATFORMS.md">
       <Filter>Docs</Filter>
     </None>
+    <None Include="Docs\VERSIONING.md">
+      <Filter>Docs</Filter>
+    </None>
     <None Include="Source\AcsFramework_Core\Assets\Image\README.md">
       <Filter>Source\AcsFramework_Core\Assets\Image</Filter>
     </None>
@@ -1932,6 +1944,9 @@
     </None>
     <None Include="Source\AcsFramework_Core\UI\WorldLabel3D\Test\WorldLabel3DTest.cpp">
       <Filter>Source\AcsFramework_Core\UI\WorldLabel3D\Test</Filter>
+    </None>
+    <None Include="Source\AcsFramework_Core\Version\Test\FrameworkVersionTest.cpp">
+      <Filter>Source\AcsFramework_Core\Version\Test</Filter>
     </None>
     <None Include="Source\Common\Compat\README.md">
       <Filter>Source\Common\Compat</Filter>
