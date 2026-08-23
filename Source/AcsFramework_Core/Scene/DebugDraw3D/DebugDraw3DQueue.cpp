@@ -225,6 +225,69 @@ bool CDebugDraw3DQueue::TryAxes( FVec3 Origin, FQuat Rotation, f32 AxisLength, f
 }
 
 
+bool CDebugDraw3DQueue::TryGrid( FVec3 Center, f32 HalfExtent, u32 Divisions, FVec4 Color ) noexcept
+{
+	/** 中心と色を既存の線契約でまとめて検証するための値。 */
+	const FDebugLine3D ValidationLine{ Center, Center, Color };
+	/** X、Z各方向の端から端までのworld長。 */
+	const f32 Diameter = HalfExtent * 2.0f;
+	if ( !ValidationLine.IsValid() || !std::isfinite( HalfExtent ) || HalfExtent <= 0.0f
+		|| !std::isfinite( Diameter )
+		|| Divisions < kMinimumGridDivisions || Divisions > kMaximumGridDivisions )
+	{
+		++m_RejectedDrawCount;
+		return false;
+	}
+
+	/** 隣り合うグリッド線のworld間隔。 */
+	const f32 Step = Diameter / static_cast<f32>( Divisions );
+	if ( !std::isfinite( Step ) || Step <= 0.0f )
+	{
+		++m_RejectedDrawCount;
+		return false;
+	}
+
+	/** X方向とZ方向の線を交互に保持する最大長の候補領域。 */
+	FDebugLine3D Lines[kMaximumGridLineCount];
+	for ( u32 DivisionIndex = 0u; DivisionIndex <= Divisions; ++DivisionIndex )
+	{
+		/** 最後の線だけ加算誤差を避けて正の端へ厳密に置く、中心からのずれ。 */
+		const f32 Offset = DivisionIndex == Divisions
+			? HalfExtent
+			: -HalfExtent + Step * static_cast<f32>( DivisionIndex );
+		/** 現在分割位置でX方向へ伸ばす候補線。 */
+		const FDebugLine3D XLine{
+			Center + FVec3{ -HalfExtent, 0.0f, Offset },
+			Center + FVec3{ HalfExtent, 0.0f, Offset },
+			Color,
+		};
+		/** 現在分割位置でZ方向へ伸ばす候補線。 */
+		const FDebugLine3D ZLine{
+			Center + FVec3{ Offset, 0.0f, -HalfExtent },
+			Center + FVec3{ Offset, 0.0f, HalfExtent },
+			Color,
+		};
+		if ( !XLine.IsValid() || !ZLine.IsValid() )
+		{
+			++m_RejectedDrawCount;
+			return false;
+		}
+
+		/** 現在分割のX線とZ線を書き込む先頭位置。 */
+		const usize LineIndex = static_cast<usize>( DivisionIndex ) * 2u;
+		Lines[LineIndex] = XLine;
+		Lines[LineIndex + 1u] = ZLine;
+	}
+
+	/** X方向とZ方向へ各Divisions+1本を置く総線数。 */
+	const usize LineCount = ( static_cast<usize>( Divisions ) + 1u ) * 2u;
+	if ( TryAppendLines_Internal( Lines, LineCount ) ) return true;
+
+	++m_RejectedDrawCount;
+	return false;
+}
+
+
 bool CDebugDraw3DQueue::TryAabb( const FAabb3& Bounds, FVec4 Color ) noexcept
 {
 	if ( !IsValidHalfSize( Bounds.half_size ) )

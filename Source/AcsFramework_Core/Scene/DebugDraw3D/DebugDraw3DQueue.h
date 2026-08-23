@@ -26,6 +26,21 @@ public:
 	/** world単位で指定する各座標軸長の既定値。 */
 	static constexpr f32 kDefaultAxisLength = 1.0f;
 
+	/** 水平グリッドを面として読める最小分割数。 */
+	static constexpr u32 kMinimumGridDivisions = 1u;
+
+	/** 1world単位刻みになる既定の水平グリッド分割数。 */
+	static constexpr u32 kDefaultGridDivisions = 10u;
+
+	/** 1要求が線容量と一時領域を過度に消費しない最大分割数。 */
+	static constexpr u32 kMaximumGridDivisions = 128u;
+
+	/** 最大分割の水平グリッドを構成する線数。 */
+	static constexpr u32 kMaximumGridLineCount = ( kMaximumGridDivisions + 1u ) * 2u;
+
+	/** world原点を中心に既定グリッドが届く片側の距離。 */
+	static constexpr f32 kDefaultGridHalfExtent = 5.0f;
+
 	/** 球を輪として読める最小分割数。 */
 	static constexpr u32 kMinimumSphereSegments = 4u;
 
@@ -79,6 +94,20 @@ public:
 	bool TryAxes( FVec3 Origin, FQuat Rotation = FQuat::Identity(),
 		f32 AxisLength = kDefaultAxisLength,
 		f32 HeadSize = kDefaultArrowHeadSize ) noexcept;
+
+	/**
+	 * 指定中心の水平XZ面を等間隔のグリッド線として一括登録する。
+	 *
+	 * @details X方向とZ方向へ各Divisions+1本を置く。全線を保持できない場合は1本も追加しない。
+	 * @param Center グリッド中央のworld座標。yがグリッド面の高さになる。
+	 * @param HalfExtent 中心からX、Z各端までのworld距離。0より大きい有限値。
+	 * @param Divisions 各方向を等分する1から128の数。
+	 * @param Color 全てのグリッド線へ使う色。
+	 * @return 位置、寸法、分割数、色が有効で、全線を保存できたらtrue。
+	 */
+	bool TryGrid( FVec3 Center = FVec3{}, f32 HalfExtent = kDefaultGridHalfExtent,
+		u32 Divisions = kDefaultGridDivisions,
+		FVec4 Color = FVec4{ 0.28f, 0.36f, 0.48f, 1.0f } ) noexcept;
 
 	/**
 	 * 軸並行境界箱の12辺を一括登録する。

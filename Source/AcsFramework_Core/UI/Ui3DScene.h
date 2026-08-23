@@ -478,6 +478,21 @@ public:
 		f32 HeadSize = CDebugDraw3DQueue::kDefaultArrowHeadSize ) noexcept;
 
 	/**
+	 * 指定中心の水平XZグリッドを次の3D描画へ一括登録する。
+	 *
+	 * @details X方向とZ方向へ各Divisions+1本を等間隔で置く。表示を続ける場合は更新ごとに呼ぶ。
+	 * @param Center グリッド中央のworld座標。yがグリッド面の高さになる。
+	 * @param HalfExtent 中心からX、Z各端までのworld距離。0より大きい有限値。
+	 * @param Divisions 各方向を等分する1から128の数。
+	 * @param Color 全てのグリッド線へ使う色。
+	 * @return 位置、寸法、分割数、色が有効で、全線を登録できたらtrue。
+	 */
+	bool DrawGrid3D( FVec3 Center = FVec3{},
+		f32 HalfExtent = CDebugDraw3DQueue::kDefaultGridHalfExtent,
+		u32 Divisions = CDebugDraw3DQueue::kDefaultGridDivisions,
+		FVec4 Color = FVec4{ 0.28f, 0.36f, 0.48f, 1.0f } ) noexcept;
+
+	/**
 	 * 軸並行境界箱の12辺を次の3D描画へ一括登録する。
 	 *
 	 * @details 線は深度を無視して常に見える。表示を続ける場合は更新ごとに呼ぶ。

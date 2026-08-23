@@ -22,6 +22,12 @@ bool CDebugDraw3DLayer::DrawAxes( FVec3 Origin, FQuat Rotation, f32 AxisLength, 
 }
 
 
+bool CDebugDraw3DLayer::DrawGrid( FVec3 Center, f32 HalfExtent, u32 Divisions, FVec4 Color ) noexcept
+{
+	return m_Queue.TryGrid( Center, HalfExtent, Divisions, Color );
+}
+
+
 bool CDebugDraw3DLayer::DrawAabb( const FAabb3& Bounds, FVec4 Color ) noexcept
 {
 	return m_Queue.TryAabb( Bounds, Color );

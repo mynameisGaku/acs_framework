@@ -39,6 +39,12 @@ public:
 		f32 AxisLength = CDebugDraw3DQueue::kDefaultAxisLength,
 		f32 HeadSize = CDebugDraw3DQueue::kDefaultArrowHeadSize ) noexcept;
 
+	/** 指定中心の水平XZグリッドを次の3D描画へ一括登録する。 */
+	bool DrawGrid( FVec3 Center = FVec3{},
+		f32 HalfExtent = CDebugDraw3DQueue::kDefaultGridHalfExtent,
+		u32 Divisions = CDebugDraw3DQueue::kDefaultGridDivisions,
+		FVec4 Color = FVec4{ 0.28f, 0.36f, 0.48f, 1.0f } ) noexcept;
+
 	/** 軸並行境界箱の12辺を次の3D描画へ一括登録する。 */
 	bool DrawAabb( const FAabb3& Bounds, FVec4 Color = FVec4{ 0.20f, 0.95f, 1.0f, 1.0f } ) noexcept;
 

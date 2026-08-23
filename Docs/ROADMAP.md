@@ -38,7 +38,7 @@ ACS のモジュールは **438 個**ある。この枠組みが窓口を用意�
 | 3D エフェクト | `AEffect3DScene`、`CEffect3DPlayer`、同梱の Effekseer |
 | 3D の形状重なり | `AUi3DScene::Collision3D`、`CSceneCollision3D`、ACSの`CCollisionWorld3D` |
 | 3D の視線操作 | `AUi3DScene::PickScreen3D`、`CInteractionFocus3D`、`CWorldLabel3DLayer` |
-| 3D デバッグ描画 | `DrawLine3D`、`DrawArrow3D`、`DrawAxes3D`、`DrawAabb3D`、`DrawSphere3D`、ACSの`FDebugDraw3D` |
+| 3D デバッグ描画 | `DrawLine3D`、`DrawArrow3D`、`DrawAxes3D`、`DrawGrid3D`、`DrawAabb3D`、`DrawSphere3D`、ACSの`FDebugDraw3D` |
 | 遊ぶ人向け UI | `AUi3DScene`、`CUiLayer`、ACSの `AWidget` 群 |
 | 多言語 | `CLocalizationSubsystem` |
 | 決定性 (記録と再生) | `CSimulationSubsystem` |

@@ -485,6 +485,12 @@ bool AUi3DScene::DrawAxes3D( FVec3 Origin, FQuat Rotation, f32 AxisLength, f32 H
 }
 
 
+bool AUi3DScene::DrawGrid3D( FVec3 Center, f32 HalfExtent, u32 Divisions, FVec4 Color ) noexcept
+{
+	return m_DebugDraw3D.DrawGrid( Center, HalfExtent, Divisions, Color );
+}
+
+
 bool AUi3DScene::DrawAabb3D( const FAabb3& Bounds, FVec4 Color ) noexcept
 {
 	return m_DebugDraw3D.DrawAabb( Bounds, Color );

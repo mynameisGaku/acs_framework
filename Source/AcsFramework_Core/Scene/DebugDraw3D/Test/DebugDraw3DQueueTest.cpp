@@ -120,6 +120,46 @@ void RunDebugDraw3DQueueTests( CTestHarness& Harness )
 		Harness.CheckEqualU64( InvalidAxes.RejectedDrawCount(), 8u, "拒否した座標軸要求を1件ずつ数える" );
 	}
 
+	Harness.BeginSuite( "CDebugDraw3DQueue / 水平XZグリッドを原子的に扱う" );
+
+	{
+		const FVec3 Center{ 1.0f, 2.0f, 3.0f };
+		const FVec4 Color{ 0.28f, 0.36f, 0.48f, 1.0f };
+		CDebugDraw3DQueue Queue( 6u );
+		Harness.Check( Queue.TryGrid( Center, 2.0f, 2u, Color ), "2分割の水平グリッドを登録できる" );
+		Harness.CheckEqualU64( Queue.Num(), 6u, "X方向とZ方向へ各3本を登録する" );
+		Harness.CheckEqualF32( Queue.Get( 0u ).Start.x, -1.0f, "最初のX線を負のX端から始める" );
+		Harness.CheckEqualF32( Queue.Get( 0u ).End.x, 3.0f, "最初のX線を正のX端まで伸ばす" );
+		Harness.CheckEqualF32( Queue.Get( 0u ).Start.z, 1.0f, "最初のX線を負のZ端へ置く" );
+		Harness.CheckEqualF32( Queue.Get( 1u ).End.z, 5.0f, "最初のZ線を正のZ端まで伸ばす" );
+		Harness.CheckEqualF32( Queue.Get( 2u ).Start.z, 3.0f, "中央のX線を中心Zへ置く" );
+		Harness.CheckEqualF32( Queue.Get( 3u ).Start.x, 1.0f, "中央のZ線を中心Xへ置く" );
+		Harness.CheckEqualF32( Queue.Get( 4u ).Start.z, 5.0f, "最後のX線を正のZ端へ厳密に置く" );
+		Harness.CheckEqualF32( Queue.Get( 0u ).Color.y, Color.y, "指定色を全グリッド線へ使う" );
+
+		CDebugDraw3DQueue MaximumQueue( CDebugDraw3DQueue::kMaximumGridLineCount );
+		Harness.Check( MaximumQueue.TryGrid( FVec3{}, 64.0f, CDebugDraw3DQueue::kMaximumGridDivisions, Color ), "最大分割数を受け付ける" );
+		Harness.CheckEqualU64( MaximumQueue.Num(), CDebugDraw3DQueue::kMaximumGridLineCount, "最大分割でも固定上限内の線数になる" );
+
+		CDebugDraw3DQueue TooSmall( 6u );
+		Harness.Check( TooSmall.TryLine( FVec3{}, FVec3{ 0.0f, 1.0f, 0.0f } ), "容量確認前の線を登録できる" );
+		Harness.Check( !TooSmall.TryGrid( Center, 2.0f, 2u, Color ), "全線分の空きがないグリッドを拒否する" );
+		Harness.CheckEqualU64( TooSmall.Num(), 1u, "容量不足でも既存線とグリッドの原子性を保つ" );
+
+		CDebugDraw3DQueue InvalidGrid;
+		const f32 NotANumber = std::numeric_limits<f32>::quiet_NaN();
+		Harness.Check( !InvalidGrid.TryGrid( FVec3{ NotANumber, 0.0f, 0.0f } ), "有限でない中心を拒否する" );
+		Harness.Check( !InvalidGrid.TryGrid( FVec3{}, 0.0f ), "片側距離0のグリッドを拒否する" );
+		Harness.Check( !InvalidGrid.TryGrid( FVec3{}, -1.0f ), "負の片側距離を拒否する" );
+		Harness.Check( !InvalidGrid.TryGrid( FVec3{}, NotANumber ), "有限でない片側距離を拒否する" );
+		Harness.Check( !InvalidGrid.TryGrid( FVec3{}, 1.0f, 0u ), "分割数0を拒否する" );
+		Harness.Check( !InvalidGrid.TryGrid( FVec3{}, 1.0f, CDebugDraw3DQueue::kMaximumGridDivisions + 1u ), "最大を超える分割数を拒否する" );
+		Harness.Check( !InvalidGrid.TryGrid( FVec3{}, 1.0f, 1u, FVec4{ 1.0f, 1.0f, 1.0f, 0.0f } ), "透明なグリッド色を拒否する" );
+		Harness.Check( !InvalidGrid.TryGrid( FVec3{}, std::numeric_limits<f32>::max() ), "直径計算で有限範囲を超えるグリッドを拒否する" );
+		Harness.CheckEqualU64( InvalidGrid.Num(), 0u, "不正なグリッドを途中まで登録しない" );
+		Harness.CheckEqualU64( InvalidGrid.RejectedDrawCount(), 8u, "拒否したグリッド要求を1件ずつ数える" );
+	}
+
 	Harness.BeginSuite( "CDebugDraw3DQueue / AABBを12辺まとめて扱う" );
 
 	{

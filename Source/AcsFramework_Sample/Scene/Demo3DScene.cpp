@@ -46,6 +46,18 @@ namespace
 	/** 近接範囲と比較する全衝突形状の表示色。 */
 	constexpr FVec4 kCollisionShapeColor{ 0.45f, 1.0f, 0.38f, 1.0f };
 
+	/** Vデバッグで地面より少し上へ重ねる水平グリッド中心。 */
+	constexpr FVec3 kDebugGridCenter{ 0.0f, 0.03f, 0.0f };
+
+	/** 展示範囲を1world単位刻みで覆う水平グリッドの片側距離。 */
+	constexpr f32 kDebugGridHalfExtent = 6.0f;
+
+	/** 水平グリッドを1world単位刻みにする分割数。 */
+	constexpr u32 kDebugGridDivisions = 12u;
+
+	/** 形状表示を邪魔せず床面を読める水平グリッド色。 */
+	constexpr FVec4 kDebugGridColor{ 0.24f, 0.32f, 0.46f, 0.82f };
+
 	/** 初期画面でキャラクターと展示物を同時に見せる足元位置。 */
 	constexpr FVec3 kCharacterStartPosition{ 0.0f, 0.001f, 4.2f };
 
@@ -1163,6 +1175,7 @@ void ADemo3DScene::UpdateDemoProximityTrigger_Internal() noexcept
 	{
 		const FVec4 Color = Result.IsInside( MoverId )
 			? kProximityInsideColor : kProximityOutsideColor;
+		(void)DrawGrid3D( kDebugGridCenter, kDebugGridHalfExtent, kDebugGridDivisions, kDebugGridColor );
 		(void)DrawCollisionShapes3D( CSceneCollision3D::kAllLayers, kCollisionShapeColor );
 		(void)DrawProximityTrigger3D( m_SpinnerProximityTrigger, Color );
 		if ( m_Spinner )
