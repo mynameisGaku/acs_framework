@@ -131,6 +131,26 @@ namespace
 			&& std::isfinite( Value.z ) && Value.z >= 0.0f;
 	}
 
+	/** 箱の8頂点を検証済みの12辺へ展開できたらtrue。 */
+	bool TryBuildBoxLines_Internal( const FVec3* Corners, FVec4 Color, FDebugLine3D* OutLines ) noexcept
+	{
+		if ( Corners == nullptr || OutLines == nullptr ) return false;
+
+		/** 8頂点を12辺へ結ぶ固定の頂点番号。 */
+		constexpr u32 EdgeIndices[CDebugDraw3DQueue::kBoxLineCount][2] =
+		{
+			{ 0u, 1u }, { 1u, 2u }, { 2u, 3u }, { 3u, 0u },
+			{ 4u, 5u }, { 5u, 6u }, { 6u, 7u }, { 7u, 4u },
+			{ 0u, 4u }, { 1u, 5u }, { 2u, 6u }, { 3u, 7u },
+		};
+		for ( usize Index = 0u; Index < CDebugDraw3DQueue::kBoxLineCount; ++Index )
+		{
+			OutLines[Index] = FDebugLine3D{ Corners[EdgeIndices[Index][0]], Corners[EdgeIndices[Index][1]], Color };
+			if ( !OutLines[Index].IsValid() ) return false;
+		}
+		return true;
+	}
+
 	/** 任意法線の円周上にある1点を返す。 */
 	FVec3 CirclePoint_Internal( FVec3 Center, FVec3 Tangent, FVec3 Bitangent,
 		f32 Radius, f32 Cosine, f32 Sine ) noexcept
@@ -511,6 +531,51 @@ bool CDebugDraw3DQueue::TryCylinder( FVec3 Center, FVec3 Axis, f32 Height,
 }
 
 
+bool CDebugDraw3DQueue::TryBox( FVec3 Center, FQuat Rotation, FVec3 HalfSize,
+	FVec4 Color ) noexcept
+{
+	/** 中心と色を既存の線契約でまとめて検証するための値。 */
+	const FDebugLine3D ValidationLine{ Center, Center, Color };
+	/** 8頂点へ適用する有限な単位回転。 */
+	FQuat NormalizedRotation;
+	if ( !ValidationLine.IsValid() || !TryNormalizeRotation_Internal( Rotation, NormalizedRotation )
+		|| !IsValidHalfSize( HalfSize ) )
+	{
+		++m_RejectedDrawCount;
+		return false;
+	}
+
+	/** 回転前の中心を原点とする箱の8ローカル頂点。 */
+	const FVec3 LocalCorners[8] =
+	{
+		FVec3{ -HalfSize.x, -HalfSize.y, -HalfSize.z },
+		FVec3{ HalfSize.x, -HalfSize.y, -HalfSize.z },
+		FVec3{ HalfSize.x, HalfSize.y, -HalfSize.z },
+		FVec3{ -HalfSize.x, HalfSize.y, -HalfSize.z },
+		FVec3{ -HalfSize.x, -HalfSize.y, HalfSize.z },
+		FVec3{ HalfSize.x, -HalfSize.y, HalfSize.z },
+		FVec3{ HalfSize.x, HalfSize.y, HalfSize.z },
+		FVec3{ -HalfSize.x, HalfSize.y, HalfSize.z },
+	};
+	/** world回転と中心を反映した箱の8頂点。 */
+	FVec3 Corners[8];
+	for ( usize Index = 0u; Index < 8u; ++Index )
+	{
+		Corners[Index] = Center + Rotate( NormalizedRotation, LocalCorners[Index] );
+	}
+
+	/** 8頂点を一括登録前に全検証する12本の候補線。 */
+	FDebugLine3D Lines[kBoxLineCount];
+	if ( !TryBuildBoxLines_Internal( Corners, Color, Lines )
+		|| !TryAppendLines_Internal( Lines, kBoxLineCount ) )
+	{
+		++m_RejectedDrawCount;
+		return false;
+	}
+	return true;
+}
+
+
 bool CDebugDraw3DQueue::TryAabb( const FAabb3& Bounds, FVec4 Color ) noexcept
 {
 	if ( !IsValidHalfSize( Bounds.half_size ) )
@@ -535,27 +600,10 @@ bool CDebugDraw3DQueue::TryAabb( const FAabb3& Bounds, FVec4 Color ) noexcept
 		FVec3{ Maximum.x, Maximum.y, Maximum.z },
 		FVec3{ Minimum.x, Maximum.y, Maximum.z },
 	};
-	/** 8頂点を12辺へ結ぶ固定の頂点番号。 */
-	constexpr u32 EdgeIndices[12][2] =
-	{
-		{ 0u, 1u }, { 1u, 2u }, { 2u, 3u }, { 3u, 0u },
-		{ 4u, 5u }, { 5u, 6u }, { 6u, 7u }, { 7u, 4u },
-		{ 0u, 4u }, { 1u, 5u }, { 2u, 6u }, { 3u, 7u },
-	};
 	/** 一括登録前に全値を検証する12本の候補線。 */
-	FDebugLine3D Lines[12];
-	/** 12辺を候補線へ変換し、1本でも不正なら箱全体を拒否する。 */
-	for ( usize Index = 0u; Index < 12u; ++Index )
-	{
-		Lines[Index] = FDebugLine3D{ Corners[EdgeIndices[Index][0]], Corners[EdgeIndices[Index][1]], Color };
-		if ( !Lines[Index].IsValid() )
-		{
-			++m_RejectedDrawCount;
-			return false;
-		}
-	}
-
-	if ( TryAppendLines_Internal( Lines, 12u ) ) return true;
+	FDebugLine3D Lines[kBoxLineCount];
+	if ( TryBuildBoxLines_Internal( Corners, Color, Lines )
+		&& TryAppendLines_Internal( Lines, kBoxLineCount ) ) return true;
 
 	++m_RejectedDrawCount;
 	return false;

@@ -20,6 +20,9 @@ public:
 	/** X、Y、Zの3本の矢印で構成する座標軸の固定線数。 */
 	static constexpr u32 kAxesLineCount = kArrowLineCount * 3u;
 
+	/** 軸並行箱と向き付き箱を構成する固定辺数。 */
+	static constexpr u32 kBoxLineCount = 12u;
+
 	/** world単位で指定する矢尻長の既定値。 */
 	static constexpr f32 kDefaultArrowHeadSize = 0.25f;
 
@@ -194,6 +197,19 @@ public:
 	bool TryCylinder( FVec3 Center, FVec3 Axis, f32 Height, f32 Radius,
 		FVec4 Color = FVec4{ 0.20f, 0.95f, 0.74f, 1.0f },
 		u32 Segments = kDefaultCylinderSegments ) noexcept;
+
+	/**
+	 * 指定world回転を持つ箱の12辺を一括登録する。
+	 *
+	 * @details 12本全てを保持できない場合は1本も追加しない。
+	 * @param Center 箱のworld中心。
+	 * @param Rotation 箱へ適用する有限で正規化可能なworld回転。
+	 * @param HalfSize 回転前のローカルX、Y、Z各軸へ伸びる有限な非負半サイズ。
+	 * @param Color 12辺全てへ使う色。
+	 * @return 中心、回転、半サイズ、色が有効で、12辺全てを保存できたらtrue。
+	 */
+	bool TryBox( FVec3 Center, FQuat Rotation, FVec3 HalfSize,
+		FVec4 Color = FVec4{ 1.0f, 0.38f, 0.72f, 1.0f } ) noexcept;
 
 	/**
 	 * 軸並行境界箱の12辺を一括登録する。

@@ -542,6 +542,19 @@ public:
 		u32 Segments = CDebugDraw3DQueue::kDefaultCylinderSegments ) noexcept;
 
 	/**
+	 * 指定world回転を持つ箱の12辺を次の3D描画へ一括登録する。
+	 *
+	 * @details 回転ノードの見た目、局所範囲、向き付き境界を示す。表示を続ける場合は更新ごとに呼ぶ。
+	 * @param Center 箱のworld中心。
+	 * @param Rotation 箱へ適用する有限で正規化可能なworld回転。
+	 * @param HalfSize 回転前のローカルX、Y、Z各軸へ伸びる有限な非負半サイズ。
+	 * @param Color 12辺全てへ使う色。
+	 * @return 値が有効で、12辺全てを登録できたらtrue。
+	 */
+	bool DrawBox3D( FVec3 Center, FQuat Rotation, FVec3 HalfSize,
+		FVec4 Color = FVec4{ 1.0f, 0.38f, 0.72f, 1.0f } ) noexcept;
+
+	/**
 	 * 軸並行境界箱の12辺を次の3D描画へ一括登録する。
 	 *
 	 * @details 線は深度を無視して常に見える。表示を続ける場合は更新ごとに呼ぶ。

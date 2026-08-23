@@ -60,6 +60,10 @@ public:
 		FVec4 Color = FVec4{ 0.20f, 0.95f, 0.74f, 1.0f },
 		u32 Segments = CDebugDraw3DQueue::kDefaultCylinderSegments ) noexcept;
 
+	/** 指定world回転を持つ箱の12辺を次の3D描画へ一括登録する。 */
+	bool DrawBox( FVec3 Center, FQuat Rotation, FVec3 HalfSize,
+		FVec4 Color = FVec4{ 1.0f, 0.38f, 0.72f, 1.0f } ) noexcept;
+
 	/** 軸並行境界箱の12辺を次の3D描画へ一括登録する。 */
 	bool DrawAabb( const FAabb3& Bounds, FVec4 Color = FVec4{ 0.20f, 0.95f, 1.0f, 1.0f } ) noexcept;
 

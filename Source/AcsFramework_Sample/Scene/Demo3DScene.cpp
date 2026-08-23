@@ -82,6 +82,12 @@ namespace
 	/** 正面円錐と区別する回転軸円柱色。 */
 	constexpr FVec4 kSpinnerDebugAxisCylinderColor{ 0.20f, 0.95f, 0.74f, 0.92f };
 
+	/** 回転立方体の表面より少し外側へ置く姿勢表示箱の各半サイズ。 */
+	constexpr FVec3 kSpinnerDebugBoxHalfSize{ 0.78f, 0.78f, 0.78f };
+
+	/** world軸固定の衝突AABBと区別する向き付き箱色。 */
+	constexpr FVec4 kSpinnerDebugBoxColor{ 1.0f, 0.38f, 0.72f, 0.94f };
+
 	/** 初期画面でキャラクターと展示物を同時に見せる足元位置。 */
 	constexpr FVec3 kCharacterStartPosition{ 0.0f, 0.001f, 4.2f };
 
@@ -1216,6 +1222,8 @@ void ADemo3DScene::UpdateDemoProximityTrigger_Internal() noexcept
 			/** 回転中の立方体から共通して読む現在world変換。 */
 			const FTransform3D& SpinnerWorld = m_Spinner.Node->World();
 			(void)DrawAxes3D( SpinnerWorld.position, SpinnerWorld.rotation, 1.1f, 0.24f );
+			(void)DrawBox3D( SpinnerWorld.position, SpinnerWorld.rotation,
+				kSpinnerDebugBoxHalfSize, kSpinnerDebugBoxColor );
 			/** 回転立方体のローカル前方をworldへ移した円錐方向。 */
 			const FVec3 SpinnerForward = Rotate( SpinnerWorld.rotation, FVec3::Forward() );
 			(void)DrawCone3D( SpinnerWorld.position, SpinnerForward,

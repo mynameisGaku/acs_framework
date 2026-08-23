@@ -49,6 +49,13 @@ bool CDebugDraw3DLayer::DrawCylinder( FVec3 Center, FVec3 Axis, f32 Height,
 }
 
 
+bool CDebugDraw3DLayer::DrawBox( FVec3 Center, FQuat Rotation, FVec3 HalfSize,
+	FVec4 Color ) noexcept
+{
+	return m_Queue.TryBox( Center, Rotation, HalfSize, Color );
+}
+
+
 bool CDebugDraw3DLayer::DrawAabb( const FAabb3& Bounds, FVec4 Color ) noexcept
 {
 	return m_Queue.TryAabb( Bounds, Color );

@@ -512,6 +512,13 @@ bool AUi3DScene::DrawCylinder3D( FVec3 Center, FVec3 Axis, f32 Height,
 }
 
 
+bool AUi3DScene::DrawBox3D( FVec3 Center, FQuat Rotation, FVec3 HalfSize,
+	FVec4 Color ) noexcept
+{
+	return m_DebugDraw3D.DrawBox( Center, Rotation, HalfSize, Color );
+}
+
+
 bool AUi3DScene::DrawAabb3D( const FAabb3& Bounds, FVec4 Color ) noexcept
 {
 	return m_DebugDraw3D.DrawAabb( Bounds, Color );

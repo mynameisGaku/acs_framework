@@ -319,21 +319,68 @@ void RunDebugDraw3DQueueTests( CTestHarness& Harness )
 		Harness.CheckEqualU64( InvalidCylinder.RejectedDrawCount(), 11u, "拒否した円柱要求を1件ずつ数える" );
 	}
 
+	Harness.BeginSuite( "CDebugDraw3DQueue / world回転を持つ箱を原子的に扱う" );
+
+	{
+		const FVec3 Center{ 1.0f, 2.0f, 3.0f };
+		const FVec3 HalfSize{ 1.0f, 2.0f, 3.0f };
+		const FVec4 Color{ 1.0f, 0.38f, 0.72f, 1.0f };
+		CDebugDraw3DQueue Queue( CDebugDraw3DQueue::kBoxLineCount );
+		Harness.Check( Queue.TryBox( Center, FQuat::Identity(), HalfSize, Color ), "回転なしの向き付き箱を登録できる" );
+		Harness.CheckEqualU64( Queue.Num(), CDebugDraw3DQueue::kBoxLineCount, "向き付き箱を12本の線へ展開する" );
+		Harness.CheckEqualF32( Queue.Get( 0u ).Start.x, 0.0f, "最初の辺を負のローカルX端から始める" );
+		Harness.CheckEqualF32( Queue.Get( 0u ).Start.y, 0.0f, "最初の辺を負のローカルY端へ置く" );
+		Harness.CheckEqualF32( Queue.Get( 0u ).Start.z, 0.0f, "最初の辺を負のローカルZ端へ置く" );
+		Harness.CheckEqualF32( Queue.Get( 0u ).End.x, 2.0f, "最初の辺を正のローカルX端へ結ぶ" );
+		Harness.CheckEqualF32( Queue.Get( 0u ).Color.z, Color.z, "指定色を12辺全てへ使う" );
+
+		CDebugDraw3DQueue RotatedQueue( CDebugDraw3DQueue::kBoxLineCount );
+		const FQuat HalfTurn = FQuat::AxisAngle( FVec3::Up(), 3.14159265358979323846f );
+		Harness.Check( RotatedQueue.TryBox( Center, HalfTurn, HalfSize, Color ), "world回転を持つ箱を登録できる" );
+		Harness.CheckNearF32( RotatedQueue.Get( 0u ).Start.x, 2.0f, 0.00001f, "Y軸半回転を最初の頂点Xへ反映する" );
+		Harness.CheckNearF32( RotatedQueue.Get( 0u ).Start.z, 6.0f, 0.00001f, "Y軸半回転を最初の頂点Zへ反映する" );
+		Harness.CheckNearF32( RotatedQueue.Get( 0u ).End.x, 0.0f, 0.00001f, "回転後も最初の辺をローカルX方向へ結ぶ" );
+
+		CDebugDraw3DQueue NormalizedQueue( CDebugDraw3DQueue::kBoxLineCount );
+		Harness.Check( NormalizedQueue.TryBox( FVec3{}, FQuat{ 0.0f, 0.0f, 0.0f, 2.0f }, FVec3{ 1.0f, 1.0f, 1.0f } ), "正規化されていない有限回転を受け付ける" );
+		Harness.CheckNearF32( NormalizedQueue.Get( 0u ).Start.x, -1.0f, 0.00001f, "回転を正規化して箱へ使う" );
+
+		CDebugDraw3DQueue TooSmall( CDebugDraw3DQueue::kBoxLineCount );
+		Harness.Check( TooSmall.TryLine( FVec3{}, FVec3{ 0.0f, 1.0f, 0.0f } ), "容量確認前の線を登録できる" );
+		Harness.Check( !TooSmall.TryBox( Center, FQuat::Identity(), HalfSize, Color ), "12辺分の空きがない向き付き箱を拒否する" );
+		Harness.CheckEqualU64( TooSmall.Num(), 1u, "容量不足でも既存線と向き付き箱の原子性を保つ" );
+
+		CDebugDraw3DQueue InvalidBox;
+		const f32 NotANumber = std::numeric_limits<f32>::quiet_NaN();
+		Harness.Check( !InvalidBox.TryBox( FVec3{ NotANumber, 0.0f, 0.0f }, FQuat::Identity(), HalfSize ), "有限でない中心を拒否する" );
+		Harness.Check( !InvalidBox.TryBox( FVec3{}, FQuat{ 0.0f, 0.0f, 0.0f, 0.0f }, HalfSize ), "長さ0の回転を拒否する" );
+		Harness.Check( !InvalidBox.TryBox( FVec3{}, FQuat{ NotANumber, 0.0f, 0.0f, 1.0f }, HalfSize ), "有限でない回転を拒否する" );
+		Harness.Check( !InvalidBox.TryBox( FVec3{}, FQuat::Identity(), FVec3{ -1.0f, 1.0f, 1.0f } ), "負の半サイズを拒否する" );
+		Harness.Check( !InvalidBox.TryBox( FVec3{}, FQuat::Identity(), FVec3{ NotANumber, 1.0f, 1.0f } ), "有限でない半サイズを拒否する" );
+		Harness.Check( !InvalidBox.TryBox( FVec3{}, FQuat::Identity(), HalfSize,
+			FVec4{ 1.0f, 1.0f, 1.0f, 0.0f } ), "透明な箱色を拒否する" );
+		/** 頂点計算を有限範囲外へ押し出す最大有限値。 */
+		const f32 Maximum = std::numeric_limits<f32>::max();
+		Harness.Check( !InvalidBox.TryBox( FVec3{ Maximum, 0.0f, 0.0f }, FQuat::Identity(), FVec3{ Maximum, 1.0f, 1.0f } ), "頂点計算で有限範囲を超える箱を拒否する" );
+		Harness.CheckEqualU64( InvalidBox.Num(), 0u, "不正な向き付き箱を途中まで登録しない" );
+		Harness.CheckEqualU64( InvalidBox.RejectedDrawCount(), 7u, "拒否した向き付き箱要求を1件ずつ数える" );
+	}
+
 	Harness.BeginSuite( "CDebugDraw3DQueue / AABBを12辺まとめて扱う" );
 
 	{
 		const FAabb3 Bounds = FAabb3::FromCenterExtents( FVec3{ 2.0f, 3.0f, 4.0f }, FVec3{ 1.0f, 2.0f, 3.0f } );
-		CDebugDraw3DQueue Queue( 12u );
+		CDebugDraw3DQueue Queue( CDebugDraw3DQueue::kBoxLineCount );
 		Harness.Check( Queue.TryAabb( Bounds, FVec4{ 1.0f, 0.5f, 0.1f, 1.0f } ), "12辺が入るときだけ箱を登録できる" );
 		Harness.CheckEqualU64( Queue.Num(), 12u, "箱を12本の線へ展開する" );
 		Harness.CheckEqualF32( Queue.Get( 0u ).Start.x, 1.0f, "最初の辺は最小Xから始まる" );
 		Harness.CheckEqualF32( Queue.Get( 0u ).End.x, 3.0f, "最初の辺は最大Xへ進む" );
 
-		CDebugDraw3DQueue TooSmall( 11u );
+		CDebugDraw3DQueue TooSmall( CDebugDraw3DQueue::kBoxLineCount - 1u );
 		Harness.Check( !TooSmall.TryAabb( Bounds ), "12辺未満の空きでは箱を拒否する" );
 		Harness.CheckEqualU64( TooSmall.Num(), 0u, "容量不足の箱を途中まで追加しない" );
 
-		CDebugDraw3DQueue InvalidBox( 12u );
+		CDebugDraw3DQueue InvalidBox( CDebugDraw3DQueue::kBoxLineCount );
 		Harness.Check( !InvalidBox.TryAabb( FAabb3::FromCenterExtents( FVec3{}, FVec3{ -1.0f, 1.0f, 1.0f } ) ), "負の半サイズを拒否する" );
 		Harness.CheckEqualU64( InvalidBox.Num(), 0u, "不正な箱を登録しない" );
 	}

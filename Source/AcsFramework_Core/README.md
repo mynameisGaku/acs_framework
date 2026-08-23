@@ -105,7 +105,7 @@ HDR透過描画はACSへ任せる。カメラへ自動で向くビルボード�
 3Dデバッグ描画もsceneのカメラ、HDR描画先、GPU終了順へ結び付くためSubsystemにはしない。
 `FDebugLine3D`と`CDebugDraw3DQueue`はGPUなしで値と1フレーム上限を検証し、
 `CDebugDraw3DLayer`はACSの`FDebugDraw3D`を遅延初期化して`AUi3DScene`の透明3Dパスへ接続する。
-`DrawLine3D`、`DrawArrow3D`、`DrawAxes3D`、`DrawGrid3D`、`DrawCircle3D`、`DrawCone3D`、`DrawCylinder3D`、`DrawAabb3D`、`DrawSphere3D`は深度を無視する確認用オーバーレイで、
+`DrawLine3D`、`DrawArrow3D`、`DrawAxes3D`、`DrawGrid3D`、`DrawCircle3D`、`DrawCone3D`、`DrawCylinder3D`、`DrawBox3D`、`DrawAabb3D`、`DrawSphere3D`は深度を無視する確認用オーバーレイで、
 `DrawCollisionShape3D`は登録済みの1形状、`DrawCollisionShapes3D`はレイヤー一致する全有効形状、
 `DrawProximityTrigger3D`は近接判定範囲と同じ球または箱を一括登録する。
 表示を続ける側は更新ごとに登録する。
@@ -114,6 +114,7 @@ HDR透過描画はACSへ任せる。カメラへ自動で向くビルボード�
 円は中心、法線、半径、分割数から任意のworld面へ原子的に展開する。
 円錐は頂点、方向、長さ、底面半径だけで視野や正面範囲へ展開する。
 円柱は中心、軸、高さ、半径だけで回転軸や円柱範囲へ展開する。
+向き付き箱は中心、回転、半サイズから回転ノードの局所範囲へ展開する。
 球はACSの衝突判定と同じ`FSphere`をそのまま受け取る。
 
 ### Text変換の契約
