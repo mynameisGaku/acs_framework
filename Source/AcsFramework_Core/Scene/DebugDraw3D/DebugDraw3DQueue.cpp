@@ -68,6 +68,15 @@ namespace
 		return IsFiniteRotation_Internal( OutRotation );
 	}
 
+	/** 指定方向へ直交する有限な2本の単位方向を作れたらtrue。 */
+	bool TryMakePerpendicularBasis_Internal( FVec3 Direction, FVec3& OutFirst, FVec3& OutSecond ) noexcept
+	{
+		/** 真上・真下でも退化しない、指定方向と交差させる基準軸。 */
+		const FVec3 ReferenceAxis = std::abs( Direction.y ) < 0.999f ? FVec3::Up() : FVec3::Forward();
+		return TryNormalizeDirection_Internal( Cross( ReferenceAxis, Direction ), OutFirst )
+			&& TryNormalizeDirection_Internal( Cross( Direction, OutFirst ), OutSecond );
+	}
+
 	/** 1本の矢印を検証済みの胴体1本と矢尻4本へ展開できたらtrue。 */
 	bool TryBuildArrowLines_Internal( FVec3 Start, FVec3 End, FVec4 Color,
 		f32 HeadSize, FDebugLine3D* OutLines ) noexcept
@@ -92,14 +101,11 @@ namespace
 		FVec3 Direction;
 		if ( !TryNormalizeDirection_Internal( Delta, Direction ) ) return false;
 
-		/** 真上・真下でも退化しない、矢印方向と交差させる基準軸。 */
-		const FVec3 ReferenceAxis = std::abs( Direction.y ) < 0.999f ? FVec3::Up() : FVec3::Forward();
 		/** 矢尻を左右へ開く単位方向。 */
 		FVec3 Right;
 		/** 矢尻を上下へ開く単位方向。 */
 		FVec3 Up;
-		if ( !TryNormalizeDirection_Internal( Cross( ReferenceAxis, Direction ), Right )
-			|| !TryNormalizeDirection_Internal( Cross( Direction, Right ), Up ) ) return false;
+		if ( !TryMakePerpendicularBasis_Internal( Direction, Right, Up ) ) return false;
 
 		/** 矢尻4本の根元を置く中心。 */
 		const FVec3 HeadBase = End - Direction * HeadSize;
@@ -123,6 +129,13 @@ namespace
 		return std::isfinite( Value.x ) && Value.x >= 0.0f
 			&& std::isfinite( Value.y ) && Value.y >= 0.0f
 			&& std::isfinite( Value.z ) && Value.z >= 0.0f;
+	}
+
+	/** 任意法線の円周上にある1点を返す。 */
+	FVec3 CirclePoint_Internal( FVec3 Center, FVec3 Tangent, FVec3 Bitangent,
+		f32 Radius, f32 Cosine, f32 Sine ) noexcept
+	{
+		return Center + Tangent * ( Radius * Cosine ) + Bitangent * ( Radius * Sine );
 	}
 
 	/** 指定平面の円周上にある球の1点を返す。 */
@@ -282,6 +295,68 @@ bool CDebugDraw3DQueue::TryGrid( FVec3 Center, f32 HalfExtent, u32 Divisions, FV
 	/** X方向とZ方向へ各Divisions+1本を置く総線数。 */
 	const usize LineCount = ( static_cast<usize>( Divisions ) + 1u ) * 2u;
 	if ( TryAppendLines_Internal( Lines, LineCount ) ) return true;
+
+	++m_RejectedDrawCount;
+	return false;
+}
+
+
+bool CDebugDraw3DQueue::TryCircle( FVec3 Center, FVec3 Normal, f32 Radius,
+	FVec4 Color, u32 Segments ) noexcept
+{
+	/** 中心と色を既存の線契約でまとめて検証するための値。 */
+	const FDebugLine3D ValidationLine{ Center, Center, Color };
+	/** 円の面を向く有限な単位法線。 */
+	FVec3 NormalizedNormal;
+	if ( !ValidationLine.IsValid() || !TryNormalizeDirection_Internal( Normal, NormalizedNormal )
+		|| !std::isfinite( Radius ) || Radius <= 0.0f
+		|| Segments < kMinimumCircleSegments || Segments > kMaximumCircleSegments )
+	{
+		++m_RejectedDrawCount;
+		return false;
+	}
+
+	/** 円の面上で第1成分を表す単位方向。 */
+	FVec3 Tangent;
+	/** 円の面上で第2成分を表す単位方向。 */
+	FVec3 Bitangent;
+	if ( !TryMakePerpendicularBasis_Internal( NormalizedNormal, Tangent, Bitangent ) )
+	{
+		++m_RejectedDrawCount;
+		return false;
+	}
+
+	/** 全値を検証してから一括登録する最大長の候補領域。 */
+	FDebugLine3D Lines[kMaximumCircleSegments];
+	/** 隣り合う円周点の角度差。 */
+	const f32 AngleStep = kFullTurnRadians / static_cast<f32>( Segments );
+	for ( u32 SegmentIndex = 0u; SegmentIndex < Segments; ++SegmentIndex )
+	{
+		/** 現在の円周点を作る角度。 */
+		const f32 CurrentAngle = AngleStep * static_cast<f32>( SegmentIndex );
+		/** 最後の辺を開始点へ厳密に閉じる次の角度。 */
+		const f32 NextAngle = SegmentIndex + 1u == Segments
+			? 0.0f
+			: AngleStep * static_cast<f32>( SegmentIndex + 1u );
+		/** 現在の円周点から次の円周点へ結ぶ候補線。 */
+		const FDebugLine3D Line{
+			CirclePoint_Internal( Center, Tangent, Bitangent, Radius,
+				std::cos( CurrentAngle ), std::sin( CurrentAngle ) ),
+			CirclePoint_Internal( Center, Tangent, Bitangent, Radius,
+				std::cos( NextAngle ), std::sin( NextAngle ) ),
+			Color,
+		};
+		if ( Line.IsValid() )
+		{
+			Lines[SegmentIndex] = Line;
+			continue;
+		}
+
+		++m_RejectedDrawCount;
+		return false;
+	}
+
+	if ( TryAppendLines_Internal( Lines, Segments ) ) return true;
 
 	++m_RejectedDrawCount;
 	return false;

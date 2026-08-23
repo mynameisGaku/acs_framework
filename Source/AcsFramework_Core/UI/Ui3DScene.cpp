@@ -491,6 +491,13 @@ bool AUi3DScene::DrawGrid3D( FVec3 Center, f32 HalfExtent, u32 Divisions, FVec4 
 }
 
 
+bool AUi3DScene::DrawCircle3D( FVec3 Center, FVec3 Normal, f32 Radius,
+	FVec4 Color, u32 Segments ) noexcept
+{
+	return m_DebugDraw3D.DrawCircle( Center, Normal, Radius, Color, Segments );
+}
+
+
 bool AUi3DScene::DrawAabb3D( const FAabb3& Bounds, FVec4 Color ) noexcept
 {
 	return m_DebugDraw3D.DrawAabb( Bounds, Color );

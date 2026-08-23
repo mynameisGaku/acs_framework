@@ -45,6 +45,11 @@ public:
 		u32 Divisions = CDebugDraw3DQueue::kDefaultGridDivisions,
 		FVec4 Color = FVec4{ 0.28f, 0.36f, 0.48f, 1.0f } ) noexcept;
 
+	/** 指定world法線へ直交する閉じた円を次の3D描画へ一括登録する。 */
+	bool DrawCircle( FVec3 Center, FVec3 Normal, f32 Radius,
+		FVec4 Color = FVec4{ 1.0f, 0.58f, 0.18f, 1.0f },
+		u32 Segments = CDebugDraw3DQueue::kDefaultCircleSegments ) noexcept;
+
 	/** 軸並行境界箱の12辺を次の3D描画へ一括登録する。 */
 	bool DrawAabb( const FAabb3& Bounds, FVec4 Color = FVec4{ 0.20f, 0.95f, 1.0f, 1.0f } ) noexcept;
 

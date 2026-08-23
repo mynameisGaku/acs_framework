@@ -160,6 +160,58 @@ void RunDebugDraw3DQueueTests( CTestHarness& Harness )
 		Harness.CheckEqualU64( InvalidGrid.RejectedDrawCount(), 8u, "拒否したグリッド要求を1件ずつ数える" );
 	}
 
+	Harness.BeginSuite( "CDebugDraw3DQueue / 任意法線の円を原子的に扱う" );
+
+	{
+		const FVec3 Center{ 1.0f, 2.0f, 3.0f };
+		const FVec4 Color{ 1.0f, 0.58f, 0.18f, 1.0f };
+		CDebugDraw3DQueue Queue( 4u );
+		Harness.Check( Queue.TryCircle( Center, FVec3::Up(), 2.0f, Color, 4u ), "上向き法線の4分割円を登録できる" );
+		Harness.CheckEqualU64( Queue.Num(), 4u, "分割数と同じ4本の線へ展開する" );
+		Harness.CheckEqualF32( Queue.Get( 0u ).Start.x, -1.0f, "水平円を中心から負のX側で始める" );
+		Harness.CheckEqualF32( Queue.Get( 0u ).Start.y, 2.0f, "水平円を指定した高さへ置く" );
+		Harness.CheckEqualF32( Queue.Get( 0u ).Start.z, 3.0f, "水平円の開始Zを中心へ置く" );
+		Harness.CheckNearF32( Queue.Get( 0u ).End.x, 1.0f, 0.00001f, "水平円の次点を中心Xへ戻す" );
+		Harness.CheckNearF32( Queue.Get( 0u ).End.z, 5.0f, 0.00001f, "水平円の次点を正のZ側へ進める" );
+		Harness.CheckNearF32( Queue.Get( 3u ).End.x, Queue.Get( 0u ).Start.x, 0.00001f, "最後の辺を開始点Xへ閉じる" );
+		Harness.CheckNearF32( Queue.Get( 3u ).End.z, Queue.Get( 0u ).Start.z, 0.00001f, "最後の辺を開始点Zへ閉じる" );
+
+		const FVec3 TiltedNormal{ 0.0f, 1.0f, 1.0f };
+		CDebugDraw3DQueue TiltedQueue( 8u );
+		Harness.Check( TiltedQueue.TryCircle( Center, TiltedNormal, 2.0f, Color, 8u ), "傾いた法線の円を登録できる" );
+		/** 円の中心から最初の円周点へ向かう半径。 */
+		const FVec3 RadiusVector = TiltedQueue.Get( 0u ).Start - Center;
+		Harness.CheckNearF32( Dot( RadiusVector, Normalize( TiltedNormal ) ), 0.0f, 0.00001f, "円周点を指定法線と直交する面へ置く" );
+		Harness.CheckNearF32( LengthSq( RadiusVector ), 4.0f, 0.00001f, "傾いた面でも指定半径を保つ" );
+
+		CDebugDraw3DQueue MaximumQueue( CDebugDraw3DQueue::kMaximumCircleSegments );
+		Harness.Check( MaximumQueue.TryCircle( FVec3{}, FVec3::Forward(), 4.0f, Color,
+			CDebugDraw3DQueue::kMaximumCircleSegments ), "最大分割数を受け付ける" );
+		Harness.CheckEqualU64( MaximumQueue.Num(), CDebugDraw3DQueue::kMaximumCircleSegments, "最大分割でも固定上限内の線数になる" );
+
+		CDebugDraw3DQueue TooSmall( 4u );
+		Harness.Check( TooSmall.TryLine( FVec3{}, FVec3{ 0.0f, 1.0f, 0.0f } ), "容量確認前の線を登録できる" );
+		Harness.Check( !TooSmall.TryCircle( Center, FVec3::Up(), 2.0f, Color, 4u ), "全線分の空きがない円を拒否する" );
+		Harness.CheckEqualU64( TooSmall.Num(), 1u, "容量不足でも既存線と円の原子性を保つ" );
+
+		CDebugDraw3DQueue InvalidCircle;
+		const f32 NotANumber = std::numeric_limits<f32>::quiet_NaN();
+		Harness.Check( !InvalidCircle.TryCircle( FVec3{}, FVec3{}, 1.0f ), "長さ0の法線を拒否する" );
+		Harness.Check( !InvalidCircle.TryCircle( FVec3{}, FVec3{ NotANumber, 0.0f, 0.0f }, 1.0f ), "有限でない法線を拒否する" );
+		Harness.Check( !InvalidCircle.TryCircle( FVec3{}, FVec3::Up(), 0.0f ), "半径0の円を拒否する" );
+		Harness.Check( !InvalidCircle.TryCircle( FVec3{}, FVec3::Up(), NotANumber ), "有限でない半径を拒否する" );
+		Harness.Check( !InvalidCircle.TryCircle( FVec3{}, FVec3::Up(), 1.0f, Color, 3u ), "小さすぎる分割数を拒否する" );
+		Harness.Check( !InvalidCircle.TryCircle( FVec3{}, FVec3::Up(), 1.0f, Color,
+			CDebugDraw3DQueue::kMaximumCircleSegments + 1u ), "大きすぎる分割数を拒否する" );
+		Harness.Check( !InvalidCircle.TryCircle( FVec3{}, FVec3::Up(), 1.0f,
+			FVec4{ 1.0f, 1.0f, 1.0f, 0.0f } ), "透明な円色を拒否する" );
+		/** 円周計算を有限範囲外へ押し出す最大有限値。 */
+		const f32 Maximum = std::numeric_limits<f32>::max();
+		Harness.Check( !InvalidCircle.TryCircle( FVec3{ Maximum, 0.0f, 0.0f }, FVec3::Up(), Maximum ), "円周計算で有限範囲を超える円を拒否する" );
+		Harness.CheckEqualU64( InvalidCircle.Num(), 0u, "不正な円を途中まで登録しない" );
+		Harness.CheckEqualU64( InvalidCircle.RejectedDrawCount(), 8u, "拒否した円要求を1件ずつ数える" );
+	}
+
 	Harness.BeginSuite( "CDebugDraw3DQueue / AABBを12辺まとめて扱う" );
 
 	{

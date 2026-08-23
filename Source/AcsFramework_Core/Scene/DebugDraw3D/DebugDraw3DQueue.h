@@ -41,14 +41,23 @@ public:
 	/** world原点を中心に既定グリッドが届く片側の距離。 */
 	static constexpr f32 kDefaultGridHalfExtent = 5.0f;
 
-	/** 球を輪として読める最小分割数。 */
-	static constexpr u32 kMinimumSphereSegments = 4u;
+	/** 円を輪として読める最小分割数。 */
+	static constexpr u32 kMinimumCircleSegments = 4u;
 
-	/** 見た目と線数の釣り合いを取った球の既定分割数。 */
-	static constexpr u32 kDefaultSphereSegments = 24u;
+	/** 見た目と線数の釣り合いを取った円の既定分割数。 */
+	static constexpr u32 kDefaultCircleSegments = 24u;
 
-	/** 1要求が線容量を過度に消費しない球の最大分割数。 */
-	static constexpr u32 kMaximumSphereSegments = 128u;
+	/** 1要求が線容量を過度に消費しない円の最大分割数。 */
+	static constexpr u32 kMaximumCircleSegments = 128u;
+
+	/** 球の各円へ使う最小分割数。 */
+	static constexpr u32 kMinimumSphereSegments = kMinimumCircleSegments;
+
+	/** 球の各円へ使う既定分割数。 */
+	static constexpr u32 kDefaultSphereSegments = kDefaultCircleSegments;
+
+	/** 球の各円へ使う最大分割数。 */
+	static constexpr u32 kMaximumSphereSegments = kMaximumCircleSegments;
 
 	/**
 	 * 空のキューを作る。
@@ -108,6 +117,21 @@ public:
 	bool TryGrid( FVec3 Center = FVec3{}, f32 HalfExtent = kDefaultGridHalfExtent,
 		u32 Divisions = kDefaultGridDivisions,
 		FVec4 Color = FVec4{ 0.28f, 0.36f, 0.48f, 1.0f } ) noexcept;
+
+	/**
+	 * 指定world法線へ直交する閉じた円を一括登録する。
+	 *
+	 * @details Segments本全てを保持できない場合は1本も追加しない。
+	 * @param Center 円のworld中心。
+	 * @param Normal 円が載る面の有限で正規化可能なworld法線。
+	 * @param Radius 円のworld半径。0より大きい有限値。
+	 * @param Color 全ての円周線へ使う色。
+	 * @param Segments 円周を等分する4から128の数。
+	 * @return 中心、法線、半径、色、分割数が有効で、全線を保存できたらtrue。
+	 */
+	bool TryCircle( FVec3 Center, FVec3 Normal, f32 Radius,
+		FVec4 Color = FVec4{ 1.0f, 0.58f, 0.18f, 1.0f },
+		u32 Segments = kDefaultCircleSegments ) noexcept;
 
 	/**
 	 * 軸並行境界箱の12辺を一括登録する。

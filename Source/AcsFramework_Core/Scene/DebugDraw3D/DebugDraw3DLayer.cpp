@@ -28,6 +28,13 @@ bool CDebugDraw3DLayer::DrawGrid( FVec3 Center, f32 HalfExtent, u32 Divisions, F
 }
 
 
+bool CDebugDraw3DLayer::DrawCircle( FVec3 Center, FVec3 Normal, f32 Radius,
+	FVec4 Color, u32 Segments ) noexcept
+{
+	return m_Queue.TryCircle( Center, Normal, Radius, Color, Segments );
+}
+
+
 bool CDebugDraw3DLayer::DrawAabb( const FAabb3& Bounds, FVec4 Color ) noexcept
 {
 	return m_Queue.TryAabb( Bounds, Color );

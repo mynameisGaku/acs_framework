@@ -55,7 +55,7 @@ WASDで移動、左Shiftで走行、矢印キーで視点、Spaceでジャンプ
 | 3D 音響 | `PlaySound3D()`、現在カメラ基準の距離減衰、モノラル効果音の左右定位 |
 | 遊ぶ人向け UI | `AUi3DScene`、文字・ボタン・入力、ポスト処理後の鮮明なHUD合成 |
 | 3D位置の文字 | `WorldLabels()`、ノード破棄と画面外を安全に扱う敵名・目的地表示 |
-| 3Dデバッグ描画 | `DrawLine3D()`、`DrawArrow3D()`、`DrawAxes3D()`、`DrawGrid3D()`、`DrawAabb3D()`、`DrawSphere3D()`、単体・レイヤー一括の`DrawCollisionShape3D()` / `DrawCollisionShapes3D()`、`DrawProximityTrigger3D()`、深度を無視する1フレーム線 |
+| 3Dデバッグ描画 | `DrawLine3D()`、`DrawArrow3D()`、`DrawAxes3D()`、`DrawGrid3D()`、`DrawCircle3D()`、`DrawAabb3D()`、`DrawSphere3D()`、単体・レイヤー一括の`DrawCollisionShape3D()` / `DrawCollisionShapes3D()`、`DrawProximityTrigger3D()`、深度を無視する1フレーム線 |
 | 当てる | `MakeScreenRay3D()` / `Raycast3D()` / `PickScreen3D()`で球面や読み込みメッシュへ正確に当てる |
 | 重なりと移動判定 | `CSceneCollision3D`、ノード追従、球・箱の重なり、球スイープ、レイヤー |
 | 近づきを取る | `BindProximityTrigger3D()`、ノード追従する球・箱への進入・滞在・退出、レイヤー絞り込み |
@@ -147,6 +147,7 @@ if ( Hit.IsHit() )
     DrawAabb3D( FAabb3::FromCenterExtents( Hit.Point, FVec3{ 0.08f, 0.08f, 0.08f } ),
         FVec4{ 1.0f, 0.62f, 0.12f, 1.0f } );
     DrawSphere3D( FSphere{ Hit.Point, 0.12f }, FVec4{ 1.0f, 0.28f, 0.78f, 1.0f } );
+    DrawCircle3D( Hit.Point + Hit.Normal * 0.01f, Hit.Normal, 0.35f );
     DrawArrow3D( Hit.Point, Hit.Point + Hit.Normal * 0.75f );
     DrawAxes3D( Hit.Point );
 }

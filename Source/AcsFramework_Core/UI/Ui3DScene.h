@@ -493,6 +493,21 @@ public:
 		FVec4 Color = FVec4{ 0.28f, 0.36f, 0.48f, 1.0f } ) noexcept;
 
 	/**
+	 * 指定world法線へ直交する閉じた円を次の3D描画へ一括登録する。
+	 *
+	 * @details 接触面、半径、効果範囲を1本の輪で示す。表示を続ける場合は更新ごとに呼ぶ。
+	 * @param Center 円のworld中心。
+	 * @param Normal 円が載る面の有限で正規化可能なworld法線。
+	 * @param Radius 円のworld半径。0より大きい有限値。
+	 * @param Color 全ての円周線へ使う色。
+	 * @param Segments 円周を等分する4から128の数。
+	 * @return 値が有効で、円周線を全て登録できたらtrue。
+	 */
+	bool DrawCircle3D( FVec3 Center, FVec3 Normal, f32 Radius,
+		FVec4 Color = FVec4{ 1.0f, 0.58f, 0.18f, 1.0f },
+		u32 Segments = CDebugDraw3DQueue::kDefaultCircleSegments ) noexcept;
+
+	/**
 	 * 軸並行境界箱の12辺を次の3D描画へ一括登録する。
 	 *
 	 * @details 線は深度を無視して常に見える。表示を続ける場合は更新ごとに呼ぶ。

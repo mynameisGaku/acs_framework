@@ -101,6 +101,7 @@ DrawProximityTrigger3D( DoorTrigger ); // 判定範囲を表示し続ける場�
 DrawArrow3D( DoorNode->World().position, DoorNode->World().position + FVec3::Up() ); // 方向を表示する場合
 DrawAxes3D( DoorNode->World().position, DoorNode->World().rotation ); // ローカル座標軸を表示する場合
 DrawGrid3D(); // world原点を中心に水平グリッドを表示する場合
+DrawCircle3D( DoorNode->World().position, FVec3::Up(), 0.5f ); // 水平面の向きと半径を輪で表示する場合
 ```
 
 `DrawCollisionShape3D`は`Collision3D()`へ登録済みで現在問い合わせ対象の形状番号だけを受け付け、
@@ -111,6 +112,7 @@ world軸平行箱を既存デバッグ線へ一括登録する。線は次の透
 `DrawArrow3D`は胴体1本と矢尻4本を原子的に登録し、法線、移動方向、光の向きを素材なしで表示する。
 `DrawAxes3D`は指定回転のローカルX、Y、Zを赤、緑、青の3本の矢印として原子的に登録する。
 `DrawGrid3D`は中心のyを高さとして水平XZ面を等分し、X・Z方向の全線を原子的に登録する。
+`DrawCircle3D`は指定world法線へ直交する円を作り、接触面、半径、効果範囲を少ない線で表示する。
 
 `SpawnCollidableModel3D`はモデル生成とこの衝突登録を一括で行い、ノードと形状番号を返す。
 描画境界、明示箱、明示球を選べ、登録できなければ生成ノードも破棄予定へ戻す。厚さのない

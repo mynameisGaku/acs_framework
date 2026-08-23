@@ -163,6 +163,15 @@ namespace
 	/** 命中位置の座標軸へ使う矢尻のworld長。 */
 	constexpr f32 kGeometryPickAxisHeadSize = 0.14f;
 
+	/** 命中面とのちらつきを避けるため法線側へずらすworld距離。 */
+	constexpr f32 kGeometryPickSurfaceCircleOffset = 0.015f;
+
+	/** 命中面の向きと広がりを示す円のworld半径。 */
+	constexpr f32 kGeometryPickSurfaceCircleRadius = 0.42f;
+
+	/** 命中面の円を滑らかに見せつつ線数を抑える分割数。 */
+	constexpr u32 kGeometryPickSurfaceCircleSegments = 20u;
+
 	/** 見た目の差が読みやすい順に巡回する天候。 */
 	constexpr EWeatherKind kDemoWeatherCycle[] =
 	{
@@ -1281,11 +1290,17 @@ void ADemo3DScene::DrawGeometryPickDebug_Internal( f32 DeltaSeconds ) noexcept
 	const bool bHitBoxQueued = DrawAabb3D( FAabb3::FromCenterExtents( m_GeometryPickDebugEnd, FVec3{ 0.22f, 0.22f, 0.22f } ), FVec4{ 1.0f, 0.62f, 0.12f, 1.0f } );
 	/** 命中点を球形の接触範囲として読む3方向円の登録結果。 */
 	const bool bHitSphereQueued = DrawSphere3D( FSphere{ m_GeometryPickDebugEnd, 0.32f }, FVec4{ 1.0f, 0.28f, 0.78f, 1.0f } );
+	/** 実形状から得た表面法線へ直交し、接触面を輪として読む登録結果。 */
+	const bool bSurfaceCircleQueued = DrawCircle3D(
+		m_GeometryPickDebugEnd + m_GeometryPickDebugNormal * kGeometryPickSurfaceCircleOffset,
+		m_GeometryPickDebugNormal, kGeometryPickSurfaceCircleRadius,
+		FVec4{ 1.0f, 0.58f, 0.18f, 1.0f }, kGeometryPickSurfaceCircleSegments );
 	/** 実形状から得た表面の向きを読み取る矢印の登録結果。 */
 	const bool bNormalQueued = DrawArrow3D( m_GeometryPickDebugEnd,
 		m_GeometryPickDebugEnd + m_GeometryPickDebugNormal * kGeometryPickNormalLength,
 		FVec4{ 1.0f, 0.86f, 0.18f, 1.0f }, kGeometryPickNormalHeadSize );
-	if ( !bRayQueued || !bAxesQueued || !bHitBoxQueued || !bHitSphereQueued || !bNormalQueued )
+	if ( !bRayQueued || !bAxesQueued || !bHitBoxQueued || !bHitSphereQueued
+		|| !bSurfaceCircleQueued || !bNormalQueued )
 	{
 		m_GeometryPickDebugRemainingSeconds = 0.0f;
 		ACS_LOG_WARN( "Demo3D: 実形状判定の3Dデバッグ線を登録できなかった" );
