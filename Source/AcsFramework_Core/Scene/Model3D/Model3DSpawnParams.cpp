@@ -13,6 +13,12 @@ namespace
 			&& Color.y >= 0.0f && Color.y <= 1.0f
 			&& Color.z >= 0.0f && Color.z <= 1.0f;
 	}
+
+	/** 材質の割合として使える有限な0から1の値か返す。 */
+	bool IsMaterialRatioValid_Internal( f32 Value ) noexcept
+	{
+		return std::isfinite( Value ) && Value >= 0.0f && Value <= 1.0f;
+	}
 }
 
 FModel3DSpawnParams FModel3DSpawnParams::FromMesh( FStringView Path, FVec3 InPosition ) noexcept
@@ -32,6 +38,16 @@ FModel3DSpawnParams FModel3DSpawnParams::FromPrimitive( EMeshPrimitive3D InPrimi
 	Params.Primitive = InPrimitive;
 	Params.Position = InPosition;
 
+	return Params;
+}
+
+
+FModel3DSpawnParams FModel3DSpawnParams::FromCoatedPrimitive( EMeshPrimitive3D InPrimitive, FVec3 InPosition, FVec3 InColor, f32 InCoatRoughness ) noexcept
+{
+	FModel3DSpawnParams Params = FromPrimitive( InPrimitive, InPosition );
+	Params.Color = FVec4{ InColor.x, InColor.y, InColor.z, 1.0f };
+	Params.Clearcoat = 1.0f;
+	Params.ClearcoatRoughness = InCoatRoughness;
 	return Params;
 }
 
@@ -56,6 +72,8 @@ bool FModel3DSpawnParams::IsValid() const noexcept
 	const bool bHasMeshPath = MeshPath.Data() != nullptr && MeshPath.Size() > 0u;
 	if ( bWantsMesh && !bHasMeshPath && !MeshAsset ) return false;
 	if ( MeshAsset && MeshAsset->Type() != AMeshAsset::StaticType() ) return false;
+	if ( !IsMaterialRatioValid_Internal( Clearcoat ) ) return false;
+	if ( !IsMaterialRatioValid_Internal( ClearcoatRoughness ) ) return false;
 	if ( !IsEmissiveColorValid_Internal( EmissiveColor ) ) return false;
 	if ( !std::isfinite( EmissiveStrength ) || EmissiveStrength < 0.0f || EmissiveStrength > 10.0f ) return false;
 

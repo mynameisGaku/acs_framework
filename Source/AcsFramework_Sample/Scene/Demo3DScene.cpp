@@ -494,6 +494,12 @@ void ADemo3DScene::OnEnter() noexcept
 			Ball, FCollisionShape3DParams::FromBounds( kCharacterCollisionLayer ) );
 	}
 
+	// 透明な上塗りを一呼出しで重ね、通常の粗さだけでは出ない細い反射を見せる。
+	FModel3DSpawnParams CoatedMarker = FModel3DSpawnParams::FromCoatedPrimitive( EMeshPrimitive3D::Sphere, FVec3{ -1.0f, 0.42f, -2.2f }, FVec3{ 0.78f, 0.10f, 0.06f }, 0.05f );
+	CoatedMarker.Scale = FVec3{ 0.42f, 0.42f, 0.42f };
+	CoatedMarker.Name = FStringView( "CoatedMarker" );
+	if ( SpawnModel3D( CoatedMarker ) == nullptr ) ACS_LOG_WARN( "Demo3D: 光沢コートマーカーを配置できなかった" );
+
 	// HDR自己発光を一呼出しで作る。照明が暗くても色を保ち、bloomへ光が広がる。
 	FModel3DSpawnParams GlowMarker = FModel3DSpawnParams::FromEmissivePrimitive( EMeshPrimitive3D::Sphere, FVec3{ -1.8f, 0.34f, -2.2f }, FVec3{ 0.12f, 0.52f, 1.0f }, 4.0f );
 	GlowMarker.Scale = FVec3{ 0.28f, 0.28f, 0.28f };

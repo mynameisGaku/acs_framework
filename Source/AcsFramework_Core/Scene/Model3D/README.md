@@ -36,6 +36,9 @@ SpawnModel3D( Ball );
 // HDR自己発光は色と強度だけで作り、ACSのtonemapとbloomへ同じ経路で渡す
 SpawnModel3D( FModel3DSpawnParams::FromEmissivePrimitive( EMeshPrimitive3D::Sphere, FVec3{ -2.0f, 1.0f, 0.0f }, FVec3{ 0.12f, 0.52f, 1.0f }, 4.0f ) );
 
+// 車の塗装やラッカーのような透明な上塗りは、色と上塗り粗さだけで作る
+SpawnModel3D( FModel3DSpawnParams::FromCoatedPrimitive( EMeshPrimitive3D::Sphere, FVec3{ 0.0f, 1.0f, 2.0f }, FVec3{ 0.78f, 0.10f, 0.06f }, 0.05f ) );
+
 // 別の立体に見た目と衝突形状の両方が必要なら、一括生成結果を受け取る
 FModel3DSpawnParams Obstacle = FModel3DSpawnParams::FromPrimitive(
     EMeshPrimitive3D::Cube, FVec3{ 4.0f, 0.5f, 0.0f } );
@@ -77,6 +80,11 @@ Hero->Local().position.x += 1.0f;
 照明そのものではないため、周囲を直接照らす必要がある場合は`SpawnLight3D`も併用する。
 外部モデルを発光させる場合は`EmissiveColor`と`EmissiveStrength`を配置前に直接指定できる。
 
+`FromCoatedPrimitive`は表面色を揃え、`Clearcoat`を1、指定した`ClearcoatRoughness`を上塗り層へ
+設定する。通常の`Roughness`は元の面、`ClearcoatRoughness`はその上へ重なる透明層だけを変える。
+車の塗装、ラッカー、濡れた面のように細い反射を残したい場合に使う。外部モデルでは2値を直接
+指定でき、どちらも0から1の有限値だけを受け付ける。
+
 シーンの物は `Scene.Graph()` へ置く。これにより有効な `FNodeId` が付き、当たり判定、
 波紋、識別子による破棄へ同じノードを渡せる。`ANode&` を受ける従来の多重定義は、
 シーン外の一時的なノード木や既存コードとの互換用であり、識別子は発行しない。
@@ -108,5 +116,6 @@ Hero->Local().position.x += 1.0f;
   （ACS の保存形式も度なので、往復しても崩れない）。
 - 負の倍率は**鏡写しとして通す**。0 だけを弾く。
 - 自己発光色は各成分0から1、強度は0から10だけを受け付ける。壊れたHDR値を描画へ渡さない。
+- 上塗り強度と上塗り粗さは0から1の有限値だけを受け付ける。元の面の粗さとは別に扱う。
 - **名前はシーンを保存すると消える。** 名前で探す作りにしないこと
   （`Scene/Snapshot/README.md` を見ること）。

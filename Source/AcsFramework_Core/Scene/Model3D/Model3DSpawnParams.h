@@ -74,6 +74,20 @@ struct FModel3DSpawnParams
 	f32 Roughness = 0.5f;
 
 	/**
+	 * 透明な上塗り層の強さ。0で無し、1で最大。
+	 *
+	 * @details 車の塗装、ラッカー、濡れた面のように、元の材質の上へ細い反射を重ねる。
+	 */
+	f32 Clearcoat = 0.0f;
+
+	/**
+	 * 上塗り層だけの粗さ。0で鋭い反射、1でぼけた反射。
+	 *
+	 * @details `Clearcoat`が0なら見た目へ影響しない。
+	 */
+	f32 ClearcoatRoughness = 0.1f;
+
+	/**
 	 * 照明を受けずに加算する自己発光色。
 	 *
 	 * @details 各成分は0から1。`EmissiveStrength`が0なら発光しない。
@@ -125,6 +139,17 @@ struct FModel3DSpawnParams
 	static FModel3DSpawnParams FromPrimitive( EMeshPrimitive3D InPrimitive, FVec3 InPosition ) noexcept;
 
 	/**
+	 * 光沢のある透明な上塗りを持つ形を、色と位置から作る。
+	 *
+	 * @param InPrimitive 使う形。
+	 * @param InPosition 置く場所。
+	 * @param InColor 表面へ使う0から1のRGB。
+	 * @param InCoatRoughness 上塗り層の0から1の粗さ。
+	 * @return 上塗り強度1の形指定。上塗り粗さの不正値はIsValidで拒否される。
+	 */
+	static FModel3DSpawnParams FromCoatedPrimitive( EMeshPrimitive3D InPrimitive, FVec3 InPosition, FVec3 InColor, f32 InCoatRoughness = 0.08f ) noexcept;
+
+	/**
 	 * 自己発光する形を色、位置、強度から作る。
 	 *
 	 * @param InPrimitive 使う形。
@@ -144,6 +169,7 @@ struct FModel3DSpawnParams
 	 * - 大きさに 0 が入っている
 	 * - 形として `Mesh` を指しているのに、モデルの場所も読込済みモデルも無い
 	 * - 読込済みモデルが `AMeshAsset` ではない
+	 * - 上塗り強度または上塗り粗さが0から1の有限値ではない
 	 * - 自己発光色が0から1の有限RGBではない
 	 * - 自己発光強度が0から10の有限値ではない
 	 */

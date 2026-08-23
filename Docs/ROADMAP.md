@@ -179,7 +179,8 @@ cameraからの距離に応じて大気へ馴染み、雲も実距離まで同�
   `GlobalIllumination()` (既定 OFF、近くの色の回り込み) を場面から触れる。
   bloom と FXAA (`PostParams().fxaa_enabled`、既定 OFF) は `PostParams()` から調整でき、
   材質も `FModel3DSpawnParams::Metallic` / `Roughness` で触れ、`FromEmissivePrimitive` なら
-  色とHDR強度だけでACSのtonemapとbloomへ繋がる自己発光形を置ける (2026-08-23)。
+  色とHDR強度だけでACSのtonemapとbloomへ繋がる自己発光形を置ける。`FromCoatedPrimitive` なら
+  色と上塗り粗さだけで、車の塗装やラッカーのような二層の反射を持つ形も置ける (2026-08-23)。
   `TryApplyVisualPreset3D`なら遮蔽、反射、間接光、bloom、露出、TAAまたはFXAAを
   `Performance`、`Balanced`、`Cinematic`の1回で揃え、適用後の個別調整も残す (2026-08-23)。
 - ~~3D エフェクトの配線 (Effekseer)~~ → **実装済み** (2026-08-21)。
