@@ -30,6 +30,7 @@ void RunModel3DSpawnerTests( CTestHarness& Harness )
 		Harness.CheckEqualF32( Params.Color.w, 1.0f, "既定は不透明" );
 		Harness.Check( !Params.bToonShading, "既定はPBR陰影" );
 		Harness.CheckEqualF32( Params.Clearcoat, 0.0f, "既定では透明な上塗りを使わない" );
+		Harness.CheckEqualF32( Params.SubsurfaceStrength, 0.0f, "既定では表面下へ光を回さない" );
 		Harness.CheckEqualF32( Params.EmissiveStrength, 0.0f, "既定では自己発光しない" );
 		Harness.Check( Params.bCastsShadow, "既定で影を落とす" );
 	}
@@ -55,6 +56,18 @@ void RunModel3DSpawnerTests( CTestHarness& Harness )
 		Harness.CheckEqualF32( Coated.Color.x, 0.75f, "指定した表面色を使う" );
 		Harness.CheckEqualF32( Coated.Clearcoat, 1.0f, "上塗り強度を最大にする" );
 		Harness.CheckEqualF32( Coated.ClearcoatRoughness, 0.06f, "上塗り粗さを設定する" );
+	}
+
+	Harness.BeginSuite( "FModel3DSpawnParams / 内部へ光が回る形を一呼出しで作る" );
+
+	{
+		const FModel3DSpawnParams Subsurface = FModel3DSpawnParams::FromSubsurfacePrimitive( EMeshPrimitive3D::Sphere, FVec3{ 0.5f, 1.0f, -2.0f }, FVec3{ 0.82f, 0.48f, 0.36f }, FVec3{ 1.0f, 0.22f, 0.12f }, 0.65f );
+		Harness.Check( Subsurface.IsValid(), "内部散乱形を作れる" );
+		Harness.Check( Subsurface.Primitive == EMeshPrimitive3D::Sphere, "指定した形を使う" );
+		Harness.CheckEqualF32( Subsurface.Position.x, 0.5f, "指定した位置を使う" );
+		Harness.CheckEqualF32( Subsurface.Color.y, 0.48f, "指定した表面色を使う" );
+		Harness.CheckEqualF32( Subsurface.SubsurfaceColor.z, 0.12f, "指定した内部色を使う" );
+		Harness.CheckEqualF32( Subsurface.SubsurfaceStrength, 0.65f, "指定した光の回り込み量を使う" );
 	}
 
 	Harness.BeginSuite( "FModel3DSpawnParams / 自己発光形を一呼出しで作る" );
@@ -106,6 +119,18 @@ void RunModel3DSpawnerTests( CTestHarness& Harness )
 		FModel3DSpawnParams InvalidClearcoat;
 		InvalidClearcoat.Clearcoat = std::numeric_limits<f32>::quiet_NaN();
 		Harness.Check( !InvalidClearcoat.IsValid(), "有限でない上塗り強度を弾く" );
+
+		FModel3DSpawnParams NegativeSubsurface;
+		NegativeSubsurface.SubsurfaceStrength = -0.01f;
+		Harness.Check( !NegativeSubsurface.IsValid(), "負の光の回り込み量を弾く" );
+
+		FModel3DSpawnParams ExcessiveSubsurface;
+		ExcessiveSubsurface.SubsurfaceStrength = 1.01f;
+		Harness.Check( !ExcessiveSubsurface.IsValid(), "上限を超える光の回り込み量を弾く" );
+
+		FModel3DSpawnParams InvalidSubsurfaceColor;
+		InvalidSubsurfaceColor.SubsurfaceColor = FVec3{ 1.0f, std::numeric_limits<f32>::quiet_NaN(), 0.2f };
+		Harness.Check( !InvalidSubsurfaceColor.IsValid(), "有限でない内部色を弾く" );
 
 		FModel3DSpawnParams NegativeEmission;
 		NegativeEmission.EmissiveStrength = -0.1f;
@@ -181,6 +206,21 @@ void RunModel3DSpawnerTests( CTestHarness& Harness )
 		{
 			Harness.CheckEqualF32( Mesh->Material().pbr.clearcoat, 1.0f, "上塗り強度を渡す" );
 			Harness.CheckEqualF32( Mesh->Material().pbr.clearcoatRoughness, 0.04f, "上塗り粗さを渡す" );
+		}
+	}
+
+	Harness.BeginSuite( "CModel3DSpawner / 内部散乱をACSのPBR材質へ渡す" );
+
+	{
+		TObjectPtr<ANode> Parent = NewObject<ANode>();
+		const FModel3DSpawnParams Params = FModel3DSpawnParams::FromSubsurfacePrimitive( EMeshPrimitive3D::Sphere, FVec3{}, FVec3{ 0.80f, 0.45f, 0.32f }, FVec3{ 1.0f, 0.18f, 0.08f }, 0.72f );
+		const AMeshComponent3D* const Mesh = MeshOf( CModel3DSpawner::SpawnInto( *Parent, Params ) );
+		Harness.Check( Mesh != nullptr, "内部散乱形を置ける" );
+		Harness.Check( Mesh != nullptr && Mesh->MaterialLoaded(), "PBR材質を確定する" );
+		if ( Mesh != nullptr )
+		{
+			Harness.CheckEqualF32( Mesh->Material().pbr.subsurface, 0.72f, "光の回り込み量を渡す" );
+			Harness.CheckEqualF32( Mesh->Material().pbr.subsurfaceColor.y, 0.18f, "内部色を渡す" );
 		}
 	}
 

@@ -501,6 +501,13 @@ void ADemo3DScene::OnEnter() noexcept
 	CoatedMarker.Name = FStringView( "CoatedMarker" );
 	if ( SpawnModel3D( CoatedMarker ) == nullptr ) ACS_LOG_WARN( "Demo3D: 光沢コートマーカーを配置できなかった" );
 
+	// 肌や蝋のように表面のすぐ下へ光を回し、影の境目が硬く見えない球を置く。
+	FModel3DSpawnParams SubsurfaceMarker = FModel3DSpawnParams::FromSubsurfacePrimitive( EMeshPrimitive3D::Sphere, FVec3{ 0.4f, 0.42f, -2.2f }, FVec3{ 0.82f, 0.46f, 0.34f }, FVec3{ 1.0f, 0.18f, 0.08f }, 0.68f );
+	SubsurfaceMarker.Scale = FVec3{ 0.42f, 0.42f, 0.42f };
+	SubsurfaceMarker.Roughness = 0.58f;
+	SubsurfaceMarker.Name = FStringView( "SubsurfaceMarker" );
+	if ( SpawnModel3D( SubsurfaceMarker ) == nullptr ) ACS_LOG_WARN( "Demo3D: 内部散乱マーカーを配置できなかった" );
+
 	// ACS既定の二段影と縁光を一呼出しで選び、PBRとは異なるイラスト調の球を置く。
 	FModel3DSpawnParams ToonMarker = FModel3DSpawnParams::FromToonPrimitive( EMeshPrimitive3D::Sphere, FVec3{ 1.8f, 0.42f, -2.2f }, FVec3{ 0.95f, 0.58f, 0.10f } );
 	ToonMarker.Scale = FVec3{ 0.42f, 0.42f, 0.42f };

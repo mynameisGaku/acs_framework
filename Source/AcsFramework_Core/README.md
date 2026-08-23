@@ -100,6 +100,10 @@ XZの正負4方向、1から256までの段数、1段の寸法、材質、衝突
 `AUi3DScene::TryApplyVisualPreset3D`はその場面窓口だけを担う。GPU資源、描画順、実際の各効果は
 ACSへ任せ、適用後の個別調整口も残す。
 
+3D材質の内部散乱もモデル1個ごとの決定論的な値なのでSubsystemにはしない。
+`FModel3DSpawnParams`が内部色と強度を検証し、`CModel3DSpawner`が既存のACS PBR材質へ渡す。
+画面用の一時資源、材質の有無による経路選択、実際の散乱処理はACSへ任せる。
+
 3D選択は`AUi3DScene::MakeScreenRay3D`と`Raycast3D`、1回で済ませる`PickScreen3D`へまとめる。
 内部では`CScenePicker`からACSの`CSceneNodeGraph`が持つ実形状判定を呼び、再実装しない。
 世代付き識別子を使いやすいノードポインタと世界座標の命中情報へ変換し、高速な境界箱判定は

@@ -5,8 +5,8 @@
 
 namespace
 {
-	/** 自己発光色として使える有限な0から1のRGBか返す。 */
-	bool IsEmissiveColorValid_Internal( FVec3 Color ) noexcept
+	/** 材質色として使える有限な0から1のRGBか返す。 */
+	bool IsUnitColor3Valid_Internal( FVec3 Color ) noexcept
 	{
 		return std::isfinite( Color.x ) && std::isfinite( Color.y ) && std::isfinite( Color.z )
 			&& Color.x >= 0.0f && Color.x <= 1.0f
@@ -61,6 +61,16 @@ FModel3DSpawnParams FModel3DSpawnParams::FromCoatedPrimitive( EMeshPrimitive3D I
 }
 
 
+FModel3DSpawnParams FModel3DSpawnParams::FromSubsurfacePrimitive( EMeshPrimitive3D InPrimitive, FVec3 InPosition, FVec3 InColor, FVec3 InSubsurfaceColor, f32 InStrength ) noexcept
+{
+	FModel3DSpawnParams Params = FromPrimitive( InPrimitive, InPosition );
+	Params.Color = FVec4{ InColor.x, InColor.y, InColor.z, 1.0f };
+	Params.SubsurfaceStrength = InStrength;
+	Params.SubsurfaceColor = InSubsurfaceColor;
+	return Params;
+}
+
+
 FModel3DSpawnParams FModel3DSpawnParams::FromEmissivePrimitive( EMeshPrimitive3D InPrimitive, FVec3 InPosition, FVec3 InColor, f32 InStrength ) noexcept
 {
 	FModel3DSpawnParams Params = FromPrimitive( InPrimitive, InPosition );
@@ -83,7 +93,9 @@ bool FModel3DSpawnParams::IsValid() const noexcept
 	if ( MeshAsset && MeshAsset->Type() != AMeshAsset::StaticType() ) return false;
 	if ( !IsMaterialRatioValid_Internal( Clearcoat ) ) return false;
 	if ( !IsMaterialRatioValid_Internal( ClearcoatRoughness ) ) return false;
-	if ( !IsEmissiveColorValid_Internal( EmissiveColor ) ) return false;
+	if ( !IsMaterialRatioValid_Internal( SubsurfaceStrength ) ) return false;
+	if ( !IsUnitColor3Valid_Internal( SubsurfaceColor ) ) return false;
+	if ( !IsUnitColor3Valid_Internal( EmissiveColor ) ) return false;
 	if ( !std::isfinite( EmissiveStrength ) || EmissiveStrength < 0.0f || EmissiveStrength > 10.0f ) return false;
 
 	return true;

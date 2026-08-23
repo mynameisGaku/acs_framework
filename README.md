@@ -47,7 +47,7 @@ WASDで移動、左Shiftで走行、矢印キーで視点、Spaceでジャンプ
 
 | | |
 |---|---|
-| 3D を置く | `SpawnModel3D()` / `SpawnAnimatedModel3D()`と、それぞれの操作対象版・衝突版・操作＋衝突版、`SpawnBlock3D()`、`SpawnSphere3D()`、`SpawnRoom3D()`、`SpawnCorridor3D()`、`SpawnDoorway3D()`、`SpawnFence3D()`、`SpawnStairs3D()`、`DestroyCollidableModel3D()`、`SpawnNode3D()`、FBX の取り込み、材質 (metallic / roughness / HDR自己発光) |
+| 3D を置く | `SpawnModel3D()` / `SpawnAnimatedModel3D()`と、それぞれの操作対象版・衝突版・操作＋衝突版、`SpawnBlock3D()`、`SpawnSphere3D()`、`SpawnRoom3D()`、`SpawnCorridor3D()`、`SpawnDoorway3D()`、`SpawnFence3D()`、`SpawnStairs3D()`、`DestroyCollidableModel3D()`、`SpawnNode3D()`、FBX の取り込み、材質 (metallic / roughness / HDR自己発光 / 内部散乱) |
 | 3D画像を置く | `SpawnImage3D()`の固定板、`SpawnBillboard3D()`のカメラ追従板、透過PNG、深度判定、HDR合成 |
 | 3D を照らす | `SpawnLight3D()`、方向だけで置ける太陽、位置と距離だけで置ける点光源 |
 | 3D 地面 | `SpawnGround3D()`、広さだけで置ける表示面と直下の厚み付き衝突 |
@@ -85,6 +85,9 @@ SpawnModel3D( FModel3DSpawnParams::FromEmissivePrimitive( EMeshPrimitive3D::Sphe
 
 // 色と上塗り粗さだけで、車の塗装のような光沢コート球を置く
 SpawnModel3D( FModel3DSpawnParams::FromCoatedPrimitive( EMeshPrimitive3D::Sphere, FVec3{ 0, 1, 2 }, FVec3{ 0.8f, 0.1f, 0.06f }, 0.05f ) );
+
+// 表面色と内部色だけで、肌や蝋のように光が回り込む球を置く
+SpawnModel3D( FModel3DSpawnParams::FromSubsurfacePrimitive( EMeshPrimitive3D::Sphere, FVec3{ 1, 1, 2 }, FVec3{ 0.82f, 0.46f, 0.34f }, FVec3{ 1.0f, 0.18f, 0.08f } ) );
 
 // 色と位置だけで、二段影と縁光を持つトゥーン球を置く
 SpawnModel3D( FModel3DSpawnParams::FromToonPrimitive( EMeshPrimitive3D::Sphere, FVec3{ -2, 1, 2 }, FVec3{ 0.95f, 0.58f, 0.10f } ) );

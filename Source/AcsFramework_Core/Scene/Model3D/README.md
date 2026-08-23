@@ -39,6 +39,9 @@ SpawnModel3D( FModel3DSpawnParams::FromEmissivePrimitive( EMeshPrimitive3D::Sphe
 // 車の塗装やラッカーのような透明な上塗りは、色と上塗り粗さだけで作る
 SpawnModel3D( FModel3DSpawnParams::FromCoatedPrimitive( EMeshPrimitive3D::Sphere, FVec3{ 0.0f, 1.0f, 2.0f }, FVec3{ 0.78f, 0.10f, 0.06f }, 0.05f ) );
 
+// 肌や蝋のように表面のすぐ下へ光が回る材質は、表面色と内部色だけで作る
+SpawnModel3D( FModel3DSpawnParams::FromSubsurfacePrimitive( EMeshPrimitive3D::Sphere, FVec3{ 1.0f, 1.0f, 2.0f }, FVec3{ 0.82f, 0.46f, 0.34f }, FVec3{ 1.0f, 0.18f, 0.08f } ) );
+
 // ACS既定の二段影と縁光を使うイラスト調の形も、色と位置だけで作る
 SpawnModel3D( FModel3DSpawnParams::FromToonPrimitive( EMeshPrimitive3D::Sphere, FVec3{ 2.0f, 1.0f, 2.0f }, FVec3{ 0.95f, 0.58f, 0.10f } ) );
 
@@ -102,6 +105,11 @@ DestroyCollidableModel3D( SolidObstacle );
 車の塗装、ラッカー、濡れた面のように細い反射を残したい場合に使う。外部モデルでは2値を直接
 指定でき、どちらも0から1の有限値だけを受け付ける。
 
+`FromSubsurfacePrimitive`は表面色、内部を通って見える色、光の回り込み量をACSのPBR材質へ渡す。
+肌、蝋、乳白素材のように影の境目を柔らかく見せたい場合に使う。描画器や画面用の一時資源は
+Frameworkへ複製せず、ACSが必要な場面だけ有効にする内部散乱経路をそのまま利用する。外部モデルでは
+`SubsurfaceColor`と`SubsurfaceStrength`を直接指定でき、どちらも0から1の有限値だけを受け付ける。
+
 `FromToonPrimitive`は`bToonShading`を有効にし、ACS既定の二段影、縁光、段階的な反射を使う。
 細かなトゥーン値をFramework側へ複製せず、ACSが調整した既定値をそのまま利用する。PBR専用の
 上塗りはトゥーン陰影では使われないため、光沢コートと同時に指定しない。
@@ -138,5 +146,6 @@ DestroyCollidableModel3D( SolidObstacle );
 - 負の倍率は**鏡写しとして通す**。0 だけを弾く。
 - 自己発光色は各成分0から1、強度は0から10だけを受け付ける。壊れたHDR値を描画へ渡さない。
 - 上塗り強度と上塗り粗さは0から1の有限値だけを受け付ける。元の面の粗さとは別に扱う。
+- 内部色と光の回り込み量は0から1の有限値だけを受け付ける。強度0なら従来と同じ不透明PBRになる。
 - **名前はシーンを保存すると消える。** 名前で探す作りにしないこと
   （`Scene/Snapshot/README.md` を見ること）。

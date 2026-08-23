@@ -95,6 +95,16 @@ struct FModel3DSpawnParams
 	f32 ClearcoatRoughness = 0.1f;
 
 	/**
+	 * 表面のすぐ下へ光を回り込ませる強さ。0で無し、1で最大。
+	 *
+	 * @details 肌、蝋、乳白素材のような、影の境目が柔らかい非金属に使う。
+	 */
+	f32 SubsurfaceStrength = 0.0f;
+
+	/** 内部を通って見える0から1のRGB。`SubsurfaceStrength`が0なら見た目へ影響しない。 */
+	FVec3 SubsurfaceColor{ 1.0f, 0.3f, 0.2f };
+
+	/**
 	 * 照明を受けずに加算する自己発光色。
 	 *
 	 * @details 各成分は0から1。`EmissiveStrength`が0なら発光しない。
@@ -167,6 +177,18 @@ struct FModel3DSpawnParams
 	static FModel3DSpawnParams FromCoatedPrimitive( EMeshPrimitive3D InPrimitive, FVec3 InPosition, FVec3 InColor, f32 InCoatRoughness = 0.08f ) noexcept;
 
 	/**
+	 * 光が表面のすぐ下へ回り込む形を、色と位置から作る。
+	 *
+	 * @param InPrimitive 使う形。
+	 * @param InPosition 置く場所。
+	 * @param InColor 表面へ使う0から1のRGB。
+	 * @param InSubsurfaceColor 内部を通って見える0から1のRGB。
+	 * @param InStrength 表面下へ光を回す0から1の強さ。
+	 * @return 肌や蝋に使える形指定。不正値はIsValidで拒否される。
+	 */
+	static FModel3DSpawnParams FromSubsurfacePrimitive( EMeshPrimitive3D InPrimitive, FVec3 InPosition, FVec3 InColor, FVec3 InSubsurfaceColor = FVec3{ 1.0f, 0.3f, 0.2f }, f32 InStrength = 0.55f ) noexcept;
+
+	/**
 	 * 自己発光する形を色、位置、強度から作る。
 	 *
 	 * @param InPrimitive 使う形。
@@ -187,6 +209,7 @@ struct FModel3DSpawnParams
 	 * - 形として `Mesh` を指しているのに、モデルの場所も読込済みモデルも無い
 	 * - 読込済みモデルが `AMeshAsset` ではない
 	 * - 上塗り強度または上塗り粗さが0から1の有限値ではない
+	 * - 表面下へ光を回す強さまたは色が0から1の有限値ではない
 	 * - 自己発光色が0から1の有限RGBではない
 	 * - 自己発光強度が0から10の有限値ではない
 	 */
