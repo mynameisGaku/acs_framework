@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 #pragma once
 
-#include <acs.h>
+#include "AcsFramework_Core/UI/Ui3DScene.h"
 
 using namespace acs;
 using namespace acs::game;
@@ -14,11 +14,12 @@ using namespace acs::game;
  * **何も設定しないと何が出るか**を測るためのもの。
  *
  * 空・太陽・大気・影・環境光・遮蔽・トーンマップは、1 行も書かなくても効く。
- * 雲・反射・SSGI・FXAAは必要な場面だけ有効にする。ここに書いてあるのは «何をどこに置くか» だけ。
+ * 雲・反射・SSGI・FXAAは必要な場面だけ有効にする。ここに書いてあるのは、公開場面APIで
+ * «何をどこに置くか» だけ。
  *
  * 起動場面を差し替えるには `CAcsFrameworkApp::CreateInitialScene` を override する。
  */
-class AMinimalScene : public ALegacyScene3DAdapter
+class AMinimalScene : public AUi3DScene
 {
 public:
 	/** 物を置いて、カメラを引く。 */

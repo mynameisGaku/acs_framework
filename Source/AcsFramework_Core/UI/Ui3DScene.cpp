@@ -6,6 +6,7 @@
 #include "AcsFramework_Core/Scene/Animation3D/AnimatedModel3DSpawner.h"
 #include "AcsFramework_Core/Scene/Character3D/ThirdPersonCharacter3D.h"
 #include "AcsFramework_Core/Scene/Character3D/ThirdPersonCharacter3DSpawner.h"
+#include "AcsFramework_Core/Scene/Ground3D/Ground3DSpawner.h"
 #include "AcsFramework_Core/Scene/Interaction3D/InteractableModel3DSpawner.h"
 #include "AcsFramework_Core/Scene/Light3D/Light3DSpawner.h"
 #include "AcsFramework_Core/Scene/Model3D/Model3DSpawner.h"
@@ -207,6 +208,22 @@ ANode* AUi3DScene::SpawnNode3D( FStringView Name, ANode* Parent ) noexcept
 {
 	const FScene3DSpawnResult Spawned = Graph().TrySpawn( Name, Parent );
 	return Spawned ? Spawned.Node : nullptr;
+}
+
+
+FCollidableModel3DSpawnResult AUi3DScene::SpawnGround3D(
+	const FGround3DSpawnParams& Params, ANode* Parent ) noexcept
+{
+	return CGround3DSpawner::SpawnInto( Graph(), m_Collision3D, Params, Parent );
+}
+
+
+FCollidableModel3DSpawnResult AUi3DScene::SpawnGround3D( FVec2 Size,
+	FVec3 Position, u32 CollisionLayer, ANode* Parent ) noexcept
+{
+	FGround3DSpawnParams Params = FGround3DSpawnParams::FromSize( Size, Position );
+	Params.CollisionLayer = CollisionLayer;
+	return SpawnGround3D( Params, Parent );
 }
 
 

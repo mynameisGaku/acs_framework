@@ -33,6 +33,7 @@ ACS のモジュールは **438 個**ある。この枠組みが窓口を用意�
 | 入力の割り当て | `CActionBindingTable`、`FActionKeyRebindState`、`CBoundActionSource` |
 | 画面・フェード・ロード中・ポーズ | `CScreenSubsystem`、`CFadeSubsystem`、`CLoadingScreenSubsystem`、`CPauseScreenSubsystem` |
 | ノード生成・シーン保存 | `CPrefabSubsystem`、`CSceneSnapshotSubsystem` |
+| 3D 地面 | `AUi3DScene::SpawnGround3D`、`FGround3DSpawnParams`、厚み付き箱衝突 |
 | 3D 水面 | `AUi3DScene::SpawnWater3D`、`FWater3DSpawnParams`、ACSの動的波紋 |
 | 3D 天候 | `AWeather3DScene`、`FWeather3DAppearance`、ACSの`CWeatherSystem` |
 | 3D エフェクト | `AEffect3DScene`、`CEffect3DPlayer`、同梱の Effekseer |
@@ -248,6 +249,10 @@ cameraからの距離に応じて大気へ馴染み、雲も実距離まで同�
   `AUi3DScene::SpawnWater3D`へ位置と広さを
   渡すだけで、ACSの屈折、反射、泡、波紋を使う識別子付き水面を置ける。高度な描画実装を
   複製せず、値の検証とシーンへの接続だけをFrameworkが受け持つ
+- ~~歩ける3D地面の簡単配置~~ → **実装済み** (2026-08-23)。
+  `SpawnGround3D( FVec2{ 16.0f, 12.0f } )`だけで、同じ尺度の表示面と直下の厚み付き箱衝突を置く。
+  上面位置、厚み、PBR材質、衝突レイヤーを`FGround3DSpawnParams`で調整でき、登録失敗時は
+  生成ノードも巻き戻す
 - ~~3D天候の遷移と描画接続~~ → **実装済み** (2026-08-22)。`AWeather3DScene`で
   `SetWeather( EWeatherKind::Storm, 2.5f )`と書くだけで、ACSの天候状態を雲量、雲影、霧、
   空色、IBL環境光へ同じ遷移率で反映する。雨雪の素材は作品ごとに選べるよう、降水密度と

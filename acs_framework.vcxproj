@@ -476,6 +476,10 @@
     <None Include="Source\AcsFramework_Core\Scene\Visual3D\README.md" />
     <None Include="Source\AcsFramework_Core\Scene\Visual3D\Test\VisualPreset3DTest.cpp" />
     <ClInclude Include="Source\AcsFramework_Core\Scene\Visual3D\VisualPreset3D.h" />
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Ground3D\Ground3DSpawner.h" />
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Ground3D\Ground3DSpawnParams.h" />
+    <None Include="Source\AcsFramework_Core\Scene\Ground3D\README.md" />
+    <None Include="Source\AcsFramework_Core\Scene\Ground3D\Test\Ground3DSpawnerTest.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Common\Pch.cpp">
@@ -678,6 +682,8 @@
     <ClCompile Include="Source\AcsFramework_Core\Scene\Trigger3D\ProximityTrigger3DParams.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Scene\Trigger3D\ProximityTrigger3DUpdateResult.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Scene\Visual3D\VisualPreset3D.cpp" />
+    <ClCompile Include="Source\AcsFramework_Core\Scene\Ground3D\Ground3DSpawner.cpp" />
+    <ClCompile Include="Source\AcsFramework_Core\Scene\Ground3D\Ground3DSpawnParams.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

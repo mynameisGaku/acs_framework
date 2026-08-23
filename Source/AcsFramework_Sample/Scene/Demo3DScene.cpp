@@ -2,6 +2,7 @@
 #include "AcsFramework_Sample/Scene/Demo3DScene.h"
 
 #include "AcsFramework_Core/Scene/Animation3D/AnimatedModel3DSpawner.h"
+#include "AcsFramework_Core/Scene/Ground3D/Ground3DSpawnParams.h"
 #include "AcsFramework_Core/Scene/Light3D/Light3DSpawnParams.h"
 #include "AcsFramework_Core/Scene/Model3D/Model3DSpawnParams.h"
 #include "AcsFramework_Core/Scene/Sprite3D/Sprite3DSpawner.h"
@@ -349,18 +350,18 @@ namespace
 	 * @param Name ノード名。
 	 * @return 置いた平面ノードと衝突形状。どちらかに失敗したら空の結果。
 	 */
-	FCollidableModel3DSpawnResult SpawnDemoPlane( AUi3DScene& Scene, FVec3 Position,
+	FCollidableModel3DSpawnResult SpawnDemoGround( AUi3DScene& Scene, FVec3 Position,
 		FVec3 Scale, FVec4 Color,
 		f32 Roughness, FStringView Name ) noexcept
 	{
-		FModel3DSpawnParams Plane = FModel3DSpawnParams::FromPrimitive( EMeshPrimitive3D::Plane, Position );
-		Plane.Scale = Scale;
-		Plane.Color = Color;
-		Plane.Roughness = Roughness;
-		Plane.bCastsShadow = false;
-		Plane.Name = Name;
-		return Scene.SpawnCollidableModel3D( Plane, FCollisionShape3DParams::FromBox(
-			FVec3{ 0.0f, -0.5f, 0.0f }, FVec3{ 0.5f, 0.5f, 0.5f }, kCharacterCollisionLayer ) );
+		FGround3DSpawnParams Ground = FGround3DSpawnParams::FromSize(
+			FVec2{ Scale.x, Scale.z }, Position );
+		Ground.Thickness = Scale.y;
+		Ground.Color = Color;
+		Ground.Roughness = Roughness;
+		Ground.CollisionLayer = kCharacterCollisionLayer;
+		Ground.Name = Name;
+		return Scene.SpawnGround3D( Ground );
 	}
 
 	/**
@@ -427,17 +428,17 @@ void ADemo3DScene::OnEnter() noexcept
 
 	// 磨いた床。水面の直下だけ穴を空け、屈折が極浅い床を拾って白くならないようにする。
 	constexpr FVec4 FloorColor{ 0.55f, 0.56f, 0.58f, 1.0f };
-	const FCollidableModel3DSpawnResult FloorLeft = SpawnDemoPlane( *this, FVec3{ -1.75f, 0.0f, 0.0f }, FVec3{ 5.5f, 1.0f, kFloorSize },
+	const FCollidableModel3DSpawnResult FloorLeft = SpawnDemoGround( *this, FVec3{ -1.75f, 0.0f, 0.0f }, FVec3{ 5.5f, 1.0f, kFloorSize },
 		FloorColor, 0.10f, FStringView( "FloorLeft" ) );
-	const FCollidableModel3DSpawnResult FloorFront = SpawnDemoPlane( *this, FVec3{ 2.7f, 0.0f, -3.625f }, FVec3{ 3.4f, 1.0f, 1.75f },
+	const FCollidableModel3DSpawnResult FloorFront = SpawnDemoGround( *this, FVec3{ 2.7f, 0.0f, -3.625f }, FVec3{ 3.4f, 1.0f, 1.75f },
 		FloorColor, 0.10f, FStringView( "FloorFront" ) );
-	const FCollidableModel3DSpawnResult FloorBack = SpawnDemoPlane( *this, FVec3{ 2.7f, 0.0f, 2.275f }, FVec3{ 3.4f, 1.0f, 4.45f },
+	const FCollidableModel3DSpawnResult FloorBack = SpawnDemoGround( *this, FVec3{ 2.7f, 0.0f, 2.275f }, FVec3{ 3.4f, 1.0f, 4.45f },
 		FloorColor, 0.10f, FStringView( "FloorBack" ) );
-	const FCollidableModel3DSpawnResult FloorRight = SpawnDemoPlane( *this, FVec3{ 4.45f, 0.0f, 0.0f }, FVec3{ 0.10f, 1.0f, kFloorSize },
+	const FCollidableModel3DSpawnResult FloorRight = SpawnDemoGround( *this, FVec3{ 4.45f, 0.0f, 0.0f }, FVec3{ 0.10f, 1.0f, kFloorSize },
 		FloorColor, 0.10f, FStringView( "FloorRight" ) );
 
 	// 水底。水面から十分離し、ACSの吸収と散乱が色として現れる深さを作る。
-	const FCollidableModel3DSpawnResult PoolBottom = SpawnDemoPlane( *this, FVec3{ kWaterPosition.x, -0.76f, kWaterPosition.z },
+	const FCollidableModel3DSpawnResult PoolBottom = SpawnDemoGround( *this, FVec3{ kWaterPosition.x, -0.76f, kWaterPosition.z },
 		FVec3{ kWaterSize.x, 1.0f, kWaterSize.y }, FVec4{ 0.08f, 0.16f, 0.20f, 1.0f },
 		0.82f, FStringView( "PoolBottom" ) );
 

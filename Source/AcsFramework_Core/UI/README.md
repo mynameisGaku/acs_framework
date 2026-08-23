@@ -42,7 +42,8 @@ bloomや輪郭補正の影響を受けず、3D場面より手前、ポーズ・�
 `SpawnCollidableAnimatedModel3D`は骨付きモデルと衝突、
 `SpawnInteractableCollidableAnimatedModel3D`は骨付きモデルと衝突と視線操作、
 `SpawnThirdPersonCharacter3D`は静的または骨付きモデルと自己衝突、移動、追従カメラ、任意アニメーション、
-`SpawnLight3D`は太陽または点光源、`SpawnWater3D`は水面を扱う。パスを渡した場合だけ場面共通の
+`SpawnGround3D`は表示面と直下の厚み付き箱、`SpawnLight3D`は太陽または点光源、
+`SpawnWater3D`は水面を扱う。パスを渡した場合だけ場面共通の
 asset窓口で読み、読込済みassetはそのまま使う。
 
 ```cpp
@@ -54,6 +55,7 @@ SpawnInteractableCollidableModel3D(
     FStringView( "E: OPEN" ), FCollisionShape3DParams::FromBounds( 0x2u ) );
 SpawnImage3D( FSprite3DSpawnParams::FromImage(
     FStringView( "Textures/Sign.png" ), FVec3{ 0.0f, 2.0f, 3.0f }, FVec2{ 1.2f, 0.6f } ) );
+SpawnGround3D( FVec2{ 16.0f, 12.0f } );
 SpawnLight3D( FLight3DSpawnParams::Sun( FVec3{ -0.47f, 0.58f, 0.66f } ) );
 
 ANode* const Vehicle = SpawnNode3D( FStringView( "Vehicle" ) );

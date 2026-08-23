@@ -50,6 +50,10 @@ Subsystemにはしない。`AEffect3DScene`がscene単位で`CEffect3DPlayer`を
 `FWater3DSpawnParams`は描画器なしで検証できる値、`CWater3DSpawner`はACSの平面メッシュと
 `AWaterSurface3DComponent`を識別子付きノードへ接続する状態なしのアダプターとする。
 
+3D地面も局所的な生成処理なのでSubsystemにはしない。`FGround3DSpawnParams`は上面位置、広さ、
+厚み、材質、衝突レイヤーを検証し、`CGround3DSpawner`は既存のモデル生成と場面衝突登録だけを
+組み合わせる。表示面と直下の箱は同じノード尺度を使い、後段失敗時は生成ノードも巻き戻す。
+
 3D天候もsceneごとの空、雲、霧、環境光を変えるためSubsystemにはしない。
 `FWeather3DAppearance`は`CWeatherSystem`の状態だけから決まる検証可能な値、
 `AWeather3DScene`は派生場面が設定した晴天時の環境を基準として記録し、相対値を毎フレーム

@@ -22,6 +22,7 @@ using namespace acs;
 using namespace acs::game;
 
 struct FAnimatedModel3DSpawnParams;
+struct FGround3DSpawnParams;
 struct FLight3DSpawnParams;
 struct FModel3DSpawnParams;
 struct FSpatialPlayRequest;
@@ -208,6 +209,30 @@ public:
 	 * @return 場面の世代付き識別子を持つ空ノード。親または生成に失敗したらnullptr。
 	 */
 	ANode* SpawnNode3D( FStringView Name = FStringView{}, ANode* Parent = nullptr ) noexcept;
+
+	/**
+	 * 表示用平面と、その直下に収まる歩ける箱型衝突を1回で場面へ置く。
+	 *
+	 * @param Params 上面位置、広さ、厚み、見た目、衝突レイヤー。
+	 * @param Parent この場面が所有する親。空ならroot直下。
+	 * @return 地面ノードと衝突識別子。失敗時は空で、半端な生成物を残さない。
+	 */
+	FCollidableModel3DSpawnResult SpawnGround3D( const FGround3DSpawnParams& Params,
+		ANode* Parent = nullptr ) noexcept;
+
+	/**
+	 * 既定の見た目と厚みを使い、広さだけで歩ける3D地面を置く。
+	 *
+	 * @param Size X方向とZ方向の全幅。
+	 * @param Position 配置先親から見た地面上面の中心位置。root直下ではworld位置。
+	 * @param CollisionLayer 地面が属する非0の衝突レイヤー。
+	 * @param Parent この場面が所有する親。空ならroot直下。
+	 * @return 地面ノードと衝突識別子。入力または登録に失敗したら空の結果。
+	 */
+	FCollidableModel3DSpawnResult SpawnGround3D( FVec2 Size,
+		FVec3 Position = FVec3{},
+		u32 CollisionLayer = CCollisionWorld3D::kAllLayers,
+		ANode* Parent = nullptr ) noexcept;
 
 	/**
 	 * プリミティブまたは静的3Dモデルを、必要な読み込みを含めて1回で場面へ置く。

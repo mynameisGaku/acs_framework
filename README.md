@@ -49,6 +49,7 @@ WASDで移動、左Shiftで走行、矢印キーで視点、Spaceでジャンプ
 | 3D を置く | `SpawnModel3D()` / `SpawnAnimatedModel3D()`と、それぞれの操作対象版・衝突版・操作＋衝突版、`SpawnNode3D()`、FBX の取り込み、材質 (metallic / roughness / HDR自己発光) |
 | 3D画像を置く | `SpawnImage3D()`の固定板、`SpawnBillboard3D()`のカメラ追従板、透過PNG、深度判定、HDR合成 |
 | 3D を照らす | `SpawnLight3D()`、方向だけで置ける太陽、位置と距離だけで置ける点光源 |
+| 3D 地面 | `SpawnGround3D()`、広さだけで置ける表示面と直下の厚み付き衝突 |
 | 動かす | `SpawnThirdPersonCharacter3D()`でモデル生成・自己衝突・移動・向き・追従カメラを一括化。既存ノードには`BindThirdPersonCharacter3D()` |
 | 操作を変える | UIでキーボード、ゲームパッドのボタン・軸を選び、自動保存して次回起動時に復元 |
 | カメラで追う | `CNodeOrbitCamera3D`、人物の注視点追従、回転・距離操作、遮蔽物回避 |
@@ -92,6 +93,9 @@ SpawnModel3D( FModel3DSpawnParams::FromToonPrimitive( EMeshPrimitive3D::Sphere, 
 FModel3DSpawnParams Model = FModel3DSpawnParams::FromMesh( FStringView( "Models/Robot.fbx" ), Position );
 SpawnModel3D( Model );
 
+// 広さだけで、表示面とその直下1mの歩ける衝突を同時に置く
+const FCollidableModel3DSpawnResult Ground = SpawnGround3D( FVec2{ 16.0f, 12.0f } );
+
 // 遮蔽、反射、間接光、bloom、露出、輪郭補正を標準品質へ揃える
 TryApplyVisualPreset3D( EVisualPreset3D::Balanced );
 
@@ -106,12 +110,6 @@ FModel3DSpawnParams Wall = FModel3DSpawnParams::FromPrimitive(
     EMeshPrimitive3D::Cube, FVec3{ 4.0f, 0.5f, 0.0f } );
 const FCollidableModel3DSpawnResult SolidWall = SpawnCollidableModel3D(
     Wall, FCollisionShape3DParams::FromBounds( 0x2u ) );
-
-// 厚さのないPlaneは、歩ける厚みをローカル箱で明示する
-const FCollidableModel3DSpawnResult Floor = SpawnCollidableModel3D(
-    FModel3DSpawnParams::FromPrimitive( EMeshPrimitive3D::Plane, FVec3{} ),
-    FCollisionShape3DParams::FromBox(
-        FVec3{ 0.0f, -0.5f, 0.0f }, FVec3{ 0.5f, 0.5f, 0.5f }, 0x2u ) );
 
 // 複数の見た目を1個として動かす空ノードを作り、その下へモデルを置く
 ANode* const Robot = SpawnNode3D( FStringView( "Robot" ) );

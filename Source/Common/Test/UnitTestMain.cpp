@@ -71,6 +71,7 @@ void RunThirdPersonCharacter3DTests( CTestHarness& Harness );
 void RunSceneCollision3DTests( CTestHarness& Harness );
 void RunProximityTrigger3DTests( CTestHarness& Harness );
 void RunDebugDraw3DQueueTests( CTestHarness& Harness );
+void RunGround3DSpawnerTests( CTestHarness& Harness );
 void RunLight3DSpawnerTests( CTestHarness& Harness );
 void RunWater3DSpawnerTests( CTestHarness& Harness );
 void RunWeather3DAppearanceTests( CTestHarness& Harness );
@@ -129,6 +130,7 @@ int main()
 	RunSceneCollision3DTests( Harness );
 	RunProximityTrigger3DTests( Harness );
 	RunDebugDraw3DQueueTests( Harness );
+	RunGround3DSpawnerTests( Harness );
 	RunLight3DSpawnerTests( Harness );
 	RunWater3DSpawnerTests( Harness );
 	RunWeather3DAppearanceTests( Harness );
