@@ -21,6 +21,75 @@ public:
 	/** サブシステムの型 ID と診断名を実装する。 */
 	ACS_SUBSYSTEM_KIND( CLoadingScreenSubsystem )
 
+	/** 局所scopeだけが使う、世代検証付き内部操作の非所有アダプター。 */
+	class FScopeAdapter final
+	{
+	public:
+		/** 操作対象を非所有で保持する。 */
+		explicit FScopeAdapter( CLoadingScreenSubsystem& Owner ) noexcept : m_Owner( &Owner ) {}
+
+		/** 要求追従を取得し、成功時の世代を返す。 */
+		bool FollowRequest( const CAssetLoaderSubsystem& Loader, FAssetLoadRequest Request, const FString& Message, u64& Revision )
+		{
+			return m_Owner->FollowScopedRequest_Internal( Loader, Request, Message, Revision );
+		}
+
+		/** 要求と追従世代が現在の所有状態か返す。 */
+		bool IsFollowCurrent( FAssetLoadRequest Request, u64 Revision ) const noexcept
+		{
+			return m_Owner->IsScopedFollowCurrent_Internal( Request, Revision );
+		}
+
+		/** 要求と追従世代が一致する場合だけ解除する。 */
+		bool UnfollowRequest( FAssetLoadRequest Request, u64 Revision ) noexcept
+		{
+			return m_Owner->UnfollowScopedRequest_Internal( Request, Revision );
+		}
+
+		/** 手動表示を取得し、成功時の世代を返す。 */
+		bool AcquireDisplay( const FString& Message, u64& Revision )
+		{
+			return m_Owner->AcquireDisplayScope_Internal( Message, Revision );
+		}
+
+		/** 表示世代が現在の所有状態か返す。 */
+		bool IsDisplayCurrent( u64 Revision ) const noexcept
+		{
+			return m_Owner->IsDisplayScopeCurrent_Internal( Revision );
+		}
+
+		/** 現在の表示世代だけ文言を変更する。 */
+		bool SetDisplayMessage( u64 Revision, const FString& Message )
+		{
+			return m_Owner->SetDisplayScopeMessage_Internal( Revision, Message );
+		}
+
+		/** 現在の表示世代だけ進捗を変更する。 */
+		bool SetDisplayProgress( u64 Revision, f32 Ratio ) noexcept
+		{
+			return m_Owner->SetDisplayScopeProgress_Internal( Revision, Ratio );
+		}
+
+		/** 現在の表示世代だけフォントを変更する。 */
+		bool SetDisplayFont( u64 Revision, const FFont* Font ) noexcept
+		{
+			return m_Owner->SetDisplayScopeFont_Internal( Revision, Font );
+		}
+
+		/** 現在の表示世代だけ表示を解除する。 */
+		bool ReleaseDisplay( u64 Revision ) noexcept
+		{
+			return m_Owner->ReleaseDisplayScope_Internal( Revision );
+		}
+
+	private:
+		/** 操作対象。アダプターより長く生存する。 */
+		CLoadingScreenSubsystem* m_Owner = nullptr;
+	};
+
+	/** 局所scope実装へ世代検証付きアダプターを返す。 */
+	FScopeAdapter ScopeAdapter_Internal() noexcept { return FScopeAdapter( *this ); }
+
 	/**
 	 * ロード画面を出す。
 	 *
@@ -132,20 +201,14 @@ public:
 	void Draw( CRenderer& Renderer, const FFont* SharedFont ) noexcept;
 
 private:
-	/** この通常型だけが要求と追従世代を照合して局所解除を行う。 */
-	friend class CLoadingScreenFollowScope;
-
-	/** この通常型だけが表示世代を照合して局所表示を解除する。 */
-	friend class CLoadingScreenDisplayScope;
-
 	/** LoaderとRequestをscope用に登録し、成功時の追従世代を返す。無効または現在でない要求はfalseで世代0を返す。 */
-	bool FollowScopedRequest( const CAssetLoaderSubsystem& Loader, FAssetLoadRequest Request, const FString& Message, u64& Revision );
+	bool FollowScopedRequest_Internal( const CAssetLoaderSubsystem& Loader, FAssetLoadRequest Request, const FString& Message, u64& Revision );
 
 	/** Requestと追従世代が現在のLoader追従と一致するか返す。無効または外部変更後はfalseを返す。 */
-	bool IsScopedFollowCurrent( FAssetLoadRequest Request, u64 Revision ) const noexcept;
+	bool IsScopedFollowCurrent_Internal( FAssetLoadRequest Request, u64 Revision ) const noexcept;
 
 	/** Requestと追従世代が一致する場合だけ追従を解除する。不一致はfalseで状態を変えない。 */
-	bool UnfollowRequest( FAssetLoadRequest Request, u64 Revision ) noexcept;
+	bool UnfollowScopedRequest_Internal( FAssetLoadRequest Request, u64 Revision ) noexcept;
 
 	/** 追従世代を進め、0を無効値として避ける。 */
 	void AdvanceFollowRevision() noexcept;
@@ -160,22 +223,22 @@ private:
 	void ClearDisplayScopeFont() noexcept;
 
 	/** 手動表示を取得し、成功時の表示世代を返す。追従中はfalseで状態を変えない。 */
-	bool AcquireDisplayScope( const FString& Message, u64& Revision );
+	bool AcquireDisplayScope_Internal( const FString& Message, u64& Revision );
 
 	/** 表示世代が現在値で追従中でないかを返す。無効世代はfalseを返す。 */
-	bool IsDisplayScopeCurrent( u64 Revision ) const noexcept;
+	bool IsDisplayScopeCurrent_Internal( u64 Revision ) const noexcept;
 
 	/** 現在の表示世代だけ文言を差し替える。古い世代はfalseで状態を変えない。 */
-	bool SetDisplayScopeMessage( u64 Revision, const FString& Message );
+	bool SetDisplayScopeMessage_Internal( u64 Revision, const FString& Message );
 
 	/** 現在の表示世代だけ進捗を差し替える。古い世代はfalseで状態を変えない。 */
-	bool SetDisplayScopeProgress( u64 Revision, f32 Ratio ) noexcept;
+	bool SetDisplayScopeProgress_Internal( u64 Revision, f32 Ratio ) noexcept;
 
 	/** 現在の表示世代だけフォントを差し替える。古い世代はfalseで状態を変えない。 */
-	bool SetDisplayScopeFont( u64 Revision, const FFont* Font ) noexcept;
+	bool SetDisplayScopeFont_Internal( u64 Revision, const FFont* Font ) noexcept;
 
 	/** 現在の表示世代だけ表示を解除する。古い世代はfalseで状態を変えない。 */
-	bool ReleaseDisplayScope( u64 Revision ) noexcept;
+	bool ReleaseDisplayScope_Internal( u64 Revision ) noexcept;
 
 	/** 手動表示用フォントを解除して表示世代を進め、0を無効値として避ける。 */
 	void AdvanceDisplayRevision() noexcept;

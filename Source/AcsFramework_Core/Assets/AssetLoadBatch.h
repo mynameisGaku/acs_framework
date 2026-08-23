@@ -5,8 +5,6 @@
 
 using namespace acs;
 
-class CAssetLoaderSubsystem;
-
 /** 1回分のアセット読み込みと、その完了結果を保持する通常型。 */
 class FAssetLoadBatch
 {
@@ -25,6 +23,33 @@ public:
 
 	/** サブシステム内の固定所有物として移動しない。 */
 	FAssetLoadBatch& operator=( FAssetLoadBatch&& ) = delete;
+
+
+protected:
+	/** 旧状態の観測を外し、新しい完了通知を受け付ける。 */
+	void Start_Internal( CAssetRegistry* Registry, const TArray<FString>& Paths, FSimpleDelegate OnComplete ) noexcept;
+
+	/** 読み込み処理を止めずに現状態の観測と完了通知を解除する。 */
+	void Cancel_Internal() noexcept;
+
+	/** 完了した非同期結果を調べ、全入力完了時に通知を1回配送する。 */
+	void Update_Internal() noexcept;
+
+	/** 現batchの処理中状態を返す。 */
+	bool IsLoading_Internal() const noexcept { return m_bLoading; }
+
+	/** 完了件数を要求件数で割った進捗を返す。 */
+	f32 GetProgress_Internal() const noexcept;
+
+	/** 失敗entryがあるかを返す。 */
+	bool HasFailed_Internal() const noexcept { return m_bFailed; }
+
+	/** Begin入力の件数を返す。確保失敗時も入力件数を保持する。 */
+	usize Num_Internal() const noexcept { return m_RequestedCount; }
+
+	/** Begin入力の添字に対応する成功assetを返す。 */
+	TSharedPtr<AAsset> GetAsset_Internal( usize Index ) const noexcept;
+
 
 private:
 	/** エンジンへ渡すパスの最大UTF-16文字数。終端NULを含む。 */
@@ -49,15 +74,6 @@ private:
 		TSharedPtr<AAsset> Asset;
 	};
 
-	/** 旧状態の観測を外し、新しい完了通知を受け付ける。 */
-	void Start( CAssetRegistry* Registry, const TArray<FString>& Paths, FSimpleDelegate OnComplete ) noexcept;
-
-	/** 読み込み処理を止めずに現状態の観測と完了通知を解除する。 */
-	void Cancel() noexcept;
-
-	/** 完了した非同期結果を調べ、全入力完了時に通知を1回配送する。 */
-	void Update() noexcept;
-
 	/** すべての入力を失敗完了として通知を配送する。 */
 	void SetFailureSummary() noexcept;
 
@@ -66,24 +82,6 @@ private:
 
 	/** 完了通知と入力一覧を破棄して空状態へ戻す。 */
 	void ResetObservation() noexcept;
-
-	/** 現batchの処理中状態を返す。 */
-	bool IsLoading() const noexcept { return m_bLoading; }
-
-	/** 完了件数を要求件数で割った進捗を返す。 */
-	f32 GetProgress() const noexcept;
-
-	/** 失敗entryがあるかを返す。 */
-	bool HasFailed() const noexcept { return m_bFailed; }
-
-	/** Begin入力の件数を返す。確保失敗時も入力件数を保持する。 */
-	usize Num() const noexcept { return m_RequestedCount; }
-
-	/** Begin入力の添字に対応する成功assetを返す。 */
-	TSharedPtr<AAsset> GetAsset( usize Index ) const noexcept;
-
-	/** GameInstanceの窓口だけが読み込み単位を操作する。 */
-	friend class CAssetLoaderSubsystem;
 
 	/** Begin入力順のentry配列。 */
 	TArray<FEntry> m_Entries;

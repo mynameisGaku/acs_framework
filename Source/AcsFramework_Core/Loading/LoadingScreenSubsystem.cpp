@@ -49,7 +49,7 @@ bool CLoadingScreenSubsystem::FollowRequest( const CAssetLoaderSubsystem& Loader
 	return true;
 }
 
-bool CLoadingScreenSubsystem::FollowScopedRequest( const CAssetLoaderSubsystem& Loader, FAssetLoadRequest Request, const FString& Message, u64& Revision )
+bool CLoadingScreenSubsystem::FollowScopedRequest_Internal( const CAssetLoaderSubsystem& Loader, FAssetLoadRequest Request, const FString& Message, u64& Revision )
 {
 	if ( !FollowRequest( Loader, Request, Message ) )
 	{
@@ -69,14 +69,14 @@ bool CLoadingScreenSubsystem::UnfollowRequest( FAssetLoadRequest Request ) noexc
 	return true;
 }
 
-bool CLoadingScreenSubsystem::IsScopedFollowCurrent( FAssetLoadRequest Request, u64 Revision ) const noexcept
+bool CLoadingScreenSubsystem::IsScopedFollowCurrent_Internal( FAssetLoadRequest Request, u64 Revision ) const noexcept
 {
 	return Request.IsValid() && m_Followed != nullptr && m_FollowedRequest == Request && m_FollowRevision == Revision;
 }
 
-bool CLoadingScreenSubsystem::UnfollowRequest( FAssetLoadRequest Request, u64 Revision ) noexcept
+bool CLoadingScreenSubsystem::UnfollowScopedRequest_Internal( FAssetLoadRequest Request, u64 Revision ) noexcept
 {
-	if ( !IsScopedFollowCurrent( Request, Revision ) ) return false;
+	if ( !IsScopedFollowCurrent_Internal( Request, Revision ) ) return false;
 
 	ClearFollow();
 	return true;
@@ -147,7 +147,7 @@ void CLoadingScreenSubsystem::SetFont( const FFont* Font ) noexcept
 	m_Font = Font;
 }
 
-bool CLoadingScreenSubsystem::AcquireDisplayScope( const FString& Message, u64& Revision )
+bool CLoadingScreenSubsystem::AcquireDisplayScope_Internal( const FString& Message, u64& Revision )
 {
 	if ( m_Followed != nullptr )
 	{
@@ -163,38 +163,38 @@ bool CLoadingScreenSubsystem::AcquireDisplayScope( const FString& Message, u64& 
 	return true;
 }
 
-bool CLoadingScreenSubsystem::IsDisplayScopeCurrent( u64 Revision ) const noexcept
+bool CLoadingScreenSubsystem::IsDisplayScopeCurrent_Internal( u64 Revision ) const noexcept
 {
 	return Revision != 0u && m_Followed == nullptr && m_DisplayRevision == Revision;
 }
 
-bool CLoadingScreenSubsystem::SetDisplayScopeMessage( u64 Revision, const FString& Message )
+bool CLoadingScreenSubsystem::SetDisplayScopeMessage_Internal( u64 Revision, const FString& Message )
 {
-	if ( !IsDisplayScopeCurrent( Revision ) ) return false;
+	if ( !IsDisplayScopeCurrent_Internal( Revision ) ) return false;
 
 	m_Message = Message;
 	return true;
 }
 
-bool CLoadingScreenSubsystem::SetDisplayScopeProgress( u64 Revision, f32 Ratio ) noexcept
+bool CLoadingScreenSubsystem::SetDisplayScopeProgress_Internal( u64 Revision, f32 Ratio ) noexcept
 {
-	if ( !IsDisplayScopeCurrent( Revision ) ) return false;
+	if ( !IsDisplayScopeCurrent_Internal( Revision ) ) return false;
 
 	SetProgressValue( Ratio );
 	return true;
 }
 
-bool CLoadingScreenSubsystem::SetDisplayScopeFont( u64 Revision, const FFont* Font ) noexcept
+bool CLoadingScreenSubsystem::SetDisplayScopeFont_Internal( u64 Revision, const FFont* Font ) noexcept
 {
-	if ( !IsDisplayScopeCurrent( Revision ) ) return false;
+	if ( !IsDisplayScopeCurrent_Internal( Revision ) ) return false;
 
 	m_DisplayScopeFont = Font;
 	return true;
 }
 
-bool CLoadingScreenSubsystem::ReleaseDisplayScope( u64 Revision ) noexcept
+bool CLoadingScreenSubsystem::ReleaseDisplayScope_Internal( u64 Revision ) noexcept
 {
-	if ( !IsDisplayScopeCurrent( Revision ) ) return false;
+	if ( !IsDisplayScopeCurrent_Internal( Revision ) ) return false;
 
 	m_bVisible = false;
 	AdvanceDisplayRevision();

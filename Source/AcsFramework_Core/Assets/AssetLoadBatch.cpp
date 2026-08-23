@@ -3,7 +3,7 @@
 
 #include "AcsFramework_Core/Text/StringConvert.h"
 
-void FAssetLoadBatch::Start( CAssetRegistry* Registry, const TArray<FString>& Paths, FSimpleDelegate OnComplete ) noexcept
+void FAssetLoadBatch::Start_Internal( CAssetRegistry* Registry, const TArray<FString>& Paths, FSimpleDelegate OnComplete ) noexcept
 {
 	ResetObservation();
 	m_RequestedCount = Paths.Num();
@@ -87,7 +87,7 @@ void FAssetLoadBatch::Start( CAssetRegistry* Registry, const TArray<FString>& Pa
 	if ( m_FinishedCount >= m_RequestedCount ) Finish();
 }
 
-void FAssetLoadBatch::Cancel() noexcept
+void FAssetLoadBatch::Cancel_Internal() noexcept
 {
 	if ( !m_bLoading ) return;
 
@@ -99,7 +99,7 @@ void FAssetLoadBatch::Cancel() noexcept
 	m_bFailed = false;
 }
 
-void FAssetLoadBatch::Update() noexcept
+void FAssetLoadBatch::Update_Internal() noexcept
 {
 	if ( !m_bLoading ) return;
 
@@ -155,14 +155,14 @@ void FAssetLoadBatch::ResetObservation() noexcept
 	m_bFailed = false;
 }
 
-f32 FAssetLoadBatch::GetProgress() const noexcept
+f32 FAssetLoadBatch::GetProgress_Internal() const noexcept
 {
 	if ( m_RequestedCount == 0u ) return 1.0f;
 
 	return static_cast<f32>( m_FinishedCount ) / static_cast<f32>( m_RequestedCount );
 }
 
-TSharedPtr<AAsset> FAssetLoadBatch::GetAsset( usize Index ) const noexcept
+TSharedPtr<AAsset> FAssetLoadBatch::GetAsset_Internal( usize Index ) const noexcept
 {
 	if ( Index >= m_RequestedCount || Index >= m_Entries.Num() ) return TSharedPtr<AAsset>();
 

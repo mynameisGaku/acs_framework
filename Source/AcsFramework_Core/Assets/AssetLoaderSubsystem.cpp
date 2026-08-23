@@ -44,14 +44,14 @@ ACS_REGISTER_SUBSYSTEM( CAssetLoaderSubsystem, ESubsystemScope::GameInstance )
 void CAssetLoaderSubsystem::Begin( const TArray<FString>& Paths, FSimpleDelegate OnComplete )
 {
 	m_CurrentRequest = FAssetLoadRequest();
-	m_Batch.Start( m_Registry, Paths, Move( OnComplete ) );
+	m_Batch.Start_Internal( m_Registry, Paths, Move( OnComplete ) );
 }
 
 void CAssetLoaderSubsystem::Cancel() noexcept
 {
 	// 取消し前に処理中かどうかを保持する値。
-	const bool bWasLoading = m_Batch.IsLoading();
-	m_Batch.Cancel();
+	const bool bWasLoading = m_Batch.IsLoading_Internal();
+	m_Batch.Cancel_Internal();
 	if ( bWasLoading ) m_CurrentRequest = FAssetLoadRequest();
 }
 
@@ -62,7 +62,7 @@ FAssetLoadRequest CAssetLoaderSubsystem::BeginRequest( const TArray<FString>& Pa
 	if ( !Request.IsValid() ) return FAssetLoadRequest();
 
 	m_CurrentRequest = Request;
-	m_Batch.Start( m_Registry, Paths, Move( OnComplete ) );
+	m_Batch.Start_Internal( m_Registry, Paths, Move( OnComplete ) );
 	return Request;
 }
 
@@ -78,7 +78,7 @@ FAssetLoadRequest CAssetLoaderSubsystem::AcquireRequest() noexcept
 	const u64 Generation = AcquireAssetGeneration( m_NextGeneration );
 	if ( Generation == 0u ) return FAssetLoadRequest();
 
-	return FAssetLoadRequest( m_OwnerId, Generation );
+	return FRequestAdapter::Create( m_OwnerId, Generation );
 }
 
 FAssetLoadRequest CAssetLoaderSubsystem::GetCurrentRequest() const noexcept
@@ -93,24 +93,24 @@ bool CAssetLoaderSubsystem::IsCurrent( FAssetLoadRequest Request ) const noexcep
 
 bool CAssetLoaderSubsystem::CancelRequest( FAssetLoadRequest Request ) noexcept
 {
-	if ( !IsCurrent( Request ) || !m_Batch.IsLoading() ) return false;
+	if ( !IsCurrent( Request ) || !m_Batch.IsLoading_Internal() ) return false;
 
-	m_Batch.Cancel();
+	m_Batch.Cancel_Internal();
 	m_CurrentRequest = FAssetLoadRequest();
 	return true;
 }
 
 f32 CAssetLoaderSubsystem::GetProgress() const noexcept
 {
-	return m_Batch.GetProgress();
+	return m_Batch.GetProgress_Internal();
 }
 
 TSharedPtr<AAsset> CAssetLoaderSubsystem::GetAsset( usize Index ) const noexcept
 {
-	return m_Batch.GetAsset( Index );
+	return m_Batch.GetAsset_Internal( Index );
 }
 
 void CAssetLoaderSubsystem::Update() noexcept
 {
-	m_Batch.Update();
+	m_Batch.Update_Internal();
 }

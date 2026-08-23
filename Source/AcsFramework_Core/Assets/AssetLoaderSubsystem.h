@@ -85,16 +85,16 @@ public:
 	bool CancelRequest( FAssetLoadRequest Request ) noexcept;
 
 	/** 現batchが処理中かを返す。 */
-	bool IsLoading() const noexcept { return m_Batch.IsLoading(); }
+	bool IsLoading() const noexcept { return m_Batch.IsLoading_Internal(); }
 
 	/** 完了件数を入力件数で割った進捗を返す。空または失敗完了は1を返す。 */
 	f32 GetProgress() const noexcept;
 
 	/** 現batchに失敗entryがあるかを返す。 */
-	bool HasFailed() const noexcept { return m_Batch.HasFailed(); }
+	bool HasFailed() const noexcept { return m_Batch.HasFailed_Internal(); }
 
 	/** Beginへ渡した入力件数を返す。確保失敗時も入力件数を保つ。 */
-	usize Num() const noexcept { return m_Batch.Num(); }
+	usize Num() const noexcept { return m_Batch.Num_Internal(); }
 
 	/** Begin入力のIndexに対応する成功assetを返す。範囲外または失敗時は空を返す。 */
 	TSharedPtr<AAsset> GetAsset( usize Index ) const noexcept;
@@ -103,6 +103,31 @@ public:
 	void Update() noexcept;
 
 private:
+	/** `protected`なbatch操作だけを所有サブシステムへ公開する`private`アダプター。 */
+	class FBatchAdapter final : public FAssetLoadBatch
+	{
+	public:
+		using FAssetLoadBatch::Cancel_Internal;
+		using FAssetLoadBatch::GetAsset_Internal;
+		using FAssetLoadBatch::GetProgress_Internal;
+		using FAssetLoadBatch::HasFailed_Internal;
+		using FAssetLoadBatch::IsLoading_Internal;
+		using FAssetLoadBatch::Num_Internal;
+		using FAssetLoadBatch::Start_Internal;
+		using FAssetLoadBatch::Update_Internal;
+	};
+
+	/** `protected`な要求生成だけを所有サブシステムへ公開する`private`アダプター。 */
+	class FRequestAdapter final : public FAssetLoadRequest
+	{
+	public:
+		/** 発行元識別子と世代から要求を作る。 */
+		static constexpr FAssetLoadRequest Create( u64 OwnerId, u64 Generation ) noexcept
+		{
+			return Create_Internal( OwnerId, Generation );
+		}
+	};
+
 	/** プロセス全体で再利用しない発行元識別子と、読み込み窓口内で再利用しない世代から要求を作る。 */
 	FAssetLoadRequest AcquireRequest() noexcept;
 
@@ -116,7 +141,7 @@ private:
 	CImageLibrary m_Images;
 
 	/** 現在観測している1件のbatch。 */
-	FAssetLoadBatch m_Batch;
+	FBatchAdapter m_Batch;
 
 	/** このLoaderだけを識別するプロセス全体の非0値。 */
 	u64 m_OwnerId = 0u;

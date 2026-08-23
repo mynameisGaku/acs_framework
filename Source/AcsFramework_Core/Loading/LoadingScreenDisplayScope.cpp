@@ -20,7 +20,7 @@ bool CLoadingScreenDisplayScope::Show( const FString& Message )
 
 	/** 表示取得後に保持する世代。 */
 	u64 Revision = 0u;
-	if ( !m_Loading->AcquireDisplayScope( Message, Revision ) )
+	if ( !m_Loading->ScopeAdapter_Internal().AcquireDisplay( Message, Revision ) )
 	{
 		m_Revision = 0u;
 		return false;
@@ -32,17 +32,17 @@ bool CLoadingScreenDisplayScope::Show( const FString& Message )
 
 bool CLoadingScreenDisplayScope::SetMessage( const FString& Message )
 {
-	return m_Loading != nullptr && m_Loading->SetDisplayScopeMessage( m_Revision, Message );
+	return m_Loading != nullptr && m_Loading->ScopeAdapter_Internal().SetDisplayMessage( m_Revision, Message );
 }
 
 bool CLoadingScreenDisplayScope::SetProgress( f32 Ratio ) noexcept
 {
-	return m_Loading != nullptr && m_Loading->SetDisplayScopeProgress( m_Revision, Ratio );
+	return m_Loading != nullptr && m_Loading->ScopeAdapter_Internal().SetDisplayProgress( m_Revision, Ratio );
 }
 
 bool CLoadingScreenDisplayScope::SetFont( const FFont* Font ) noexcept
 {
-	return m_Loading != nullptr && m_Loading->SetDisplayScopeFont( m_Revision, Font );
+	return m_Loading != nullptr && m_Loading->ScopeAdapter_Internal().SetDisplayFont( m_Revision, Font );
 }
 
 bool CLoadingScreenDisplayScope::Reset() noexcept
@@ -54,12 +54,12 @@ bool CLoadingScreenDisplayScope::Reset() noexcept
 	}
 
 	/** 解除呼出しの成否。 */
-	const bool bReleased = m_Loading->ReleaseDisplayScope( m_Revision );
+	const bool bReleased = m_Loading->ScopeAdapter_Internal().ReleaseDisplay( m_Revision );
 	m_Revision = 0u;
 	return bReleased;
 }
 
 bool CLoadingScreenDisplayScope::IsActive() const noexcept
 {
-	return m_Loading != nullptr && m_Loading->IsDisplayScopeCurrent( m_Revision );
+	return m_Loading != nullptr && m_Loading->ScopeAdapter_Internal().IsDisplayCurrent( m_Revision );
 }

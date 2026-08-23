@@ -352,6 +352,40 @@ if ($missingVersionProjectPaths.Count -gt 0) {
     Pass '版管理ファイルをVisual Studioプロジェクトへ登録済み'
 }
 
+# ---- 12. 内部アクセスの命名 -----------------------------------------------
+# 所有関係を暗黙の全権アクセスへ戻さず、内部処理はFoo_Internalと狭いアダプターで表す。
+Section '内部アクセスの命名'
+$friendFindings = @()
+$leadingUnderscoreFindings = @()
+$leadingUnderscorePattern = '\b_[A-Za-z][A-Za-z0-9_]*\s*\('
+foreach ($file in Get-ChildItem (Join-Path $repo 'Source') -Recurse -Include *.h, *.cpp) {
+    $relativePath = $file.FullName.Substring($repo.Length + 1)
+    $sourceText = Get-Content -LiteralPath $file.FullName -Raw
+    if ($sourceText -match '\bfriend\b') {
+        $friendFindings += $relativePath
+    }
+
+    # Windows CRTの既存関数呼出しであり、Frameworkが宣言する名前ではない。
+    if ($relativePath -eq 'Source\Debug\DebugTop\Settings\DebugTopSettingsPath.cpp') {
+        $sourceText = $sourceText -replace '\b_wfullpath\s*\(', ''
+    }
+    if ($sourceText -match $leadingUnderscorePattern) {
+        $leadingUnderscoreFindings += $relativePath
+    }
+}
+
+if ($friendFindings.Count -gt 0) {
+    Fail 'internal-access' "friend依存があります: $($friendFindings[0])"
+} else {
+    Pass 'Framework Sourceにfriend依存なし'
+}
+
+if ($leadingUnderscoreFindings.Count -gt 0) {
+    Fail 'internal-access' "先頭_のFramework関数があります: $($leadingUnderscoreFindings[0])"
+} else {
+    Pass '内部関数名はFoo_Internal形式'
+}
+
 # ---- result ----------------------------------------------------------------
 Write-Host ''
 if ($failures.Count -gt 0) {

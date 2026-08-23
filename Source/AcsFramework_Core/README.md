@@ -36,6 +36,11 @@ Core はACSの部品を再実装しない。たとえば設定の値と検証付
 同じ理由で音声は`CAudioDirector`とXAudio2 backendを所有・配線するが、音声のミキシングや
 アセット解決を複製しない。
 
+所有型だけが値を発行または更新する場合も`friend`へ依存しない。値側は`protected`の
+`Foo_Internal`操作だけを持ち、所有型の`private`アダプターが必要な操作だけを再公開する。
+別の局所型から世代付き状態を扱う場合は、`CLoadingScreenSubsystem::FScopeAdapter`のような
+検証付きアダプターを返し、状態fieldそのものは`private`に保つ。
+
 3Dエフェクトはscene固有のカメラ・HDR描画先・depth・終了順へ結び付くため、GameInstanceの
 Subsystemにはしない。`AEffect3DScene`がscene単位で`CEffect3DPlayer`を所有し、ACSは外部描画を
 挿入できる透明3DパスとD3D12借用契約だけを持つ。Effekseer固有の読込・再生・描画はframework

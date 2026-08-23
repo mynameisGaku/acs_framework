@@ -50,9 +50,16 @@ public:
 	/** 有効な購読を保持しているかを返す。 */
 	bool IsValid() const noexcept { return m_Owner != nullptr && m_Handle.IsValid(); }
 
-private:
-	friend class CEventSubsystem;
 
+protected:
+	/** 購読解除先と識別子から、所有サブシステムのアダプター用に購読値を作る。 */
+	static FEventSubscription Create_Internal( CEventSubsystem& Owner, FSubscriptionHandle Handle ) noexcept
+	{
+		return FEventSubscription( Owner, Handle );
+	}
+
+
+private:
 	/**
 	 * 購読の解除先とエンジン側の購読識別子を記録する。
 	 * @param Owner 購読解除を行うサブシステム。

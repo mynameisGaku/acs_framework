@@ -55,7 +55,7 @@ public:
 	{
 		if ( m_Application == nullptr || Instance == nullptr ) return FEventSubscription();
 
-		return FEventSubscription( *this, m_Application->GetEvents().Subscribe<E>( &MethodThunk<E, Method, TOwner>, Instance ) );
+		return FSubscriptionAdapter::Create( *this, m_Application->GetEvents().Subscribe<E>( &MethodThunk<E, Method, TOwner>, Instance ) );
 	}
 
 	/**
@@ -97,6 +97,17 @@ public:
 	bool Unsubscribe( FSubscriptionHandle Handle ) noexcept;
 
 private:
+	/** `protected`な購読生成だけを所有サブシステムへ公開する`private`アダプター。 */
+	class FSubscriptionAdapter final : public FEventSubscription
+	{
+	public:
+		/** 解除先とEngine識別子を所有する購読値を作る。 */
+		static FEventSubscription Create( CEventSubsystem& Owner, FSubscriptionHandle Handle ) noexcept
+		{
+			return Create_Internal( Owner, Handle );
+		}
+	};
+
 	/**
 	 * void* を畳んでメンバ関数へ渡す中継。
 	 *

@@ -24,15 +24,21 @@ public:
 	/** 2つの読み込み要求が異なる発行元または世代を持つかを返す。 */
 	constexpr bool operator!=( const FAssetLoadRequest& Other ) const noexcept { return !( *this == Other ); }
 
+
+protected:
+	/** 発行元識別子と世代から、所有窓口のアダプター用に要求値を作る。 */
+	static constexpr FAssetLoadRequest Create_Internal( u64 OwnerId, u64 Generation ) noexcept
+	{
+		return FAssetLoadRequest( OwnerId, Generation );
+	}
+
+
 private:
 	/** 同じ読み込み窓口を識別する非所有のプロセス全体の値。0は無効値と枯渇状態に予約する。 */
 	u64 m_OwnerId = 0u;
 
 	/** 読み込み窓口内で要求を識別する世代。0は無効値と枯渇状態に予約する。 */
 	u64 m_Generation = 0u;
-
-	/** 読み込み窓口だけが有効な要求を発行する。 */
-	friend class CAssetLoaderSubsystem;
 
 	/** 発行済みの発行元識別子と世代から要求を構築する。0を含む値は有効な要求にならない。 */
 	constexpr FAssetLoadRequest( u64 OwnerId, u64 Generation ) noexcept
