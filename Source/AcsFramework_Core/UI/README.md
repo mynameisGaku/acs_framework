@@ -87,6 +87,7 @@ const FSceneRayHit Picked = PickScreen3D( FVec2{ 0.5f, 0.5f }, 100.0f );
 出たノードを別々の世代付き識別子配列で返す。扉や会話などの反応は場面側で決める。
 
 ```cpp
+const FCollisionShapeId3D DoorShape = Collision3D().TryAddBounds( *DoorNode, DoorLayer );
 CProximityTrigger3D DoorTrigger;
 BindProximityTrigger3D(
     DoorTrigger, *DoorNode,
@@ -94,9 +95,12 @@ BindProximityTrigger3D(
 
 FProximityTrigger3DUpdateResult Result;
 if ( DoorTrigger.Update( Result ) && Result.DidEnter( PlayerNode->Id() ) ) OpenDoor();
+DrawCollisionShape3D( DoorShape ); // 登録した衝突形状を表示し続ける場合
 DrawProximityTrigger3D( DoorTrigger ); // 判定範囲を表示し続ける場合
 ```
 
+`DrawCollisionShape3D`は`Collision3D()`へ登録済みで現在問い合わせ対象の形状番号だけを受け付け、
+判定と同じworld球またはworld軸平行箱を既存デバッグ線へ一括登録する。
 `DrawProximityTrigger3D`はこの場面へ接続済みのトリガーだけを受け付け、判定と同じworld球または
 world軸平行箱を既存デバッグ線へ一括登録する。線は次の透明3D描画後に消える。
 

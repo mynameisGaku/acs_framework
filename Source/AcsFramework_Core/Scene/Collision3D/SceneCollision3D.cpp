@@ -122,6 +122,37 @@ void CSceneCollision3D::Clear() noexcept
 }
 
 
+bool CSceneCollision3D::TryGetWorldShape( FCollisionShapeId3D Shape,
+	FWorldCollisionShape3D& OutShape ) noexcept
+{
+	if ( !Shape.IsValid() || !RefreshGraphIdentity_Internal() || m_Graph == nullptr ) return false;
+	FRegistration* const Registration = FindRegistration_Internal( Shape );
+	if ( Registration == nullptr || !m_World.IsAlive( Shape ) ) return false;
+
+	ANode* const Node = m_Graph->Get( Registration->Node );
+	if ( Node == nullptr ) return false;
+
+	FWorldCollisionShape3D WorldShape;
+	WorldShape.Layer = Registration->Layer;
+	WorldShape.bQueryable = Registration->Layer != 0u && IsNodeActive_Internal( *Node );
+	if ( Registration->Kind == EShapeKind::Box )
+	{
+		WorldShape.Kind = FWorldCollisionShape3D::EKind::Box;
+		if ( !TryMakeWorldBox_Internal( *Node, Registration->LocalCenter,
+			Registration->LocalHalfSize, WorldShape.Box ) ) return false;
+	}
+	else
+	{
+		WorldShape.Kind = FWorldCollisionShape3D::EKind::Sphere;
+		if ( !TryMakeWorldSphere_Internal( *Node, Registration->LocalCenter,
+			Registration->LocalRadius, WorldShape.Sphere ) ) return false;
+	}
+
+	OutShape = WorldShape;
+	return true;
+}
+
+
 bool CSceneCollision3D::Sync() noexcept
 {
 	if ( !RefreshGraphIdentity_Internal() ) return false;

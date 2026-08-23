@@ -470,6 +470,19 @@ public:
 		u32 Segments = CDebugDraw3DQueue::kDefaultSphereSegments ) noexcept;
 
 	/**
+	 * この場面へ登録した衝突形状を現在位置で次の3D描画へ一括登録する。
+	 *
+	 * @details 問い合わせ対象と同じworld球またはworld軸平行箱を使う。表示を続ける場合は更新ごとに呼ぶ。
+	 * @param Shape `Collision3D()`へ登録済みの世代付き形状番号。
+	 * @param Color 全ての線へ使う色。
+	 * @param SphereSegments 球を構成する各円の分割数。箱では使わない。
+	 * @return 生存中かつ問い合わせ対象の形状を取得し、線を全て登録できたらtrue。
+	 */
+	bool DrawCollisionShape3D( FCollisionShapeId3D Shape,
+		FVec4 Color = FVec4{ 0.20f, 0.95f, 1.0f, 1.0f },
+		u32 SphereSegments = CDebugDraw3DQueue::kDefaultSphereSegments ) noexcept;
+
+	/**
 	 * この場面へ接続した近接トリガーの現在範囲を次の3D描画へ一括登録する。
 	 *
 	 * @details 判定と同じworld球またはworld軸平行箱を使う。表示を続ける場合は更新ごとに呼ぶ。

@@ -53,7 +53,7 @@ WASDで移動、左Shiftで走行、矢印キーで視点、Spaceでジャンプ
 | 3D 音響 | `PlaySound3D()`、現在カメラ基準の距離減衰、モノラル効果音の左右定位 |
 | 遊ぶ人向け UI | `AUi3DScene`、文字・ボタン・入力、ポスト処理後の鮮明なHUD合成 |
 | 3D位置の文字 | `WorldLabels()`、ノード破棄と画面外を安全に扱う敵名・目的地表示 |
-| 3Dデバッグ描画 | `DrawLine3D()`、`DrawAabb3D()`、`DrawSphere3D()`、`DrawProximityTrigger3D()`、深度を無視して常に確認できる1フレーム線 |
+| 3Dデバッグ描画 | `DrawLine3D()`、`DrawAabb3D()`、`DrawSphere3D()`、`DrawCollisionShape3D()`、`DrawProximityTrigger3D()`、深度を無視して常に確認できる1フレーム線 |
 | 当てる | `MakeScreenRay3D()` / `Raycast3D()` / `PickScreen3D()`で球面や読み込みメッシュへ正確に当てる |
 | 重なりと移動判定 | `CSceneCollision3D`、ノード追従、球・箱の重なり、球スイープ、レイヤー |
 | 近づきを取る | `BindProximityTrigger3D()`、ノード追従する球・箱への進入・滞在・退出、レイヤー絞り込み |
@@ -152,6 +152,7 @@ Collision.TryAddBounds( *WallNode, 0x2u );
 TArray<ANode*> Nearby;
 Collision.TryOverlapSphere(
     FSphere{ HeroNode->World().position, 2.0f }, Nearby, HeroSpawn.Shape, 0x2u );
+DrawCollisionShape3D( HeroSpawn.Shape ); // 登録形状を表示し続ける場合は毎フレーム呼ぶ
 
 // 扉へ追従する箱範囲へ人物が入った瞬間だけ処理する。Triggerは場面のメンバーとして保持する
 CProximityTrigger3D DoorTrigger;

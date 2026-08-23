@@ -464,6 +464,7 @@
     <ClInclude Include="Source\AcsFramework_Core\Scene\Trigger3D\ProximityTrigger3DUpdateResult.h" />
     <None Include="Source\AcsFramework_Core\Scene\Trigger3D\Test\ProximityTrigger3DTest.cpp" />
     <ClInclude Include="Source\Debug\DebugTop\Element\DebugTopEnum.h" />
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Collision3D\WorldCollisionShape3D.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Common\Pch.cpp">

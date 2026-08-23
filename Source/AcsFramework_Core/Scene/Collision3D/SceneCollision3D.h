@@ -5,6 +5,7 @@
 
 #include "AcsFramework_Core/Scene/Collision3D/CollisionShape3DParams.h"
 #include "AcsFramework_Core/Scene/Collision3D/SceneSweepHit3D.h"
+#include "AcsFramework_Core/Scene/Collision3D/WorldCollisionShape3D.h"
 #include "AcsFramework_Core/Scene/Pick3D/SceneRay.h"
 
 using namespace acs;
@@ -131,6 +132,17 @@ public:
 
 	/** 現在登録している形状数を返す。 */
 	u32 ShapeCount() const noexcept { return m_World.ShapeCount(); }
+
+	/**
+	 * 登録形状を現在Transformへ変換したworld形状として返す。
+	 *
+	 * @details 無効なノードでも形状を返し、現在の問い合わせ対象かどうかを`bQueryable`へ分ける。
+	 * @param Shape 調べる世代付き形状番号。
+	 * @param OutShape 種類、world形状、登録レイヤー、問い合わせ状態。失敗時は変更しない。
+	 * @return 生存する登録、ノード、有限な現在Transformを全て確認できたらtrue。
+	 */
+	bool TryGetWorldShape( FCollisionShapeId3D Shape,
+		FWorldCollisionShape3D& OutShape ) noexcept;
 
 	/**
 	 * 生存ノードの現在Transformを反映し、破棄済みノードの登録を取り除く。

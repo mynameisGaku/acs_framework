@@ -106,7 +106,8 @@ HDR透過描画はACSへ任せる。カメラへ自動で向くビルボード�
 `FDebugLine3D`と`CDebugDraw3DQueue`はGPUなしで値と1フレーム上限を検証し、
 `CDebugDraw3DLayer`はACSの`FDebugDraw3D`を遅延初期化して`AUi3DScene`の透明3Dパスへ接続する。
 `DrawLine3D`、`DrawAabb3D`、`DrawSphere3D`は深度を無視する確認用オーバーレイで、
-`DrawProximityTrigger3D`は判定と同じ球または箱を一括登録する。表示を続ける側は更新ごとに登録する。
+`DrawCollisionShape3D`は登録済み衝突形状、`DrawProximityTrigger3D`は近接判定範囲と同じ球または箱を
+一括登録する。表示を続ける側は更新ごとに登録する。
 球はACSの衝突判定と同じ`FSphere`をそのまま受け取る。
 
 ### Text変換の契約

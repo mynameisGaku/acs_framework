@@ -1127,6 +1127,9 @@
     <ClInclude Include="Source\AcsFramework_Core\Scene\Collision3D\SceneSweepHit3D.h">
       <Filter>Source\AcsFramework_Core\Scene\Collision3D</Filter>
     </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Collision3D\WorldCollisionShape3D.h">
+      <Filter>Source\AcsFramework_Core\Scene\Collision3D</Filter>
+    </ClInclude>
     <ClInclude Include="Source\AcsFramework_Core\Scene\DebugDraw3D\DebugDraw3DLayer.h">
       <Filter>Source\AcsFramework_Core\Scene\DebugDraw3D</Filter>
     </ClInclude>

@@ -43,6 +43,9 @@ namespace
 	/** 往復モデルが内側にいるときの近接範囲表示色。 */
 	constexpr FVec4 kProximityInsideColor{ 1.0f, 0.72f, 0.18f, 1.0f };
 
+	/** 近接範囲と比較する回転立方体の衝突形状表示色。 */
+	constexpr FVec4 kSpinnerCollisionColor{ 0.45f, 1.0f, 0.38f, 1.0f };
+
 	/** 初期画面でキャラクターと展示物を同時に見せる足元位置。 */
 	constexpr FVec3 kCharacterStartPosition{ 0.0f, 0.001f, 4.2f };
 
@@ -1148,6 +1151,7 @@ void ADemo3DScene::UpdateDemoProximityTrigger_Internal() noexcept
 	{
 		const FVec4 Color = Result.IsInside( MoverId )
 			? kProximityInsideColor : kProximityOutsideColor;
+		(void)DrawCollisionShape3D( m_Spinner.Shape, kSpinnerCollisionColor );
 		(void)DrawProximityTrigger3D( m_SpinnerProximityTrigger, Color );
 	}
 	if ( Result.DidEnter( MoverId ) )

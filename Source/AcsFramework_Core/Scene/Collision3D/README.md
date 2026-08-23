@@ -24,6 +24,9 @@ Collision.TrySweepSphere(
 `AUi3DScene`を使わない独自の所有者では、従来どおり`CSceneCollision3D{ Graph }`を直接所有できる。
 ローカル形状を問い合わせへ使う場合は、公開アダプターの`TryMakeWorldBox`または
 `TryMakeWorldSphere`で現在Transformを反映できる。失敗時は呼出側の出力を変更しない。
+登録後の形状は`TryGetWorldShape`で同じ変換結果を読み取れる。戻り値の`Kind`が球と箱を区別し、
+`Layer`と`bQueryable`が登録レイヤーと現在の問い合わせ対象状態を分けて示す。ノードを無効にしても
+形状調整用のworld値は取得できるが、実際の判定対象ではないことを`bQueryable == false`で確認できる。
 進入、滞在、退出を前回との差として受け取る用途は、同じ集合を使う
 [`CProximityTrigger3D`](../Trigger3D/README.md)へ任せる。
 

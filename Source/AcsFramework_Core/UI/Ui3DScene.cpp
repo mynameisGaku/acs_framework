@@ -469,6 +469,24 @@ bool AUi3DScene::DrawSphere3D( const FSphere& Sphere, FVec4 Color, u32 Segments 
 }
 
 
+bool AUi3DScene::DrawCollisionShape3D( FCollisionShapeId3D Shape,
+	FVec4 Color, u32 SphereSegments ) noexcept
+{
+	FWorldCollisionShape3D WorldShape;
+	if ( !m_Collision3D.TryGetWorldShape( Shape, WorldShape ) || !WorldShape.bQueryable ) return false;
+
+	switch ( WorldShape.Kind )
+	{
+	case FWorldCollisionShape3D::EKind::Box:
+		return m_DebugDraw3D.DrawAabb( WorldShape.Box, Color );
+	case FWorldCollisionShape3D::EKind::Sphere:
+		return m_DebugDraw3D.DrawSphere( WorldShape.Sphere, Color, SphereSegments );
+	default:
+		return false;
+	}
+}
+
+
 bool AUi3DScene::DrawProximityTrigger3D( const CProximityTrigger3D& Trigger,
 	FVec4 Color, u32 SphereSegments ) noexcept
 {

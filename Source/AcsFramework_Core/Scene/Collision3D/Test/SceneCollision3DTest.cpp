@@ -78,6 +78,96 @@ void RunSceneCollision3DTests( CTestHarness& Harness )
 		Harness.Check( Hits.IsEmpty(), "回転前の長軸には形状を残さない" );
 	}
 
+	Harness.BeginSuite( "CSceneCollision3D / 登録形状を現在world形状として読み取る" );
+
+	{
+		CSceneNodeGraph Graph;
+		CSceneCollision3D Collision{ Graph };
+		const FScene3DSpawnResult Spawned = Graph.TrySpawn( FStringView( "WorldSphere" ) );
+		Harness.Check( Spawned.Succeeded(), "world形状確認用の球ノードを置ける" );
+		if ( !Spawned ) return;
+
+		Spawned.Node->SetPosition( FVec3{ 2.0f, 3.0f, 4.0f } );
+		Spawned.Node->SetScale( FVec3{ 2.0f, 3.0f, 4.0f } );
+		const FCollisionShapeId3D Shape = Collision.TryAddSphere(
+			*Spawned.Node, FVec3{}, 0.25f, 0x8u );
+		Harness.Check( Shape.IsValid(), "読み取り対象の球を登録できる" );
+
+		Spawned.Node->SetPosition( FVec3{ 5.0f, 6.0f, 7.0f } );
+		FWorldCollisionShape3D WorldShape;
+		Harness.Check( Collision.TryGetWorldShape( Shape, WorldShape ),
+			"登録球を移動後のworld形状として取得する" );
+		Harness.Check( WorldShape.Kind == FWorldCollisionShape3D::EKind::Sphere,
+			"登録時の球種別を返す" );
+		CheckNear( Harness, WorldShape.Sphere.center.x, 5.0f,
+			"現在位置をworld球中心へ反映する" );
+		CheckNear( Harness, WorldShape.Sphere.center.y, 6.0f,
+			"現在位置のYをworld球中心へ反映する" );
+		CheckNear( Harness, WorldShape.Sphere.radius, 1.0f,
+			"最大拡縮をworld球半径へ反映する" );
+		Harness.CheckEqualU64( WorldShape.Layer, 0x8u, "登録レイヤーを返す" );
+		Harness.Check( WorldShape.bQueryable, "有効なノードとレイヤーを問い合わせ対象として返す" );
+
+		Spawned.Node->SetEnabled( false );
+		Harness.Check( Collision.TryGetWorldShape( Shape, WorldShape ),
+			"無効なノードでも形状調整用のworld球を取得する" );
+		Harness.Check( !WorldShape.bQueryable,
+			"無効なノードを問い合わせ対象とは報告しない" );
+
+		Spawned.Node->SetEnabled( true );
+		Harness.Check( Collision.TrySetLayer( Shape, 0u ), "登録球をレイヤー0へ変更する" );
+		Harness.Check( Collision.TryGetWorldShape( Shape, WorldShape ),
+			"レイヤー0でも形状調整用のworld球を取得する" );
+		Harness.CheckEqualU64( WorldShape.Layer, 0u, "変更後の登録レイヤーを返す" );
+		Harness.Check( !WorldShape.bQueryable,
+			"レイヤー0の形状を問い合わせ対象とは報告しない" );
+
+		WorldShape.Sphere.center.x = 91.0f;
+		WorldShape.Layer = 0x123u;
+		WorldShape.bQueryable = true;
+		Harness.Check( Collision.Remove( Shape ), "失敗時の出力確認前に登録球を外す" );
+		Harness.Check( !Collision.TryGetWorldShape( Shape, WorldShape ),
+			"外した世代付き形状番号を拒否する" );
+		Harness.CheckEqualF32( WorldShape.Sphere.center.x, 91.0f,
+			"取得失敗時はworld形状を変えない" );
+		Harness.CheckEqualU64( WorldShape.Layer, 0x123u,
+			"取得失敗時は診断情報も変えない" );
+		Harness.Check( WorldShape.bQueryable,
+			"取得失敗時は問い合わせ状態も変えない" );
+	}
+
+	{
+		CSceneNodeGraph Graph;
+		CSceneCollision3D Collision{ Graph };
+		const FScene3DSpawnResult Spawned = Graph.TrySpawn( FStringView( "WorldBox" ) );
+		Harness.Check( Spawned.Succeeded(), "world形状確認用の箱ノードを置ける" );
+		if ( !Spawned ) return;
+
+		Spawned.Node->SetPosition( FVec3{ 1.0f, 2.0f, 3.0f } );
+		Spawned.Node->RotateDeg( FVec3{ 0.0f, 90.0f, 0.0f } );
+		const FCollisionShapeId3D Shape = Collision.TryAddBox(
+			*Spawned.Node, FVec3{}, FVec3{ 2.0f, 0.25f, 0.5f } );
+		Harness.Check( Shape.IsValid(), "読み取り対象の箱を登録できる" );
+
+		FWorldCollisionShape3D WorldShape;
+		Harness.Check( Collision.TryGetWorldShape( Shape, WorldShape ),
+			"登録箱を回転後のworld形状として取得する" );
+		Harness.Check( WorldShape.Kind == FWorldCollisionShape3D::EKind::Box,
+			"登録時の箱種別を返す" );
+		CheckNear( Harness, WorldShape.Box.center.x, 1.0f,
+			"現在位置をworld箱中心へ反映する" );
+		CheckNear( Harness, WorldShape.Box.center.y, 2.0f,
+			"現在位置のYをworld箱中心へ反映する" );
+		CheckNear( Harness, WorldShape.Box.center.z, 3.0f,
+			"現在位置のZをworld箱中心へ反映する" );
+		CheckNear( Harness, WorldShape.Box.half_size.x, 0.5f,
+			"90度回転後の短辺をworld X軸へ反映する" );
+		CheckNear( Harness, WorldShape.Box.half_size.z, 2.0f,
+			"90度回転後の長辺をworld Z軸へ反映する" );
+		Harness.Check( WorldShape.bQueryable,
+			"有効な登録箱を問い合わせ対象として返す" );
+	}
+
 	Harness.BeginSuite( "CSceneCollision3D / レイヤーとノード状態を反映する" );
 
 	{
