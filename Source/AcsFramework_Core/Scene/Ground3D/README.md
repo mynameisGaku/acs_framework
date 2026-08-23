@@ -4,7 +4,7 @@
 
 ```cpp
 // 原点へ16m x 12mの地面を置く。上面から下へ既定の1mぶん衝突を持つ。
-const FCollidableModel3DSpawnResult Ground = SpawnGround3D( FVec2{ 16.0f, 12.0f } );
+FCollidableModel3DSpawnResult Ground = SpawnGround3D( FVec2{ 16.0f, 12.0f } );
 ```
 
 見た目や厚みを変える場合は値を明示する。
@@ -26,3 +26,5 @@ const FCollidableModel3DSpawnResult Placed = SpawnGround3D( Ground );
 
 `AUi3DScene`を使わない独自場面では、`CGround3DSpawner::SpawnInto`へ場面グラフと
 `CSceneCollision3D`を渡す。生成後の衝突登録に失敗した場合はノードも巻き戻される。
+場面途中で外す場合は結果を`DestroyCollidableModel3D`へ渡し、表示ノードと歩ける箱を同じ
+呼出しで片付ける。

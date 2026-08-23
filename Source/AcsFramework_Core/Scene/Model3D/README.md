@@ -45,7 +45,7 @@ SpawnModel3D( FModel3DSpawnParams::FromToonPrimitive( EMeshPrimitive3D::Sphere, 
 // 別の立体に見た目と衝突形状の両方が必要なら、一括生成結果を受け取る
 FModel3DSpawnParams Obstacle = FModel3DSpawnParams::FromPrimitive(
     EMeshPrimitive3D::Cube, FVec3{ 4.0f, 0.5f, 0.0f } );
-const FCollidableModel3DSpawnResult SolidObstacle = SpawnCollidableModel3D(
+FCollidableModel3DSpawnResult SolidObstacle = SpawnCollidableModel3D(
     Obstacle, FCollisionShape3DParams::FromBounds( 0x2u ) );
 
 // 厚さのない描画面には歩ける箱を明示する
@@ -62,6 +62,9 @@ if ( Character != nullptr ) SpawnModel3D(
 
 // 置いた後に動かす
 Hero->Local().position.x += 1.0f;
+
+// 衝突付き結果はノードと形状を同じ呼出しで片付ける
+DestroyCollidableModel3D( SolidObstacle );
 ```
 
 `AUi3DScene`を使わないノード木では、従来どおり`CModel3DSpawner::SpawnInto`へグラフと、
@@ -71,6 +74,8 @@ Hero->Local().position.x += 1.0f;
 `SpawnCollidableModel3D`は同じ読込経路でモデルを置き、`CSceneCollision3D`へ形状を登録する。
 成功時は`FCollidableModel3DSpawnResult`の`Node`と`Shape`を両方返す。登録に失敗した生成ノードは
 破棄予定へ戻すため、「見えるが当たらない」半端な配置を成功として残さない。
+通常の衝突付き結果は`DestroyCollidableModel3D`へ渡すと、ノードと形状の対応を検証したうえで
+両方を片付け、成功時だけ呼出側の結果を空へ戻す。
 同じ単一モデルを視線操作へも登録する場合は`SpawnInteractableCollidableModel3D`を使うと、
 3処理の途中失敗をまとめて巻き戻せる。
 場面途中では結果を`DestroyInteractableCollidableModel3D`へ渡し、形状と操作対象ごと安全に消せる。

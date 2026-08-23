@@ -29,6 +29,8 @@ Collision.TrySweepSphere(
 形状調整用のworld値は取得できるが、実際の判定対象ではないことを`bQueryable == false`で確認できる。
 `TryGetWorldShapes`へレイヤーマスクを渡すと、現在問い合わせ対象の形状だけを登録順の値配列へ
 一括取得できる。同期、変換、確保の途中で失敗した場合は呼出側の配列を変更しない。
+`IsRegisteredTo`はworld形状を計算せず、形状番号と登録ノードの対だけを確認する。破棄処理など、
+壊れたTransformを持つノードも安全に片付ける必要がある場合に使う。
 進入、滞在、退出を前回との差として受け取る用途は、同じ集合を使う
 [`CProximityTrigger3D`](../Trigger3D/README.md)へ任せる。
 
@@ -37,15 +39,18 @@ Collision.TrySweepSphere(
 モデル生成と同時に登録する。後者は登録失敗時に生成ノードも破棄予定へ戻し、成功時はノードと
 形状番号を`FCollidableModel3DSpawnResult`で返す。
 さらに視線操作も必要な単一モデルは`SpawnInteractableCollidableModel3D`で3処理を一括化できる。
-実行中の破棄は、その結果を`DestroyInteractableCollidableModel3D`へ渡すと形状も直ちに外れる。
+通常の結果は`DestroyCollidableModel3D`、視線操作付きは`DestroyInteractableCollidableModel3D`へ
+渡すと、ノードと形状を同じ呼出しで片付けられる。
 
 ```cpp
-const FCollidableModel3DSpawnResult Wall = SpawnCollidableModel3D(
+FCollidableModel3DSpawnResult Wall = SpawnCollidableModel3D(
     WallModel, FCollisionShape3DParams::FromBounds( 0x2u ) );
 
 const FCollidableModel3DSpawnResult Floor = SpawnCollidableModel3D(
     FloorPlane, FCollisionShape3DParams::FromBox(
         FVec3{ 0.0f, -0.5f, 0.0f }, FVec3{ 0.5f, 0.5f, 0.5f }, 0x2u ) );
+
+DestroyCollidableModel3D( Wall );
 ```
 
 登録時の中心、半サイズ、半径はノードのローカル座標で指定する。問い合わせ前に位置、回転、拡縮を

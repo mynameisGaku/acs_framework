@@ -120,6 +120,16 @@ public:
 	bool TrySetLayer( FCollisionShapeId3D Shape, u32 Layer ) noexcept;
 
 	/**
+	 * 形状が指定ノードへ登録された対か返す。
+	 *
+	 * @details world形状を計算しないため、配置後にノードのTransformが壊れていても所有関係を確認できる。
+	 * @param Shape 調べる世代付き形状番号。
+	 * @param Node 形状を登録したと期待する、この集合と同じ場面のノード。
+	 * @return 生存する形状の登録ノードと`Node`が同じならtrue。
+	 */
+	bool IsRegisteredTo( FCollisionShapeId3D Shape, const ANode& Node ) noexcept;
+
+	/**
 	 * 登録形状を外す。ノード自体は変更しない。
 	 *
 	 * @param Shape 外す形状番号。

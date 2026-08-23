@@ -61,6 +61,22 @@ FCollidableModel3DSpawnResult CModel3DSpawner::SpawnCollidableInto( CSceneNodeGr
 }
 
 
+bool CModel3DSpawner::DestroyCollidable( CSceneNodeGraph& Graph,
+	CSceneCollision3D& Collision, FCollidableModel3DSpawnResult& Model ) noexcept
+{
+	if ( !Model ) return false;
+
+	const FNodeId NodeId = Graph.IdOf( Model.Node );
+	if ( !NodeId.IsValid() || Graph.Get( NodeId ) != Model.Node ) return false;
+	if ( !Collision.IsRegisteredTo( Model.Shape, *Model.Node ) ) return false;
+	if ( !Model.Node->IsPendingDestroy() && !Graph.Destroy( NodeId ) ) return false;
+	if ( !Collision.Remove( Model.Shape ) ) return false;
+
+	Model = FCollidableModel3DSpawnResult{};
+	return true;
+}
+
+
 ANode* CModel3DSpawner::SpawnInto( ANode& Parent, const FModel3DSpawnParams& Params ) noexcept
 {
 	// 置いてから «見えない» と気付くのが一番たちが悪いので、作る前に弾く。

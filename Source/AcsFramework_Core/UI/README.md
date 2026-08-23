@@ -44,7 +44,8 @@ bloomや輪郭補正の影響を受けず、3D場面より手前、ポーズ・�
 `SpawnThirdPersonCharacter3D`は静的または骨付きモデルと自己衝突、移動、追従カメラ、任意アニメーション、
 `SpawnGround3D`は表示面と直下の厚み付き箱、`SpawnLight3D`は太陽または点光源、
 `SpawnWater3D`は水面を扱う。パスを渡した場合だけ場面共通の
-asset窓口で読み、読込済みassetはそのまま使う。
+asset窓口で読み、読込済みassetはそのまま使う。通常の衝突付き生成結果は
+`DestroyCollidableModel3D`へ渡すと、ノードと形状を対のまま片付けられる。
 
 ```cpp
 SpawnModel3D( FModel3DSpawnParams::FromMesh(
@@ -62,7 +63,7 @@ ANode* const Vehicle = SpawnNode3D( FStringView( "Vehicle" ) );
 if ( Vehicle != nullptr ) SpawnModel3D(
     FModel3DSpawnParams::FromPrimitive( EMeshPrimitive3D::Cube, FVec3{} ), Vehicle );
 
-const FCollidableModel3DSpawnResult Wall = SpawnCollidableModel3D(
+FCollidableModel3DSpawnResult Wall = SpawnCollidableModel3D(
     FModel3DSpawnParams::FromMesh(
         FStringView( "Models/Wall.fbx" ), FVec3{ 0.0f, 0.0f, 8.0f } ),
     FCollisionShape3DParams::FromBounds( 0x2u ) );
@@ -79,6 +80,7 @@ SpawnWater3D( Water );
 PlaySound3D( FStringView( "Audio/Hit.wav" ), FVec3{ 1.0f, 0.5f, 3.0f } );
 
 const FSceneRayHit Picked = PickScreen3D( FVec2{ 0.5f, 0.5f }, 100.0f );
+DestroyCollidableModel3D( Wall );
 ```
 
 `PlaySound3D`は現在カメラを聴取位置へ同期してから、その瞬間の距離と左右位置で短い効果音を
@@ -132,6 +134,8 @@ world軸平行箱を既存デバッグ線へ一括登録する。線は次の透
 `Plane`を床にする場合は`FCollisionShape3DParams::FromBox`で歩ける厚みを明示する。
 `SpawnCollidableAnimatedModel3D`は同じ失敗時巻き戻しを骨付きモデルへ適用し、初期animation再生も
 成功したノードだけを返す。大きく姿勢が変わる人物には、読込時の境界より明示箱または明示球を使う。
+通常モデル、骨付きモデル、地面の一括生成結果は`DestroyCollidableModel3D`へ渡すと、ノードと
+形状が同じ登録対であることを確認してから両方を片付け、成功時だけ結果を空に戻す。
 
 `SpawnInteractableModel3D`と`SpawnInteractableAnimatedModel3D`は、モデル生成後に
 `InteractionFocus()`へ操作案内と対象を登録する。対象登録に失敗した場合は生成ノードも破棄予定へ

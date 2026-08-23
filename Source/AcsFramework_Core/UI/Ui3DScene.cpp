@@ -323,6 +323,13 @@ FCollidableModel3DSpawnResult AUi3DScene::SpawnCollidableModel3D(
 }
 
 
+bool AUi3DScene::DestroyCollidableModel3D(
+	FCollidableModel3DSpawnResult& Model ) noexcept
+{
+	return CModel3DSpawner::DestroyCollidable( Graph(), m_Collision3D, Model );
+}
+
+
 ANode* AUi3DScene::SpawnImage3D( const FSprite3DSpawnParams& Params, ANode* Parent ) noexcept
 {
 	if ( !Params.IsValid() ) return nullptr;

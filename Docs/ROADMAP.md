@@ -110,7 +110,8 @@ cameraからの距離に応じて大気へ馴染み、雲も実距離まで同�
   `SpawnNode3D`は世代付きの空ノードを作り、複数モデルを同じ親Transformで動かす複合3D物体から
   派生場面の低水準な`Graph().TrySpawn`を取り除く。
   `SpawnCollidableModel3D`は描画境界、明示箱、明示球を選んで衝突登録まで一括化し、登録失敗時は
-  生成ノードを巻き戻す。成功時はノードと世代付き形状番号を対で返す
+  生成ノードを巻き戻す。成功時はノードと世代付き形状番号を対で返し、
+  `DestroyCollidableModel3D`はその対を検証してから両方を同じ呼出しで片付ける
 - ~~カメラ~~ → **ACS 側へ実装済み** (`CCamera3D`、`acs_temp_doc/0004`)。
   `CCameraStack` は 2D 専用だったので使えず、`FCamera2D` の 3D 版を ACS に足した。
   Frameworkでは`CNodeOrbitCamera3D`が人物などのノードを注視点として追い、明示した回転・距離

@@ -100,6 +100,17 @@ bool CSceneCollision3D::TrySetLayer( FCollisionShapeId3D Shape, u32 Layer ) noex
 }
 
 
+bool CSceneCollision3D::IsRegisteredTo( FCollisionShapeId3D Shape,
+	const ANode& Node ) noexcept
+{
+	if ( !Shape.IsValid() || !RefreshGraphIdentity_Internal() || m_Graph == nullptr ) return false;
+	FRegistration* const Registration = FindRegistration_Internal( Shape );
+	if ( Registration == nullptr || !m_World.IsAlive( Shape ) ) return false;
+	return Node.Id().IsValid() && Registration->Node == Node.Id()
+		&& m_Graph->Get( Node.Id() ) == &Node;
+}
+
+
 bool CSceneCollision3D::Remove( FCollisionShapeId3D Shape ) noexcept
 {
 	if ( !RefreshGraphIdentity_Internal() ) return false;

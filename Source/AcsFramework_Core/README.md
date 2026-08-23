@@ -77,6 +77,8 @@ ACSへ任せ、適用後の個別調整口も残す。
 `CModel3DSpawner`または`CAnimatedModel3DSpawner`が返す形状を引き継ぎ、後段失敗時だけ
 `CSceneCollision3D`から形状を外して生成ノードを巻き戻す。場面途中の破棄では、ノード破棄を
 受け付けてから対象登録と任意の衝突形状を外し、成功した呼出側の結果だけを空に戻す。
+通常の衝突付き結果も`CModel3DSpawner::DestroyCollidable`でノードと形状の対応を検証してから
+一括破棄し、`AUi3DScene::DestroyCollidableModel3D`を公開窓口にする。
 
 3Dの重なりと移動判定は、場面側が`CSceneCollision3D`を所有する。ACSの`CCollisionWorld3D`へ
 ノードとローカル形状を登録し、問い合わせ時に現在Transformへ同期して、結果をノードポインタへ

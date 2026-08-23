@@ -46,7 +46,7 @@ WASDで移動、左Shiftで走行、矢印キーで視点、Spaceでジャンプ
 
 | | |
 |---|---|
-| 3D を置く | `SpawnModel3D()` / `SpawnAnimatedModel3D()`と、それぞれの操作対象版・衝突版・操作＋衝突版、`SpawnNode3D()`、FBX の取り込み、材質 (metallic / roughness / HDR自己発光) |
+| 3D を置く | `SpawnModel3D()` / `SpawnAnimatedModel3D()`と、それぞれの操作対象版・衝突版・操作＋衝突版、`DestroyCollidableModel3D()`、`SpawnNode3D()`、FBX の取り込み、材質 (metallic / roughness / HDR自己発光) |
 | 3D画像を置く | `SpawnImage3D()`の固定板、`SpawnBillboard3D()`のカメラ追従板、透過PNG、深度判定、HDR合成 |
 | 3D を照らす | `SpawnLight3D()`、方向だけで置ける太陽、位置と距離だけで置ける点光源 |
 | 3D 地面 | `SpawnGround3D()`、広さだけで置ける表示面と直下の厚み付き衝突 |
@@ -94,7 +94,7 @@ FModel3DSpawnParams Model = FModel3DSpawnParams::FromMesh( FStringView( "Models/
 SpawnModel3D( Model );
 
 // 広さだけで、表示面とその直下1mの歩ける衝突を同時に置く
-const FCollidableModel3DSpawnResult Ground = SpawnGround3D( FVec2{ 16.0f, 12.0f } );
+FCollidableModel3DSpawnResult Ground = SpawnGround3D( FVec2{ 16.0f, 12.0f } );
 
 // 遮蔽、反射、間接光、bloom、露出、輪郭補正を標準品質へ揃える
 TryApplyVisualPreset3D( EVisualPreset3D::Balanced );
@@ -152,6 +152,9 @@ DestroyNode3D( Node );
 
 // 一括生成した扉は、操作案内と衝突形状も同じ呼び出しで直ちに外す
 DestroyInteractableCollidableModel3D( Door );
+
+// 通常の衝突付きモデルや地面も、ノードと形状を対のまま片付ける
+DestroyCollidableModel3D( Ground );
 
 // 左上を0、右下を1とした画面位置から、実際の3D表面へ当てる
 const FSceneRay Ray = MakeScreenRay3D( FVec2{ MouseX / static_cast<f32>( W ), MouseY / static_cast<f32>( H ) } );

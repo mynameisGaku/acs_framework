@@ -92,6 +92,19 @@ public:
 		ANode* Parent = nullptr ) noexcept;
 
 	/**
+	 * 一括生成した衝突付きモデルを、ノードと形状を残さず破棄する。
+	 *
+	 * @details `Model`のノードと形状が同じ場面で対になっていることを先に確認する。
+	 * 別場面、別ノードの形状、不完全な結果では何も変更しない。
+	 * @param Graph 生成時に使った場面グラフ。
+	 * @param Collision 生成時に使った衝突集合。
+	 * @param Model `SpawnCollidableInto`の成功結果。成功時は空の結果になる。
+	 * @return 所有関係を確認し、ノードを破棄予定へ移して形状を外せたらtrue。
+	 */
+	static bool DestroyCollidable( CSceneNodeGraph& Graph, CSceneCollision3D& Collision,
+		FCollidableModel3DSpawnResult& Model ) noexcept;
+
+	/**
 	 * 指定どおりに置く。
 	 *
 	 * @param Parent 繋ぐ先。置いたものはこの下にぶら下がる。

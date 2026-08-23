@@ -104,13 +104,10 @@ bool CInteractableModel3DSpawner::Destroy( CSceneNodeGraph& Graph,
 	FCollidableModel3DSpawnResult& Model ) noexcept
 {
 	if ( !Model ) return false;
-	const FNodeId NodeId = Graph.IdOf( Model.Node );
-	if ( !NodeId.IsValid() || Graph.Get( NodeId ) != Model.Node ) return false;
-	if ( !Model.Node->IsPendingDestroy() && !Graph.Destroy( NodeId ) ) return false;
+	ANode* const Node = Model.Node;
+	if ( !CModel3DSpawner::DestroyCollidable( Graph, Collision, Model ) ) return false;
 
-	(void)Focus.UnregisterTarget( *Model.Node );
-	(void)Collision.Remove( Model.Shape );
-	Model = FCollidableModel3DSpawnResult{};
+	(void)Focus.UnregisterTarget( *Node );
 	return true;
 }
 

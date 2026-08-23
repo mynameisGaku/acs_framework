@@ -306,6 +306,15 @@ public:
 		ANode* Parent = nullptr ) noexcept;
 
 	/**
+	 * 一括生成した通常モデル、骨格モデル、または地面をノードと衝突形状ごと破棄する。
+	 *
+	 * @details ノードと形状がこの場面で対になっていない場合は何も変更しない。
+	 * @param Model 衝突付き生成APIの成功結果。成功時は空の結果になる。
+	 * @return 自場面の対になったノードを破棄予定へ移し、形状も直ちに外せたらtrue。
+	 */
+	bool DestroyCollidableModel3D( FCollidableModel3DSpawnResult& Model ) noexcept;
+
+	/**
 	 * 画像名から向き固定の3D画像板を、必要な読み込みを含めて1回で場面へ置く。
 	 *
 	 * @param Params 画像名、位置、向き、大きさ、ノード名。

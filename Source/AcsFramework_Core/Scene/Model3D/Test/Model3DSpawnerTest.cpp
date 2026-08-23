@@ -323,6 +323,82 @@ void RunModel3DSpawnerTests( CTestHarness& Harness )
 			"明示箱を生成ノードへ結び付ける" );
 	}
 
+	Harness.BeginSuite( "CModel3DSpawner / 衝突付き結果を対で破棄する" );
+
+	{
+		CSceneNodeGraph Graph;
+		CSceneCollision3D Collision{ Graph };
+		FCollidableModel3DSpawnResult Spawned = CModel3DSpawner::SpawnCollidableInto(
+			Graph, Collision, FModel3DSpawnParams::FromPrimitive(
+				EMeshPrimitive3D::Cube, FVec3{} ) );
+		ANode* const DestroyedNode = Spawned.Node;
+		if ( Spawned.Node != nullptr )
+			Spawned.Node->Local().position.x = std::numeric_limits<f32>::quiet_NaN();
+
+		Harness.Check( CModel3DSpawner::DestroyCollidable( Graph, Collision, Spawned ),
+			"Transformが壊れていても所有対からノードと形状を破棄できる" );
+		Harness.Check( !Spawned.Succeeded() && Spawned.Node == nullptr && !Spawned.Shape.IsValid(),
+			"成功時に呼出側の結果を空へ戻す" );
+		Harness.Check( DestroyedNode != nullptr && DestroyedNode->IsPendingDestroy(),
+			"ノードを次の構造反映で消える状態へ移す" );
+		Harness.CheckEqualU64( Collision.ShapeCount(), 0u, "衝突形状を直ちに外す" );
+		Graph.ResolveStructuralChanges();
+		Harness.CheckEqualU64( Graph.Root().ChildCount(), 0u, "構造反映後にノードを残さない" );
+		Harness.CheckEqualU64( Graph.RegisteredCount(), 1u, "ノード識別子も解放する" );
+		Harness.Check( !CModel3DSpawner::DestroyCollidable( Graph, Collision, Spawned ),
+			"空の結果を二重破棄しない" );
+	}
+
+	{
+		CSceneNodeGraph Graph;
+		CSceneCollision3D Collision{ Graph };
+		FCollidableModel3DSpawnResult First = CModel3DSpawner::SpawnCollidableInto(
+			Graph, Collision, FModel3DSpawnParams::FromPrimitive(
+				EMeshPrimitive3D::Cube, FVec3{ -1.0f, 0.0f, 0.0f } ) );
+		const FCollidableModel3DSpawnResult Second = CModel3DSpawner::SpawnCollidableInto(
+			Graph, Collision, FModel3DSpawnParams::FromPrimitive(
+				EMeshPrimitive3D::Cube, FVec3{ 1.0f, 0.0f, 0.0f } ) );
+		First.Shape = Second.Shape;
+
+		Harness.Check( !CModel3DSpawner::DestroyCollidable( Graph, Collision, First ),
+			"別ノードの形状を組み合わせた結果を拒む" );
+		Harness.Check( First.Node != nullptr && First.Shape == Second.Shape,
+			"失敗時に呼出側の結果を変えない" );
+		Harness.Check( First.Node != nullptr && !First.Node->IsPendingDestroy(),
+			"不整合結果でノードを破棄しない" );
+		Harness.CheckEqualU64( Graph.Root().ChildCount(), 2u, "不整合結果で場面を変えない" );
+		Harness.CheckEqualU64( Collision.ShapeCount(), 2u, "不整合結果で形状を外さない" );
+	}
+
+	{
+		CSceneNodeGraph Graph;
+		CSceneNodeGraph OtherGraph;
+		CSceneCollision3D Collision{ Graph };
+		CSceneCollision3D OtherCollision{ OtherGraph };
+		FCollidableModel3DSpawnResult Spawned = CModel3DSpawner::SpawnCollidableInto(
+			Graph, Collision, FModel3DSpawnParams::FromPrimitive(
+				EMeshPrimitive3D::Cube, FVec3{} ) );
+
+		Harness.Check( !CModel3DSpawner::DestroyCollidable( OtherGraph, OtherCollision, Spawned ),
+			"別場面の窓口から破棄できない" );
+		Harness.Check( Spawned.Succeeded(), "別場面で失敗しても成功結果を保つ" );
+		Harness.CheckEqualU64( Graph.Root().ChildCount(), 1u, "元の場面ノードを保つ" );
+		Harness.CheckEqualU64( Collision.ShapeCount(), 1u, "元の場面形状を保つ" );
+	}
+
+	{
+		CSceneNodeGraph Graph;
+		CSceneCollision3D Collision{ Graph };
+		FCollidableModel3DSpawnResult Spawned = CModel3DSpawner::SpawnCollidableInto(
+			Graph, Collision, FModel3DSpawnParams::FromPrimitive(
+				EMeshPrimitive3D::Cube, FVec3{} ) );
+		const FNodeId NodeId = Graph.IdOf( Spawned.Node );
+		Harness.Check( Graph.Destroy( NodeId ), "外側で先にノードを破棄予定へ移せる" );
+		Harness.Check( CModel3DSpawner::DestroyCollidable( Graph, Collision, Spawned ),
+			"破棄予定ノードの残った形状も片付ける" );
+		Harness.CheckEqualU64( Collision.ShapeCount(), 0u, "破棄予定ノードの形状を外す" );
+	}
+
 	Harness.BeginSuite( "CModel3DSpawner / 衝突登録失敗を巻き戻す" );
 
 	{
