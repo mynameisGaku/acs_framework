@@ -137,6 +137,64 @@ foreach ($script in Get-ChildItem $PSScriptRoot -Filter *.ps1) {
 }
 if ($failures.Count -eq 0 -or -not ($failures -match '^script')) { Pass 'all scripts parse' }
 
+# ---- 8. 実行時契約の正本 --------------------------------------------------
+# 方針が複数READMEへ分散すると、失敗処理やスレッド境界が機能ごとに食い違う。
+Section '実行時契約の正本'
+$runtimeContractPath = Join-Path $repo 'Docs\RUNTIME_CONTRACTS.md'
+if (-not (Test-Path -LiteralPath $runtimeContractPath -PathType Leaf)) {
+    Fail 'runtime-contracts' 'Docs/RUNTIME_CONTRACTS.md がありません'
+} else {
+    $runtimeContracts = Get-Content -LiteralPath $runtimeContractPath -Raw
+    $requiredContractHeadings = @(
+        '## 失敗の返し方',
+        '## ログ',
+        '## スレッド安全性',
+        '## セーブ互換性')
+    $missingContractHeadings = @($requiredContractHeadings | Where-Object {
+        -not $runtimeContracts.Contains($_)
+    })
+    if ($missingContractHeadings.Count -gt 0) {
+        Fail 'runtime-contracts' "必須章がありません: $($missingContractHeadings[0])"
+    } else {
+        Pass '失敗、ログ、スレッド、セーブの契約を確認'
+    }
+}
+$topReadme = Get-Content -LiteralPath (Join-Path $repo 'README.md') -Raw
+if (-not $topReadme.Contains('Docs/RUNTIME_CONTRACTS.md')) {
+    Fail 'runtime-contracts' 'README.md から実行時契約へ辿れません'
+} else {
+    Pass 'READMEから実行時契約へ接続済み'
+}
+$projectText = Get-Content -LiteralPath (Join-Path $repo 'acs_framework.vcxproj') -Raw
+if (-not $projectText.Contains('Docs\RUNTIME_CONTRACTS.md')) {
+    Fail 'runtime-contracts' '実行時契約がVisual Studio projectへ登録されていません'
+} else {
+    Pass '実行時契約をVisual Studio projectへ登録済み'
+}
+
+# ---- 9. 隠れたバックグラウンドスレッド ----------------------------------
+# Frameworkは主スレッド更新を既定とする。直接スレッドを作る変更は所有者と終了処理の設計を伴うため、
+# 単なる追加をここで止め、実行時契約と監査例外を同じ変更で見直させる。
+Section '隠れたバックグラウンドスレッド生成なし'
+$threadCreationPatterns = @(
+    '\bstd::(?:thread|jthread|async)\b',
+    '\b(?:CreateThread|_beginthread|_beginthreadex|QueueUserWorkItem)\s*\(')
+$threadCreationFindings = @()
+foreach ($file in Get-ChildItem (Join-Path $repo 'Source') -Recurse -Include *.h, *.cpp) {
+    $text = Get-Content -LiteralPath $file.FullName -Raw
+    foreach ($pattern in $threadCreationPatterns) {
+        if ($text -match $pattern) {
+            $threadCreationFindings += $file.FullName.Substring($repo.Length + 1)
+            break
+        }
+    }
+}
+if ($threadCreationFindings.Count -gt 0) {
+    Fail 'thread-creation' "直接スレッドを生成しています: $($threadCreationFindings[0])"
+} else {
+    Pass 'Framework Sourceに直接スレッド生成なし'
+}
+
 # ---- result ----------------------------------------------------------------
 Write-Host ''
 if ($failures.Count -gt 0) {

@@ -1714,6 +1714,9 @@
     <None Include="Docs\ROADMAP.md">
       <Filter>Docs</Filter>
     </None>
+    <None Include="Docs\RUNTIME_CONTRACTS.md">
+      <Filter>Docs</Filter>
+    </None>
     <None Include="Source\AcsFramework_Core\Assets\Image\README.md">
       <Filter>Source\AcsFramework_Core\Assets\Image</Filter>
     </None>

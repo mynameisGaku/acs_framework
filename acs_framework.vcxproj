@@ -338,6 +338,7 @@
     <ClInclude Include="Source\AcsFramework_Core\Text\Localization\LocalizationSubsystem.h" />
     <None Include="Source\AcsFramework_Core\Text\Localization\README.md" />
     <None Include="Source\AcsFramework_Core\Text\Localization\Test\LocalizationTest.cpp" />
+    <None Include="Docs\RUNTIME_CONTRACTS.md" />
     <None Include="Docs\ROADMAP.md" />
     <ClInclude Include="Source\AcsFramework_Core\Scene\Model3D\Model3DSpawnParams.h" />
     <ClInclude Include="Source\AcsFramework_Core\Scene\Model3D\Model3DSpawner.h" />
