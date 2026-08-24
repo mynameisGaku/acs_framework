@@ -301,6 +301,7 @@
     <None Include="Source\Common\Test\TestHarness.h" />
     <None Include="Source\Common\Test\TestHarness.cpp" />
     <None Include="Source\Common\Test\UnitTestMain.cpp" />
+    <None Include="Source\Common\Test\PublicApiHeaderTest.cpp" />
     <None Include="Source\Common\Test\InternedNamePoolTest.cpp" />
     <None Include="Source\Common\Test\README.md" />
     <None Include="Source\AcsFramework_Core\Simulation\Test\ActionInputTapeTest.cpp" />

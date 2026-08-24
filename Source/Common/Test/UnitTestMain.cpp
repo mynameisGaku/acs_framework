@@ -95,6 +95,7 @@ void RunSceneSnapshotTests( CTestHarness& Harness );
 void RunFixedStepDriverTests( CTestHarness& Harness );
 void RunEffect3DPlayParamsTests( CTestHarness& Harness );
 void RunFrameworkVersionTests( CTestHarness& Harness );
+void RunPublicApiHeaderTests( CTestHarness& Harness );
 
 int main()
 {
@@ -161,6 +162,7 @@ int main()
 	RunFixedStepDriverTests( Harness );
 	RunEffect3DPlayParamsTests( Harness );
 	RunFrameworkVersionTests( Harness );
+	RunPublicApiHeaderTests( Harness );
 
 	Harness.Report();
 

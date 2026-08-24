@@ -62,6 +62,7 @@ else                            { $flags += @('/MD', '/O2', '/DNDEBUG') }
 # audio output stays out of this list on purpose.
 $sources = @(
     'Common\Test\UnitTestMain.cpp',
+    'Common\Test\PublicApiHeaderTest.cpp',
     'Common\Test\TestHarness.cpp',
     'Common\Test\InternedNamePoolTest.cpp',
     'Common\Test\AcsArchiveFileTest.cpp',

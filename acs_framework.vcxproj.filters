@@ -2182,6 +2182,9 @@
     <None Include="Source\Common\Test\InternedNamePoolTest.cpp">
       <Filter>Source\Common\Test</Filter>
     </None>
+    <None Include="Source\Common\Test\PublicApiHeaderTest.cpp">
+      <Filter>Source\Common\Test</Filter>
+    </None>
     <None Include="Source\Common\Test\README.md">
       <Filter>Source\Common\Test</Filter>
     </None>

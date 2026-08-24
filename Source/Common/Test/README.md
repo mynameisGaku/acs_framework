@@ -26,6 +26,7 @@
 |---|---|
 | `Common/Test/TestHarness.*` | 確かめる土台 (数える・落ちた場所を出す) |
 | `Common/Test/UnitTestMain.cpp` | 入口。各モジュールの `RunXxxTests` を呼ぶ |
+| `Common/Test/PublicApiHeaderTest.cpp` | 共通ヘッダーだけで公開3D APIを解決できるか確かめる |
 | `<モジュール>/Test/XxxTest.cpp` | そのモジュールのテスト本体 |
 
 テストは**そのモジュールの隣**に置く。土台の側へ集めると、モジュールを消したときに
