@@ -484,6 +484,12 @@
     <ClInclude Include="Source\AcsFramework_Core\Scene\Block3D\Block3DSpawnParams.h" />
     <None Include="Source\AcsFramework_Core\Scene\Block3D\README.md" />
     <None Include="Source\AcsFramework_Core\Scene\Block3D\Test\Block3DSpawnerTest.cpp" />
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Corridor3D\Corridor3DDirection.h" />
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Corridor3D\Corridor3DSpawner.h" />
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Corridor3D\Corridor3DSpawnParams.h" />
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Corridor3D\Corridor3DSpawnResult.h" />
+    <None Include="Source\AcsFramework_Core\Scene\Corridor3D\README.md" />
+    <None Include="Source\AcsFramework_Core\Scene\Corridor3D\Test\Corridor3DSpawnerTest.cpp" />
     <ClInclude Include="Source\AcsFramework_Core\Scene\Sphere3D\Sphere3DSpawner.h" />
     <ClInclude Include="Source\AcsFramework_Core\Scene\Sphere3D\Sphere3DSpawnParams.h" />
     <None Include="Source\AcsFramework_Core\Scene\Sphere3D\README.md" />
@@ -705,6 +711,8 @@
     <ClCompile Include="Source\AcsFramework_Core\Scene\Ground3D\Ground3DSpawnParams.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Scene\Block3D\Block3DSpawner.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Scene\Block3D\Block3DSpawnParams.cpp" />
+    <ClCompile Include="Source\AcsFramework_Core\Scene\Corridor3D\Corridor3DSpawner.cpp" />
+    <ClCompile Include="Source\AcsFramework_Core\Scene\Corridor3D\Corridor3DSpawnParams.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Scene\Sphere3D\Sphere3DSpawner.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Scene\Sphere3D\Sphere3DSpawnParams.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Scene\Stairs3D\Stairs3DSpawner.cpp" />

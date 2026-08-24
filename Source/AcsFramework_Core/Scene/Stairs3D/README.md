@@ -35,3 +35,6 @@ FStairs3DSpawnResult Placed = SpawnStairs3D( Stairs );
 
 階段全体を回転・拡縮する場合は同じ親ノードの下へ置ける。親を斜め回転または非一様拡縮すると、
 各箱衝突は既存契約どおり表示を包む安全側のworld軸平行箱になる。
+
+階段の前後を両端が開いた通路へ繋ぐ場合は[`SpawnCorridor3D`](../Corridor3D/README.md)へ内幅と長さを
+渡すと、床と側壁2枚を同じ衝突付き配置契約で追加できる。

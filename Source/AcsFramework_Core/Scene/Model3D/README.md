@@ -79,6 +79,8 @@ DestroyCollidableModel3D( SolidObstacle );
 [`SpawnSphere3D`](../Sphere3D/README.md)、歩ける表示面は[`SpawnGround3D`](../Ground3D/README.md)を
 使うと、表示と衝突の寸法を1個の設定へまとめられる。
 床と四方の壁をまとめる場合は[`SpawnRoom3D`](../Room3D/README.md)が5組の生成と巻き戻しを扱う。
+両端が開いた通路は[`SpawnCorridor3D`](../Corridor3D/README.md)が床と側壁2枚の生成、巻き戻し、
+一括破棄を扱う。
 衝突付き階段は[`SpawnStairs3D`](../Stairs3D/README.md)が段数と1段の寸法から直方体列を組み、
 全段の生成、巻き戻し、一括破棄を扱う。
 同じ単一モデルを視線操作へも登録する場合は`SpawnInteractableCollidableModel3D`を使うと、

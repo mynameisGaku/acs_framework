@@ -45,6 +45,7 @@ bloomや輪郭補正の影響を受けず、3D場面より手前、ポーズ・�
 `SpawnGround3D`は表示面と直下の厚み付き箱、`SpawnBlock3D`は同寸法の立方体表示と箱型衝突、
 `SpawnSphere3D`は同半径の球表示と球型衝突、
 `SpawnRoom3D`は歩ける床と四方の壁、
+`SpawnCorridor3D`は入口から出口までの床と側壁2枚、
 `SpawnStairs3D`は共通底面から積み上がる隙間のない階段、
 `SpawnLight3D`は太陽または点光源、
 `SpawnWater3D`は水面を扱う。パスを渡した場合だけ場面共通の
@@ -64,6 +65,8 @@ SpawnGround3D( FVec2{ 16.0f, 12.0f } );
 SpawnBlock3D( FVec3{ 4.0f, 2.0f, 0.5f }, FVec3{ 0.0f, 1.0f, 4.0f } );
 FCollidableModel3DSpawnResult Ball = SpawnSphere3D( 0.8f, FVec3{ 2.0f, 0.8f, 2.0f } );
 FRoom3DSpawnResult Room = SpawnRoom3D( FVec2{ 12.0f, 8.0f }, 3.0f );
+FCorridor3DSpawnResult Corridor = SpawnCorridor3D(
+    3.0f, 10.0f, 3.0f, FVec3{ 0.0f, 0.0f, 4.0f } );
 FStairs3DSpawnResult Stairs = SpawnStairs3D(
     8u, 2.0f, 0.32f, 0.18f, FVec3{ -2.0f, 0.0f, -3.0f } );
 SpawnLight3D( FLight3DSpawnParams::Sun( FVec3{ -0.47f, 0.58f, 0.66f } ) );
@@ -90,6 +93,7 @@ const FSceneRayHit Picked = PickScreen3D( FVec2{ 0.5f, 0.5f }, 100.0f );
 DestroyCollidableModel3D( Wall );
 DestroyCollidableModel3D( Ball );
 DestroyRoom3D( Room );
+DestroyCorridor3D( Corridor );
 DestroyStairs3D( Stairs );
 ```
 
@@ -148,6 +152,9 @@ world軸平行箱を既存デバッグ線へ一括登録する。線は次の透
 既定外の色と材質は`FSphere3DSpawnParams`で変更する。
 床と四方の壁を持つ天井なし空間は`SpawnRoom3D`へ内寸と壁高を渡すと5組をまとめて置ける。
 途中失敗は既生成分まで巻き戻し、`DestroyRoom3D`は全5組を検証してから片付ける。
+両端が開いた通路は`SpawnCorridor3D`へ内幅、長さ、壁高を渡すと、入口から出口まで続く床と側壁2枚を
+XZの正負4方向へ置ける。床は壁外面まで覆い、`DestroyCorridor3D`は全3組の所有関係と重複を検証して
+から片付ける。
 衝突付き階段は`SpawnStairs3D`へ段数、幅、踏面奥行き、段差を渡すと、下へ隙間を残さない段を
 XZの正負4方向へ置ける。最大256段の途中失敗は高い側から巻き戻し、`DestroyStairs3D`は全段の
 所有関係と重複を検証してから片付ける。

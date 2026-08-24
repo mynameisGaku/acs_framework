@@ -7,6 +7,7 @@
 #include "AcsFramework_Core/Scene/Block3D/Block3DSpawner.h"
 #include "AcsFramework_Core/Scene/Character3D/ThirdPersonCharacter3D.h"
 #include "AcsFramework_Core/Scene/Character3D/ThirdPersonCharacter3DSpawner.h"
+#include "AcsFramework_Core/Scene/Corridor3D/Corridor3DSpawner.h"
 #include "AcsFramework_Core/Scene/Ground3D/Ground3DSpawner.h"
 #include "AcsFramework_Core/Scene/Interaction3D/InteractableModel3DSpawner.h"
 #include "AcsFramework_Core/Scene/Light3D/Light3DSpawner.h"
@@ -260,6 +261,30 @@ FCollidableModel3DSpawnResult AUi3DScene::SpawnSphere3D( f32 Radius,
 	FSphere3DSpawnParams Params = FSphere3DSpawnParams::FromRadius( Radius, Position );
 	Params.CollisionLayer = CollisionLayer;
 	return SpawnSphere3D( Params, Parent );
+}
+
+
+FCorridor3DSpawnResult AUi3DScene::SpawnCorridor3D(
+	const FCorridor3DSpawnParams& Params, ANode* Parent ) noexcept
+{
+	return CCorridor3DSpawner::SpawnInto( Graph(), m_Collision3D, Params, Parent );
+}
+
+
+FCorridor3DSpawnResult AUi3DScene::SpawnCorridor3D( f32 InnerWidth,
+	f32 Length, f32 WallHeight, FVec3 EntranceCenter,
+	ECorridor3DDirection Direction, u32 CollisionLayer, ANode* Parent ) noexcept
+{
+	FCorridor3DSpawnParams Params = FCorridor3DSpawnParams::FromDimensions(
+		InnerWidth, Length, WallHeight, EntranceCenter, Direction );
+	Params.CollisionLayer = CollisionLayer;
+	return SpawnCorridor3D( Params, Parent );
+}
+
+
+bool AUi3DScene::DestroyCorridor3D( FCorridor3DSpawnResult& Corridor ) noexcept
+{
+	return CCorridor3DSpawner::Destroy( Graph(), m_Collision3D, Corridor );
 }
 
 

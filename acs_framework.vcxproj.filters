@@ -127,6 +127,12 @@
     <Filter Include="Source\AcsFramework_Core\Scene\Collision3D\Test">
       <UniqueIdentifier>{eb51a720-5b1a-13b8-90bc-d964302b1ffb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\AcsFramework_Core\Scene\Corridor3D">
+      <UniqueIdentifier>{243344c7-4811-2efe-ed88-2b8048a256c2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\AcsFramework_Core\Scene\Corridor3D\Test">
+      <UniqueIdentifier>{1ff57641-5de2-9551-2a08-991b9f71a4f5}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Source\AcsFramework_Core\Scene\DebugDraw3D">
       <UniqueIdentifier>{8f20fe2f-3387-db6a-fbe9-e43b0962357a}</UniqueIdentifier>
     </Filter>
@@ -533,6 +539,12 @@
     </ClCompile>
     <ClCompile Include="Source\AcsFramework_Core\Scene\Collision3D\SceneCollision3D.cpp">
       <Filter>Source\AcsFramework_Core\Scene\Collision3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Scene\Corridor3D\Corridor3DSpawner.cpp">
+      <Filter>Source\AcsFramework_Core\Scene\Corridor3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Scene\Corridor3D\Corridor3DSpawnParams.cpp">
+      <Filter>Source\AcsFramework_Core\Scene\Corridor3D</Filter>
     </ClCompile>
     <ClCompile Include="Source\AcsFramework_Core\Scene\DebugDraw3D\DebugDraw3DLayer.cpp">
       <Filter>Source\AcsFramework_Core\Scene\DebugDraw3D</Filter>
@@ -1210,6 +1222,18 @@
     </ClInclude>
     <ClInclude Include="Source\AcsFramework_Core\Scene\Collision3D\WorldCollisionShape3D.h">
       <Filter>Source\AcsFramework_Core\Scene\Collision3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Corridor3D\Corridor3DDirection.h">
+      <Filter>Source\AcsFramework_Core\Scene\Corridor3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Corridor3D\Corridor3DSpawner.h">
+      <Filter>Source\AcsFramework_Core\Scene\Corridor3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Corridor3D\Corridor3DSpawnParams.h">
+      <Filter>Source\AcsFramework_Core\Scene\Corridor3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Corridor3D\Corridor3DSpawnResult.h">
+      <Filter>Source\AcsFramework_Core\Scene\Corridor3D</Filter>
     </ClInclude>
     <ClInclude Include="Source\AcsFramework_Core\Scene\DebugDraw3D\DebugDraw3DLayer.h">
       <Filter>Source\AcsFramework_Core\Scene\DebugDraw3D</Filter>
@@ -1923,6 +1947,12 @@
     </None>
     <None Include="Source\AcsFramework_Core\Scene\Collision3D\Test\SceneCollision3DTest.cpp">
       <Filter>Source\AcsFramework_Core\Scene\Collision3D\Test</Filter>
+    </None>
+    <None Include="Source\AcsFramework_Core\Scene\Corridor3D\README.md">
+      <Filter>Source\AcsFramework_Core\Scene\Corridor3D</Filter>
+    </None>
+    <None Include="Source\AcsFramework_Core\Scene\Corridor3D\Test\Corridor3DSpawnerTest.cpp">
+      <Filter>Source\AcsFramework_Core\Scene\Corridor3D\Test</Filter>
     </None>
     <None Include="Source\AcsFramework_Core\Scene\DebugDraw3D\Test\DebugDraw3DQueueTest.cpp">
       <Filter>Source\AcsFramework_Core\Scene\DebugDraw3D\Test</Filter>

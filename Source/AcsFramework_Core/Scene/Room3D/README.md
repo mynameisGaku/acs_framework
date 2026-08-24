@@ -30,6 +30,9 @@ FRoom3DSpawnResult Placed = SpawnRoom3D( Room );
 場面途中で外す場合は`DestroyRoom3D`へ成功結果を渡す。全5組が同じ場面で重複なく対になっている
 ことを確認してから片付け、成功時だけ呼出側の結果を空にする。
 
+部屋同士を両端が開いた床で繋ぐ場合は[`SpawnCorridor3D`](../Corridor3D/README.md)へ内幅と長さを
+渡すと、床と側壁2枚の生成・巻き戻し・一括破棄をまとめられる。
+
 部屋内で高さを繋ぐ場合は[`SpawnStairs3D`](../Stairs3D/README.md)へ段数と1段の寸法を渡すと、
 この部屋と同じ衝突付き直方体の契約で隙間のない階段を追加できる。
 

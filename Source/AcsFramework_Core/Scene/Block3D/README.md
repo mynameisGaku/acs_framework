@@ -42,5 +42,8 @@ const FCollidableModel3DSpawnResult Platform = SpawnBlock3D( Block );
 床と四方の壁を毎回組む用途では[`SpawnRoom3D`](../Room3D/README.md)を使う。内寸と壁高から
 この直方体4個と地面1個を配置し、途中失敗と一括破棄まで扱う。
 
+両端が開いた通路では[`SpawnCorridor3D`](../Corridor3D/README.md)を使う。内幅と長さから
+この直方体2個と地面1個を4方向へ配置し、途中失敗と一括破棄まで扱う。
+
 高さの違う段を毎回組む用途では[`SpawnStairs3D`](../Stairs3D/README.md)を使う。段数と1段の寸法から
 隙間のない直方体列を4方向へ配置し、途中失敗と一括破棄まで扱う。

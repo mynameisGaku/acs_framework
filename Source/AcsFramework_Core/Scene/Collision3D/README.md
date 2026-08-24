@@ -61,6 +61,8 @@ DestroyCollidableModel3D( Ball );
 `FCollisionShape3DParams`を渡す。
 床と四方の壁をまとめる場合は`SpawnRoom3D`が5組を作り、`DestroyRoom3D`が全組の対応を検証して
 から一括で外す。
+両端が開いた通路は`SpawnCorridor3D`が床と側壁2枚を作り、`DestroyCorridor3D`が全3組の対応を
+検証してから一括で外す。
 衝突付き階段は`SpawnStairs3D`が共通底面から段を積み上げ、`DestroyStairs3D`が全段の所有関係と
 重複を検証してから一括で外す。
 

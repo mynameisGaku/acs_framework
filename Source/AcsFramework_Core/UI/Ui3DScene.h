@@ -7,6 +7,8 @@
 #include "AcsFramework_Core/Scene/Character3D/ThirdPersonCharacter3DSpawnParams.h"
 #include "AcsFramework_Core/Scene/Character3D/ThirdPersonCharacter3DSpawnResult.h"
 #include "AcsFramework_Core/Scene/Collision3D/SceneCollision3D.h"
+#include "AcsFramework_Core/Scene/Corridor3D/Corridor3DDirection.h"
+#include "AcsFramework_Core/Scene/Corridor3D/Corridor3DSpawnResult.h"
 #include "AcsFramework_Core/Scene/DebugDraw3D/DebugDraw3DLayer.h"
 #include "AcsFramework_Core/Scene/Interaction3D/InteractionHighlight3DParams.h"
 #include "AcsFramework_Core/Scene/Interaction3D/InteractionFocus3D.h"
@@ -26,6 +28,7 @@ using namespace acs::game;
 
 struct FAnimatedModel3DSpawnParams;
 struct FBlock3DSpawnParams;
+struct FCorridor3DSpawnParams;
 struct FGround3DSpawnParams;
 struct FLight3DSpawnParams;
 struct FModel3DSpawnParams;
@@ -288,6 +291,43 @@ public:
 		FVec3 Position = FVec3{},
 		u32 CollisionLayer = CCollisionWorld3D::kAllLayers,
 		ANode* Parent = nullptr ) noexcept;
+
+	/**
+	 * 歩ける床と左右の壁を持つ、両端が開いた3D通路を1回で置く。
+	 *
+	 * @param Params 入口、方向、内幅、長さ、壁と床の寸法、見た目、衝突レイヤー。
+	 * @param Parent 3個のノードを繋ぐ、この場面が所有する親。空ならroot直下。
+	 * @return 床と側壁2枚。失敗時は空で、有効な半端物を残さない。
+	 */
+	FCorridor3DSpawnResult SpawnCorridor3D( const FCorridor3DSpawnParams& Params,
+		ANode* Parent = nullptr ) noexcept;
+
+	/**
+	 * 既定の壁厚、床厚、見た目を使い、内幅と長さだけで3D通路を置く。
+	 *
+	 * @param InnerWidth 左右の壁内面の間で使える全幅。
+	 * @param Length 入口境界から出口境界までの長さ。
+	 * @param WallHeight 床上面からの壁高。
+	 * @param EntranceCenter 配置先親から見た入口境界の床上中心。
+	 * @param Direction 入口から出口へ通路を伸ばす軸方向。省略時はZ正方向。
+	 * @param CollisionLayer 床と側壁が属する非0の衝突レイヤー。
+	 * @param Parent 3個のノードを繋ぐ、この場面が所有する親。空ならroot直下。
+	 * @return 床と側壁2枚。入力または途中登録に失敗したら空の結果。
+	 */
+	FCorridor3DSpawnResult SpawnCorridor3D( f32 InnerWidth, f32 Length,
+		f32 WallHeight = 3.0f, FVec3 EntranceCenter = FVec3{},
+		ECorridor3DDirection Direction = ECorridor3DDirection::PositiveZ,
+		u32 CollisionLayer = CCollisionWorld3D::kAllLayers,
+		ANode* Parent = nullptr ) noexcept;
+
+	/**
+	 * 一括生成した3D通路を、床と側壁2枚のノード・形状ごと破棄する。
+	 *
+	 * @details 全3組がこの場面で重複なく対になっていない場合は何も変更しない。
+	 * @param Corridor `SpawnCorridor3D`の成功結果。成功時は空の結果になる。
+	 * @return 3個のノードを破棄予定へ移し、形状も直ちに外せたらtrue。
+	 */
+	bool DestroyCorridor3D( FCorridor3DSpawnResult& Corridor ) noexcept;
 
 	/**
 	 * 衝突付き直方体を段差ごとに積み上げた軸方向3D階段を1回で置く。
