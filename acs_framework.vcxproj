@@ -547,6 +547,11 @@
     <None Include="Source\AcsFramework_Core\Scene\Checkpoint3D\README.md" />
     <None Include="Source\AcsFramework_Core\Scene\Checkpoint3D\Test\Checkpoint3DTest.cpp" />
     <None Include="Source\AcsFramework_Core\Scene\Checkpoint3D\Test\CheckpointRoute3DTest.cpp" />
+    <ClInclude Include="Source\AcsFramework_Core\Scene\StreetLamp3D\StreetLamp3DSpawner.h" />
+    <ClInclude Include="Source\AcsFramework_Core\Scene\StreetLamp3D\StreetLamp3DSpawnParams.h" />
+    <ClInclude Include="Source\AcsFramework_Core\Scene\StreetLamp3D\StreetLamp3DSpawnResult.h" />
+    <None Include="Source\AcsFramework_Core\Scene\StreetLamp3D\README.md" />
+    <None Include="Source\AcsFramework_Core\Scene\StreetLamp3D\Test\StreetLamp3DSpawnerTest.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Common\Pch.cpp">
@@ -781,6 +786,8 @@
     <ClCompile Include="Source\AcsFramework_Core\Scene\Checkpoint3D\CheckpointRoute3D.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Scene\Checkpoint3D\CheckpointRoute3DParams.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Scene\Checkpoint3D\CheckpointRoute3DProgress.cpp" />
+    <ClCompile Include="Source\AcsFramework_Core\Scene\StreetLamp3D\StreetLamp3DSpawner.cpp" />
+    <ClCompile Include="Source\AcsFramework_Core\Scene\StreetLamp3D\StreetLamp3DSpawnParams.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

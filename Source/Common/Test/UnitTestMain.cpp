@@ -80,6 +80,7 @@ void RunDoorway3DSpawnerTests( CTestHarness& Harness );
 void RunFence3DSpawnerTests( CTestHarness& Harness );
 void RunSphere3DSpawnerTests( CTestHarness& Harness );
 void RunStairs3DSpawnerTests( CTestHarness& Harness );
+void RunStreetLamp3DSpawnerTests( CTestHarness& Harness );
 void RunRoom3DSpawnerTests( CTestHarness& Harness );
 void RunGround3DSpawnerTests( CTestHarness& Harness );
 void RunLamp3DTests( CTestHarness& Harness );
@@ -152,6 +153,7 @@ int main()
 	RunFence3DSpawnerTests( Harness );
 	RunSphere3DSpawnerTests( Harness );
 	RunStairs3DSpawnerTests( Harness );
+	RunStreetLamp3DSpawnerTests( Harness );
 	RunRoom3DSpawnerTests( Harness );
 	RunGround3DSpawnerTests( Harness );
 	RunLamp3DTests( Harness );

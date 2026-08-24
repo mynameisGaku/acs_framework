@@ -229,6 +229,12 @@
     <Filter Include="Source\AcsFramework_Core\Scene\Stairs3D\Test">
       <UniqueIdentifier>{1bc5cfda-4312-17ca-4962-e23be924dbe3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\AcsFramework_Core\Scene\StreetLamp3D">
+      <UniqueIdentifier>{9e610e30-e71f-47b2-426b-b538be824cf7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\AcsFramework_Core\Scene\StreetLamp3D\Test">
+      <UniqueIdentifier>{bfa53776-f512-b807-035f-9c773780e621}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Source\AcsFramework_Core\Scene\Trigger3D">
       <UniqueIdentifier>{87d869b4-8ad8-69af-9b80-22fd7f9a41a0}</UniqueIdentifier>
     </Filter>
@@ -734,6 +740,12 @@
     </ClCompile>
     <ClCompile Include="Source\AcsFramework_Core\Scene\Stairs3D\Stairs3DSpawnParams.cpp">
       <Filter>Source\AcsFramework_Core\Scene\Stairs3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Scene\StreetLamp3D\StreetLamp3DSpawner.cpp">
+      <Filter>Source\AcsFramework_Core\Scene\StreetLamp3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Scene\StreetLamp3D\StreetLamp3DSpawnParams.cpp">
+      <Filter>Source\AcsFramework_Core\Scene\StreetLamp3D</Filter>
     </ClCompile>
     <ClCompile Include="Source\AcsFramework_Core\Scene\Trigger3D\ProximityTrigger3D.cpp">
       <Filter>Source\AcsFramework_Core\Scene\Trigger3D</Filter>
@@ -1541,6 +1553,15 @@
     <ClInclude Include="Source\AcsFramework_Core\Scene\Stairs3D\Stairs3DSpawnResult.h">
       <Filter>Source\AcsFramework_Core\Scene\Stairs3D</Filter>
     </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Scene\StreetLamp3D\StreetLamp3DSpawner.h">
+      <Filter>Source\AcsFramework_Core\Scene\StreetLamp3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Scene\StreetLamp3D\StreetLamp3DSpawnParams.h">
+      <Filter>Source\AcsFramework_Core\Scene\StreetLamp3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Scene\StreetLamp3D\StreetLamp3DSpawnResult.h">
+      <Filter>Source\AcsFramework_Core\Scene\StreetLamp3D</Filter>
+    </ClInclude>
     <ClInclude Include="Source\AcsFramework_Core\Scene\Trigger3D\ProximityTrigger3D.h">
       <Filter>Source\AcsFramework_Core\Scene\Trigger3D</Filter>
     </ClInclude>
@@ -2232,6 +2253,12 @@
     </None>
     <None Include="Source\AcsFramework_Core\Scene\Stairs3D\Test\Stairs3DSpawnerTest.cpp">
       <Filter>Source\AcsFramework_Core\Scene\Stairs3D\Test</Filter>
+    </None>
+    <None Include="Source\AcsFramework_Core\Scene\StreetLamp3D\README.md">
+      <Filter>Source\AcsFramework_Core\Scene\StreetLamp3D</Filter>
+    </None>
+    <None Include="Source\AcsFramework_Core\Scene\StreetLamp3D\Test\StreetLamp3DSpawnerTest.cpp">
+      <Filter>Source\AcsFramework_Core\Scene\StreetLamp3D\Test</Filter>
     </None>
     <None Include="Source\AcsFramework_Core\Scene\Trigger3D\README.md">
       <Filter>Source\AcsFramework_Core\Scene\Trigger3D</Filter>

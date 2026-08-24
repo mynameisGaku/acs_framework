@@ -50,6 +50,7 @@ bloomや輪郭補正の影響を受けず、3D場面より手前、ポーズ・�
 `SpawnDoorway3D`は開口を残す左右柱と上枠、
 `SpawnStairs3D`は共通底面から積み上がる隙間のない階段、
 `SpawnLight3D`は太陽または点光源、`SpawnLamp3D`は見える自己発光球と同色の点光源、
+`SpawnStreetLamp3D`は衝突付き金属ポスト、発光球、点光源を床位置から組み立てる街灯、
 `SpawnStudioLightRig3D`は被写体中心・見る方向・半径から
 既存の太陽を保つキー、フィル、リムの点光源3灯、
 `SpawnWater3D`は水面を扱う。パスを渡した場合だけ場面共通の
@@ -77,6 +78,8 @@ FDoorway3DSpawnResult Doorway = SpawnDoorway3D(
     4.0f, 3.0f, 1.2f, 2.2f, 0.25f, FVec3{ 0.0f, 0.0f, 14.0f } );
 FStairs3DSpawnResult Stairs = SpawnStairs3D(
     8u, 2.0f, 0.32f, 0.18f, FVec3{ -2.0f, 0.0f, -3.0f } );
+FStreetLamp3DSpawnResult StreetLamp = SpawnStreetLamp3D(
+    FVec3{ 2.5f, 0.0f, -1.5f } );
 SpawnLight3D( FLight3DSpawnParams::Sun( FVec3{ -0.47f, 0.58f, 0.66f } ) );
 FLamp3DSpawnResult Lamp = SpawnLamp3D( FVec3{ 1.6f, 2.1f, -0.8f } );
 FLamp3DParams MovedLamp = FLamp3DParams::At( FVec3{ 2.0f, 2.4f, 0.0f } );
@@ -110,6 +113,7 @@ DestroyCorridor3D( Corridor );
 DestroyBridge3D( Bridge );
 DestroyDoorway3D( Doorway );
 DestroyStairs3D( Stairs );
+DestroyStreetLamp3D( StreetLamp );
 ```
 
 `PlaySound3D`は現在カメラを聴取位置へ同期してから、その瞬間の距離と左右位置で短い効果音を

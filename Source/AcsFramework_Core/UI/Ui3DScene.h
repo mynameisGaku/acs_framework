@@ -28,6 +28,7 @@
 #include "AcsFramework_Core/Scene/Room3D/Room3DSpawnResult.h"
 #include "AcsFramework_Core/Scene/Stairs3D/Stairs3DDirection.h"
 #include "AcsFramework_Core/Scene/Stairs3D/Stairs3DSpawnResult.h"
+#include "AcsFramework_Core/Scene/StreetLamp3D/StreetLamp3DSpawnResult.h"
 #include "AcsFramework_Core/Scene/Trigger3D/ProximityTrigger3D.h"
 #include "AcsFramework_Core/Scene/Visual3D/VisualPreset3D.h"
 #include "AcsFramework_Core/UI/InteractionReticle3D/InteractionReticle3DParams.h"
@@ -49,6 +50,7 @@ struct FModel3DSpawnParams;
 struct FRoom3DSpawnParams;
 struct FSphere3DSpawnParams;
 struct FStairs3DSpawnParams;
+struct FStreetLamp3DSpawnParams;
 struct FSpatialPlayRequest;
 struct FSprite3DSpawnParams;
 struct FStudioLightRig3DParams;
@@ -552,6 +554,39 @@ public:
 	 * @return 全段のノードを破棄予定へ移し、形状も直ちに外せたらtrue。
 	 */
 	bool DestroyStairs3D( FStairs3DSpawnResult& Stairs ) noexcept;
+
+	/**
+	 * 床位置を基準に、衝突付き金属ポストと見える点光源を1基の3D街灯として置く。
+	 *
+	 * @details ポストは回転しない直方体で、表示と箱型衝突が同じ位置・寸法になる。
+	 * 街灯1基につきACSの点光源枠を1灯使用する。
+	 * @param Params 床位置、ポスト寸法・材質、発光球、照明、衝突レイヤー。
+	 * @param Parent 3ノードを繋ぐ、この場面が所有する親。空ならroot直下。
+	 * @return ポスト、衝突、発光球、点光源を全て配置した結果。失敗時は空。
+	 */
+	FStreetLamp3DSpawnResult SpawnStreetLamp3D(
+		const FStreetLamp3DSpawnParams& Params,
+		ANode* Parent = nullptr ) noexcept;
+
+	/**
+	 * 床位置だけで、既定の金属ポストと暖色ランプを持つ3D街灯を置く。
+	 *
+	 * @param BasePosition 配置先親から見たポスト底面中央。
+	 * @param Parent 3ノードを繋ぐ、この場面が所有する親。空ならroot直下。
+	 * @return 既定の衝突付き街灯。入力または親が無効なら空。
+	 */
+	FStreetLamp3DSpawnResult SpawnStreetLamp3D( FVec3 BasePosition,
+		ANode* Parent = nullptr ) noexcept;
+
+	/**
+	 * この場面へ一括配置した3D街灯を、3ノードとポスト衝突ごと破棄する。
+	 *
+	 * @details 場面、root、3ノード、衝突形状、重複を先に検証する。
+	 * @param StreetLamp `SpawnStreetLamp3D`の成功結果。成功時は空になる。
+	 * @return この場面の街灯と確認し、全て片付けられた場合だけtrue。
+	 */
+	bool DestroyStreetLamp3D(
+		FStreetLamp3DSpawnResult& StreetLamp ) noexcept;
 
 	/**
 	 * 歩ける床と四方の壁を持つ、天井なし3D部屋を1回で置く。

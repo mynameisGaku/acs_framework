@@ -23,6 +23,7 @@
 | 開口壁枠 | `AcsFramework_Core/UI/Ui3DScene.h` | `SpawnDoorway3D` |
 | 柵 | `AcsFramework_Core/UI/Ui3DScene.h` | `SpawnFence3D` |
 | 階段 | `AcsFramework_Core/UI/Ui3DScene.h` | `SpawnStairs3D` |
+| 衝突付き3D街灯 | `AcsFramework_Core/UI/Ui3DScene.h` | `SpawnStreetLamp3D`、`DestroyStreetLamp3D` |
 | 静的モデル | `AcsFramework_Core/UI/Ui3DScene.h` | `SpawnModel3D` |
 | 衝突付きモデル | `AcsFramework_Core/UI/Ui3DScene.h` | `SpawnCollidableModel3D` |
 | 骨格モデル | `AcsFramework_Core/UI/Ui3DScene.h` | `SpawnAnimatedModel3D` |
@@ -56,6 +57,8 @@
 | 階段設定 | `AcsFramework_Core/Scene/Stairs3D/Stairs3DSpawnParams.h` | `FStairs3DSpawnParams` |
 | 3Dランプ設定 | `AcsFramework_Core/Scene/Light3D/Lamp3DParams.h` | `FLamp3DParams` |
 | 3Dランプ結果 | `AcsFramework_Core/Scene/Light3D/Lamp3DSpawnResult.h` | `FLamp3DSpawnResult` |
+| 3D街灯設定 | `AcsFramework_Core/Scene/StreetLamp3D/StreetLamp3DSpawnParams.h` | `FStreetLamp3DSpawnParams` |
+| 3D街灯結果 | `AcsFramework_Core/Scene/StreetLamp3D/StreetLamp3DSpawnResult.h` | `FStreetLamp3DSpawnResult` |
 | 衝突形状設定 | `AcsFramework_Core/Scene/Collision3D/CollisionShape3DParams.h` | `FCollisionShape3DParams` |
 | 衝突結果 | `AcsFramework_Core/Scene/Model3D/CollidableModel3DSpawnResult.h` | `FCollidableModel3DSpawnResult` |
 | 部屋結果 | `AcsFramework_Core/Scene/Room3D/Room3DSpawnResult.h` | `FRoom3DSpawnResult` |

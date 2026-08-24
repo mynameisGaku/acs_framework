@@ -23,6 +23,7 @@
 #include "AcsFramework_Core/Scene/Sphere3D/Sphere3DSpawner.h"
 #include "AcsFramework_Core/Scene/Sprite3D/Sprite3DSpawner.h"
 #include "AcsFramework_Core/Scene/Stairs3D/Stairs3DSpawner.h"
+#include "AcsFramework_Core/Scene/StreetLamp3D/StreetLamp3DSpawner.h"
 #include "AcsFramework_Core/Scene/Water3D/Water3DSpawner.h"
 #include "AcsFramework_Core/UI/InteractionReticle3D/InteractionReticle3DLayout.h"
 
@@ -426,6 +427,30 @@ FStairs3DSpawnResult AUi3DScene::SpawnStairs3D( u32 StepCount,
 bool AUi3DScene::DestroyStairs3D( FStairs3DSpawnResult& Stairs ) noexcept
 {
 	return CStairs3DSpawner::Destroy( Graph(), m_Collision3D, Stairs );
+}
+
+
+FStreetLamp3DSpawnResult AUi3DScene::SpawnStreetLamp3D(
+	const FStreetLamp3DSpawnParams& Params, ANode* Parent ) noexcept
+{
+	return CStreetLamp3DSpawner::SpawnInto(
+		Graph(), m_Collision3D, Params, Parent );
+}
+
+
+FStreetLamp3DSpawnResult AUi3DScene::SpawnStreetLamp3D(
+	FVec3 BasePosition, ANode* Parent ) noexcept
+{
+	return SpawnStreetLamp3D(
+		FStreetLamp3DSpawnParams::At( BasePosition ), Parent );
+}
+
+
+bool AUi3DScene::DestroyStreetLamp3D(
+	FStreetLamp3DSpawnResult& StreetLamp ) noexcept
+{
+	return CStreetLamp3DSpawner::Destroy(
+		Graph(), m_Collision3D, StreetLamp );
 }
 
 
