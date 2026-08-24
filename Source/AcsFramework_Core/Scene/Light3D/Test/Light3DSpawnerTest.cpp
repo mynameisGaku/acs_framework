@@ -113,6 +113,36 @@ void RunLight3DSpawnerTests( CTestHarness& Harness )
 		}
 	}
 
+	Harness.BeginSuite( "CLight3DSpawner / 配置済みの光だけを検証して更新する" );
+
+	{
+		TObjectPtr<ANode> Parent = NewObject<ANode>();
+		ANode* const Placed = CLight3DSpawner::SpawnInto(
+			*Parent, FLight3DSpawnParams::Point( FVec3{ 1.0f, 2.0f, 3.0f }, 6.0f ) );
+		ALightComponent3D* const Light = LightOf( Placed );
+		const FLight3DSpawnParams Updated = FLight3DSpawnParams::Sun(
+			FVec3{ -2.0f, 1.0f, 3.0f }, FVec3{ 0.9f, 0.6f, 0.3f }, 1.25f );
+
+		Harness.Check( Placed != nullptr && Light != nullptr, "更新対象の点光源を置ける" );
+		if ( Placed != nullptr && Light != nullptr )
+		{
+			Harness.Check( CLight3DSpawner::TryApplyTo( *Placed, Updated ), "既存の光へ全指定を反映できる" );
+			Harness.Check( Light->LightKind() == ELight3DKind::Directional, "光の種類も更新する" );
+			CheckDirection( Harness, Light->WorldDirection(), Normalize( Updated.DirectionToLight ), "太陽の方向を更新する" );
+			CheckNear( Harness, Light->Intensity(), 1.25f, "光の強さを更新する" );
+			Harness.CheckEqualU64( Placed->ComponentCount(), 1u, "光の部品を重複追加しない" );
+		}
+	}
+
+	{
+		TObjectPtr<ANode> Bare = NewObject<ANode>();
+		Bare->Local().position = FVec3{ 4.0f, 5.0f, 6.0f };
+		const FLight3DSpawnParams Valid = FLight3DSpawnParams::Sun( FVec3{ 1.0f, 1.0f, 0.0f } );
+		Harness.Check( !CLight3DSpawner::TryApplyTo( *Bare, Valid ), "光の部品が無いノードを拒否する" );
+		CheckDirection( Harness, Bare->Local().position, FVec3{ 4.0f, 5.0f, 6.0f }, "失敗時は変形を変えない" );
+		Harness.CheckEqualU64( Bare->ComponentCount(), 0u, "失敗時に部品を勝手に追加しない" );
+	}
+
 	Harness.BeginSuite( "CLight3DSpawner / 不正な光を半端に残さない" );
 
 	{

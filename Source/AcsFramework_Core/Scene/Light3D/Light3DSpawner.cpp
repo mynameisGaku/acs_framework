@@ -41,6 +41,18 @@ ANode* CLight3DSpawner::SpawnInto( ANode& Parent, const FLight3DSpawnParams& Par
 }
 
 
+bool CLight3DSpawner::TryApplyTo( ANode& Node, const FLight3DSpawnParams& Params ) noexcept
+{
+	if ( !Params.IsValid() ) return false;
+	ALightComponent3D* const Light = Node.GetComponent<ALightComponent3D>();
+	if ( Light == nullptr ) return false;
+
+	ApplyTransform_Internal( Node, Params );
+	ApplyLightValues_Internal( *Light, Params );
+	return true;
+}
+
+
 FQuat CLight3DSpawner::DirectionRotation_Internal( FVec3 DirectionToLight ) noexcept
 {
 	const FVec3 Up{ 0.0f, 1.0f, 0.0f };
@@ -72,6 +84,12 @@ void CLight3DSpawner::ApplyTransform_Internal( ANode& Node, const FLight3DSpawnP
 void CLight3DSpawner::ApplyLight_Internal( ANode& Node, const FLight3DSpawnParams& Params ) noexcept
 {
 	ALightComponent3D& Light = Node.AddComponent<ALightComponent3D>();
+	ApplyLightValues_Internal( Light, Params );
+}
+
+
+void CLight3DSpawner::ApplyLightValues_Internal( ALightComponent3D& Light, const FLight3DSpawnParams& Params ) noexcept
+{
 	Light.SetLightKind( Params.Kind );
 	Light.SetColor( Params.Color );
 	Light.SetIntensity( Params.Intensity );

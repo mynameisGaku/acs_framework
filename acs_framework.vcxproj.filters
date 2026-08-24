@@ -723,6 +723,9 @@
     <ClCompile Include="Source\AcsFramework_Core\Scene\Water3D\Water3DSpawnParams.cpp">
       <Filter>Source\AcsFramework_Core\Scene\Water3D</Filter>
     </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Scene\Weather3D\TimeOfDay3DAppearance.cpp">
+      <Filter>Source\AcsFramework_Core\Scene\Weather3D</Filter>
+    </ClCompile>
     <ClCompile Include="Source\AcsFramework_Core\Scene\Weather3D\Weather3DAppearance.cpp">
       <Filter>Source\AcsFramework_Core\Scene\Weather3D</Filter>
     </ClCompile>
@@ -1495,6 +1498,9 @@
     </ClInclude>
     <ClInclude Include="Source\AcsFramework_Core\Scene\Water3D\Water3DSpawnParams.h">
       <Filter>Source\AcsFramework_Core\Scene\Water3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Weather3D\TimeOfDay3DAppearance.h">
+      <Filter>Source\AcsFramework_Core\Scene\Weather3D</Filter>
     </ClInclude>
     <ClInclude Include="Source\AcsFramework_Core\Scene\Weather3D\Weather3DAppearance.h">
       <Filter>Source\AcsFramework_Core\Scene\Weather3D</Filter>

@@ -380,6 +380,7 @@
     <ClInclude Include="Source\AcsFramework_Core\Scene\Water3D\Water3DSpawner.h" />
     <None Include="Source\AcsFramework_Core\Scene\Water3D\README.md" />
     <None Include="Source\AcsFramework_Core\Scene\Water3D\Test\Water3DSpawnerTest.cpp" />
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Weather3D\TimeOfDay3DAppearance.h" />
     <ClInclude Include="Source\AcsFramework_Core\Scene\Weather3D\Weather3DAppearance.h" />
     <ClInclude Include="Source\AcsFramework_Core\Scene\Weather3D\Weather3DScene.h" />
     <None Include="Source\AcsFramework_Core\Scene\Weather3D\README.md" />
@@ -696,6 +697,7 @@
     <ClCompile Include="Source\AcsFramework_Core\Scene\Light3D\Light3DSpawner.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Scene\Water3D\Water3DSpawnParams.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Scene\Water3D\Water3DSpawner.cpp" />
+    <ClCompile Include="Source\AcsFramework_Core\Scene\Weather3D\TimeOfDay3DAppearance.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Scene\Weather3D\Weather3DAppearance.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Scene\Weather3D\Weather3DScene.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Effects\Effect3D\Effect3DPlayParams.cpp" />

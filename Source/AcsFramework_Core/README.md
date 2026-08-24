@@ -89,10 +89,11 @@ XZの正負4方向、1から256までの段数、1段の寸法、材質、衝突
 `CStairs3DSpawner`は既存の衝突付き直方体だけを共通底面から合成し、途中失敗時は既生成分を高い側から
 逆順に巻き戻す。一括破棄では全段の所有関係とノード・形状の重複を先に検証する。
 
-3D天候もsceneごとの空、雲、霧、環境光を変えるためSubsystemにはしない。
-`FWeather3DAppearance`は`CWeatherSystem`の状態だけから決まる検証可能な値、
-`AWeather3DScene`は派生場面が設定した晴天時の環境を基準として記録し、相対値を毎フレーム
-適用する薄いアダプターとする。雨雪の素材は固定せず、粒子密度と風向きを公開する。
+3D天候と時刻もsceneごとの太陽、空、雲、霧、環境光を変えるためSubsystemにはしない。
+`FWeather3DAppearance`は`CWeatherSystem`、`FTimeOfDay3DAppearance`はACSの`CAmbientDirector`から
+決まる検証可能な値とする。`AWeather3DScene`は派生場面が設定した晴天時の環境を基準に、
+時刻の太陽・空・環境光を先に作り、天候の相対値を後から毎フレーム適用する薄いアダプターとする。
+雨雪の素材は固定せず、粒子密度と風向きを公開する。
 
 3D見た目プリセットもsceneごとの設定値なのでSubsystemにはしない。`EVisualPreset3D`は
 `Performance`、`Balanced`、`Cinematic`の負荷と見た目を選び、純粋な

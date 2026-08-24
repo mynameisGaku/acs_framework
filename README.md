@@ -99,6 +99,9 @@ SpawnModel3D( FModel3DSpawnParams::FromFabricPrimitive( EMeshPrimitive3D::Sphere
 // 色と位置だけで、二段影と縁光を持つトゥーン球を置く
 SpawnModel3D( FModel3DSpawnParams::FromToonPrimitive( EMeshPrimitive3D::Sphere, FVec3{ -2, 1, 2 }, FVec3{ 0.95f, 0.58f, 0.10f } ) );
 
+// 8時から太陽、空、環境光を同じ時計で動かす (既定は実時間1分でゲーム内1時間)
+EnableTimeOfDay3D( 8.0f );
+
 // FBX を置く (Assets からの相対名)
 FModel3DSpawnParams Model = FModel3DSpawnParams::FromMesh( FStringView( "Models/Robot.fbx" ), Position );
 SpawnModel3D( Model );

@@ -11,6 +11,9 @@ SpawnLight3D( FLight3DSpawnParams::Point( FVec3{ 0.0f, 2.0f, 0.0f }, 8.0f ) );
 ```
 
 `AUi3DScene`を使わない独自の場面グラフでは、低水準の`CLight3DSpawner::SpawnInto`を直接使える。
+配置後に時刻や演出で値を変える場合は`CLight3DSpawner::TryApplyTo`へ同じ
+`FLight3DSpawnParams`を渡す。光の部品が無いノードには部品を追加せず、入力不正時も変形と
+既存の光を変更しないため、内部の回転変換を外部から直接呼ぶ必要はない。
 
 平行光の`DirectionToLight`は、光が進む向きではなく、面から光源へ向かう向きである。
 長さそのものは明るさに影響せず、配置時に正規化する。点光源は`Position`と`Range`を使う。

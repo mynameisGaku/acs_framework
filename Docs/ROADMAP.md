@@ -42,7 +42,7 @@ ACS のモジュールは **438 個**ある。この枠組みが窓口を用意�
 | 3D 柵 | `AUi3DScene::SpawnFence3D`、最大間隔で並ぶ支柱と水平な横桟、失敗時巻き戻し・一括破棄 |
 | 3D 階段 | `AUi3DScene::SpawnStairs3D`、4方向の隙間のない段、失敗時巻き戻し・一括破棄 |
 | 3D 水面 | `AUi3DScene::SpawnWater3D`、`FWater3DSpawnParams`、ACSの動的波紋 |
-| 3D 天候 | `AWeather3DScene`、`FWeather3DAppearance`、ACSの`CWeatherSystem` |
+| 3D 天候・時刻 | `AWeather3DScene`、`FWeather3DAppearance`、ACSの`CWeatherSystem`と`CAmbientDirector` |
 | 3D エフェクト | `AEffect3DScene`、`CEffect3DPlayer`、同梱の Effekseer |
 | 3D 材質 | PBR、光沢コート、自己発光、トゥーン、布の毛羽反射、肌・蝋向け内部散乱 |
 | 3D の形状重なり | `AUi3DScene::Collision3D`、`CSceneCollision3D`、ACSの`CCollisionWorld3D` |
@@ -310,6 +310,9 @@ cameraからの距離に応じて大気へ馴染み、雲も実距離まで同�
   `SetWeather( EWeatherKind::Storm, 2.5f )`と書くだけで、ACSの天候状態を雲量、雲影、霧、
   空色、IBL環境光へ同じ遷移率で反映する。雨雪の素材は作品ごとに選べるよう、降水密度と
   風向きだけを公開する
+- ~~3D時刻による太陽・空・環境光の同期~~ → **実装済み** (2026-08-25)。
+  `EnableTimeOfDay3D( 8.0f )`の1回でACSの24時間補間、専用太陽、物理大気、IBLを接続する。
+  太陽軌道の方位と進行速度を場面ごとに変えられ、天候は現在時刻の空と環境光へ後から合成する
 - ~~シーン保存でノード名を残す~~ → **実装済み** (2026-08-22)。ACS v4のバイト列は変更せず、
   Framework形式でDFS先行順のUTF-8名前表を添える。旧Frameworkが保存したACS v2/v3/v4の
   生バイト列も判別して読み込めるため、既存セーブの後方互換性を保つ

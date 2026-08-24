@@ -3,7 +3,6 @@
 
 #include "AcsFramework_Core/Scene/Animation3D/AnimatedModel3DSpawner.h"
 #include "AcsFramework_Core/Scene/Ground3D/Ground3DSpawnParams.h"
-#include "AcsFramework_Core/Scene/Light3D/Light3DSpawnParams.h"
 #include "AcsFramework_Core/Scene/Model3D/Model3DSpawnParams.h"
 #include "AcsFramework_Core/Scene/Sprite3D/Sprite3DSpawner.h"
 #include "AcsFramework_Core/Scene/Water3D/Water3DSpawnParams.h"
@@ -583,8 +582,10 @@ void ADemo3DScene::OnEnter() noexcept
 	// 以前は真上に近い位置に置いていたので «床に太陽が映らない» ように見えていた。
 	// 描けていなかったのではなく、映る場所が画面の外だった。
 	// 以前のEuler角と同じ方向を、光の意味に合う「面から太陽へ向かう方向」で直接渡す。
-	// ノード作成、回転への変換、部品の追加は配置窓口がまとめる。
-	SpawnLight3D( FLight3DSpawnParams::Sun( FVec3{ -0.472623f, 0.581683f, 0.662021f } ) );
+	// ノード作成、時刻進行、回転、空と環境光の同期は時刻窓口がまとめる。
+	// 初期時刻と方位は従来の太陽方向へ合わせ、1日は実時間96分でゆっくり進める。
+	if ( !EnableTimeOfDay3D( 15.6287f, 1.0f / 240.0f, 54.4766f ) )
+		ACS_LOG_WARN( "Demo3D: 時刻連動の太陽を配置できなかった" );
 
 	// 点光源は置かない。
 	//

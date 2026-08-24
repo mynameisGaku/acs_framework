@@ -145,6 +145,7 @@ $sources = @(
     'AcsFramework_Core\Scene\Water3D\Water3DSpawnParams.cpp',
     'AcsFramework_Core\Scene\Water3D\Water3DSpawner.cpp',
     'AcsFramework_Core\Scene\Water3D\Test\Water3DSpawnerTest.cpp',
+    'AcsFramework_Core\Scene\Weather3D\TimeOfDay3DAppearance.cpp',
     'AcsFramework_Core\Scene\Weather3D\Weather3DAppearance.cpp',
     'AcsFramework_Core\Scene\Weather3D\Test\Weather3DAppearanceTest.cpp',
 	'AcsFramework_Core\Scene\Visual3D\VisualPreset3D.cpp',

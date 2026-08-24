@@ -42,6 +42,17 @@ public:
 	 */
 	static ANode* SpawnInto( ANode& Parent, const FLight3DSpawnParams& Params ) noexcept;
 
+	/**
+	 * 配置済みノードの光と変形を、検証済みの指定へ更新する。
+	 *
+	 * @details `ALightComponent3D`が無いノードへ部品を勝手に追加しない。入力を先に全て
+	 * 検証するため、失敗時はノードの変形と既存の光を変更しない。
+	 * @param Node 更新する光の部品を既に持つノード。
+	 * @param Params 新しい種類、位置または方向、色、強さ、距離。
+	 * @return 全指定を反映できた場合だけtrue。
+	 */
+	static bool TryApplyTo( ANode& Node, const FLight3DSpawnParams& Params ) noexcept;
+
 private:
 	/**
 	 * +Yを指定方向へ向ける最短回転を作る。
@@ -66,4 +77,12 @@ private:
 	 * @param Params 有効性を確認済みの指定。
 	 */
 	static void ApplyLight_Internal( ANode& Node, const FLight3DSpawnParams& Params ) noexcept;
+
+	/**
+	 * 既存の光の部品へ種類と描画値を設定する。
+	 *
+	 * @param Light 更新する光の部品。
+	 * @param Params 有効性を確認済みの指定。
+	 */
+	static void ApplyLightValues_Internal( ALightComponent3D& Light, const FLight3DSpawnParams& Params ) noexcept;
 };
