@@ -12,6 +12,8 @@
 #include "AcsFramework_Core/Scene/DebugDraw3D/DebugDraw3DLayer.h"
 #include "AcsFramework_Core/Scene/Doorway3D/Doorway3DOrientation.h"
 #include "AcsFramework_Core/Scene/Doorway3D/Doorway3DSpawnResult.h"
+#include "AcsFramework_Core/Scene/Fence3D/Fence3DDirection.h"
+#include "AcsFramework_Core/Scene/Fence3D/Fence3DSpawnResult.h"
 #include "AcsFramework_Core/Scene/Interaction3D/InteractionHighlight3DParams.h"
 #include "AcsFramework_Core/Scene/Interaction3D/InteractionFocus3D.h"
 #include "AcsFramework_Core/Scene/Model3D/CollidableModel3DSpawnResult.h"
@@ -32,6 +34,7 @@ struct FAnimatedModel3DSpawnParams;
 struct FBlock3DSpawnParams;
 struct FCorridor3DSpawnParams;
 struct FDoorway3DSpawnParams;
+struct FFence3DSpawnParams;
 struct FGround3DSpawnParams;
 struct FLight3DSpawnParams;
 struct FModel3DSpawnParams;
@@ -371,6 +374,44 @@ public:
 	 * @return 3個のノードを破棄予定へ移し、形状も直ちに外せたらtrue。
 	 */
 	bool DestroyDoorway3D( FDoorway3DSpawnResult& Doorway ) noexcept;
+
+	/**
+	 * 両端を含む支柱を最大間隔で分け、水平な横桟で繋いだ3D柵を置く。
+	 *
+	 * @param Params 始点、方向、寸法、支柱間隔、横桟数、見た目、衝突レイヤー。
+	 * @param Parent 全支柱と横桟を繋ぐ、この場面が所有する親。空ならroot直下。
+	 * @return 始点から並ぶ支柱と下から並ぶ横桟。失敗時は空で、有効な半端物を残さない。
+	 */
+	FFence3DSpawnResult SpawnFence3D( const FFence3DSpawnParams& Params,
+		ANode* Parent = nullptr ) noexcept;
+
+	/**
+	 * 既定の支柱・横桟寸法と見た目を使い、長さと高さだけで3D柵を置く。
+	 *
+	 * @param Length 始点支柱と終点支柱の中心間距離。
+	 * @param Height 底面から支柱上端までの高さ。
+	 * @param MaximumPostSpacing 隣り合う支柱中心の最大間隔。
+	 * @param StartPostBottomCenter 配置先親から見た始点支柱の底面中央。
+	 * @param Direction 始点支柱から終点支柱へ伸ばす軸方向。
+	 * @param CollisionLayer 全支柱と横桟が属する非0の衝突レイヤー。
+	 * @param Parent 全支柱と横桟を繋ぐ、この場面が所有する親。空ならroot直下。
+	 * @return 始点から並ぶ支柱と下から並ぶ横桟。入力または途中登録に失敗したら空の結果。
+	 */
+	FFence3DSpawnResult SpawnFence3D( f32 Length, f32 Height,
+		f32 MaximumPostSpacing = 2.0f,
+		FVec3 StartPostBottomCenter = FVec3{},
+		EFence3DDirection Direction = EFence3DDirection::PositiveZ,
+		u32 CollisionLayer = CCollisionWorld3D::kAllLayers,
+		ANode* Parent = nullptr ) noexcept;
+
+	/**
+	 * 一括生成した3D柵を、全支柱と横桟のノード・形状ごと破棄する。
+	 *
+	 * @details 全要素がこの場面で重複なく対になっていない場合は何も変更しない。
+	 * @param Fence `SpawnFence3D`の成功結果。成功時は空の結果になる。
+	 * @return 全ノードを破棄予定へ移し、形状も直ちに外せたらtrue。
+	 */
+	bool DestroyFence3D( FFence3DSpawnResult& Fence ) noexcept;
 
 	/**
 	 * 衝突付き直方体を段差ごとに積み上げた軸方向3D階段を1回で置く。

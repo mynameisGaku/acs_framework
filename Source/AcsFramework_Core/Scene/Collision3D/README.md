@@ -65,6 +65,8 @@ DestroyCollidableModel3D( Ball );
 検証してから一括で外す。
 開口壁枠は`SpawnDoorway3D`が通過部分を避けて左右柱と上枠を作り、`DestroyDoorway3D`が全3組の
 対応を検証してから一括で外す。
+衝突付き柵は`SpawnFence3D`が均等な支柱と水平な横桟を作り、`DestroyFence3D`が全要素の所有関係と
+重複を検証してから一括で外す。
 衝突付き階段は`SpawnStairs3D`が共通底面から段を積み上げ、`DestroyStairs3D`が全段の所有関係と
 重複を検証してから一括で外す。
 

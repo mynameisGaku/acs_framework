@@ -74,6 +74,7 @@ void RunDebugDraw3DQueueTests( CTestHarness& Harness );
 void RunBlock3DSpawnerTests( CTestHarness& Harness );
 void RunCorridor3DSpawnerTests( CTestHarness& Harness );
 void RunDoorway3DSpawnerTests( CTestHarness& Harness );
+void RunFence3DSpawnerTests( CTestHarness& Harness );
 void RunSphere3DSpawnerTests( CTestHarness& Harness );
 void RunStairs3DSpawnerTests( CTestHarness& Harness );
 void RunRoom3DSpawnerTests( CTestHarness& Harness );
@@ -139,6 +140,7 @@ int main()
 	RunBlock3DSpawnerTests( Harness );
 	RunCorridor3DSpawnerTests( Harness );
 	RunDoorway3DSpawnerTests( Harness );
+	RunFence3DSpawnerTests( Harness );
 	RunSphere3DSpawnerTests( Harness );
 	RunStairs3DSpawnerTests( Harness );
 	RunRoom3DSpawnerTests( Harness );

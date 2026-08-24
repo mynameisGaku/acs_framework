@@ -33,3 +33,5 @@ FDoorway3DSpawnResult Placed = SpawnDoorway3D( Doorway );
 
 この機能は開口壁枠だけを作り、扉板、開閉、鍵、操作対象は固定しない。作品に必要なら開口の親ノードへ
 任意のモデルや`SpawnInteractableCollidableModel3D`を追加する。
+
+開口の左右へ支柱と横桟を続ける場合は[`SpawnFence3D`](../Fence3D/README.md)を必要な長さへ分けて置く。

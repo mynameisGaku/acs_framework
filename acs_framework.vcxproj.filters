@@ -145,6 +145,12 @@
     <Filter Include="Source\AcsFramework_Core\Scene\Doorway3D\Test">
       <UniqueIdentifier>{7b65a81a-0ba3-dbaf-334d-27d6e9b03239}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\AcsFramework_Core\Scene\Fence3D">
+      <UniqueIdentifier>{71bd647a-2e77-4c0c-a17d-a5e287229826}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\AcsFramework_Core\Scene\Fence3D\Test">
+      <UniqueIdentifier>{d7687e1a-848e-48a2-865e-1e20c995ddc8}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Source\AcsFramework_Core\Scene\Ground3D">
       <UniqueIdentifier>{a539cd72-551d-1758-ed66-57036c8eb99f}</UniqueIdentifier>
     </Filter>
@@ -566,6 +572,12 @@
     </ClCompile>
     <ClCompile Include="Source\AcsFramework_Core\Scene\Doorway3D\Doorway3DSpawnParams.cpp">
       <Filter>Source\AcsFramework_Core\Scene\Doorway3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Scene\Fence3D\Fence3DSpawner.cpp">
+      <Filter>Source\AcsFramework_Core\Scene\Fence3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Scene\Fence3D\Fence3DSpawnParams.cpp">
+      <Filter>Source\AcsFramework_Core\Scene\Fence3D</Filter>
     </ClCompile>
     <ClCompile Include="Source\AcsFramework_Core\Scene\Ground3D\Ground3DSpawner.cpp">
       <Filter>Source\AcsFramework_Core\Scene\Ground3D</Filter>
@@ -1267,6 +1279,18 @@
     </ClInclude>
     <ClInclude Include="Source\AcsFramework_Core\Scene\Doorway3D\Doorway3DSpawnResult.h">
       <Filter>Source\AcsFramework_Core\Scene\Doorway3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Fence3D\Fence3DDirection.h">
+      <Filter>Source\AcsFramework_Core\Scene\Fence3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Fence3D\Fence3DSpawner.h">
+      <Filter>Source\AcsFramework_Core\Scene\Fence3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Fence3D\Fence3DSpawnParams.h">
+      <Filter>Source\AcsFramework_Core\Scene\Fence3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Fence3D\Fence3DSpawnResult.h">
+      <Filter>Source\AcsFramework_Core\Scene\Fence3D</Filter>
     </ClInclude>
     <ClInclude Include="Source\AcsFramework_Core\Scene\Ground3D\Ground3DSpawner.h">
       <Filter>Source\AcsFramework_Core\Scene\Ground3D</Filter>
@@ -1986,6 +2010,12 @@
     </None>
     <None Include="Source\AcsFramework_Core\Scene\Doorway3D\Test\Doorway3DSpawnerTest.cpp">
       <Filter>Source\AcsFramework_Core\Scene\Doorway3D\Test</Filter>
+    </None>
+    <None Include="Source\AcsFramework_Core\Scene\Fence3D\README.md">
+      <Filter>Source\AcsFramework_Core\Scene\Fence3D</Filter>
+    </None>
+    <None Include="Source\AcsFramework_Core\Scene\Fence3D\Test\Fence3DSpawnerTest.cpp">
+      <Filter>Source\AcsFramework_Core\Scene\Fence3D\Test</Filter>
     </None>
     <None Include="Source\AcsFramework_Core\Scene\Ground3D\README.md">
       <Filter>Source\AcsFramework_Core\Scene\Ground3D</Filter>

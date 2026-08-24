@@ -9,6 +9,7 @@
 #include "AcsFramework_Core/Scene/Character3D/ThirdPersonCharacter3DSpawner.h"
 #include "AcsFramework_Core/Scene/Corridor3D/Corridor3DSpawner.h"
 #include "AcsFramework_Core/Scene/Doorway3D/Doorway3DSpawner.h"
+#include "AcsFramework_Core/Scene/Fence3D/Fence3DSpawner.h"
 #include "AcsFramework_Core/Scene/Ground3D/Ground3DSpawner.h"
 #include "AcsFramework_Core/Scene/Interaction3D/InteractableModel3DSpawner.h"
 #include "AcsFramework_Core/Scene/Light3D/Light3DSpawner.h"
@@ -312,6 +313,31 @@ FDoorway3DSpawnResult AUi3DScene::SpawnDoorway3D( f32 WallWidth,
 bool AUi3DScene::DestroyDoorway3D( FDoorway3DSpawnResult& Doorway ) noexcept
 {
 	return CDoorway3DSpawner::Destroy( Graph(), m_Collision3D, Doorway );
+}
+
+
+FFence3DSpawnResult AUi3DScene::SpawnFence3D(
+	const FFence3DSpawnParams& Params, ANode* Parent ) noexcept
+{
+	return CFence3DSpawner::SpawnInto( Graph(), m_Collision3D, Params, Parent );
+}
+
+
+FFence3DSpawnResult AUi3DScene::SpawnFence3D( f32 Length, f32 Height,
+	f32 MaximumPostSpacing, FVec3 StartPostBottomCenter,
+	EFence3DDirection Direction, u32 CollisionLayer, ANode* Parent ) noexcept
+{
+	FFence3DSpawnParams Params = FFence3DSpawnParams::FromDimensions(
+		Length, Height, StartPostBottomCenter, Direction );
+	Params.MaximumPostSpacing = MaximumPostSpacing;
+	Params.CollisionLayer = CollisionLayer;
+	return SpawnFence3D( Params, Parent );
+}
+
+
+bool AUi3DScene::DestroyFence3D( FFence3DSpawnResult& Fence ) noexcept
+{
+	return CFence3DSpawner::Destroy( Graph(), m_Collision3D, Fence );
 }
 
 

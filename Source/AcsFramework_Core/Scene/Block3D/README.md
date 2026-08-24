@@ -48,5 +48,8 @@ const FCollidableModel3DSpawnResult Platform = SpawnBlock3D( Block );
 開口のある壁では[`SpawnDoorway3D`](../Doorway3D/README.md)を使う。壁と開口の寸法から
 この直方体3個を左右柱と上枠へ分け、通過部分に衝突を残さず途中失敗と一括破棄まで扱う。
 
+支柱と横桟を毎回並べる用途では[`SpawnFence3D`](../Fence3D/README.md)を使う。長さと高さから
+この直方体を等間隔の支柱と水平な横桟へ配置し、途中失敗と一括破棄まで扱う。
+
 高さの違う段を毎回組む用途では[`SpawnStairs3D`](../Stairs3D/README.md)を使う。段数と1段の寸法から
 隙間のない直方体列を4方向へ配置し、途中失敗と一括破棄まで扱う。
