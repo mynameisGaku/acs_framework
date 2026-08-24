@@ -25,7 +25,7 @@ ACS Frameworkの利用側から見える追加、変更、修正を記録する�
 - 自己発光球と同色の点光源を位置だけで同期配置・一括破棄する`SpawnLamp3D`
 - 配置済みランプの位置、半径、色、発光と照明を片側だけずらさず変える`TryUpdateLamp3D`
 - 床位置だけで衝突付き金属ポスト、発光球、点光源を一括配置・同期更新・破棄する`SpawnStreetLamp3D` / `TryUpdateStreetLamp3D`
-- 既存の太陽を保ち、中心・見る方向・半径からキー、フィル、リムを置く`SpawnStudioLightRig3D`
+- 既存の太陽を保ち、中心・見る方向・半径からキー、フィル、リムを配置・同期更新する`SpawnStudioLightRig3D` / `TryUpdateStudioLightRig3D`
 - 3D衝突、近接トリガー、視線操作、第三者視点キャラクター、追従カメラの接続層
 - 指定した1形状の進入を一度限りまたは再進入ごとに発火する`SpawnCheckpoint3D`
 - 発火番号を順番どおりに受理し、複数周の完了を決定論的に返す`FCheckpointRoute3D`

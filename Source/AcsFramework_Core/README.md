@@ -184,8 +184,8 @@ subsystemにはしない。
 再実装せず、3ノードと1形状の途中失敗巻き戻し、共通親と所有確認後の同期更新、一括破棄だけを
 受け持つため、これもsubsystemにはしない。
 被写体用の`FStudioLightRig3DParams`も中心、見る方向、半径から3灯の点光源指定を決める値に留め、
-`CStudioLightRig3DSpawner`が途中失敗時の巻き戻しと一括破棄を受け持つ。平行光を増やさず、
-既定または時刻連動の太陽を唯一の影付き主光源として保つ。
+`CStudioLightRig3DSpawner`が途中失敗時の巻き戻し、3灯と共通親の所有確認後の同期更新、一括破棄を
+受け持つ。平行光を増やさず、既定または時刻連動の太陽を唯一の影付き主光源として保つ。
 
 固定向きの3D画像配置は`FSprite3DSpawnParams`を検証可能な値、`CSprite3DSpawner`を状態なしの
 接続層とする。`CImageLibrary`は`Assets`相対名をACSの`CAssetRegistry`へ渡し、配置層は

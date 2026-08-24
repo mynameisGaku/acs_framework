@@ -175,6 +175,209 @@ void RunStudioLightRig3DTests( CTestHarness& Harness )
 			"確定後はrootと指定親だけを残す" );
 	}
 
+	Harness.BeginSuite( "CStudioLightRig3DSpawner / 被写体に合わせて3灯を同期更新する" );
+
+	{
+		CSceneNodeGraph Graph;
+		const FScene3DSpawnResult Parent = Graph.TrySpawn(
+			FStringView( "SubjectRoot" ) );
+		FStudioLightRig3DSpawnResult Spawned =
+			CStudioLightRig3DSpawner::SpawnInto(
+				Graph, FStudioLightRig3DParams::AroundSubject(
+					FVec3{ 0.0f, 1.0f, 0.0f },
+					FVec3{ 0.0f, 0.0f, -1.0f }, 1.0f ), Parent.Node );
+		const FNodeId OriginalKeyId = Spawned.KeyLightId();
+		const FNodeId OriginalFillId = Spawned.FillLightId();
+		const FNodeId OriginalRimId = Spawned.RimLightId();
+
+		FStudioLightRig3DParams Updated =
+			FStudioLightRig3DParams::AroundSubject(
+				FVec3{ 2.0f, 1.5f, -3.0f },
+				FVec3{ 1.0f, 0.2f, 0.0f }, 2.0f );
+		Updated.KeyColor = FVec3{ 1.0f, 0.70f, 0.45f };
+		Updated.KeyIntensity = 2.6f;
+		Updated.FillColor = FVec3{ 0.30f, 0.55f, 1.0f };
+		Updated.FillIntensity = 0.9f;
+		Updated.RimColor = FVec3{ 1.0f, 0.35f, 0.18f };
+		Updated.RimIntensity = 1.8f;
+		Updated.RangeScale = 5.0f;
+		FLight3DSpawnParams ExpectedKey;
+		FLight3DSpawnParams ExpectedFill;
+		FLight3DSpawnParams ExpectedRim;
+		Harness.Check( Updated.TryBuildLights(
+			ExpectedKey, ExpectedFill, ExpectedRim ),
+			"更新後の3灯指定を計算できる" );
+
+		Harness.Check( CStudioLightRig3DSpawner::TryApplyTo(
+			Graph, Spawned, Updated ),
+			"有効な新指定を3灯へ一括反映できる" );
+		Harness.Check( Spawned.KeyLightId() == OriginalKeyId
+			&& Spawned.FillLightId() == OriginalFillId
+			&& Spawned.RimLightId() == OriginalRimId,
+			"更新しても3灯の世代付き番号を保つ" );
+		Harness.CheckEqualU64( Graph.RegisteredCount(), 5u,
+			"更新で3灯を作り直さない" );
+
+		ANode* const Key = Spawned.KeyLight();
+		ANode* const Fill = Spawned.FillLight();
+		ANode* const Rim = Spawned.RimLight();
+		CheckVector( Harness,
+			Key != nullptr ? Key->Local().position : FVec3{},
+			ExpectedKey.Position, "キーを新しい被写体の左上へ移す" );
+		CheckVector( Harness,
+			Fill != nullptr ? Fill->Local().position : FVec3{},
+			ExpectedFill.Position, "フィルを新しい被写体の右側へ移す" );
+		CheckVector( Harness,
+			Rim != nullptr ? Rim->Local().position : FVec3{},
+			ExpectedRim.Position, "リムを新しい被写体の背面へ移す" );
+		Harness.Check( Key != nullptr && Key->Parent() == Parent.Node
+			&& Fill != nullptr && Fill->Parent() == Parent.Node
+			&& Rim != nullptr && Rim->Parent() == Parent.Node,
+			"更新後も3灯の共通親を保つ" );
+		Harness.Check( Key != nullptr
+			&& Key->Name() == FStringView( "StudioKeyLight" )
+			&& Fill != nullptr
+			&& Fill->Name() == FStringView( "StudioFillLight" )
+			&& Rim != nullptr
+			&& Rim->Name() == FStringView( "StudioRimLight" ),
+			"更新後も3灯の役割名を保つ" );
+
+		ALightComponent3D* const KeyLight = LightOf( Key );
+		ALightComponent3D* const FillLight = LightOf( Fill );
+		ALightComponent3D* const RimLight = LightOf( Rim );
+		FPointLight KeyOutput{};
+		FPointLight FillOutput{};
+		FPointLight RimOutput{};
+		Harness.Check( KeyLight != nullptr && KeyLight->FillPoint( KeyOutput )
+			&& FillLight != nullptr && FillLight->FillPoint( FillOutput )
+			&& RimLight != nullptr && RimLight->FillPoint( RimOutput ),
+			"更新後の3灯を描画値へ変換できる" );
+		Harness.CheckNearF32( KeyOutput.range, ExpectedKey.Range, 0.0001f,
+			"キーを新しい到達距離へ更新する" );
+		Harness.CheckNearF32( FillOutput.color.z,
+			ExpectedFill.Color.z * ExpectedFill.Intensity, 0.0001f,
+			"フィルを新しい色と強さへ更新する" );
+		Harness.CheckNearF32( RimOutput.color.x,
+			ExpectedRim.Color.x * ExpectedRim.Intensity, 0.0001f,
+			"リムを新しい色と強さへ更新する" );
+	}
+
+	Harness.BeginSuite( "CStudioLightRig3DSpawner / 更新失敗時は3灯を変えない" );
+
+	{
+		CSceneNodeGraph Graph;
+		const FScene3DSpawnResult Parent = Graph.TrySpawn(
+			FStringView( "SubjectRoot" ) );
+		const FScene3DSpawnResult OtherParent = Graph.TrySpawn(
+			FStringView( "OtherRoot" ) );
+		const FStudioLightRig3DParams Initial =
+			FStudioLightRig3DParams::AroundSubject(
+				FVec3{ 0.0f, 1.0f, 0.0f },
+				FVec3{ 0.0f, 0.0f, -1.0f }, 1.0f );
+		FStudioLightRig3DSpawnResult Spawned =
+			CStudioLightRig3DSpawner::SpawnInto(
+				Graph, Initial, Parent.Node );
+		ANode* const Key = Spawned.KeyLight();
+		ANode* const Fill = Spawned.FillLight();
+		ANode* const Rim = Spawned.RimLight();
+		FLight3DSpawnParams InitialKey;
+		FLight3DSpawnParams InitialFill;
+		FLight3DSpawnParams InitialRim;
+		Harness.Check( Initial.TryBuildLights(
+			InitialKey, InitialFill, InitialRim ),
+			"失敗時比較用の初期3灯を計算できる" );
+
+		FStudioLightRig3DParams Updated =
+			FStudioLightRig3DParams::AroundSubject(
+				FVec3{ 6.0f, 2.0f, -4.0f },
+				FVec3{ 1.0f, 0.0f, 0.0f }, 2.5f );
+		FStudioLightRig3DParams Invalid = Updated;
+		Invalid.RimIntensity = -1.0f;
+		Harness.Check( !CStudioLightRig3DSpawner::TryApplyTo(
+			Graph, Spawned, Invalid ), "不正な新指定を拒否する" );
+		CheckVector( Harness,
+			Key != nullptr ? Key->Local().position : FVec3{},
+			InitialKey.Position, "不正入力ではキーを変えない" );
+		CheckVector( Harness,
+			Fill != nullptr ? Fill->Local().position : FVec3{},
+			InitialFill.Position, "不正入力ではフィルを変えない" );
+		CheckVector( Harness,
+			Rim != nullptr ? Rim->Local().position : FVec3{},
+			InitialRim.Position, "不正入力ではリムを変えない" );
+		FPointLight KeyAfterInvalid{};
+		FPointLight FillAfterInvalid{};
+		FPointLight RimAfterInvalid{};
+		Harness.Check( LightOf( Key ) != nullptr
+			&& LightOf( Key )->FillPoint( KeyAfterInvalid )
+			&& LightOf( Fill ) != nullptr
+			&& LightOf( Fill )->FillPoint( FillAfterInvalid )
+			&& LightOf( Rim ) != nullptr
+			&& LightOf( Rim )->FillPoint( RimAfterInvalid ),
+			"不正入力後も3灯を描画値へ変換できる" );
+		Harness.CheckNearF32( KeyAfterInvalid.range,
+			InitialKey.Range, 0.0001f,
+			"不正入力ではキーの到達距離を変えない" );
+		Harness.CheckNearF32( FillAfterInvalid.color.z,
+			InitialFill.Color.z * InitialFill.Intensity, 0.0001f,
+			"不正入力ではフィルの色と強さを変えない" );
+		Harness.CheckNearF32( RimAfterInvalid.color.x,
+			InitialRim.Color.x * InitialRim.Intensity, 0.0001f,
+			"不正入力ではリムの色と強さを変えない" );
+
+		CSceneNodeGraph WrongGraph;
+		Harness.Check( !CStudioLightRig3DSpawner::TryApplyTo(
+			WrongGraph, Spawned, Updated ),
+			"別場面からの更新を拒否する" );
+		CheckVector( Harness,
+			Key != nullptr ? Key->Local().position : FVec3{},
+			InitialKey.Position, "別場面ではキーを変えない" );
+
+		if ( Rim != nullptr && OtherParent.Node != nullptr )
+			Rim->Reparent( *OtherParent.Node );
+		Graph.ResolveStructuralChanges();
+		Harness.Check( Rim != nullptr && Rim->Parent() == OtherParent.Node,
+			"共通親を崩す更新検証を準備できる" );
+		Harness.Check( !CStudioLightRig3DSpawner::TryApplyTo(
+			Graph, Spawned, Updated ),
+			"3灯が共通親を失った更新を拒否する" );
+		CheckVector( Harness,
+			Fill != nullptr ? Fill->Local().position : FVec3{},
+			InitialFill.Position, "共通親不一致ではフィルを変えない" );
+		if ( Rim != nullptr && Parent.Node != nullptr )
+			Rim->Reparent( *Parent.Node );
+		Graph.ResolveStructuralChanges();
+		Harness.Check( Rim != nullptr && Rim->Parent() == Parent.Node,
+			"リムを生成時の共通親へ戻せる" );
+
+		Harness.Check( Graph.Destroy( Spawned.KeyLightId() ),
+			"破棄予定の灯による更新検証を準備できる" );
+		Harness.Check( !CStudioLightRig3DSpawner::TryApplyTo(
+			Graph, Spawned, Updated ),
+			"キーが破棄予定なら3灯更新を拒否する" );
+		CheckVector( Harness,
+			Fill != nullptr ? Fill->Local().position : FVec3{},
+			InitialFill.Position, "破棄予定による失敗でもフィルを変えない" );
+		CheckVector( Harness,
+			Rim != nullptr ? Rim->Local().position : FVec3{},
+			InitialRim.Position, "破棄予定による失敗でもリムを変えない" );
+		FPointLight FillAfterStructuralFailures{};
+		FPointLight RimAfterStructuralFailures{};
+		Harness.Check( LightOf( Fill ) != nullptr
+			&& LightOf( Fill )->FillPoint( FillAfterStructuralFailures )
+			&& LightOf( Rim ) != nullptr
+			&& LightOf( Rim )->FillPoint( RimAfterStructuralFailures ),
+			"構成不正による失敗後も残る2灯を描画値へ変換できる" );
+		Harness.CheckNearF32( FillAfterStructuralFailures.range,
+			InitialFill.Range, 0.0001f,
+			"構成不正ではフィルの到達距離を変えない" );
+		Harness.CheckNearF32( RimAfterStructuralFailures.color.x,
+			InitialRim.Color.x * InitialRim.Intensity, 0.0001f,
+			"構成不正ではリムの色と強さを変えない" );
+		Harness.Check( !CStudioLightRig3DSpawner::TryApplyTo(
+			Graph, FStudioLightRig3DSpawnResult{}, Updated ),
+			"空の生成結果を拒否する" );
+	}
+
 	Harness.BeginSuite( "CStudioLightRig3DSpawner / 個別破棄後も残りを片付ける" );
 
 	{

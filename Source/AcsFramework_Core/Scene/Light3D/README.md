@@ -21,6 +21,11 @@ TryUpdateLamp3D( Lamp, MovedLamp );
 FStudioLightRig3DSpawnResult Rig = SpawnStudioLightRig3D(
     FVec3{ 0.0f, 1.0f, 0.0f }, FVec3{ 0.0f, 0.0f, -1.0f }, 1.2f );
 
+// 動く被写体へ3灯の位置、色、強さ、到達距離をまとめて追従させる
+FStudioLightRig3DParams MovedRig = FStudioLightRig3DParams::AroundSubject(
+    FVec3{ 2.0f, 1.2f, -1.0f }, FVec3{ 1.0f, 0.0f, 0.0f }, 1.2f );
+TryUpdateStudioLightRig3D( Rig, MovedRig );
+
 // 場面から外すときも3灯を1つの結果で片付ける
 DestroyStudioLightRig3D( Rig );
 
@@ -47,9 +52,11 @@ ACSが同時描画する点光源4灯のうち1灯を使い、途中失敗では
 3灯を使うので、同じ場面で追加する点光源は残り1灯を目安にする。
 
 より細かく調整する場合は`FStudioLightRig3DParams::AroundSubject`で作った値の色、強さ、
-到達距離倍率を変更する。無効な親や値、途中の生成失敗では3灯を半端に残さない。
-`CStudioLightRig3DSpawner`を直接使う場合も、生成結果を`Destroy`へ渡せば、別場面の光を
-巻き込まずにまとめて片付けられる。
+到達距離倍率を変更する。配置後は同じ生成結果と新指定を`TryUpdateStudioLightRig3D`へ渡すと、
+3灯の生成番号と共通親を保ったまま同期更新できる。別場面、破棄予定、共通親を失った構成、
+不正値はどの灯も変更せず拒否する。無効な親や値、途中の生成失敗では3灯を半端に残さない。
+`CStudioLightRig3DSpawner`を直接使う場合も、生成結果を`TryApplyTo`または`Destroy`へ渡せば、
+別場面の光を巻き込まずに更新・破棄できる。
 
 平行光の`DirectionToLight`は、光が進む向きではなく、面から光源へ向かう向きである。
 長さそのものは明るさに影響せず、配置時に正規化する。点光源は`Position`と`Range`を使う。

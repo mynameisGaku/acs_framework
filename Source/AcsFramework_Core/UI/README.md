@@ -53,8 +53,8 @@ bloomや輪郭補正の影響を受けず、3D場面より手前、ポーズ・�
 `SpawnLight3D`は太陽または点光源、`SpawnLamp3D`は見える自己発光球と同色の点光源、
 `SpawnStreetLamp3D` / `TryUpdateStreetLamp3D`は衝突付き金属ポスト、発光球、点光源を
 床位置から組み立てて同期更新する街灯、
-`SpawnStudioLightRig3D`は被写体中心・見る方向・半径から
-既存の太陽を保つキー、フィル、リムの点光源3灯、
+`SpawnStudioLightRig3D` / `TryUpdateStudioLightRig3D`は被写体中心・見る方向・半径から
+既存の太陽を保つキー、フィル、リムの点光源3灯を配置・同期更新し、
 `SpawnWater3D`は水面を扱う。パスを渡した場合だけ場面共通の
 asset窓口で読み、読込済みassetはそのまま使う。通常の衝突付き生成結果は
 `DestroyCollidableModel3D`へ渡すと、ノードと形状を対のまま片付けられる。
@@ -92,6 +92,9 @@ FLamp3DParams MovedLamp = FLamp3DParams::At( FVec3{ 2.0f, 2.4f, 0.0f } );
 TryUpdateLamp3D( Lamp, MovedLamp );
 FStudioLightRig3DSpawnResult Rig = SpawnStudioLightRig3D(
     FVec3{ 0.0f, 1.0f, 0.0f }, FVec3{ 0.0f, 0.0f, -1.0f }, 1.2f );
+FStudioLightRig3DParams MovedRig = FStudioLightRig3DParams::AroundSubject(
+    FVec3{ 2.0f, 1.2f, -1.0f }, FVec3{ 1.0f, 0.0f, 0.0f }, 1.2f );
+TryUpdateStudioLightRig3D( Rig, MovedRig );
 
 ANode* const Vehicle = SpawnNode3D( FStringView( "Vehicle" ) );
 if ( Vehicle != nullptr ) SpawnModel3D(

@@ -45,7 +45,7 @@ ACS のモジュールは **438 個**ある。この枠組みが窓口を用意�
 | 3D 水面 | `AUi3DScene::SpawnWater3D`、`FWater3DSpawnParams`、ACSの動的波紋 |
 | 見える3Dランプ | `AUi3DScene::SpawnLamp3D`、自己発光球と同色の点光源、同期更新、失敗時巻き戻し・一括破棄 |
 | 衝突付き3D街灯 | `AUi3DScene::SpawnStreetLamp3D` / `TryUpdateStreetLamp3D`、金属ポスト・箱衝突・発光球・点光源の一括配置・同期更新・破棄 |
-| 被写体用3点照明 | `AUi3DScene::SpawnStudioLightRig3D`、太陽を保つキー・フィル・リム、失敗時巻き戻し・一括破棄 |
+| 被写体用3点照明 | `AUi3DScene::SpawnStudioLightRig3D` / `TryUpdateStudioLightRig3D`、太陽を保つキー・フィル・リム、同期更新・失敗時巻き戻し・一括破棄 |
 | 3D 天候・時刻 | `AWeather3DScene`、`FWeather3DAppearance`、ACSの`CWeatherSystem`と`CAmbientDirector` |
 | 3D エフェクト | `AEffect3DScene`、`CEffect3DPlayer`、同梱の Effekseer |
 | 3D 材質 | PBR、光沢コート、自己発光、トゥーン、布の毛羽反射、肌・蝋向け内部散乱 |
@@ -328,7 +328,8 @@ cameraからの距離に応じて大気へ馴染み、雲も実距離まで同�
   太陽軌道の方位と進行速度を場面ごとに変えられ、天候は現在時刻の空と環境光へ後から合成する
 - ~~被写体用3点照明の一括配置~~ → **実装済み** (2026-08-25)。
   `SpawnStudioLightRig3D`へ中心、被写体からカメラへの方向、半径を渡すだけで、暖色キー、寒色
-  フィル、背面リムを配置する。3灯は点光源なので、既定または時刻連動の太陽と影を置き換えない
+  フィル、背面リムを配置する。`TryUpdateStudioLightRig3D`は3灯と共通親を先に検証し、動く被写体へ
+  位置、色、強さ、到達距離を同期反映する。3灯は点光源なので、既定または時刻連動の太陽と影を置き換えない
 - ~~見える3Dランプの一括配置~~ → **実装済み** (2026-08-25)。
   `SpawnLamp3D`へ位置だけを渡すと、bloomする自己発光球と周囲を照らす同色の点光源を置く。
   `TryUpdateLamp3D`は位置、半径、色、発光と照明を2ノードへ同期反映する。途中失敗は発光球を
@@ -394,7 +395,7 @@ cameraからの距離に応じて大気へ馴染み、雲も実距離まで同�
 | 3D の光を置く窓口 | Framework側へ実装済み (`AUi3DScene::SpawnLight3D`) | 2026-08-23 |
 | 見える3Dランプ | Framework側へ実装済み (`AUi3DScene::SpawnLamp3D`) | 2026-08-25 |
 | 衝突付き3D街灯 | Framework側へ実装済み (`AUi3DScene::SpawnStreetLamp3D`) | 2026-08-25 |
-| 被写体用3点照明 | Framework側へ実装済み (`AUi3DScene::SpawnStudioLightRig3D`) | 2026-08-25 |
+| 被写体用3点照明 | Framework側へ実装済み (`AUi3DScene::SpawnStudioLightRig3D` / `TryUpdateStudioLightRig3D`) | 2026-08-25 |
 | 追う ACS のブランチ | **`dev`** (main は ABI ガードが逆で使えない) | 2026-08-17 |
 | 配布物の作り方 | `.\Tools\UpdateAcsDist.ps1` で dev の worktree からビルドして配置 | 2026-08-17 |
 | 対応する配布物 | dev から生成したもの (`C:\acs_dev`)。世代差は `Source/Common/Compat/` が吸収 | 2026-08-17 |

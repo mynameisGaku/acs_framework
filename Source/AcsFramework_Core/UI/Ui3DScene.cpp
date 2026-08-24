@@ -755,6 +755,15 @@ FStudioLightRig3DSpawnResult AUi3DScene::SpawnStudioLightRig3D(
 }
 
 
+bool AUi3DScene::TryUpdateStudioLightRig3D(
+	const FStudioLightRig3DSpawnResult& Spawned,
+	const FStudioLightRig3DParams& Params ) noexcept
+{
+	return CStudioLightRig3DSpawner::TryApplyTo(
+		Graph(), Spawned, Params );
+}
+
+
 bool AUi3DScene::DestroyStudioLightRig3D(
 	FStudioLightRig3DSpawnResult& Spawned ) noexcept
 {

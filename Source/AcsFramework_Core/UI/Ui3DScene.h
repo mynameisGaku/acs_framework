@@ -880,6 +880,18 @@ public:
 		f32 SubjectRadius, ANode* Parent = nullptr ) noexcept;
 
 	/**
+	 * この場面へ配置したキー、フィル、リムの3灯を、同じ被写体指定から同期更新する。
+	 *
+	 * @details 別場面の結果、共通親を失った構成、破棄予定の灯、不正値では何も変更しない。
+	 * @param Spawned `SpawnStudioLightRig3D`の成功結果。
+	 * @param Params 新しい被写体中心、見る方向、半径と3灯の見た目。
+	 * @return 3灯の位置、色、強さ、到達距離を全て更新できた場合だけtrue。
+	 */
+	bool TryUpdateStudioLightRig3D(
+		const FStudioLightRig3DSpawnResult& Spawned,
+		const FStudioLightRig3DParams& Params ) noexcept;
+
+	/**
 	 * この場面へ一括配置した3点照明を全て破棄する。
 	 *
 	 * @param Spawned `SpawnStudioLightRig3D`の成功結果。成功時は空になる。
