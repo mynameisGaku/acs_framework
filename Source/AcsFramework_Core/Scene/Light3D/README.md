@@ -12,6 +12,11 @@ SpawnLight3D( FLight3DSpawnParams::Point( FVec3{ 0.0f, 2.0f, 0.0f }, 8.0f ) );
 // 自己発光球と周囲を照らす同色の点光源を、位置だけで置く
 FLamp3DSpawnResult Lamp = SpawnLamp3D( FVec3{ 1.6f, 2.1f, -0.8f } );
 
+// 動く光も発光球と点光源を同じ位置・色へ更新する
+FLamp3DParams MovedLamp = FLamp3DParams::At( FVec3{ 2.0f, 2.4f, 0.0f } );
+MovedLamp.Color = FVec3{ 0.18f, 0.52f, 1.0f };
+TryUpdateLamp3D( Lamp, MovedLamp );
+
 // 被写体中心、被写体からカメラへの方向、半径だけでキー・フィル・リムを置く
 FStudioLightRig3DSpawnResult Rig = SpawnStudioLightRig3D(
     FVec3{ 0.0f, 1.0f, 0.0f }, FVec3{ 0.0f, 0.0f, -1.0f }, 1.2f );
@@ -33,6 +38,8 @@ DestroyLamp3D( Lamp );
 1回で揃える。既定値は暖色、半径0.16、自己発光強度4、照明強度2、到達距離5である。
 色、半径、2種類の強度を変える場合は`FLamp3DParams::At`で作った値を調整する。1個につき
 ACSが同時描画する点光源4灯のうち1灯を使い、途中失敗では発光球を残さない。
+生成後の移動、色替え、点滅は同じ値を`TryUpdateLamp3D`へ渡す。生成結果が同じ場面とrootを
+指し、発光球と点光源が両方生存する場合だけ更新するため、失敗時に片方だけ変わらない。
 
 `SpawnStudioLightRig3D`は、被写体を正面左上から照らす暖色のキー、陰側を持ち上げる寒色の
 フィル、背面から輪郭を分けるリムを全て点光源で置く。平行光を増やさないため、既定または

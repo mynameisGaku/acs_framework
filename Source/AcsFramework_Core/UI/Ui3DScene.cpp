@@ -681,6 +681,14 @@ FLamp3DSpawnResult AUi3DScene::SpawnLamp3D(
 }
 
 
+bool AUi3DScene::TryUpdateLamp3D(
+	const FLamp3DSpawnResult& Spawned,
+	const FLamp3DParams& Params ) noexcept
+{
+	return CLamp3DSpawner::TryApplyTo( Graph(), Spawned, Params );
+}
+
+
 bool AUi3DScene::DestroyLamp3D( FLamp3DSpawnResult& Spawned ) noexcept
 {
 	return CLamp3DSpawner::Destroy( Graph(), Spawned );

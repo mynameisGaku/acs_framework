@@ -212,6 +212,111 @@ void RunLamp3DTests( CTestHarness& Harness )
 			"確定後はrootと指定親だけを残す" );
 	}
 
+	Harness.BeginSuite( "CLamp3DSpawner / 発光球と点光源を同期更新する" );
+
+	{
+		CSceneNodeGraph Graph;
+		FLamp3DSpawnResult Spawned = CLamp3DSpawner::SpawnInto(
+			Graph, FLamp3DParams::At( FVec3{ 1.0f, 2.0f, 3.0f } ) );
+		ANode* const Bulb = Spawned.Bulb();
+		ANode* const LightNode = Spawned.Light();
+		AMeshComponent3D* const Mesh = MeshOf_Internal( Bulb );
+		ALightComponent3D* const Light = LightOf_Internal( LightNode );
+
+		FLamp3DParams Updated = FLamp3DParams::At(
+			FVec3{ -2.0f, 3.5f, 1.0f } );
+		Updated.Radius = 0.30f;
+		Updated.Color = FVec3{ 0.18f, 0.52f, 1.0f };
+		Updated.EmissiveStrength = 6.0f;
+		Updated.LightIntensity = 3.0f;
+		Updated.Range = 8.0f;
+		Updated.BulbName = FStringView( "MovingBulb" );
+		Updated.LightName = FStringView( "MovingLight" );
+
+		CSceneNodeGraph WrongGraph;
+		Harness.Check( !CLamp3DSpawner::TryApplyTo(
+			WrongGraph, Spawned, Updated ),
+			"別場面からの同期更新を拒否する" );
+		CheckVector_Internal( Harness,
+			Bulb != nullptr ? Bulb->Local().position : FVec3{},
+			FVec3{ 1.0f, 2.0f, 3.0f },
+			"別場面による失敗時は発光球を変えない" );
+		CheckVector_Internal( Harness,
+			LightNode != nullptr ? LightNode->Local().position : FVec3{},
+			FVec3{ 1.0f, 2.0f, 3.0f },
+			"別場面による失敗時は点光源を変えない" );
+
+		FLamp3DParams Invalid = Updated;
+		Invalid.EmissiveStrength = -1.0f;
+		Harness.Check( !CLamp3DSpawner::TryApplyTo(
+			Graph, Spawned, Invalid ),
+			"不正な新指定を拒否する" );
+		CheckVector_Internal( Harness,
+			Bulb != nullptr ? Bulb->Local().position : FVec3{},
+			FVec3{ 1.0f, 2.0f, 3.0f },
+			"不正入力では発光球を変えない" );
+		CheckVector_Internal( Harness,
+			LightNode != nullptr ? LightNode->Local().position : FVec3{},
+			FVec3{ 1.0f, 2.0f, 3.0f },
+			"不正入力では点光源を変えない" );
+
+		Harness.Check( CLamp3DSpawner::TryApplyTo(
+			Graph, Spawned, Updated ),
+			"有効な新指定を発光球と点光源へ一括反映できる" );
+		CheckVector_Internal( Harness,
+			Bulb != nullptr ? Bulb->Local().position : FVec3{},
+			Updated.Position, "発光球を新しい位置へ移す" );
+		CheckVector_Internal( Harness,
+			LightNode != nullptr ? LightNode->Local().position : FVec3{},
+			Updated.Position, "点光源を同じ新位置へ移す" );
+		CheckVector_Internal( Harness,
+			Bulb != nullptr ? Bulb->Local().scale : FVec3{},
+			FVec3{ 0.6f, 0.6f, 0.6f },
+			"発光球を新しい半径へ拡縮する" );
+		Harness.Check( Bulb != nullptr
+			&& Bulb->Name() == FStringView( "MovingBulb" )
+			&& LightNode != nullptr
+			&& LightNode->Name() == FStringView( "MovingLight" ),
+			"2ノードの役割名も一括更新する" );
+		Harness.Check( Mesh != nullptr && Mesh->MaterialLoaded(),
+			"同期更新後も発光材質を確定する" );
+		if ( Mesh != nullptr && Mesh->MaterialLoaded() )
+		{
+			CheckVector_Internal( Harness, Mesh->Material().pbr.emissive,
+				Updated.Color, "発光球を新しい共有色へ変える" );
+			Harness.CheckEqualF32( Mesh->Material().pbr.emissiveStrength,
+				Updated.EmissiveStrength,
+				"発光球を新しいHDR強度へ変える" );
+		}
+		if ( Light != nullptr )
+		{
+			FPointLight Output{};
+			Harness.Check( Light->FillPoint( Output ),
+				"同期更新後の点光源を描画値へ変換できる" );
+			CheckVector_Internal( Harness, Output.position,
+				Updated.Position, "点光源の描画位置も発光球と一致する" );
+			Harness.CheckNearF32( Output.range, Updated.Range, 0.0001f,
+				"点光源を新しい到達距離へ変える" );
+			Harness.CheckNearF32( Output.color.z,
+				Updated.Color.z * Updated.LightIntensity, 0.0001f,
+				"点光源を新しい色と照明強度へ変える" );
+		}
+
+		Harness.Check( Graph.Destroy( Spawned.BulbId() ),
+			"同期更新後の発光球を個別に破棄予定へ移せる" );
+		FLamp3DParams AfterDestroy = Updated;
+		AfterDestroy.Position = FVec3{ 9.0f, 9.0f, 9.0f };
+		Harness.Check( !CLamp3DSpawner::TryApplyTo(
+			Graph, Spawned, AfterDestroy ),
+			"片方が破棄予定なら同期更新を拒否する" );
+		CheckVector_Internal( Harness,
+			LightNode != nullptr ? LightNode->Local().position : FVec3{},
+			Updated.Position,
+			"破棄予定による失敗時は残る点光源を変えない" );
+		Harness.Check( CLamp3DSpawner::Destroy( Graph, Spawned ),
+			"同期更新の確認後も残るノードを片付けられる" );
+	}
+
 	Harness.BeginSuite( "CLamp3DSpawner / 個別破棄後も残りを片付ける" );
 
 	{

@@ -777,6 +777,17 @@ public:
 		ANode* Parent = nullptr ) noexcept;
 
 	/**
+	 * この場面へ配置した3Dランプの発光球と点光源を同じ指定へ同期更新する。
+	 *
+	 * @details 別場面の結果、破棄予定の片方、不正な新指定では何も変更しない。
+	 * @param Spawned `SpawnLamp3D`の成功結果。
+	 * @param Params 新しい位置、半径、共有色、発光と照明の強さ、到達距離。
+	 * @return 発光球と点光源を両方更新できた場合だけtrue。
+	 */
+	bool TryUpdateLamp3D( const FLamp3DSpawnResult& Spawned,
+		const FLamp3DParams& Params ) noexcept;
+
+	/**
 	 * この場面へ一括配置した3Dランプを、発光球と点光源ごと破棄する。
 	 *
 	 * @param Spawned `SpawnLamp3D`の成功結果。成功時は空になる。

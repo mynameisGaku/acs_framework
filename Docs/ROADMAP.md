@@ -43,7 +43,7 @@ ACS のモジュールは **438 個**ある。この枠組みが窓口を用意�
 | 3D 柵 | `AUi3DScene::SpawnFence3D`、最大間隔で並ぶ支柱と水平な横桟、失敗時巻き戻し・一括破棄 |
 | 3D 階段 | `AUi3DScene::SpawnStairs3D`、4方向の隙間のない段、失敗時巻き戻し・一括破棄 |
 | 3D 水面 | `AUi3DScene::SpawnWater3D`、`FWater3DSpawnParams`、ACSの動的波紋 |
-| 見える3Dランプ | `AUi3DScene::SpawnLamp3D`、自己発光球と同色の点光源、失敗時巻き戻し・一括破棄 |
+| 見える3Dランプ | `AUi3DScene::SpawnLamp3D`、自己発光球と同色の点光源、同期更新、失敗時巻き戻し・一括破棄 |
 | 被写体用3点照明 | `AUi3DScene::SpawnStudioLightRig3D`、太陽を保つキー・フィル・リム、失敗時巻き戻し・一括破棄 |
 | 3D 天候・時刻 | `AWeather3DScene`、`FWeather3DAppearance`、ACSの`CWeatherSystem`と`CAmbientDirector` |
 | 3D エフェクト | `AEffect3DScene`、`CEffect3DPlayer`、同梱の Effekseer |
@@ -325,7 +325,8 @@ cameraからの距離に応じて大気へ馴染み、雲も実距離まで同�
   フィル、背面リムを配置する。3灯は点光源なので、既定または時刻連動の太陽と影を置き換えない
 - ~~見える3Dランプの一括配置~~ → **実装済み** (2026-08-25)。
   `SpawnLamp3D`へ位置だけを渡すと、bloomする自己発光球と周囲を照らす同色の点光源を置く。
-  途中失敗は発光球を巻き戻し、生成結果から別場面を巻き込まず2ノードをまとめて破棄できる
+  `TryUpdateLamp3D`は位置、半径、色、発光と照明を2ノードへ同期反映する。途中失敗は発光球を
+  巻き戻し、生成結果から別場面を巻き込まず2ノードをまとめて破棄できる
 - ~~シーン保存でノード名を残す~~ → **実装済み** (2026-08-22)。ACS v4のバイト列は変更せず、
   Framework形式でDFS先行順のUTF-8名前表を添える。旧Frameworkが保存したACS v2/v3/v4の
   生バイト列も判別して読み込めるため、既存セーブの後方互換性を保つ

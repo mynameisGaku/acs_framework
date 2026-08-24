@@ -168,6 +168,11 @@ SpawnLight3D( FLight3DSpawnParams::Sun( FVec3{ -0.47f, 0.58f, 0.66f } ) );
 // 位置だけで、bloomする発光球と周囲を照らす点光源を同時に置く
 FLamp3DSpawnResult Lamp = SpawnLamp3D( FVec3{ 1.6f, 2.1f, -0.8f } );
 
+// 動かすときも発光球と点光源の位置・色を片側だけずらさない
+FLamp3DParams MovedLamp = FLamp3DParams::At( FVec3{ 2.0f, 2.4f, 0.0f } );
+MovedLamp.Color = FVec3{ 0.18f, 0.52f, 1.0f };
+TryUpdateLamp3D( Lamp, MovedLamp );
+
 // 中心、カメラ方向、半径だけで、太陽を保ったまま被写体用の3点照明を置く
 FStudioLightRig3DSpawnResult StudioLights = SpawnStudioLightRig3D(
     FVec3{ 0.0f, 1.0f, 0.0f }, FVec3{ 0.0f, 0.0f, -1.0f }, 1.2f );

@@ -79,6 +79,8 @@ FStairs3DSpawnResult Stairs = SpawnStairs3D(
     8u, 2.0f, 0.32f, 0.18f, FVec3{ -2.0f, 0.0f, -3.0f } );
 SpawnLight3D( FLight3DSpawnParams::Sun( FVec3{ -0.47f, 0.58f, 0.66f } ) );
 FLamp3DSpawnResult Lamp = SpawnLamp3D( FVec3{ 1.6f, 2.1f, -0.8f } );
+FLamp3DParams MovedLamp = FLamp3DParams::At( FVec3{ 2.0f, 2.4f, 0.0f } );
+TryUpdateLamp3D( Lamp, MovedLamp );
 FStudioLightRig3DSpawnResult Rig = SpawnStudioLightRig3D(
     FVec3{ 0.0f, 1.0f, 0.0f }, FVec3{ 0.0f, 0.0f, -1.0f }, 1.2f );
 

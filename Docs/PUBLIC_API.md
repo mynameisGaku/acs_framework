@@ -29,7 +29,7 @@
 | 画像板 | `AcsFramework_Core/UI/Ui3DScene.h` | `SpawnImage3D` |
 | ビルボード | `AcsFramework_Core/UI/Ui3DScene.h` | `SpawnBillboard3D` |
 | 光源 | `AcsFramework_Core/UI/Ui3DScene.h` | `SpawnLight3D` |
-| 見える3Dランプ | `AcsFramework_Core/UI/Ui3DScene.h` | `SpawnLamp3D`、`DestroyLamp3D` |
+| 見える3Dランプ | `AcsFramework_Core/UI/Ui3DScene.h` | `SpawnLamp3D`、`TryUpdateLamp3D`、`DestroyLamp3D` |
 | 被写体用3点照明 | `AcsFramework_Core/UI/Ui3DScene.h` | `SpawnStudioLightRig3D`、`DestroyStudioLightRig3D` |
 | 水面 | `AcsFramework_Core/UI/Ui3DScene.h` | `SpawnWater3D` |
 | 衝突破棄 | `AcsFramework_Core/UI/Ui3DScene.h` | `DestroyCollidableModel3D` |
