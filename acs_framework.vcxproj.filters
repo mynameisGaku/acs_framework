@@ -1891,6 +1891,9 @@
     <None Include="Docs\demo3d.png">
       <Filter>Docs</Filter>
     </None>
+    <None Include="Docs\PUBLIC_API.md">
+      <Filter>Docs</Filter>
+    </None>
     <None Include="Docs\ROADMAP.md">
       <Filter>Docs</Filter>
     </None>
@@ -2222,6 +2225,9 @@
       <Filter>Tools</Filter>
     </None>
     <None Include="Tools\RunCiChecks.ps1">
+      <Filter>Tools</Filter>
+    </None>
+    <None Include="Tools\RunPublicApiAudit.ps1">
       <Filter>Tools</Filter>
     </None>
     <None Include="Tools\RunSimulationDeterminismTest.ps1">

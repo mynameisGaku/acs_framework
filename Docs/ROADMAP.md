@@ -324,7 +324,9 @@ cameraからの距離に応じて大気へ馴染み、雲も実距離まで同�
 
 - ~~版管理、公開API範囲、破壊的変更の規則を決める~~ **実装済み** (2026-08-23)。
   `VERSION`と`FFrameworkVersion`で現在の`0.5.0-dev`を明示し、`Docs/VERSIONING.md`を正本とする
-- 残り: 公開APIを最終監査し、`1.0.0`へ上げて契約を凍結する
+- ~~公開APIの最終監査~~ → **`Docs/PUBLIC_API.md`と`Tools/RunPublicApiAudit.ps1`として実装済み**。
+  3D場面の統合入口、設定・結果型、`AcsFramework.h`の再公開、宣言の実在を同じ検査で確認する。
+  `1.0.0`への版上げは、ACS Release公開、clean clone、実機確認が揃うまで保留する
 - ~~`CHANGELOG.md`を置き、利用側へ影響する変更を追えるようにする~~ **実装済み** (2026-08-23)
 
 ---

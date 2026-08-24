@@ -344,9 +344,11 @@
     <None Include="Docs\RUNTIME_CONTRACTS.md" />
     <None Include="Docs\SUPPORTED_PLATFORMS.md" />
     <None Include="Docs\VERSIONING.md" />
+    <None Include="Docs\PUBLIC_API.md" />
     <None Include="Docs\ROADMAP.md" />
     <None Include="CHANGELOG.md" />
     <None Include="VERSION" />
+    <None Include="Tools\RunPublicApiAudit.ps1" />
     <ClInclude Include="Source\AcsFramework_Core\Scene\Model3D\Model3DSpawnParams.h" />
     <ClInclude Include="Source\AcsFramework_Core\Scene\Model3D\Model3DSpawner.h" />
     <None Include="Source\AcsFramework_Core\Scene\Model3D\README.md" />

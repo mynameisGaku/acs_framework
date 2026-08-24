@@ -7,6 +7,7 @@
 
 現在は開発版`0.5.0-dev`。版の意味と互換性は[`Docs/VERSIONING.md`](Docs/VERSIONING.md)、
 利用側へ影響する変更は[`CHANGELOG.md`](CHANGELOG.md)に記録する。
+代表的な3D公開入口は[`Docs/PUBLIC_API.md`](Docs/PUBLIC_API.md)にまとめ、`RunRepoChecks.ps1`で監査する。
 
 ![3D デモ](Docs/demo3d.png)
 

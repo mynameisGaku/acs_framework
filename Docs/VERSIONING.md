@@ -16,6 +16,7 @@
 次を利用側との互換性契約に含める。
 
 - `AcsFramework_Core/AcsFramework.h`から再公開する宣言
+- 3Dの代表的な利用入口として`Docs/PUBLIC_API.md`に記載した宣言
 - 機能READMEでゲーム側の入口として案内するpublic宣言と、派生用のvirtual hook
 - セーブ、スナップショット、リプレイなど公開済みの永続形式
 - `Docs/RUNTIME_CONTRACTS.md`と各機能READMEに明記した実行時の振る舞い
@@ -55,9 +56,10 @@ v1.0.0より前は公開APIを固める途中なので、互換でない変更�
 ## 公開手順
 
 1. `VERSION`、C++版定数、`CHANGELOG.md`を同じ公開版へ揃える。
-2. `Tools/RunCiChecks.ps1`を通し、対応GPUを持つ実機でサンプルの見た目も確認する。
-3. clean cloneでACS取得からRelease起動まで再現する。
-4. `vMAJOR.MINOR.PATCH`タグを公開対象コミットへ付ける。
-5. GitHub ReleaseへACS配布物とSHA-256を登録し、Frameworkのpinから取得確認する。
+2. `Tools/RunRepoChecks.ps1`で公開API監査を通し、`Tools/RunCiChecks.ps1`を通す。
+3. 対応GPUを持つ実機でサンプルの見た目を確認する。
+4. clean cloneでACS取得からRelease起動まで再現する。
+5. `vMAJOR.MINOR.PATCH`タグを公開対象コミットへ付ける。
+6. GitHub ReleaseへACS配布物とSHA-256を登録し、Frameworkのpinから取得確認する。
 
 どれかが未完了なら開発版のままにし、タグまたは正式版の番号だけを先に公開しない。

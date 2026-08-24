@@ -352,7 +352,16 @@ if ($missingVersionProjectPaths.Count -gt 0) {
     Pass '版管理ファイルをVisual Studioプロジェクトへ登録済み'
 }
 
-# ---- 12. 内部アクセスの命名 -----------------------------------------------
+# ---- 12. 公開APIの正本 -----------------------------------------------------
+Section '公開APIの正本'
+& (Join-Path $PSScriptRoot 'RunPublicApiAudit.ps1')
+if ($LASTEXITCODE -ne 0) {
+    Fail 'public-api' '公開API監査に失敗しました'
+} else {
+    Pass '公開API一覧、再公開ヘッダー、宣言を確認'
+}
+
+# ---- 13. 内部アクセスの命名 -----------------------------------------------
 # 所有関係を暗黙の全権アクセスへ戻さず、内部処理はFoo_Internalと狭いアダプターで表す。
 Section '内部アクセスの命名'
 $friendFindings = @()
