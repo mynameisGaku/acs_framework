@@ -134,11 +134,27 @@ DrawCylinder3D( DoorNode->World().position, FVec3::Up(), 2.0f, 0.4f ); // 回転
 DrawBox3D( DoorNode->World().position, DoorNode->World().rotation, FVec3{ 0.6f, 1.0f, 0.2f } ); // 回転した局所範囲を表示する場合
 ```
 
+追跡対象が1つに決まるゴールや復帰地点では、`SpawnCheckpoint3D`が範囲基準ノードの生成と
+接続をまとめる。`Checkpoint`と`Spawned`は場面メンバーとして保持する。
+
+```cpp
+Spawned = SpawnCheckpoint3D(
+    Checkpoint, Player.Shape, FVec3{ 0.0f, 1.0f, 12.0f }, 2.0f, PlayerLayer );
+FCheckpoint3DUpdateResult Result;
+if ( Checkpoint.Update( Result ) && Result.bActivatedThisUpdate ) SaveRespawnPoint();
+DrawCheckpoint3D( Checkpoint );
+```
+
+既定は最初の進入だけを発火にし、`FCheckpoint3DParams`の`bActivateOnce`をfalseにすれば退出後の
+再進入でも発火する。`DestroyCheckpoint3D`は範囲基準と接続だけを片付け、追跡対象は残す。
+
 `DrawCollisionShape3D`は`Collision3D()`へ登録済みで現在問い合わせ対象の形状番号だけを受け付け、
 判定と同じworld球またはworld軸平行箱を既存デバッグ線へ一括登録する。
 `DrawCollisionShapes3D`は同じ処理をレイヤーマスクへ一致する全有効形状へ行い、表示できた形状数を返す。
 `DrawProximityTrigger3D`はこの場面へ接続済みのトリガーだけを受け付け、判定と同じworld球または
 world軸平行箱を既存デバッグ線へ一括登録する。線は次の透明3D描画後に消える。
+`DrawCheckpoint3D`もこの場面へ接続済みのチェックポイントだけを受け付け、内部の近接範囲を
+同じ線キューへ登録する。
 `DrawArrow3D`は胴体1本と矢尻4本を原子的に登録し、法線、移動方向、光の向きを素材なしで表示する。
 `DrawAxes3D`は指定回転のローカルX、Y、Zを赤、緑、青の3本の矢印として原子的に登録する。
 `DrawGrid3D`は中心のyを高さとして水平XZ面を等分し、X・Z方向の全線を原子的に登録する。

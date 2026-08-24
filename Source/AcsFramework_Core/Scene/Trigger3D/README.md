@@ -3,6 +3,8 @@
 `CProximityTrigger3D`は、1個の場面ノードへ追従する球または箱の範囲について、衝突ノードが今回入った、
 中にいる、出た、を世代付き`FNodeId`で返す。扉の自動開閉、チェックポイント、会話開始範囲、
 危険区域など、物理反発を起こさないゲーム判定に使う。
+追跡対象が1つに決まり、一度限りまたは再進入ごとの発火だけが必要な場合は、これを内包する
+`CCheckpoint3D`と`SpawnCheckpoint3D`を使う。
 
 ```cpp
 CProximityTrigger3D DoorTrigger;

@@ -5,6 +5,7 @@
 #include "AcsFramework_Core/Audio/Spatial/SpatialAudioSubsystem.h"
 #include "AcsFramework_Core/Scene/Animation3D/AnimatedModel3DSpawner.h"
 #include "AcsFramework_Core/Scene/Block3D/Block3DSpawner.h"
+#include "AcsFramework_Core/Scene/Checkpoint3D/Checkpoint3DSpawner.h"
 #include "AcsFramework_Core/Scene/Character3D/ThirdPersonCharacter3D.h"
 #include "AcsFramework_Core/Scene/Character3D/ThirdPersonCharacter3DSpawner.h"
 #include "AcsFramework_Core/Scene/Corridor3D/Corridor3DSpawner.h"
@@ -132,6 +133,42 @@ bool AUi3DScene::BindProximityTrigger3D( CProximityTrigger3D& Trigger,
 	ANode& Origin, const FProximityTrigger3DParams& Params ) noexcept
 {
 	return Trigger.Bind( Graph(), m_Collision3D, Origin, Params );
+}
+
+
+bool AUi3DScene::BindCheckpoint3D( CCheckpoint3D& Checkpoint,
+	ANode& Origin, FCollisionShapeId3D TargetShape,
+	const FCheckpoint3DParams& Params ) noexcept
+{
+	return Checkpoint.Bind( Graph(), m_Collision3D, Origin, TargetShape, Params );
+}
+
+
+FCheckpoint3DSpawnResult AUi3DScene::SpawnCheckpoint3D(
+	CCheckpoint3D& Checkpoint, FCollisionShapeId3D TargetShape,
+	FVec3 Position, const FCheckpoint3DParams& Params, ANode* Parent ) noexcept
+{
+	return CCheckpoint3DSpawner::SpawnInto(
+		Graph(), m_Collision3D, Checkpoint, TargetShape, Position, Params, Parent );
+}
+
+
+FCheckpoint3DSpawnResult AUi3DScene::SpawnCheckpoint3D(
+	CCheckpoint3D& Checkpoint, FCollisionShapeId3D TargetShape,
+	FVec3 Position, f32 LocalRadius, u32 CollisionMask,
+	bool bActivateOnce, ANode* Parent ) noexcept
+{
+	return SpawnCheckpoint3D( Checkpoint, TargetShape, Position,
+		FCheckpoint3DParams::Around(
+			LocalRadius, CollisionMask, bActivateOnce ), Parent );
+}
+
+
+bool AUi3DScene::DestroyCheckpoint3D( CCheckpoint3D& Checkpoint,
+	FCheckpoint3DSpawnResult& Spawned ) noexcept
+{
+	return CCheckpoint3DSpawner::Destroy(
+		Graph(), m_Collision3D, Checkpoint, Spawned );
 }
 
 
@@ -754,6 +791,15 @@ bool AUi3DScene::DrawProximityTrigger3D( const CProximityTrigger3D& Trigger,
 {
 	return Trigger.IsBoundTo( Graph(), m_Collision3D )
 		&& m_DebugDraw3D.DrawProximityTrigger( Trigger, Color, SphereSegments );
+}
+
+
+bool AUi3DScene::DrawCheckpoint3D( const CCheckpoint3D& Checkpoint,
+	FVec4 Color, u32 SphereSegments ) noexcept
+{
+	return Checkpoint.IsBoundTo( Graph(), m_Collision3D )
+		&& m_DebugDraw3D.DrawProximityTrigger(
+			Checkpoint.Range(), Color, SphereSegments );
 }
 
 

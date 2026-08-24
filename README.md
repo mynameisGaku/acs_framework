@@ -61,10 +61,11 @@ WASDで移動、左Shiftで走行、矢印キーで視点、Spaceでジャンプ
 | 3D 音響 | `PlaySound3D()`、現在カメラ基準の距離減衰、モノラル効果音の左右定位 |
 | 遊ぶ人向け UI | `AUi3DScene`、文字・ボタン・入力、ポスト処理後の鮮明なHUD合成 |
 | 3D位置の文字 | `WorldLabels()`、ノード破棄と画面外を安全に扱う敵名・目的地表示 |
-| 3Dデバッグ描画 | `DrawLine3D()`、`DrawArrow3D()`、`DrawAxes3D()`、`DrawGrid3D()`、`DrawCircle3D()`、`DrawCone3D()`、`DrawCylinder3D()`、`DrawBox3D()`、`DrawAabb3D()`、`DrawSphere3D()`、単体・レイヤー一括の`DrawCollisionShape3D()` / `DrawCollisionShapes3D()`、`DrawProximityTrigger3D()`、深度を無視する1フレーム線 |
+| 3Dデバッグ描画 | `DrawLine3D()`、`DrawArrow3D()`、`DrawAxes3D()`、`DrawGrid3D()`、`DrawCircle3D()`、`DrawCone3D()`、`DrawCylinder3D()`、`DrawBox3D()`、`DrawAabb3D()`、`DrawSphere3D()`、単体・レイヤー一括の`DrawCollisionShape3D()` / `DrawCollisionShapes3D()`、`DrawProximityTrigger3D()`、`DrawCheckpoint3D()`、深度を無視する1フレーム線 |
 | 当てる | `MakeScreenRay3D()` / `Raycast3D()` / `PickScreen3D()`で球面や読み込みメッシュへ正確に当てる |
 | 重なりと移動判定 | `CSceneCollision3D`、ノード追従、球・箱の重なり、球スイープ、レイヤー |
 | 近づきを取る | `BindProximityTrigger3D()`、ノード追従する球・箱への進入・滞在・退出、レイヤー絞り込み |
+| 通過を取る | `SpawnCheckpoint3D()`、指定した1形状の一度限り／再進入発火、生成・接続・破棄の一括化 |
 | 土台 | 起動・場面遷移・アセット・音・セーブ・設定・入力再割り当て・多言語・決定性・開発支援 |
 
 詳しくは [`Docs/ROADMAP.md`](Docs/ROADMAP.md)。**v1.0.0 で何を入れて何を入れないか**もそこに書いてある。
@@ -223,6 +224,14 @@ BindProximityTrigger3D(
 FProximityTrigger3DUpdateResult Proximity;
 if ( DoorTrigger.Update( Proximity ) && Proximity.DidEnter( HeroNode->Id() ) ) OpenDoor();
 DrawProximityTrigger3D( DoorTrigger ); // 表示を続ける場合は毎フレーム呼ぶ
+
+// GoalCheckpointとGoalは場面メンバー。人物形状がゴールへ入った瞬間だけ受け取る
+CCheckpoint3D GoalCheckpoint;
+FCheckpoint3DSpawnResult Goal = SpawnCheckpoint3D(
+    GoalCheckpoint, HeroSpawn.Shape, FVec3{ 0.0f, 1.0f, 12.0f }, 2.0f, 0x1u );
+FCheckpoint3DUpdateResult GoalState;
+if ( GoalCheckpoint.Update( GoalState ) && GoalState.bActivatedThisUpdate ) SaveGoal();
+DrawCheckpoint3D( GoalCheckpoint );
 
 // 接続済みキャラクターを、既定の入力割り当てから1回進める
 CActionBindingTable ActionBindings;

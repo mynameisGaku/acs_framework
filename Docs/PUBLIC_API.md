@@ -32,6 +32,10 @@
 | 衝突破棄 | `AcsFramework_Core/UI/Ui3DScene.h` | `DestroyCollidableModel3D` |
 | 画面選択 | `AcsFramework_Core/UI/Ui3DScene.h` | `PickScreen3D` |
 | 近接判定 | `AcsFramework_Core/UI/Ui3DScene.h` | `BindProximityTrigger3D` |
+| チェックポイント接続 | `AcsFramework_Core/UI/Ui3DScene.h` | `BindCheckpoint3D` |
+| チェックポイント生成 | `AcsFramework_Core/UI/Ui3DScene.h` | `SpawnCheckpoint3D` |
+| チェックポイント破棄 | `AcsFramework_Core/UI/Ui3DScene.h` | `DestroyCheckpoint3D` |
+| チェックポイント描画 | `AcsFramework_Core/UI/Ui3DScene.h` | `DrawCheckpoint3D` |
 | 衝突描画 | `AcsFramework_Core/UI/Ui3DScene.h` | `DrawCollisionShape3D` |
 
 ## 3D配置の設定と結果
@@ -54,4 +58,9 @@
 | 柵結果 | `AcsFramework_Core/Scene/Fence3D/Fence3DSpawnResult.h` | `FFence3DSpawnResult` |
 | 階段結果 | `AcsFramework_Core/Scene/Stairs3D/Stairs3DSpawnResult.h` | `FStairs3DSpawnResult` |
 | 衝突集合 | `AcsFramework_Core/Scene/Collision3D/SceneCollision3D.h` | `CSceneCollision3D` |
+| チェックポイント | `AcsFramework_Core/Scene/Checkpoint3D/Checkpoint3D.h` | `CCheckpoint3D` |
+| チェックポイント生成器 | `AcsFramework_Core/Scene/Checkpoint3D/Checkpoint3DSpawner.h` | `CCheckpoint3DSpawner` |
+| チェックポイント設定 | `AcsFramework_Core/Scene/Checkpoint3D/Checkpoint3DParams.h` | `FCheckpoint3DParams` |
+| チェックポイント生成結果 | `AcsFramework_Core/Scene/Checkpoint3D/Checkpoint3DSpawnResult.h` | `FCheckpoint3DSpawnResult` |
+| チェックポイント更新結果 | `AcsFramework_Core/Scene/Checkpoint3D/Checkpoint3DUpdateResult.h` | `FCheckpoint3DUpdateResult` |
 | 見た目設定 | `AcsFramework_Core/Scene/Visual3D/VisualPreset3D.h` | `EVisualPreset3D` |

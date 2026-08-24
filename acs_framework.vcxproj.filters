@@ -121,6 +121,12 @@
     <Filter Include="Source\AcsFramework_Core\Scene\Character3D\Test">
       <UniqueIdentifier>{88a6f1f4-eb82-27ee-8a52-447670ade2af}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\AcsFramework_Core\Scene\Checkpoint3D">
+      <UniqueIdentifier>{695e8d30-3262-45a3-ea81-a4cd750a1eb7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\AcsFramework_Core\Scene\Checkpoint3D\Test">
+      <UniqueIdentifier>{874be39e-401b-2e39-00ab-9ca23be321f2}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Source\AcsFramework_Core\Scene\Collision3D">
       <UniqueIdentifier>{d7c19ade-cb1f-56eb-2521-623ab6eb7f9b}</UniqueIdentifier>
     </Filter>
@@ -548,6 +554,18 @@
     </ClCompile>
     <ClCompile Include="Source\AcsFramework_Core\Scene\Character3D\ThirdPersonCharacter3DSpawner.cpp">
       <Filter>Source\AcsFramework_Core\Scene\Character3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Scene\Checkpoint3D\Checkpoint3D.cpp">
+      <Filter>Source\AcsFramework_Core\Scene\Checkpoint3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Scene\Checkpoint3D\Checkpoint3DParams.cpp">
+      <Filter>Source\AcsFramework_Core\Scene\Checkpoint3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Scene\Checkpoint3D\Checkpoint3DSpawner.cpp">
+      <Filter>Source\AcsFramework_Core\Scene\Checkpoint3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Scene\Checkpoint3D\Checkpoint3DSpawnResult.cpp">
+      <Filter>Source\AcsFramework_Core\Scene\Checkpoint3D</Filter>
     </ClCompile>
     <ClCompile Include="Source\AcsFramework_Core\Scene\Collision3D\SceneCollision3D.cpp">
       <Filter>Source\AcsFramework_Core\Scene\Collision3D</Filter>
@@ -1234,6 +1252,21 @@
     </ClInclude>
     <ClInclude Include="Source\AcsFramework_Core\Scene\Character3D\ThirdPersonCharacter3DUpdateResult.h">
       <Filter>Source\AcsFramework_Core\Scene\Character3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Checkpoint3D\Checkpoint3D.h">
+      <Filter>Source\AcsFramework_Core\Scene\Checkpoint3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Checkpoint3D\Checkpoint3DParams.h">
+      <Filter>Source\AcsFramework_Core\Scene\Checkpoint3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Checkpoint3D\Checkpoint3DSpawner.h">
+      <Filter>Source\AcsFramework_Core\Scene\Checkpoint3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Checkpoint3D\Checkpoint3DSpawnResult.h">
+      <Filter>Source\AcsFramework_Core\Scene\Checkpoint3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Checkpoint3D\Checkpoint3DUpdateResult.h">
+      <Filter>Source\AcsFramework_Core\Scene\Checkpoint3D</Filter>
     </ClInclude>
     <ClInclude Include="Source\AcsFramework_Core\Scene\Collision3D\CollisionShape3DParams.h">
       <Filter>Source\AcsFramework_Core\Scene\Collision3D</Filter>
@@ -1992,6 +2025,12 @@
     </None>
     <None Include="Source\AcsFramework_Core\Scene\Character3D\Test\ThirdPersonCharacter3DTest.cpp">
       <Filter>Source\AcsFramework_Core\Scene\Character3D\Test</Filter>
+    </None>
+    <None Include="Source\AcsFramework_Core\Scene\Checkpoint3D\README.md">
+      <Filter>Source\AcsFramework_Core\Scene\Checkpoint3D</Filter>
+    </None>
+    <None Include="Source\AcsFramework_Core\Scene\Checkpoint3D\Test\Checkpoint3DTest.cpp">
+      <Filter>Source\AcsFramework_Core\Scene\Checkpoint3D\Test</Filter>
     </None>
     <None Include="Source\AcsFramework_Core\Scene\Collision3D\README.md">
       <Filter>Source\AcsFramework_Core\Scene\Collision3D</Filter>

@@ -70,6 +70,7 @@ void RunThirdPersonCharacter3DControlPresetTests( CTestHarness& Harness );
 void RunThirdPersonCharacter3DTests( CTestHarness& Harness );
 void RunSceneCollision3DTests( CTestHarness& Harness );
 void RunProximityTrigger3DTests( CTestHarness& Harness );
+void RunCheckpoint3DTests( CTestHarness& Harness );
 void RunDebugDraw3DQueueTests( CTestHarness& Harness );
 void RunBlock3DSpawnerTests( CTestHarness& Harness );
 void RunCorridor3DSpawnerTests( CTestHarness& Harness );
@@ -137,6 +138,7 @@ int main()
 	RunThirdPersonCharacter3DTests( Harness );
 	RunSceneCollision3DTests( Harness );
 	RunProximityTrigger3DTests( Harness );
+	RunCheckpoint3DTests( Harness );
 	RunDebugDraw3DQueueTests( Harness );
 	RunBlock3DSpawnerTests( Harness );
 	RunCorridor3DSpawnerTests( Harness );

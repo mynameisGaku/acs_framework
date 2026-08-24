@@ -520,6 +520,13 @@
     <ClInclude Include="Source\AcsFramework_Core\Scene\Room3D\Room3DSpawnResult.h" />
     <None Include="Source\AcsFramework_Core\Scene\Room3D\README.md" />
     <None Include="Source\AcsFramework_Core\Scene\Room3D\Test\Room3DSpawnerTest.cpp" />
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Checkpoint3D\Checkpoint3D.h" />
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Checkpoint3D\Checkpoint3DParams.h" />
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Checkpoint3D\Checkpoint3DSpawner.h" />
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Checkpoint3D\Checkpoint3DSpawnResult.h" />
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Checkpoint3D\Checkpoint3DUpdateResult.h" />
+    <None Include="Source\AcsFramework_Core\Scene\Checkpoint3D\README.md" />
+    <None Include="Source\AcsFramework_Core\Scene\Checkpoint3D\Test\Checkpoint3DTest.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Common\Pch.cpp">
@@ -738,6 +745,10 @@
     <ClCompile Include="Source\AcsFramework_Core\Scene\Stairs3D\Stairs3DSpawnParams.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Scene\Room3D\Room3DSpawner.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Scene\Room3D\Room3DSpawnParams.cpp" />
+    <ClCompile Include="Source\AcsFramework_Core\Scene\Checkpoint3D\Checkpoint3D.cpp" />
+    <ClCompile Include="Source\AcsFramework_Core\Scene\Checkpoint3D\Checkpoint3DParams.cpp" />
+    <ClCompile Include="Source\AcsFramework_Core\Scene\Checkpoint3D\Checkpoint3DSpawner.cpp" />
+    <ClCompile Include="Source\AcsFramework_Core\Scene\Checkpoint3D\Checkpoint3DSpawnResult.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -4,6 +4,8 @@
 #include <acs.h>
 
 #include "AcsFramework_Core/Scene/Billboard3D/Billboard3DLayer.h"
+#include "AcsFramework_Core/Scene/Checkpoint3D/Checkpoint3D.h"
+#include "AcsFramework_Core/Scene/Checkpoint3D/Checkpoint3DSpawnResult.h"
 #include "AcsFramework_Core/Scene/Character3D/ThirdPersonCharacter3DSpawnParams.h"
 #include "AcsFramework_Core/Scene/Character3D/ThirdPersonCharacter3DSpawnResult.h"
 #include "AcsFramework_Core/Scene/Collision3D/SceneCollision3D.h"
@@ -137,6 +139,61 @@ public:
 	 */
 	bool BindProximityTrigger3D( CProximityTrigger3D& Trigger, ANode& Origin,
 		const FProximityTrigger3DParams& Params = FProximityTrigger3DParams{} ) noexcept;
+
+	/**
+	 * 呼出側所有のチェックポイントを、この場面の基準ノードと対象形状へ接続する。
+	 *
+	 * @param Checkpoint 呼出側が所有する未接続のチェックポイント。
+	 * @param Origin この場面が所有する範囲基準ノード。
+	 * @param TargetShape 進入だけを追跡する、この場面へ登録済みの衝突形状。
+	 * @param Params ローカル範囲、対象レイヤー、一度限りか再進入可能かの設定。
+	 * @return 所属、対象形状、設定を確認して完全に接続できたらtrue。
+	 */
+	bool BindCheckpoint3D( CCheckpoint3D& Checkpoint, ANode& Origin,
+		FCollisionShapeId3D TargetShape,
+		const FCheckpoint3DParams& Params = FCheckpoint3DParams{} ) noexcept;
+
+	/**
+	 * 範囲基準ノードの生成とチェックポイント接続を1回で完了する。
+	 *
+	 * @param Checkpoint 呼出側が所有する未接続のチェックポイント。
+	 * @param TargetShape 進入だけを追跡する、この場面へ登録済みの衝突形状。
+	 * @param Position 配置先親から見た範囲基準位置。root直下ではworld位置。
+	 * @param Params ローカル範囲、対象レイヤー、一度限りか再進入可能かの設定。
+	 * @param Parent この場面が所有する親。空ならroot直下。
+	 * @return 生成と接続を完了した範囲基準ノード。失敗時は空で半端なノードを残さない。
+	 */
+	FCheckpoint3DSpawnResult SpawnCheckpoint3D( CCheckpoint3D& Checkpoint,
+		FCollisionShapeId3D TargetShape, FVec3 Position,
+		const FCheckpoint3DParams& Params = FCheckpoint3DParams{},
+		ANode* Parent = nullptr ) noexcept;
+
+	/**
+	 * 球半径を直接指定し、範囲基準ノードの生成とチェックポイント接続を完了する。
+	 *
+	 * @param Checkpoint 呼出側が所有する未接続のチェックポイント。
+	 * @param TargetShape 進入だけを追跡する、この場面へ登録済みの衝突形状。
+	 * @param Position 配置先親から見た範囲基準位置。root直下ではworld位置。
+	 * @param LocalRadius 0より大きいローカル半径。
+	 * @param CollisionMask 検知する衝突レイヤーのビット列。
+	 * @param bActivateOnce 最初の進入だけを発火にするならtrue。
+	 * @param Parent この場面が所有する親。空ならroot直下。
+	 * @return 生成と接続を完了した範囲基準ノード。失敗時は空で半端なノードを残さない。
+	 */
+	FCheckpoint3DSpawnResult SpawnCheckpoint3D( CCheckpoint3D& Checkpoint,
+		FCollisionShapeId3D TargetShape, FVec3 Position, f32 LocalRadius,
+		u32 CollisionMask = CSceneCollision3D::kAllLayers,
+		bool bActivateOnce = true, ANode* Parent = nullptr ) noexcept;
+
+	/**
+	 * 一括生成したチェックポイントの接続を外し、範囲基準ノードを破棄する。
+	 *
+	 * @param Checkpoint 生成時に接続したチェックポイント。
+	 * @param Spawned `SpawnCheckpoint3D`の成功結果。成功時は空の結果になる。
+	 * @return 所有関係を確認し、接続解除とノード破棄を完了できたらtrue。
+	 */
+	bool DestroyCheckpoint3D( CCheckpoint3D& Checkpoint,
+		FCheckpoint3DSpawnResult& Spawned ) noexcept;
 
 	/**
 	 * 第三者視点キャラクターを、この場面の衝突集合、カメラ、対象ノードへ接続する。
@@ -904,6 +961,18 @@ public:
 	 */
 	bool DrawProximityTrigger3D( const CProximityTrigger3D& Trigger,
 		FVec4 Color = FVec4{ 0.20f, 0.95f, 1.0f, 1.0f },
+		u32 SphereSegments = CDebugDraw3DQueue::kDefaultSphereSegments ) noexcept;
+
+	/**
+	 * この場面へ接続したチェックポイントの現在範囲を次の3D描画へ一括登録する。
+	 *
+	 * @param Checkpoint `BindCheckpoint3D`または`SpawnCheckpoint3D`で接続済みの対象。
+	 * @param Color 全ての線へ使う色。
+	 * @param SphereSegments 球を構成する各円の分割数。箱では使わない。
+	 * @return 接続、world変換、線の一括登録を全て完了できたらtrue。
+	 */
+	bool DrawCheckpoint3D( const CCheckpoint3D& Checkpoint,
+		FVec4 Color = FVec4{ 0.25f, 1.0f, 0.35f, 1.0f },
 		u32 SphereSegments = CDebugDraw3DQueue::kDefaultSphereSegments ) noexcept;
 
 	/** 登録線の消去と拒否数の確認に使う、この場面所有の3Dデバッグ描画層を返す。 */

@@ -140,6 +140,13 @@ Frameworkは金属度、粗さ、方向性の既定値だけを揃え、実際�
 短い寿命の局所状態なのでsubsystemにはしない。現在の判定範囲は`TryGetWorldSphere`または
 `TryGetWorldBox`で取得でき、`DrawProximityTrigger3D`なら既存の1フレーム線へそのまま表示できる。
 
+追跡対象が1つに決まるゴールや復帰地点は、呼出側が`CCheckpoint3D`を所有する。
+内部の`CProximityTrigger3D`と登録済み衝突形状番号から、一度限りまたは再進入可能な発火事象だけを
+返す。`CCheckpoint3DSpawner`は識別子付き範囲基準ノードの生成、接続、失敗時巻き戻し、破棄を
+状態なしでまとめ、`AUi3DScene`が`BindCheckpoint3D`、`SpawnCheckpoint3D`、
+`DestroyCheckpoint3D`、`DrawCheckpoint3D`を公開する。時間、入力、保存、場面遷移、演出は
+所有しないため、GPUなしで対象位置と明示更新だけから同じ発火を再現できる。
+
 単一モデルを第三者視点キャラクターとして使う定型処理は`CThirdPersonCharacter3DSpawner`へまとめる。
 静的または骨格モデルの既存生成器、`CSceneCollision3D`、`CThirdPersonCharacter3D`を順に呼ぶだけの
 状態なしアダプターとし、自己形状番号を移動設定へ反映する。必須接続の途中で失敗した場合は形状と
@@ -171,7 +178,8 @@ HDR透過描画はACSへ任せる。カメラへ自動で向くビルボード�
 `CDebugDraw3DLayer`はACSの`FDebugDraw3D`を遅延初期化して`AUi3DScene`の透明3Dパスへ接続する。
 `DrawLine3D`、`DrawArrow3D`、`DrawAxes3D`、`DrawGrid3D`、`DrawCircle3D`、`DrawCone3D`、`DrawCylinder3D`、`DrawBox3D`、`DrawAabb3D`、`DrawSphere3D`は深度を無視する確認用オーバーレイで、
 `DrawCollisionShape3D`は登録済みの1形状、`DrawCollisionShapes3D`はレイヤー一致する全有効形状、
-`DrawProximityTrigger3D`は近接判定範囲と同じ球または箱を一括登録する。
+`DrawProximityTrigger3D`は近接判定範囲、`DrawCheckpoint3D`はチェックポイント判定範囲と同じ
+球または箱を一括登録する。
 表示を続ける側は更新ごとに登録する。
 矢印は線キューだけで胴体と立体的な矢尻へ展開し、座標軸は指定回転のX、Y、Zを赤、緑、青の
 3本の矢印として原子的に登録する。水平グリッドは中心、高さ、片側距離、分割数だけでXZ面へ展開し、
