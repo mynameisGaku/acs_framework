@@ -16,6 +16,29 @@ if ( Checkpoint.Update( Result ) && Result.bActivatedThisUpdate )
 DrawCheckpoint3D( Checkpoint );
 ```
 
+複数地点を決めた順番で通るレースや周回コースでは、各チェックポイントの発火番号だけを
+`FCheckpointRoute3D`へ渡す。ルートはチェックポイント自体を所有しないため、場面メンバーの
+寿命や配置方法を変えずに追加できる。
+
+```cpp
+FCheckpointRoute3D Route;
+Route.SetParams( FCheckpointRoute3DParams::ForCheckpoints( 3u, 2u ) );
+
+FCheckpoint3DUpdateResult CheckpointState;
+if ( Checkpoints[Index].Update( CheckpointState )
+    && CheckpointState.bActivatedThisUpdate )
+{
+    FCheckpointRoute3DAdvanceResult RouteState;
+    if ( Route.Advance( Index, RouteState )
+        && RouteState.bRouteCompletedThisAdvance ) FinishRace();
+}
+```
+
+範囲内だが次の番号と異なる発火は`bOutOfOrder`として返し、進行を変えない。周末では
+`bLapCompletedThisAdvance`、必要周回数へ到達した瞬間だけ`bRouteCompletedThisAdvance`が
+trueになる。複数周では各`CCheckpoint3D`の`bActivateOnce`をfalseにし、退出後の再進入を
+発火させる。完了後の発火は正常な無変更結果で、`Reset`すると同じ設定の先頭から再開する。
+
 既定の`bActivateOnce`はtrueで、最初の進入だけ発火する。falseなら、一度範囲外へ出た後の
 再進入でも発火する。`ResetActivation`は発火済みと範囲内の記録を両方消すため、対象が現在
 範囲内でも次の成功更新を新しい進入として扱う。

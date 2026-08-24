@@ -567,6 +567,12 @@
     <ClCompile Include="Source\AcsFramework_Core\Scene\Checkpoint3D\Checkpoint3DSpawnResult.cpp">
       <Filter>Source\AcsFramework_Core\Scene\Checkpoint3D</Filter>
     </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Scene\Checkpoint3D\CheckpointRoute3D.cpp">
+      <Filter>Source\AcsFramework_Core\Scene\Checkpoint3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Scene\Checkpoint3D\CheckpointRoute3DParams.cpp">
+      <Filter>Source\AcsFramework_Core\Scene\Checkpoint3D</Filter>
+    </ClCompile>
     <ClCompile Include="Source\AcsFramework_Core\Scene\Collision3D\SceneCollision3D.cpp">
       <Filter>Source\AcsFramework_Core\Scene\Collision3D</Filter>
     </ClCompile>
@@ -1266,6 +1272,15 @@
       <Filter>Source\AcsFramework_Core\Scene\Checkpoint3D</Filter>
     </ClInclude>
     <ClInclude Include="Source\AcsFramework_Core\Scene\Checkpoint3D\Checkpoint3DUpdateResult.h">
+      <Filter>Source\AcsFramework_Core\Scene\Checkpoint3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Checkpoint3D\CheckpointRoute3D.h">
+      <Filter>Source\AcsFramework_Core\Scene\Checkpoint3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Checkpoint3D\CheckpointRoute3DAdvanceResult.h">
+      <Filter>Source\AcsFramework_Core\Scene\Checkpoint3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Checkpoint3D\CheckpointRoute3DParams.h">
       <Filter>Source\AcsFramework_Core\Scene\Checkpoint3D</Filter>
     </ClInclude>
     <ClInclude Include="Source\AcsFramework_Core\Scene\Collision3D\CollisionShape3DParams.h">
@@ -2030,6 +2045,9 @@
       <Filter>Source\AcsFramework_Core\Scene\Checkpoint3D</Filter>
     </None>
     <None Include="Source\AcsFramework_Core\Scene\Checkpoint3D\Test\Checkpoint3DTest.cpp">
+      <Filter>Source\AcsFramework_Core\Scene\Checkpoint3D\Test</Filter>
+    </None>
+    <None Include="Source\AcsFramework_Core\Scene\Checkpoint3D\Test\CheckpointRoute3DTest.cpp">
       <Filter>Source\AcsFramework_Core\Scene\Checkpoint3D\Test</Filter>
     </None>
     <None Include="Source\AcsFramework_Core\Scene\Collision3D\README.md">

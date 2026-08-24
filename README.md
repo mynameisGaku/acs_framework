@@ -65,7 +65,7 @@ WASDで移動、左Shiftで走行、矢印キーで視点、Spaceでジャンプ
 | 当てる | `MakeScreenRay3D()` / `Raycast3D()` / `PickScreen3D()`で球面や読み込みメッシュへ正確に当てる |
 | 重なりと移動判定 | `CSceneCollision3D`、ノード追従、球・箱の重なり、球スイープ、レイヤー |
 | 近づきを取る | `BindProximityTrigger3D()`、ノード追従する球・箱への進入・滞在・退出、レイヤー絞り込み |
-| 通過を取る | `SpawnCheckpoint3D()`、指定した1形状の一度限り／再進入発火、生成・接続・破棄の一括化 |
+| 通過を取る | `SpawnCheckpoint3D()`、指定した1形状の一度限り／再進入発火、`FCheckpointRoute3D`の順番・周回管理 |
 | 土台 | 起動・場面遷移・アセット・音・セーブ・設定・入力再割り当て・多言語・決定性・開発支援 |
 
 詳しくは [`Docs/ROADMAP.md`](Docs/ROADMAP.md)。**v1.0.0 で何を入れて何を入れないか**もそこに書いてある。
@@ -232,6 +232,14 @@ FCheckpoint3DSpawnResult Goal = SpawnCheckpoint3D(
 FCheckpoint3DUpdateResult GoalState;
 if ( GoalCheckpoint.Update( GoalState ) && GoalState.bActivatedThisUpdate ) SaveGoal();
 DrawCheckpoint3D( GoalCheckpoint );
+
+// 複数のCheckpointを通る順番と2周の完了だけを、入力や時間から独立して管理する
+FCheckpointRoute3D Route;
+Route.SetParams( FCheckpointRoute3DParams::ForCheckpoints( 3u, 2u ) );
+FCheckpointRoute3DAdvanceResult RouteState;
+if ( GoalState.bActivatedThisUpdate
+    && Route.Advance( GoalIndex, RouteState )
+    && RouteState.bRouteCompletedThisAdvance ) FinishRace();
 
 // 接続済みキャラクターを、既定の入力割り当てから1回進める
 CActionBindingTable ActionBindings;
