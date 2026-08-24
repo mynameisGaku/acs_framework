@@ -484,6 +484,11 @@
     <ClInclude Include="Source\AcsFramework_Core\Scene\Block3D\Block3DSpawnParams.h" />
     <None Include="Source\AcsFramework_Core\Scene\Block3D\README.md" />
     <None Include="Source\AcsFramework_Core\Scene\Block3D\Test\Block3DSpawnerTest.cpp" />
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Room3D\Room3DSpawner.h" />
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Room3D\Room3DSpawnParams.h" />
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Room3D\Room3DSpawnResult.h" />
+    <None Include="Source\AcsFramework_Core\Scene\Room3D\README.md" />
+    <None Include="Source\AcsFramework_Core\Scene\Room3D\Test\Room3DSpawnerTest.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Common\Pch.cpp">
@@ -690,6 +695,8 @@
     <ClCompile Include="Source\AcsFramework_Core\Scene\Ground3D\Ground3DSpawnParams.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Scene\Block3D\Block3DSpawner.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Scene\Block3D\Block3DSpawnParams.cpp" />
+    <ClCompile Include="Source\AcsFramework_Core\Scene\Room3D\Room3DSpawner.cpp" />
+    <ClCompile Include="Source\AcsFramework_Core\Scene\Room3D\Room3DSpawnParams.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

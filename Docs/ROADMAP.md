@@ -35,6 +35,7 @@ ACS のモジュールは **438 個**ある。この枠組みが窓口を用意�
 | ノード生成・シーン保存 | `CPrefabSubsystem`、`CSceneSnapshotSubsystem` |
 | 3D 地面 | `AUi3DScene::SpawnGround3D`、`FGround3DSpawnParams`、厚み付き箱衝突 |
 | 3D 直方体 | `AUi3DScene::SpawnBlock3D`、`FBlock3DSpawnParams`、表示と同寸法の箱衝突 |
+| 3D 部屋 | `AUi3DScene::SpawnRoom3D`、床と四方の壁、5組の失敗時巻き戻し・一括破棄 |
 | 3D 水面 | `AUi3DScene::SpawnWater3D`、`FWater3DSpawnParams`、ACSの動的波紋 |
 | 3D 天候 | `AWeather3DScene`、`FWeather3DAppearance`、ACSの`CWeatherSystem` |
 | 3D エフェクト | `AEffect3DScene`、`CEffect3DPlayer`、同梱の Effekseer |
@@ -258,6 +259,9 @@ cameraからの距離に応じて大気へ馴染み、雲も実距離まで同�
 - ~~壁・足場・箱型障害物の簡単配置~~ → **実装済み** (2026-08-24)。
   `SpawnBlock3D( Size, CenterPosition )`だけで、同じローカル全寸法の立方体表示と箱型衝突を置く。
   回転、PBR材質、衝突レイヤーを`FBlock3DSpawnParams`で調整でき、登録失敗時は生成ノードも巻き戻す
+- ~~歩ける床と四方の壁を持つ検証部屋の簡単配置~~ → **実装済み** (2026-08-24)。
+  `SpawnRoom3D( InnerSize, WallHeight )`だけで、内寸を保った床1枚と壁4枚を置く。
+  5組の途中失敗は逆順に巻き戻し、`DestroyRoom3D`は全所有関係を先に検証してから一括破棄する
 - ~~3D天候の遷移と描画接続~~ → **実装済み** (2026-08-22)。`AWeather3DScene`で
   `SetWeather( EWeatherKind::Storm, 2.5f )`と書くだけで、ACSの天候状態を雲量、雲影、霧、
   空色、IBL環境光へ同じ遷移率で反映する。雨雪の素材は作品ごとに選べるよう、降水密度と

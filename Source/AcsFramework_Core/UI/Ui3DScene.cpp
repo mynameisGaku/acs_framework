@@ -12,6 +12,7 @@
 #include "AcsFramework_Core/Scene/Light3D/Light3DSpawner.h"
 #include "AcsFramework_Core/Scene/Model3D/Model3DSpawner.h"
 #include "AcsFramework_Core/Scene/Pick3D/ScenePicker.h"
+#include "AcsFramework_Core/Scene/Room3D/Room3DSpawner.h"
 #include "AcsFramework_Core/Scene/Sprite3D/Sprite3DSpawner.h"
 #include "AcsFramework_Core/Scene/Water3D/Water3DSpawner.h"
 #include "AcsFramework_Core/UI/InteractionReticle3D/InteractionReticle3DLayout.h"
@@ -241,6 +242,30 @@ FCollidableModel3DSpawnResult AUi3DScene::SpawnBlock3D( FVec3 Size,
 	FBlock3DSpawnParams Params = FBlock3DSpawnParams::FromSize( Size, Position );
 	Params.CollisionLayer = CollisionLayer;
 	return SpawnBlock3D( Params, Parent );
+}
+
+
+FRoom3DSpawnResult AUi3DScene::SpawnRoom3D(
+	const FRoom3DSpawnParams& Params, ANode* Parent ) noexcept
+{
+	return CRoom3DSpawner::SpawnInto( Graph(), m_Collision3D, Params, Parent );
+}
+
+
+FRoom3DSpawnResult AUi3DScene::SpawnRoom3D( FVec2 InnerSize,
+	f32 WallHeight, FVec3 FloorTopPosition, u32 CollisionLayer,
+	ANode* Parent ) noexcept
+{
+	FRoom3DSpawnParams Params = FRoom3DSpawnParams::FromInnerSize(
+		InnerSize, WallHeight, FloorTopPosition );
+	Params.CollisionLayer = CollisionLayer;
+	return SpawnRoom3D( Params, Parent );
+}
+
+
+bool AUi3DScene::DestroyRoom3D( FRoom3DSpawnResult& Room ) noexcept
+{
+	return CRoom3DSpawner::Destroy( Graph(), m_Collision3D, Room );
 }
 
 

@@ -169,6 +169,12 @@
     <Filter Include="Source\AcsFramework_Core\Scene\Prefab\Test">
       <UniqueIdentifier>{f7eff7e4-7544-5ba1-84a3-a468e44e4ee9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\AcsFramework_Core\Scene\Room3D">
+      <UniqueIdentifier>{82aa9a47-f37b-8867-83e9-148fb2c1d2dd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\AcsFramework_Core\Scene\Room3D\Test">
+      <UniqueIdentifier>{601ff24a-d564-8493-cd95-4b86443a861b}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Source\AcsFramework_Core\Scene\Snapshot">
       <UniqueIdentifier>{76e4ecac-d86f-575c-a2cc-c13f48bb814c}</UniqueIdentifier>
     </Filter>
@@ -572,6 +578,12 @@
     </ClCompile>
     <ClCompile Include="Source\AcsFramework_Core\Scene\Prefab\PrefabSubsystem.cpp">
       <Filter>Source\AcsFramework_Core\Scene\Prefab</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Scene\Room3D\Room3DSpawner.cpp">
+      <Filter>Source\AcsFramework_Core\Scene\Room3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Scene\Room3D\Room3DSpawnParams.cpp">
+      <Filter>Source\AcsFramework_Core\Scene\Room3D</Filter>
     </ClCompile>
     <ClCompile Include="Source\AcsFramework_Core\Scene\SceneTravelController.cpp">
       <Filter>Source\AcsFramework_Core\Scene</Filter>
@@ -1253,6 +1265,15 @@
     <ClInclude Include="Source\AcsFramework_Core\Scene\Prefab\PrefabSubsystem.h">
       <Filter>Source\AcsFramework_Core\Scene\Prefab</Filter>
     </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Room3D\Room3DSpawner.h">
+      <Filter>Source\AcsFramework_Core\Scene\Room3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Room3D\Room3DSpawnParams.h">
+      <Filter>Source\AcsFramework_Core\Scene\Room3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Room3D\Room3DSpawnResult.h">
+      <Filter>Source\AcsFramework_Core\Scene\Room3D</Filter>
+    </ClInclude>
     <ClInclude Include="Source\AcsFramework_Core\Scene\SceneTransition.h">
       <Filter>Source\AcsFramework_Core\Scene</Filter>
     </ClInclude>
@@ -1902,6 +1923,12 @@
     </None>
     <None Include="Source\AcsFramework_Core\Scene\Prefab\Test\PrefabSpawnerTest.cpp">
       <Filter>Source\AcsFramework_Core\Scene\Prefab\Test</Filter>
+    </None>
+    <None Include="Source\AcsFramework_Core\Scene\Room3D\README.md">
+      <Filter>Source\AcsFramework_Core\Scene\Room3D</Filter>
+    </None>
+    <None Include="Source\AcsFramework_Core\Scene\Room3D\Test\Room3DSpawnerTest.cpp">
+      <Filter>Source\AcsFramework_Core\Scene\Room3D\Test</Filter>
     </None>
     <None Include="Source\AcsFramework_Core\Scene\Snapshot\README.md">
       <Filter>Source\AcsFramework_Core\Scene\Snapshot</Filter>

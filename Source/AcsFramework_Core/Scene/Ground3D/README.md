@@ -28,3 +28,6 @@ const FCollidableModel3DSpawnResult Placed = SpawnGround3D( Ground );
 `CSceneCollision3D`を渡す。生成後の衝突登録に失敗した場合はノードも巻き戻される。
 場面途中で外す場合は結果を`DestroyCollidableModel3D`へ渡し、表示ノードと歩ける箱を同じ
 呼出しで片付ける。
+
+四方の壁も同時に必要な場合は[`SpawnRoom3D`](../Room3D/README.md)へ内寸と壁高を渡す。
+床を壁の外周まで広げ、5組の途中失敗と一括破棄もまとめて扱う。

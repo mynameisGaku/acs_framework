@@ -55,6 +55,8 @@ DestroyCollidableModel3D( Wall );
 素材を使わない直方体と歩ける平面は、`SpawnBlock3D`と`SpawnGround3D`が表示寸法と明示箱を
 一括で揃える。読み込みモデル、球、独自のローカル中心が必要な物は`SpawnCollidableModel3D`へ
 `FCollisionShape3DParams`を渡す。
+床と四方の壁をまとめる場合は`SpawnRoom3D`が5組を作り、`DestroyRoom3D`が全組の対応を検証して
+から一括で外す。
 
 登録時の中心、半サイズ、半径はノードのローカル座標で指定する。問い合わせ前に位置、回転、拡縮を
 自動同期するため、動くノードを毎フレーム登録し直す必要はない。ノードまたは祖先を無効にすると

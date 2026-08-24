@@ -46,7 +46,7 @@ WASDで移動、左Shiftで走行、矢印キーで視点、Spaceでジャンプ
 
 | | |
 |---|---|
-| 3D を置く | `SpawnModel3D()` / `SpawnAnimatedModel3D()`と、それぞれの操作対象版・衝突版・操作＋衝突版、`SpawnBlock3D()`、`DestroyCollidableModel3D()`、`SpawnNode3D()`、FBX の取り込み、材質 (metallic / roughness / HDR自己発光) |
+| 3D を置く | `SpawnModel3D()` / `SpawnAnimatedModel3D()`と、それぞれの操作対象版・衝突版・操作＋衝突版、`SpawnBlock3D()`、`SpawnRoom3D()`、`DestroyCollidableModel3D()`、`SpawnNode3D()`、FBX の取り込み、材質 (metallic / roughness / HDR自己発光) |
 | 3D画像を置く | `SpawnImage3D()`の固定板、`SpawnBillboard3D()`のカメラ追従板、透過PNG、深度判定、HDR合成 |
 | 3D を照らす | `SpawnLight3D()`、方向だけで置ける太陽、位置と距離だけで置ける点光源 |
 | 3D 地面 | `SpawnGround3D()`、広さだけで置ける表示面と直下の厚み付き衝突 |
@@ -99,6 +99,9 @@ FCollidableModel3DSpawnResult Ground = SpawnGround3D( FVec2{ 16.0f, 12.0f } );
 // 全寸法と中心位置だけで、表示と箱型衝突が揃った壁を置く
 FCollidableModel3DSpawnResult Wall = SpawnBlock3D(
     FVec3{ 4.0f, 2.0f, 0.5f }, FVec3{ 0.0f, 1.0f, 4.0f } );
+
+// 内寸と壁高だけで、歩ける床と四方の壁をまとめて置く
+FRoom3DSpawnResult Room = SpawnRoom3D( FVec2{ 12.0f, 8.0f }, 3.0f );
 
 // 遮蔽、反射、間接光、bloom、露出、輪郭補正を標準品質へ揃える
 TryApplyVisualPreset3D( EVisualPreset3D::Balanced );

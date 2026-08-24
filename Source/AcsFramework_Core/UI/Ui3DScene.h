@@ -13,6 +13,7 @@
 #include "AcsFramework_Core/Scene/Model3D/CollidableModel3DSpawnResult.h"
 #include "AcsFramework_Core/Scene/Pick3D/SceneRay.h"
 #include "AcsFramework_Core/Scene/Pick3D/SceneRayHit.h"
+#include "AcsFramework_Core/Scene/Room3D/Room3DSpawnResult.h"
 #include "AcsFramework_Core/Scene/Trigger3D/ProximityTrigger3D.h"
 #include "AcsFramework_Core/Scene/Visual3D/VisualPreset3D.h"
 #include "AcsFramework_Core/UI/InteractionReticle3D/InteractionReticle3DParams.h"
@@ -26,6 +27,7 @@ struct FBlock3DSpawnParams;
 struct FGround3DSpawnParams;
 struct FLight3DSpawnParams;
 struct FModel3DSpawnParams;
+struct FRoom3DSpawnParams;
 struct FSpatialPlayRequest;
 struct FSprite3DSpawnParams;
 struct FWater3DSpawnParams;
@@ -258,6 +260,40 @@ public:
 		FVec3 Position = FVec3{},
 		u32 CollisionLayer = CCollisionWorld3D::kAllLayers,
 		ANode* Parent = nullptr ) noexcept;
+
+	/**
+	 * 歩ける床と四方の壁を持つ、天井なし3D部屋を1回で置く。
+	 *
+	 * @param Params 床上面位置、内寸、壁と床の寸法、見た目、衝突レイヤー。
+	 * @param Parent 5個のノードを繋ぐ、この場面が所有する親。空ならroot直下。
+	 * @return 床と四方の壁。失敗時は空で、有効な半端物を残さない。
+	 */
+	FRoom3DSpawnResult SpawnRoom3D( const FRoom3DSpawnParams& Params,
+		ANode* Parent = nullptr ) noexcept;
+
+	/**
+	 * 既定の壁厚、床厚、見た目を使い、内寸と壁高だけで天井なし3D部屋を置く。
+	 *
+	 * @param InnerSize 壁の内側で使えるX方向とZ方向の全幅。
+	 * @param WallHeight 床上面からの壁高。
+	 * @param FloorTopPosition 配置先親から見た床上面の中心位置。
+	 * @param CollisionLayer 床と壁が属する非0の衝突レイヤー。
+	 * @param Parent 5個のノードを繋ぐ、この場面が所有する親。空ならroot直下。
+	 * @return 床と四方の壁。入力または途中登録に失敗したら空の結果。
+	 */
+	FRoom3DSpawnResult SpawnRoom3D( FVec2 InnerSize, f32 WallHeight = 3.0f,
+		FVec3 FloorTopPosition = FVec3{},
+		u32 CollisionLayer = CCollisionWorld3D::kAllLayers,
+		ANode* Parent = nullptr ) noexcept;
+
+	/**
+	 * 一括生成した天井なし部屋を、床と四方の壁のノード・形状ごと破棄する。
+	 *
+	 * @details 全5組がこの場面で重複なく対になっていない場合は何も変更しない。
+	 * @param Room `SpawnRoom3D`の成功結果。成功時は空の結果になる。
+	 * @return 5個のノードを破棄予定へ移し、形状も直ちに外せたらtrue。
+	 */
+	bool DestroyRoom3D( FRoom3DSpawnResult& Room ) noexcept;
 
 	/**
 	 * プリミティブまたは静的3Dモデルを、必要な読み込みを含めて1回で場面へ置く。

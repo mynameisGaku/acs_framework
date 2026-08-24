@@ -73,6 +73,7 @@ DestroyCollidableModel3D( SolidObstacle );
 両方を片付け、成功時だけ呼出側の結果を空へ戻す。
 素材を使わない直方体は[`SpawnBlock3D`](../Block3D/README.md)、歩ける表示面は
 [`SpawnGround3D`](../Ground3D/README.md)を使うと、表示と衝突の寸法を1個の設定へまとめられる。
+床と四方の壁をまとめる場合は[`SpawnRoom3D`](../Room3D/README.md)が5組の生成と巻き戻しを扱う。
 同じ単一モデルを視線操作へも登録する場合は`SpawnInteractableCollidableModel3D`を使うと、
 3処理の途中失敗をまとめて巻き戻せる。
 場面途中では結果を`DestroyInteractableCollidableModel3D`へ渡し、形状と操作対象ごと安全に消せる。
