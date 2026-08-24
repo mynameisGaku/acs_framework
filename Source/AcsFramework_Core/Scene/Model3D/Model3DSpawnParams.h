@@ -95,6 +95,19 @@ struct FModel3DSpawnParams
 	f32 ClearcoatRoughness = 0.1f;
 
 	/**
+	 * 布表面の毛羽が、輪郭付近へ柔らかく返す光の強さ。0で無し、1で最大。
+	 *
+	 * @details 布、フェルト、ベルベットのような粗い非金属に使う。
+	 */
+	f32 SheenStrength = 0.0f;
+
+	/** 毛羽だけの粗さ。0で細い返り、1で広く柔らかい返りになる。 */
+	f32 SheenRoughness = 0.3f;
+
+	/** 毛羽が返す0から1のRGB。`SheenStrength`が0なら見た目へ影響しない。 */
+	FVec3 SheenColor{ 1.0f, 1.0f, 1.0f };
+
+	/**
 	 * 表面のすぐ下へ光を回り込ませる強さ。0で無し、1で最大。
 	 *
 	 * @details 肌、蝋、乳白素材のような、影の境目が柔らかい非金属に使う。
@@ -177,6 +190,17 @@ struct FModel3DSpawnParams
 	static FModel3DSpawnParams FromCoatedPrimitive( EMeshPrimitive3D InPrimitive, FVec3 InPosition, FVec3 InColor, f32 InCoatRoughness = 0.08f ) noexcept;
 
 	/**
+	 * 布の毛羽が輪郭へ柔らかく光を返す形を、色と位置から作る。
+	 *
+	 * @param InPrimitive 使う形。
+	 * @param InPosition 置く場所。
+	 * @param InColor 表面と毛羽へ使う0から1のRGB。
+	 * @param InStrength 毛羽の反射を加える0から1の強さ。
+	 * @return 粗い布と柔らかい毛羽反射を持つ形指定。不正値はIsValidで拒否される。
+	 */
+	static FModel3DSpawnParams FromFabricPrimitive( EMeshPrimitive3D InPrimitive, FVec3 InPosition, FVec3 InColor, f32 InStrength = 0.65f ) noexcept;
+
+	/**
 	 * 光が表面のすぐ下へ回り込む形を、色と位置から作る。
 	 *
 	 * @param InPrimitive 使う形。
@@ -209,6 +233,7 @@ struct FModel3DSpawnParams
 	 * - 形として `Mesh` を指しているのに、モデルの場所も読込済みモデルも無い
 	 * - 読込済みモデルが `AMeshAsset` ではない
 	 * - 上塗り強度または上塗り粗さが0から1の有限値ではない
+	 * - 毛羽の強さ、粗さ、色が0から1の有限値ではない
 	 * - 表面下へ光を回す強さまたは色が0から1の有限値ではない
 	 * - 自己発光色が0から1の有限RGBではない
 	 * - 自己発光強度が0から10の有限値ではない

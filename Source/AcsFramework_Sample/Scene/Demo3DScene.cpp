@@ -508,6 +508,12 @@ void ADemo3DScene::OnEnter() noexcept
 	SubsurfaceMarker.Name = FStringView( "SubsurfaceMarker" );
 	if ( SpawnModel3D( SubsurfaceMarker ) == nullptr ) ACS_LOG_WARN( "Demo3D: 内部散乱マーカーを配置できなかった" );
 
+	// 布の毛羽が輪郭へ返す柔らかい光を一呼出しで加え、粗さだけの面と見比べられる球を置く。
+	FModel3DSpawnParams FabricMarker = FModel3DSpawnParams::FromFabricPrimitive( EMeshPrimitive3D::Sphere, FVec3{ 3.2f, 0.42f, -2.2f }, FVec3{ 0.16f, 0.28f, 0.68f }, 0.72f );
+	FabricMarker.Scale = FVec3{ 0.42f, 0.42f, 0.42f };
+	FabricMarker.Name = FStringView( "FabricMarker" );
+	if ( SpawnModel3D( FabricMarker ) == nullptr ) ACS_LOG_WARN( "Demo3D: 布材質マーカーを配置できなかった" );
+
 	// ACS既定の二段影と縁光を一呼出しで選び、PBRとは異なるイラスト調の球を置く。
 	FModel3DSpawnParams ToonMarker = FModel3DSpawnParams::FromToonPrimitive( EMeshPrimitive3D::Sphere, FVec3{ 1.8f, 0.42f, -2.2f }, FVec3{ 0.95f, 0.58f, 0.10f } );
 	ToonMarker.Scale = FVec3{ 0.42f, 0.42f, 0.42f };

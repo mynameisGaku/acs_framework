@@ -44,7 +44,7 @@ ACS のモジュールは **438 個**ある。この枠組みが窓口を用意�
 | 3D 水面 | `AUi3DScene::SpawnWater3D`、`FWater3DSpawnParams`、ACSの動的波紋 |
 | 3D 天候 | `AWeather3DScene`、`FWeather3DAppearance`、ACSの`CWeatherSystem` |
 | 3D エフェクト | `AEffect3DScene`、`CEffect3DPlayer`、同梱の Effekseer |
-| 3D 材質 | PBR、光沢コート、自己発光、トゥーン、肌・蝋向け内部散乱 |
+| 3D 材質 | PBR、光沢コート、自己発光、トゥーン、布の毛羽反射、肌・蝋向け内部散乱 |
 | 3D の形状重なり | `AUi3DScene::Collision3D`、`CSceneCollision3D`、ACSの`CCollisionWorld3D` |
 | 3D の視線操作 | `AUi3DScene::PickScreen3D`、`CInteractionFocus3D`、`CWorldLabel3DLayer` |
 | 3D デバッグ描画 | `DrawLine3D`、`DrawArrow3D`、`DrawAxes3D`、`DrawGrid3D`、`DrawCircle3D`、`DrawCone3D`、`DrawCylinder3D`、`DrawBox3D`、`DrawAabb3D`、`DrawSphere3D`、ACSの`FDebugDraw3D` |
@@ -197,6 +197,9 @@ cameraからの距離に応じて大気へ馴染み、雲も実距離まで同�
 - ~~肌・蝋向けの内部散乱材質~~ → **実装済み** (2026-08-23)。
   `FromSubsurfacePrimitive`へ表面色と内部色を渡すだけで、ACSの画面空間内部散乱へ接続する。
   強度0では従来の不透明PBRを保ち、必要な材質がある場面だけACS側の描画経路を使う
+- ~~布・ベルベット向けの毛羽反射材質~~ → **実装済み** (2026-08-25)。
+  `FromFabricPrimitive`へ色と位置を渡すだけで、ACSの毛羽反射計算へ接続する。
+  毛羽の色、強さ、粗さはモデルごとの値として調整でき、光源と環境反射はACS側を使う
 - ~~3D エフェクトの配線 (Effekseer)~~ → **実装済み** (2026-08-21)。
   `AEffect3DScene` を継承し、`PlayEffect3D( 素材名, 位置 )` で再生する。最初の描画前でも
   指定でき、D3D12 の準備後に自動開始する。ACS の HDR 透明3Dパス内で描くため、scene depthで

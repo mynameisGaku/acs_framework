@@ -42,6 +42,9 @@ SpawnModel3D( FModel3DSpawnParams::FromCoatedPrimitive( EMeshPrimitive3D::Sphere
 // 肌や蝋のように表面のすぐ下へ光が回る材質は、表面色と内部色だけで作る
 SpawnModel3D( FModel3DSpawnParams::FromSubsurfacePrimitive( EMeshPrimitive3D::Sphere, FVec3{ 1.0f, 1.0f, 2.0f }, FVec3{ 0.82f, 0.46f, 0.34f }, FVec3{ 1.0f, 0.18f, 0.08f } ) );
 
+// 布やベルベットのように輪郭へ柔らかく光を返す材質は、表面色と位置だけで作る
+SpawnModel3D( FModel3DSpawnParams::FromFabricPrimitive( EMeshPrimitive3D::Sphere, FVec3{ 3.0f, 1.0f, 2.0f }, FVec3{ 0.16f, 0.28f, 0.68f } ) );
+
 // ACS既定の二段影と縁光を使うイラスト調の形も、色と位置だけで作る
 SpawnModel3D( FModel3DSpawnParams::FromToonPrimitive( EMeshPrimitive3D::Sphere, FVec3{ 2.0f, 1.0f, 2.0f }, FVec3{ 0.95f, 0.58f, 0.10f } ) );
 
@@ -110,6 +113,11 @@ DestroyCollidableModel3D( SolidObstacle );
 Frameworkへ複製せず、ACSが必要な場面だけ有効にする内部散乱経路をそのまま利用する。外部モデルでは
 `SubsurfaceColor`と`SubsurfaceStrength`を直接指定でき、どちらも0から1の有限値だけを受け付ける。
 
+`FromFabricPrimitive`は粗い非金属面と、視線に近い輪郭へ返る毛羽の反射をACSのPBR材質へ渡す。
+布、フェルト、ベルベットを色と位置だけで始められ、毛羽色には同じ表面色を使う。外部モデルでは
+`SheenColor`、`SheenStrength`、`SheenRoughness`を直接指定でき、すべて0から1の有限値だけを
+受け付ける。光源、環境光、実際の反射計算はFrameworkへ複製せずACSへ任せる。
+
 `FromToonPrimitive`は`bToonShading`を有効にし、ACS既定の二段影、縁光、段階的な反射を使う。
 細かなトゥーン値をFramework側へ複製せず、ACSが調整した既定値をそのまま利用する。PBR専用の
 上塗りはトゥーン陰影では使われないため、光沢コートと同時に指定しない。
@@ -146,6 +154,7 @@ Frameworkへ複製せず、ACSが必要な場面だけ有効にする内部散�
 - 負の倍率は**鏡写しとして通す**。0 だけを弾く。
 - 自己発光色は各成分0から1、強度は0から10だけを受け付ける。壊れたHDR値を描画へ渡さない。
 - 上塗り強度と上塗り粗さは0から1の有限値だけを受け付ける。元の面の粗さとは別に扱う。
+- 毛羽の色、強さ、粗さは0から1の有限値だけを受け付ける。強さ0なら従来のPBRになる。
 - 内部色と光の回り込み量は0から1の有限値だけを受け付ける。強度0なら従来と同じ不透明PBRになる。
 - **名前はシーンを保存すると消える。** 名前で探す作りにしないこと
   （`Scene/Snapshot/README.md` を見ること）。

@@ -30,6 +30,7 @@ void RunModel3DSpawnerTests( CTestHarness& Harness )
 		Harness.CheckEqualF32( Params.Color.w, 1.0f, "既定は不透明" );
 		Harness.Check( !Params.bToonShading, "既定はPBR陰影" );
 		Harness.CheckEqualF32( Params.Clearcoat, 0.0f, "既定では透明な上塗りを使わない" );
+		Harness.CheckEqualF32( Params.SheenStrength, 0.0f, "既定では布の毛羽反射を使わない" );
 		Harness.CheckEqualF32( Params.SubsurfaceStrength, 0.0f, "既定では表面下へ光を回さない" );
 		Harness.CheckEqualF32( Params.EmissiveStrength, 0.0f, "既定では自己発光しない" );
 		Harness.Check( Params.bCastsShadow, "既定で影を落とす" );
@@ -56,6 +57,20 @@ void RunModel3DSpawnerTests( CTestHarness& Harness )
 		Harness.CheckEqualF32( Coated.Color.x, 0.75f, "指定した表面色を使う" );
 		Harness.CheckEqualF32( Coated.Clearcoat, 1.0f, "上塗り強度を最大にする" );
 		Harness.CheckEqualF32( Coated.ClearcoatRoughness, 0.06f, "上塗り粗さを設定する" );
+	}
+
+	Harness.BeginSuite( "FModel3DSpawnParams / 布の毛羽反射を一呼出しで作る" );
+
+	{
+		const FModel3DSpawnParams Fabric = FModel3DSpawnParams::FromFabricPrimitive( EMeshPrimitive3D::Sphere, FVec3{ -0.5f, 1.5f, 2.0f }, FVec3{ 0.18f, 0.30f, 0.72f }, 0.70f );
+		Harness.Check( Fabric.IsValid(), "布材質の形を作れる" );
+		Harness.Check( Fabric.Primitive == EMeshPrimitive3D::Sphere, "指定した形を使う" );
+		Harness.CheckEqualF32( Fabric.Position.y, 1.5f, "指定した位置を使う" );
+		Harness.CheckEqualF32( Fabric.Color.z, 0.72f, "指定した表面色を使う" );
+		Harness.CheckEqualF32( Fabric.Roughness, 0.82f, "布らしい粗い表面にする" );
+		Harness.CheckEqualF32( Fabric.SheenStrength, 0.70f, "指定した毛羽反射の強さを使う" );
+		Harness.CheckEqualF32( Fabric.SheenRoughness, 0.45f, "柔らかい毛羽反射にする" );
+		Harness.CheckEqualF32( Fabric.SheenColor.y, 0.30f, "毛羽へ表面色を使う" );
 	}
 
 	Harness.BeginSuite( "FModel3DSpawnParams / 内部へ光が回る形を一呼出しで作る" );
@@ -119,6 +134,18 @@ void RunModel3DSpawnerTests( CTestHarness& Harness )
 		FModel3DSpawnParams InvalidClearcoat;
 		InvalidClearcoat.Clearcoat = std::numeric_limits<f32>::quiet_NaN();
 		Harness.Check( !InvalidClearcoat.IsValid(), "有限でない上塗り強度を弾く" );
+
+		FModel3DSpawnParams NegativeSheen;
+		NegativeSheen.SheenStrength = -0.01f;
+		Harness.Check( !NegativeSheen.IsValid(), "負の毛羽反射強度を弾く" );
+
+		FModel3DSpawnParams ExcessiveSheenRoughness;
+		ExcessiveSheenRoughness.SheenRoughness = 1.01f;
+		Harness.Check( !ExcessiveSheenRoughness.IsValid(), "上限を超える毛羽粗さを弾く" );
+
+		FModel3DSpawnParams InvalidSheenColor;
+		InvalidSheenColor.SheenColor = FVec3{ 0.2f, std::numeric_limits<f32>::quiet_NaN(), 0.8f };
+		Harness.Check( !InvalidSheenColor.IsValid(), "有限でない毛羽色を弾く" );
 
 		FModel3DSpawnParams NegativeSubsurface;
 		NegativeSubsurface.SubsurfaceStrength = -0.01f;
@@ -206,6 +233,22 @@ void RunModel3DSpawnerTests( CTestHarness& Harness )
 		{
 			Harness.CheckEqualF32( Mesh->Material().pbr.clearcoat, 1.0f, "上塗り強度を渡す" );
 			Harness.CheckEqualF32( Mesh->Material().pbr.clearcoatRoughness, 0.04f, "上塗り粗さを渡す" );
+		}
+	}
+
+	Harness.BeginSuite( "CModel3DSpawner / 布の毛羽反射をACSのPBR材質へ渡す" );
+
+	{
+		TObjectPtr<ANode> Parent = NewObject<ANode>();
+		const FModel3DSpawnParams Params = FModel3DSpawnParams::FromFabricPrimitive( EMeshPrimitive3D::Sphere, FVec3{}, FVec3{ 0.16f, 0.28f, 0.68f }, 0.74f );
+		const AMeshComponent3D* const Mesh = MeshOf( CModel3DSpawner::SpawnInto( *Parent, Params ) );
+		Harness.Check( Mesh != nullptr, "布材質の形を置ける" );
+		Harness.Check( Mesh != nullptr && Mesh->MaterialLoaded(), "PBR材質を確定する" );
+		if ( Mesh != nullptr )
+		{
+			Harness.CheckEqualF32( Mesh->Material().pbr.sheen, 0.74f, "毛羽反射の強さを渡す" );
+			Harness.CheckEqualF32( Mesh->Material().pbr.sheenRoughness, 0.45f, "毛羽反射の粗さを渡す" );
+			Harness.CheckEqualF32( Mesh->Material().pbr.sheenColor.z, 0.68f, "毛羽色を渡す" );
 		}
 	}
 
