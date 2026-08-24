@@ -5,6 +5,7 @@
 #include "AcsFramework_Core/Audio/Spatial/SpatialAudioSubsystem.h"
 #include "AcsFramework_Core/Scene/Animation3D/AnimatedModel3DSpawner.h"
 #include "AcsFramework_Core/Scene/Block3D/Block3DSpawner.h"
+#include "AcsFramework_Core/Scene/Bridge3D/Bridge3DSpawner.h"
 #include "AcsFramework_Core/Scene/Checkpoint3D/Checkpoint3DSpawner.h"
 #include "AcsFramework_Core/Scene/Character3D/ThirdPersonCharacter3D.h"
 #include "AcsFramework_Core/Scene/Character3D/ThirdPersonCharacter3DSpawner.h"
@@ -301,6 +302,30 @@ FCollidableModel3DSpawnResult AUi3DScene::SpawnSphere3D( f32 Radius,
 	FSphere3DSpawnParams Params = FSphere3DSpawnParams::FromRadius( Radius, Position );
 	Params.CollisionLayer = CollisionLayer;
 	return SpawnSphere3D( Params, Parent );
+}
+
+
+FBridge3DSpawnResult AUi3DScene::SpawnBridge3D(
+	const FBridge3DSpawnParams& Params, ANode* Parent ) noexcept
+{
+	return CBridge3DSpawner::SpawnInto( Graph(), m_Collision3D, Params, Parent );
+}
+
+
+FBridge3DSpawnResult AUi3DScene::SpawnBridge3D( f32 Width,
+	f32 Length, f32 RailingHeight, FVec3 EntranceCenter,
+	EBridge3DDirection Direction, u32 CollisionLayer, ANode* Parent ) noexcept
+{
+	FBridge3DSpawnParams Params = FBridge3DSpawnParams::FromDimensions(
+		Width, Length, RailingHeight, EntranceCenter, Direction );
+	Params.CollisionLayer = CollisionLayer;
+	return SpawnBridge3D( Params, Parent );
+}
+
+
+bool AUi3DScene::DestroyBridge3D( FBridge3DSpawnResult& Bridge ) noexcept
+{
+	return CBridge3DSpawner::Destroy( Graph(), m_Collision3D, Bridge );
 }
 
 

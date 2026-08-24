@@ -109,6 +109,12 @@
     <Filter Include="Source\AcsFramework_Core\Scene\Block3D\Test">
       <UniqueIdentifier>{8acdc1cd-cd46-4be4-7fd3-8bd245e29be2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\AcsFramework_Core\Scene\Bridge3D">
+      <UniqueIdentifier>{10f92145-7e86-4f37-bd1a-6b71d3769154}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\AcsFramework_Core\Scene\Bridge3D\Test">
+      <UniqueIdentifier>{8ee79e24-2aca-45c2-b682-e9332b3e5c31}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Source\AcsFramework_Core\Scene\Camera3D">
       <UniqueIdentifier>{6356cf5a-24ae-902d-0c95-4834fea49f27}</UniqueIdentifier>
     </Filter>
@@ -533,6 +539,12 @@
     </ClCompile>
     <ClCompile Include="Source\AcsFramework_Core\Scene\Block3D\Block3DSpawnParams.cpp">
       <Filter>Source\AcsFramework_Core\Scene\Block3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Scene\Bridge3D\Bridge3DSpawner.cpp">
+      <Filter>Source\AcsFramework_Core\Scene\Bridge3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Scene\Bridge3D\Bridge3DSpawnParams.cpp">
+      <Filter>Source\AcsFramework_Core\Scene\Bridge3D</Filter>
     </ClCompile>
     <ClCompile Include="Source\AcsFramework_Core\Scene\Camera3D\NodeOrbitCamera3D.cpp">
       <Filter>Source\AcsFramework_Core\Scene\Camera3D</Filter>
@@ -1237,6 +1249,18 @@
     </ClInclude>
     <ClInclude Include="Source\AcsFramework_Core\Scene\Block3D\Block3DSpawnParams.h">
       <Filter>Source\AcsFramework_Core\Scene\Block3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Bridge3D\Bridge3DDirection.h">
+      <Filter>Source\AcsFramework_Core\Scene\Bridge3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Bridge3D\Bridge3DSpawner.h">
+      <Filter>Source\AcsFramework_Core\Scene\Bridge3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Bridge3D\Bridge3DSpawnParams.h">
+      <Filter>Source\AcsFramework_Core\Scene\Bridge3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Bridge3D\Bridge3DSpawnResult.h">
+      <Filter>Source\AcsFramework_Core\Scene\Bridge3D</Filter>
     </ClInclude>
     <ClInclude Include="Source\AcsFramework_Core\Scene\Camera3D\NodeOrbitCamera3D.h">
       <Filter>Source\AcsFramework_Core\Scene\Camera3D</Filter>
@@ -2049,6 +2073,12 @@
     </None>
     <None Include="Source\AcsFramework_Core\Scene\Block3D\Test\Block3DSpawnerTest.cpp">
       <Filter>Source\AcsFramework_Core\Scene\Block3D\Test</Filter>
+    </None>
+    <None Include="Source\AcsFramework_Core\Scene\Bridge3D\README.md">
+      <Filter>Source\AcsFramework_Core\Scene\Bridge3D</Filter>
+    </None>
+    <None Include="Source\AcsFramework_Core\Scene\Bridge3D\Test\Bridge3DSpawnerTest.cpp">
+      <Filter>Source\AcsFramework_Core\Scene\Bridge3D\Test</Filter>
     </None>
     <None Include="Source\AcsFramework_Core\Scene\Camera3D\README.md">
       <Filter>Source\AcsFramework_Core\Scene\Camera3D</Filter>

@@ -4,6 +4,8 @@
 #include <acs.h>
 
 #include "AcsFramework_Core/Scene/Billboard3D/Billboard3DLayer.h"
+#include "AcsFramework_Core/Scene/Bridge3D/Bridge3DDirection.h"
+#include "AcsFramework_Core/Scene/Bridge3D/Bridge3DSpawnResult.h"
 #include "AcsFramework_Core/Scene/Checkpoint3D/Checkpoint3D.h"
 #include "AcsFramework_Core/Scene/Checkpoint3D/Checkpoint3DSpawnResult.h"
 #include "AcsFramework_Core/Scene/Character3D/ThirdPersonCharacter3DSpawnParams.h"
@@ -35,6 +37,7 @@ using namespace acs::game;
 
 struct FAnimatedModel3DSpawnParams;
 struct FBlock3DSpawnParams;
+struct FBridge3DSpawnParams;
 struct FCorridor3DSpawnParams;
 struct FDoorway3DSpawnParams;
 struct FFence3DSpawnParams;
@@ -356,6 +359,43 @@ public:
 		FVec3 Position = FVec3{},
 		u32 CollisionLayer = CCollisionWorld3D::kAllLayers,
 		ANode* Parent = nullptr ) noexcept;
+
+	/**
+	 * 歩ける床板と両側柵を持つ、軸方向の衝突付き3D橋を1回で置く。
+	 *
+	 * @param Params 入口、方向、床板と柵の寸法、見た目、衝突レイヤー。
+	 * @param Parent 全パーツを繋ぐ、この場面が所有する親。空ならroot直下。
+	 * @return 床板と両側柵。失敗時は空で、有効な半端物を残さない。
+	 */
+	FBridge3DSpawnResult SpawnBridge3D( const FBridge3DSpawnParams& Params,
+		ANode* Parent = nullptr ) noexcept;
+
+	/**
+	 * 既定の床板・柵寸法と見た目を使い、幅、長さ、柵高だけで3D橋を置く。
+	 *
+	 * @param Width 両側の床板端を結ぶ全幅。
+	 * @param Length 入口境界から出口境界までの床板全長。
+	 * @param RailingHeight 床板上面からの柵高。
+	 * @param EntranceCenter 配置先親から見た入口境界の床板上中心。
+	 * @param Direction 入口から出口へ橋を伸ばす軸方向。省略時はZ正方向。
+	 * @param CollisionLayer 全パーツが属する非0の衝突レイヤー。
+	 * @param Parent 全パーツを繋ぐ、この場面が所有する親。空ならroot直下。
+	 * @return 床板と両側柵。入力または途中登録に失敗したら空の結果。
+	 */
+	FBridge3DSpawnResult SpawnBridge3D( f32 Width, f32 Length,
+		f32 RailingHeight = 1.15f, FVec3 EntranceCenter = FVec3{},
+		EBridge3DDirection Direction = EBridge3DDirection::PositiveZ,
+		u32 CollisionLayer = CCollisionWorld3D::kAllLayers,
+		ANode* Parent = nullptr ) noexcept;
+
+	/**
+	 * 一括生成した3D橋を、床板、支柱、横桟のノード・形状ごと破棄する。
+	 *
+	 * @details 全要素がこの場面で重複なく対になっていない場合は何も変更しない。
+	 * @param Bridge `SpawnBridge3D`の成功結果。成功時は空の結果になる。
+	 * @return 全ノードを破棄予定へ移し、形状も直ちに外せたらtrue。
+	 */
+	bool DestroyBridge3D( FBridge3DSpawnResult& Bridge ) noexcept;
 
 	/**
 	 * 歩ける床と左右の壁を持つ、両端が開いた3D通路を1回で置く。

@@ -47,7 +47,7 @@ WASDで移動、左Shiftで走行、矢印キーで視点、Spaceでジャンプ
 
 | | |
 |---|---|
-| 3D を置く | `SpawnModel3D()` / `SpawnAnimatedModel3D()`と、それぞれの操作対象版・衝突版・操作＋衝突版、`SpawnBlock3D()`、`SpawnSphere3D()`、`SpawnRoom3D()`、`SpawnCorridor3D()`、`SpawnDoorway3D()`、`SpawnFence3D()`、`SpawnStairs3D()`、`DestroyCollidableModel3D()`、`SpawnNode3D()`、FBX の取り込み、材質 (metallic / roughness / HDR自己発光 / 布の毛羽反射 / 内部散乱) |
+| 3D を置く | `SpawnModel3D()` / `SpawnAnimatedModel3D()`と、それぞれの操作対象版・衝突版・操作＋衝突版、`SpawnBlock3D()`、`SpawnSphere3D()`、`SpawnRoom3D()`、`SpawnCorridor3D()`、`SpawnBridge3D()`、`SpawnDoorway3D()`、`SpawnFence3D()`、`SpawnStairs3D()`、`DestroyCollidableModel3D()`、`SpawnNode3D()`、FBX の取り込み、材質 (metallic / roughness / HDR自己発光 / 布の毛羽反射 / 内部散乱) |
 | 3D画像を置く | `SpawnImage3D()`の固定板、`SpawnBillboard3D()`のカメラ追従板、透過PNG、深度判定、HDR合成 |
 | 3D を照らす | `SpawnLight3D()`の太陽・点光源、`SpawnStudioLightRig3D()`の被写体用キー・フィル・リム |
 | 3D 地面 | `SpawnGround3D()`、広さだけで置ける表示面と直下の厚み付き衝突 |
@@ -119,6 +119,10 @@ FRoom3DSpawnResult Room = SpawnRoom3D( FVec2{ 12.0f, 8.0f }, 3.0f );
 // 内幅と長さだけで、床と側壁を持つ両端が開いた通路を置く
 FCorridor3DSpawnResult Corridor = SpawnCorridor3D(
     3.0f, 10.0f, 3.0f, FVec3{ 0.0f, 0.0f, 4.0f } );
+
+// 幅、長さ、柵高だけで、歩ける床板と両側柵を持つ橋を置く
+FBridge3DSpawnResult Bridge = SpawnBridge3D(
+    3.0f, 10.0f, 1.15f, FVec3{ 0.0f, 1.0f, -5.0f } );
 
 // 壁と開口の寸法だけで、見えない衝突を残さない出入口枠を置く
 FDoorway3DSpawnResult Doorway = SpawnDoorway3D(

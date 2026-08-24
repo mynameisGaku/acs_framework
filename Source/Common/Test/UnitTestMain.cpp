@@ -74,6 +74,7 @@ void RunCheckpoint3DTests( CTestHarness& Harness );
 void RunCheckpointRoute3DTests( CTestHarness& Harness );
 void RunDebugDraw3DQueueTests( CTestHarness& Harness );
 void RunBlock3DSpawnerTests( CTestHarness& Harness );
+void RunBridge3DSpawnerTests( CTestHarness& Harness );
 void RunCorridor3DSpawnerTests( CTestHarness& Harness );
 void RunDoorway3DSpawnerTests( CTestHarness& Harness );
 void RunFence3DSpawnerTests( CTestHarness& Harness );
@@ -144,6 +145,7 @@ int main()
 	RunCheckpointRoute3DTests( Harness );
 	RunDebugDraw3DQueueTests( Harness );
 	RunBlock3DSpawnerTests( Harness );
+	RunBridge3DSpawnerTests( Harness );
 	RunCorridor3DSpawnerTests( Harness );
 	RunDoorway3DSpawnerTests( Harness );
 	RunFence3DSpawnerTests( Harness );

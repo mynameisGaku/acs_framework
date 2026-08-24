@@ -492,6 +492,12 @@
     <ClInclude Include="Source\AcsFramework_Core\Scene\Block3D\Block3DSpawnParams.h" />
     <None Include="Source\AcsFramework_Core\Scene\Block3D\README.md" />
     <None Include="Source\AcsFramework_Core\Scene\Block3D\Test\Block3DSpawnerTest.cpp" />
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Bridge3D\Bridge3DDirection.h" />
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Bridge3D\Bridge3DSpawner.h" />
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Bridge3D\Bridge3DSpawnParams.h" />
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Bridge3D\Bridge3DSpawnResult.h" />
+    <None Include="Source\AcsFramework_Core\Scene\Bridge3D\README.md" />
+    <None Include="Source\AcsFramework_Core\Scene\Bridge3D\Test\Bridge3DSpawnerTest.cpp" />
     <ClInclude Include="Source\AcsFramework_Core\Scene\Corridor3D\Corridor3DDirection.h" />
     <ClInclude Include="Source\AcsFramework_Core\Scene\Corridor3D\Corridor3DSpawner.h" />
     <ClInclude Include="Source\AcsFramework_Core\Scene\Corridor3D\Corridor3DSpawnParams.h" />
@@ -747,6 +753,8 @@
     <ClCompile Include="Source\AcsFramework_Core\Scene\Ground3D\Ground3DSpawnParams.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Scene\Block3D\Block3DSpawner.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Scene\Block3D\Block3DSpawnParams.cpp" />
+    <ClCompile Include="Source\AcsFramework_Core\Scene\Bridge3D\Bridge3DSpawner.cpp" />
+    <ClCompile Include="Source\AcsFramework_Core\Scene\Bridge3D\Bridge3DSpawnParams.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Scene\Corridor3D\Corridor3DSpawner.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Scene\Corridor3D\Corridor3DSpawnParams.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Scene\Doorway3D\Doorway3DSpawner.cpp" />

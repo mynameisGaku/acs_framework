@@ -38,6 +38,7 @@ ACS のモジュールは **438 個**ある。この枠組みが窓口を用意�
 | 3D 球 | `AUi3DScene::SpawnSphere3D`、`FSphere3DSpawnParams`、表示と同半径の球衝突 |
 | 3D 部屋 | `AUi3DScene::SpawnRoom3D`、床と四方の壁、5組の失敗時巻き戻し・一括破棄 |
 | 3D 通路 | `AUi3DScene::SpawnCorridor3D`、両端が開いた床と側壁2枚、失敗時巻き戻し・一括破棄 |
+| 3D 橋 | `AUi3DScene::SpawnBridge3D`、歩ける床板と両側柵、失敗時巻き戻し・一括破棄 |
 | 3D 出入口枠 | `AUi3DScene::SpawnDoorway3D`、開口を残す左右柱と上枠、失敗時巻き戻し・一括破棄 |
 | 3D 柵 | `AUi3DScene::SpawnFence3D`、最大間隔で並ぶ支柱と水平な横桟、失敗時巻き戻し・一括破棄 |
 | 3D 階段 | `AUi3DScene::SpawnStairs3D`、4方向の隙間のない段、失敗時巻き戻し・一括破棄 |
@@ -295,6 +296,10 @@ cameraからの距離に応じて大気へ馴染み、雲も実距離まで同�
   `SpawnCorridor3D( InnerWidth, Length, WallHeight )`だけで、入口から出口までの床と側壁2枚を置く。
   XZの正負4方向と共通親に対応し、3組の途中失敗は逆順に巻き戻す。
   `DestroyCorridor3D`は全所有関係と重複を先に検証してから一括破棄する
+- ~~両側柵を持つ衝突付き橋の簡単配置~~ → **実装済み** (2026-08-25)。
+  `SpawnBridge3D( Width, Length, RailingHeight )`だけで、歩ける床板と両側柵を置く。
+  XZの正負4方向へ対応し、始終端の支柱を床板内へ収め、最大支柱間隔から必要数を自動で決める。
+  `DestroyBridge3D`は全パーツの所有関係と重複を先に検証してから一括破棄する
 - ~~開口を持つ衝突付き壁枠の簡単配置~~ → **実装済み** (2026-08-24)。
   `SpawnDoorway3D( WallWidth, WallHeight, OpeningWidth, OpeningHeight )`だけで、左右柱と上枠を置く。
   X/Z軸と開口の横ずらしに対応し、開口部分には表示も衝突も残さない。

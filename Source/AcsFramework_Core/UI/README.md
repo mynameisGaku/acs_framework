@@ -46,6 +46,7 @@ bloomや輪郭補正の影響を受けず、3D場面より手前、ポーズ・�
 `SpawnSphere3D`は同半径の球表示と球型衝突、
 `SpawnRoom3D`は歩ける床と四方の壁、
 `SpawnCorridor3D`は入口から出口までの床と側壁2枚、
+`SpawnBridge3D`は床板と両側柵、
 `SpawnDoorway3D`は開口を残す左右柱と上枠、
 `SpawnStairs3D`は共通底面から積み上がる隙間のない階段、
 `SpawnLight3D`は太陽または点光源、`SpawnStudioLightRig3D`は被写体中心・見る方向・半径から
@@ -69,6 +70,8 @@ FCollidableModel3DSpawnResult Ball = SpawnSphere3D( 0.8f, FVec3{ 2.0f, 0.8f, 2.0
 FRoom3DSpawnResult Room = SpawnRoom3D( FVec2{ 12.0f, 8.0f }, 3.0f );
 FCorridor3DSpawnResult Corridor = SpawnCorridor3D(
     3.0f, 10.0f, 3.0f, FVec3{ 0.0f, 0.0f, 4.0f } );
+FBridge3DSpawnResult Bridge = SpawnBridge3D(
+    3.0f, 10.0f, 1.15f, FVec3{ 0.0f, 1.0f, -5.0f } );
 FDoorway3DSpawnResult Doorway = SpawnDoorway3D(
     4.0f, 3.0f, 1.2f, 2.2f, 0.25f, FVec3{ 0.0f, 0.0f, 14.0f } );
 FStairs3DSpawnResult Stairs = SpawnStairs3D(
@@ -100,6 +103,7 @@ DestroyCollidableModel3D( Wall );
 DestroyCollidableModel3D( Ball );
 DestroyRoom3D( Room );
 DestroyCorridor3D( Corridor );
+DestroyBridge3D( Bridge );
 DestroyDoorway3D( Doorway );
 DestroyStairs3D( Stairs );
 ```
@@ -178,6 +182,9 @@ world軸平行箱を既存デバッグ線へ一括登録する。線は次の透
 両端が開いた通路は`SpawnCorridor3D`へ内幅、長さ、壁高を渡すと、入口から出口まで続く床と側壁2枚を
 XZの正負4方向へ置ける。床は壁外面まで覆い、`DestroyCorridor3D`は全3組の所有関係と重複を検証して
 から片付ける。
+両側柵付きの橋は`SpawnBridge3D`へ床板幅、長さ、柵高を渡すと、歩ける床板と両側の支柱・横桟を
+XZの正負4方向へ置ける。始終端の支柱は床板端から半幅内側へ収まり、支柱数は最大間隔から自動で決まる。
+`DestroyBridge3D`は床板と両側柵の全所有関係と重複を検証してから片付ける。
 開口壁枠は`SpawnDoorway3D`へ壁幅、壁高、開口幅、開口高を渡すと、左右柱と上枠だけを置ける。
 開口の横位置とX/Z軸を変えても通過部分には見えない衝突を残さず、`DestroyDoorway3D`は全3組を
 検証してから片付ける。扉板、開閉、鍵、操作対象は作品側で必要なものだけ追加する。
