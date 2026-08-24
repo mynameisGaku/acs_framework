@@ -31,3 +31,6 @@ FCorridor3DSpawnResult Placed = SpawnCorridor3D( Corridor );
 
 通路全体を回転・拡縮する場合は同じ親ノードの下へ置ける。親を斜め回転または非一様拡縮すると、
 各箱衝突は既存契約どおり表示を包む安全側のworld軸平行箱になる。
+
+通路端に開口壁枠を置く場合は[`SpawnDoorway3D`](../Doorway3D/README.md)へ壁と開口の寸法を渡すと、
+左右柱と上枠だけを追加し、通過部分の表示と衝突を空けられる。

@@ -38,6 +38,7 @@ ACS のモジュールは **438 個**ある。この枠組みが窓口を用意�
 | 3D 球 | `AUi3DScene::SpawnSphere3D`、`FSphere3DSpawnParams`、表示と同半径の球衝突 |
 | 3D 部屋 | `AUi3DScene::SpawnRoom3D`、床と四方の壁、5組の失敗時巻き戻し・一括破棄 |
 | 3D 通路 | `AUi3DScene::SpawnCorridor3D`、両端が開いた床と側壁2枚、失敗時巻き戻し・一括破棄 |
+| 3D 出入口枠 | `AUi3DScene::SpawnDoorway3D`、開口を残す左右柱と上枠、失敗時巻き戻し・一括破棄 |
 | 3D 階段 | `AUi3DScene::SpawnStairs3D`、4方向の隙間のない段、失敗時巻き戻し・一括破棄 |
 | 3D 水面 | `AUi3DScene::SpawnWater3D`、`FWater3DSpawnParams`、ACSの動的波紋 |
 | 3D 天候 | `AWeather3DScene`、`FWeather3DAppearance`、ACSの`CWeatherSystem` |
@@ -273,6 +274,10 @@ cameraからの距離に応じて大気へ馴染み、雲も実距離まで同�
   `SpawnCorridor3D( InnerWidth, Length, WallHeight )`だけで、入口から出口までの床と側壁2枚を置く。
   XZの正負4方向と共通親に対応し、3組の途中失敗は逆順に巻き戻す。
   `DestroyCorridor3D`は全所有関係と重複を先に検証してから一括破棄する
+- ~~開口を持つ衝突付き壁枠の簡単配置~~ → **実装済み** (2026-08-24)。
+  `SpawnDoorway3D( WallWidth, WallHeight, OpeningWidth, OpeningHeight )`だけで、左右柱と上枠を置く。
+  X/Z軸と開口の横ずらしに対応し、開口部分には表示も衝突も残さない。
+  3組の途中失敗は逆順に巻き戻し、`DestroyDoorway3D`は全所有関係と重複を先に検証する
 - ~~隙間のない衝突付き階段の簡単配置~~ → **実装済み** (2026-08-24)。
   `SpawnStairs3D( StepCount, Width, StepDepth, StepHeight )`だけで、共通底面から積み上がる段を置く。
   XZの正負4方向と共通親に対応し、最大256段の途中失敗は逆順に巻き戻す。

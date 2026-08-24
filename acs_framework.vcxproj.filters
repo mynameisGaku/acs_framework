@@ -139,6 +139,12 @@
     <Filter Include="Source\AcsFramework_Core\Scene\DebugDraw3D\Test">
       <UniqueIdentifier>{4bba147a-e174-f1b7-32b4-cb35b0306898}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\AcsFramework_Core\Scene\Doorway3D">
+      <UniqueIdentifier>{f3b516ec-bac5-098e-784d-b9597ab85cc0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\AcsFramework_Core\Scene\Doorway3D\Test">
+      <UniqueIdentifier>{7b65a81a-0ba3-dbaf-334d-27d6e9b03239}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Source\AcsFramework_Core\Scene\Ground3D">
       <UniqueIdentifier>{a539cd72-551d-1758-ed66-57036c8eb99f}</UniqueIdentifier>
     </Filter>
@@ -554,6 +560,12 @@
     </ClCompile>
     <ClCompile Include="Source\AcsFramework_Core\Scene\DebugDraw3D\DebugLine3D.cpp">
       <Filter>Source\AcsFramework_Core\Scene\DebugDraw3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Scene\Doorway3D\Doorway3DSpawner.cpp">
+      <Filter>Source\AcsFramework_Core\Scene\Doorway3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Scene\Doorway3D\Doorway3DSpawnParams.cpp">
+      <Filter>Source\AcsFramework_Core\Scene\Doorway3D</Filter>
     </ClCompile>
     <ClCompile Include="Source\AcsFramework_Core\Scene\Ground3D\Ground3DSpawner.cpp">
       <Filter>Source\AcsFramework_Core\Scene\Ground3D</Filter>
@@ -1243,6 +1255,18 @@
     </ClInclude>
     <ClInclude Include="Source\AcsFramework_Core\Scene\DebugDraw3D\DebugLine3D.h">
       <Filter>Source\AcsFramework_Core\Scene\DebugDraw3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Doorway3D\Doorway3DOrientation.h">
+      <Filter>Source\AcsFramework_Core\Scene\Doorway3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Doorway3D\Doorway3DSpawner.h">
+      <Filter>Source\AcsFramework_Core\Scene\Doorway3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Doorway3D\Doorway3DSpawnParams.h">
+      <Filter>Source\AcsFramework_Core\Scene\Doorway3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Doorway3D\Doorway3DSpawnResult.h">
+      <Filter>Source\AcsFramework_Core\Scene\Doorway3D</Filter>
     </ClInclude>
     <ClInclude Include="Source\AcsFramework_Core\Scene\Ground3D\Ground3DSpawner.h">
       <Filter>Source\AcsFramework_Core\Scene\Ground3D</Filter>
@@ -1956,6 +1980,12 @@
     </None>
     <None Include="Source\AcsFramework_Core\Scene\DebugDraw3D\Test\DebugDraw3DQueueTest.cpp">
       <Filter>Source\AcsFramework_Core\Scene\DebugDraw3D\Test</Filter>
+    </None>
+    <None Include="Source\AcsFramework_Core\Scene\Doorway3D\README.md">
+      <Filter>Source\AcsFramework_Core\Scene\Doorway3D</Filter>
+    </None>
+    <None Include="Source\AcsFramework_Core\Scene\Doorway3D\Test\Doorway3DSpawnerTest.cpp">
+      <Filter>Source\AcsFramework_Core\Scene\Doorway3D\Test</Filter>
     </None>
     <None Include="Source\AcsFramework_Core\Scene\Ground3D\README.md">
       <Filter>Source\AcsFramework_Core\Scene\Ground3D</Filter>

@@ -45,5 +45,8 @@ const FCollidableModel3DSpawnResult Platform = SpawnBlock3D( Block );
 両端が開いた通路では[`SpawnCorridor3D`](../Corridor3D/README.md)を使う。内幅と長さから
 この直方体2個と地面1個を4方向へ配置し、途中失敗と一括破棄まで扱う。
 
+開口のある壁では[`SpawnDoorway3D`](../Doorway3D/README.md)を使う。壁と開口の寸法から
+この直方体3個を左右柱と上枠へ分け、通過部分に衝突を残さず途中失敗と一括破棄まで扱う。
+
 高さの違う段を毎回組む用途では[`SpawnStairs3D`](../Stairs3D/README.md)を使う。段数と1段の寸法から
 隙間のない直方体列を4方向へ配置し、途中失敗と一括破棄まで扱う。

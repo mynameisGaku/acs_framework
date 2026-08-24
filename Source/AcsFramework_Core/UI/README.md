@@ -46,6 +46,7 @@ bloomや輪郭補正の影響を受けず、3D場面より手前、ポーズ・�
 `SpawnSphere3D`は同半径の球表示と球型衝突、
 `SpawnRoom3D`は歩ける床と四方の壁、
 `SpawnCorridor3D`は入口から出口までの床と側壁2枚、
+`SpawnDoorway3D`は開口を残す左右柱と上枠、
 `SpawnStairs3D`は共通底面から積み上がる隙間のない階段、
 `SpawnLight3D`は太陽または点光源、
 `SpawnWater3D`は水面を扱う。パスを渡した場合だけ場面共通の
@@ -67,6 +68,8 @@ FCollidableModel3DSpawnResult Ball = SpawnSphere3D( 0.8f, FVec3{ 2.0f, 0.8f, 2.0
 FRoom3DSpawnResult Room = SpawnRoom3D( FVec2{ 12.0f, 8.0f }, 3.0f );
 FCorridor3DSpawnResult Corridor = SpawnCorridor3D(
     3.0f, 10.0f, 3.0f, FVec3{ 0.0f, 0.0f, 4.0f } );
+FDoorway3DSpawnResult Doorway = SpawnDoorway3D(
+    4.0f, 3.0f, 1.2f, 2.2f, 0.25f, FVec3{ 0.0f, 0.0f, 14.0f } );
 FStairs3DSpawnResult Stairs = SpawnStairs3D(
     8u, 2.0f, 0.32f, 0.18f, FVec3{ -2.0f, 0.0f, -3.0f } );
 SpawnLight3D( FLight3DSpawnParams::Sun( FVec3{ -0.47f, 0.58f, 0.66f } ) );
@@ -94,6 +97,7 @@ DestroyCollidableModel3D( Wall );
 DestroyCollidableModel3D( Ball );
 DestroyRoom3D( Room );
 DestroyCorridor3D( Corridor );
+DestroyDoorway3D( Doorway );
 DestroyStairs3D( Stairs );
 ```
 
@@ -155,6 +159,9 @@ world軸平行箱を既存デバッグ線へ一括登録する。線は次の透
 両端が開いた通路は`SpawnCorridor3D`へ内幅、長さ、壁高を渡すと、入口から出口まで続く床と側壁2枚を
 XZの正負4方向へ置ける。床は壁外面まで覆い、`DestroyCorridor3D`は全3組の所有関係と重複を検証して
 から片付ける。
+開口壁枠は`SpawnDoorway3D`へ壁幅、壁高、開口幅、開口高を渡すと、左右柱と上枠だけを置ける。
+開口の横位置とX/Z軸を変えても通過部分には見えない衝突を残さず、`DestroyDoorway3D`は全3組を
+検証してから片付ける。扉板、開閉、鍵、操作対象は作品側で必要なものだけ追加する。
 衝突付き階段は`SpawnStairs3D`へ段数、幅、踏面奥行き、段差を渡すと、下へ隙間を残さない段を
 XZの正負4方向へ置ける。最大256段の途中失敗は高い側から巻き戻し、`DestroyStairs3D`は全段の
 所有関係と重複を検証してから片付ける。

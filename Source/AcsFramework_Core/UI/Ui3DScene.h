@@ -10,6 +10,8 @@
 #include "AcsFramework_Core/Scene/Corridor3D/Corridor3DDirection.h"
 #include "AcsFramework_Core/Scene/Corridor3D/Corridor3DSpawnResult.h"
 #include "AcsFramework_Core/Scene/DebugDraw3D/DebugDraw3DLayer.h"
+#include "AcsFramework_Core/Scene/Doorway3D/Doorway3DOrientation.h"
+#include "AcsFramework_Core/Scene/Doorway3D/Doorway3DSpawnResult.h"
 #include "AcsFramework_Core/Scene/Interaction3D/InteractionHighlight3DParams.h"
 #include "AcsFramework_Core/Scene/Interaction3D/InteractionFocus3D.h"
 #include "AcsFramework_Core/Scene/Model3D/CollidableModel3DSpawnResult.h"
@@ -29,6 +31,7 @@ using namespace acs::game;
 struct FAnimatedModel3DSpawnParams;
 struct FBlock3DSpawnParams;
 struct FCorridor3DSpawnParams;
+struct FDoorway3DSpawnParams;
 struct FGround3DSpawnParams;
 struct FLight3DSpawnParams;
 struct FModel3DSpawnParams;
@@ -328,6 +331,46 @@ public:
 	 * @return 3個のノードを破棄予定へ移し、形状も直ちに外せたらtrue。
 	 */
 	bool DestroyCorridor3D( FCorridor3DSpawnResult& Corridor ) noexcept;
+
+	/**
+	 * 床から始まる開口を持つ3D壁枠を、左右柱と上枠の3組で置く。
+	 *
+	 * @param Params 下辺中央、向き、壁と開口の寸法、見た目、衝突レイヤー。
+	 * @param Parent 3個のノードを繋ぐ、この場面が所有する親。空ならroot直下。
+	 * @return 左右柱と上枠。失敗時は空で、有効な半端物を残さない。
+	 */
+	FDoorway3DSpawnResult SpawnDoorway3D( const FDoorway3DSpawnParams& Params,
+		ANode* Parent = nullptr ) noexcept;
+
+	/**
+	 * 既定の見た目を使い、壁と開口の寸法だけで中央開口の3D壁枠を置く。
+	 *
+	 * @param WallWidth 左右の外端間にある壁全体の幅。
+	 * @param WallHeight 床から壁上端までの高さ。
+	 * @param OpeningWidth 通り抜けられる開口幅。
+	 * @param OpeningHeight 床から上枠下端までの開口高。
+	 * @param WallThickness 壁面に直交する方向の厚み。
+	 * @param BottomCenter 配置先親から見た壁全体の下辺中央。
+	 * @param Orientation 壁幅を伸ばすXまたはZ軸。
+	 * @param CollisionLayer 左右柱と上枠が属する非0の衝突レイヤー。
+	 * @param Parent 3個のノードを繋ぐ、この場面が所有する親。空ならroot直下。
+	 * @return 左右柱と上枠。入力または途中登録に失敗したら空の結果。
+	 */
+	FDoorway3DSpawnResult SpawnDoorway3D( f32 WallWidth, f32 WallHeight,
+		f32 OpeningWidth, f32 OpeningHeight, f32 WallThickness = 0.25f,
+		FVec3 BottomCenter = FVec3{},
+		EDoorway3DOrientation Orientation = EDoorway3DOrientation::AlongX,
+		u32 CollisionLayer = CCollisionWorld3D::kAllLayers,
+		ANode* Parent = nullptr ) noexcept;
+
+	/**
+	 * 一括生成した3D壁枠を、左右柱と上枠のノード・形状ごと破棄する。
+	 *
+	 * @details 全3組がこの場面で重複なく対になっていない場合は何も変更しない。
+	 * @param Doorway `SpawnDoorway3D`の成功結果。成功時は空の結果になる。
+	 * @return 3個のノードを破棄予定へ移し、形状も直ちに外せたらtrue。
+	 */
+	bool DestroyDoorway3D( FDoorway3DSpawnResult& Doorway ) noexcept;
 
 	/**
 	 * 衝突付き直方体を段差ごとに積み上げた軸方向3D階段を1回で置く。

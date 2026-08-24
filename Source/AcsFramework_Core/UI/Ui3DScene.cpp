@@ -8,6 +8,7 @@
 #include "AcsFramework_Core/Scene/Character3D/ThirdPersonCharacter3D.h"
 #include "AcsFramework_Core/Scene/Character3D/ThirdPersonCharacter3DSpawner.h"
 #include "AcsFramework_Core/Scene/Corridor3D/Corridor3DSpawner.h"
+#include "AcsFramework_Core/Scene/Doorway3D/Doorway3DSpawner.h"
 #include "AcsFramework_Core/Scene/Ground3D/Ground3DSpawner.h"
 #include "AcsFramework_Core/Scene/Interaction3D/InteractableModel3DSpawner.h"
 #include "AcsFramework_Core/Scene/Light3D/Light3DSpawner.h"
@@ -285,6 +286,32 @@ FCorridor3DSpawnResult AUi3DScene::SpawnCorridor3D( f32 InnerWidth,
 bool AUi3DScene::DestroyCorridor3D( FCorridor3DSpawnResult& Corridor ) noexcept
 {
 	return CCorridor3DSpawner::Destroy( Graph(), m_Collision3D, Corridor );
+}
+
+
+FDoorway3DSpawnResult AUi3DScene::SpawnDoorway3D(
+	const FDoorway3DSpawnParams& Params, ANode* Parent ) noexcept
+{
+	return CDoorway3DSpawner::SpawnInto( Graph(), m_Collision3D, Params, Parent );
+}
+
+
+FDoorway3DSpawnResult AUi3DScene::SpawnDoorway3D( f32 WallWidth,
+	f32 WallHeight, f32 OpeningWidth, f32 OpeningHeight,
+	f32 WallThickness, FVec3 BottomCenter, EDoorway3DOrientation Orientation,
+	u32 CollisionLayer, ANode* Parent ) noexcept
+{
+	FDoorway3DSpawnParams Params = FDoorway3DSpawnParams::FromOpening(
+		WallWidth, WallHeight, OpeningWidth, OpeningHeight, BottomCenter, Orientation );
+	Params.WallThickness = WallThickness;
+	Params.CollisionLayer = CollisionLayer;
+	return SpawnDoorway3D( Params, Parent );
+}
+
+
+bool AUi3DScene::DestroyDoorway3D( FDoorway3DSpawnResult& Doorway ) noexcept
+{
+	return CDoorway3DSpawner::Destroy( Graph(), m_Collision3D, Doorway );
 }
 
 

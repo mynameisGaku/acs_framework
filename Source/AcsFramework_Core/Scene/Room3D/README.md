@@ -33,6 +33,9 @@ FRoom3DSpawnResult Placed = SpawnRoom3D( Room );
 部屋同士を両端が開いた床で繋ぐ場合は[`SpawnCorridor3D`](../Corridor3D/README.md)へ内幅と長さを
 渡すと、床と側壁2枚の生成・巻き戻し・一括破棄をまとめられる。
 
+壁の一部を通過できる形へ置き換える場合は[`SpawnDoorway3D`](../Doorway3D/README.md)へ壁と開口の
+寸法を渡すと、左右柱と上枠だけを置いて開口内の衝突を空けられる。
+
 部屋内で高さを繋ぐ場合は[`SpawnStairs3D`](../Stairs3D/README.md)へ段数と1段の寸法を渡すと、
 この部屋と同じ衝突付き直方体の契約で隙間のない階段を追加できる。
 

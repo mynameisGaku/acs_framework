@@ -63,6 +63,8 @@ DestroyCollidableModel3D( Ball );
 から一括で外す。
 両端が開いた通路は`SpawnCorridor3D`が床と側壁2枚を作り、`DestroyCorridor3D`が全3組の対応を
 検証してから一括で外す。
+開口壁枠は`SpawnDoorway3D`が通過部分を避けて左右柱と上枠を作り、`DestroyDoorway3D`が全3組の
+対応を検証してから一括で外す。
 衝突付き階段は`SpawnStairs3D`が共通底面から段を積み上げ、`DestroyStairs3D`が全段の所有関係と
 重複を検証してから一括で外す。
 
