@@ -30,6 +30,7 @@ void RunModel3DSpawnerTests( CTestHarness& Harness )
 		Harness.CheckEqualF32( Params.Color.w, 1.0f, "既定は不透明" );
 		Harness.Check( !Params.bToonShading, "既定はPBR陰影" );
 		Harness.CheckEqualF32( Params.Clearcoat, 0.0f, "既定では透明な上塗りを使わない" );
+		Harness.CheckEqualF32( Params.Anisotropy, 0.0f, "既定では反射を一方向へ伸ばさない" );
 		Harness.CheckEqualF32( Params.SheenStrength, 0.0f, "既定では布の毛羽反射を使わない" );
 		Harness.CheckEqualF32( Params.SubsurfaceStrength, 0.0f, "既定では表面下へ光を回さない" );
 		Harness.CheckEqualF32( Params.EmissiveStrength, 0.0f, "既定では自己発光しない" );
@@ -57,6 +58,19 @@ void RunModel3DSpawnerTests( CTestHarness& Harness )
 		Harness.CheckEqualF32( Coated.Color.x, 0.75f, "指定した表面色を使う" );
 		Harness.CheckEqualF32( Coated.Clearcoat, 1.0f, "上塗り強度を最大にする" );
 		Harness.CheckEqualF32( Coated.ClearcoatRoughness, 0.06f, "上塗り粗さを設定する" );
+	}
+
+	Harness.BeginSuite( "FModel3DSpawnParams / 磨き筋のある金属を一呼出しで作る" );
+
+	{
+		const FModel3DSpawnParams Brushed = FModel3DSpawnParams::FromBrushedMetalPrimitive( EMeshPrimitive3D::Sphere, FVec3{ -2.0f, 1.0f, 0.5f }, FVec3{ 0.62f, 0.68f, 0.76f }, 0.78f );
+		Harness.Check( Brushed.IsValid(), "ブラッシュドメタル形を作れる" );
+		Harness.Check( Brushed.Primitive == EMeshPrimitive3D::Sphere, "指定した形を使う" );
+		Harness.CheckEqualF32( Brushed.Position.x, -2.0f, "指定した位置を使う" );
+		Harness.CheckEqualF32( Brushed.Color.z, 0.76f, "指定した金属色を使う" );
+		Harness.CheckEqualF32( Brushed.Metallic, 1.0f, "金属面にする" );
+		Harness.CheckEqualF32( Brushed.Roughness, 0.28f, "磨き筋が読める粗さにする" );
+		Harness.CheckEqualF32( Brushed.Anisotropy, 0.78f, "指定した方向性を使う" );
 	}
 
 	Harness.BeginSuite( "FModel3DSpawnParams / 布の毛羽反射を一呼出しで作る" );
@@ -134,6 +148,18 @@ void RunModel3DSpawnerTests( CTestHarness& Harness )
 		FModel3DSpawnParams InvalidClearcoat;
 		InvalidClearcoat.Clearcoat = std::numeric_limits<f32>::quiet_NaN();
 		Harness.Check( !InvalidClearcoat.IsValid(), "有限でない上塗り強度を弾く" );
+
+		FModel3DSpawnParams ReverseAnisotropy;
+		ReverseAnisotropy.Anisotropy = -0.8f;
+		Harness.Check( ReverseAnisotropy.IsValid(), "負の異方性は反射方向の切替として通す" );
+
+		FModel3DSpawnParams ExcessiveAnisotropy;
+		ExcessiveAnisotropy.Anisotropy = 1.01f;
+		Harness.Check( !ExcessiveAnisotropy.IsValid(), "上限を超える異方性を弾く" );
+
+		FModel3DSpawnParams InvalidAnisotropy;
+		InvalidAnisotropy.Anisotropy = std::numeric_limits<f32>::quiet_NaN();
+		Harness.Check( !InvalidAnisotropy.IsValid(), "有限でない異方性を弾く" );
 
 		FModel3DSpawnParams NegativeSheen;
 		NegativeSheen.SheenStrength = -0.01f;
@@ -233,6 +259,22 @@ void RunModel3DSpawnerTests( CTestHarness& Harness )
 		{
 			Harness.CheckEqualF32( Mesh->Material().pbr.clearcoat, 1.0f, "上塗り強度を渡す" );
 			Harness.CheckEqualF32( Mesh->Material().pbr.clearcoatRoughness, 0.04f, "上塗り粗さを渡す" );
+		}
+	}
+
+	Harness.BeginSuite( "CModel3DSpawner / 磨き筋の方向性をACSのPBR材質へ渡す" );
+
+	{
+		TObjectPtr<ANode> Parent = NewObject<ANode>();
+		const FModel3DSpawnParams Params = FModel3DSpawnParams::FromBrushedMetalPrimitive( EMeshPrimitive3D::Sphere, FVec3{}, FVec3{ 0.62f, 0.68f, 0.76f }, -0.72f );
+		const AMeshComponent3D* const Mesh = MeshOf( CModel3DSpawner::SpawnInto( *Parent, Params ) );
+		Harness.Check( Mesh != nullptr, "ブラッシュドメタル形を置ける" );
+		Harness.Check( Mesh != nullptr && Mesh->MaterialLoaded(), "PBR材質を確定する" );
+		if ( Mesh != nullptr )
+		{
+			Harness.CheckEqualF32( Mesh->Material().pbr.metallic, 1.0f, "金属度を渡す" );
+			Harness.CheckEqualF32( Mesh->Material().pbr.roughness, 0.28f, "表面粗さを渡す" );
+			Harness.CheckEqualF32( Mesh->Material().pbr.anisotropy, -0.72f, "反射の方向性を渡す" );
 		}
 	}
 

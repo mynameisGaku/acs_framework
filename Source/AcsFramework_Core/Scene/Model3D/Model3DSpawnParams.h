@@ -95,6 +95,13 @@ struct FModel3DSpawnParams
 	f32 ClearcoatRoughness = 0.1f;
 
 	/**
+	 * 磨き筋に沿って反射を一方向へ伸ばす量。0で通常、絶対値1で最大。
+	 *
+	 * @details -1から1で指定し、符号を反転すると伸びる向きが90度入れ替わる。
+	 */
+	f32 Anisotropy = 0.0f;
+
+	/**
 	 * 布表面の毛羽が、輪郭付近へ柔らかく返す光の強さ。0で無し、1で最大。
 	 *
 	 * @details 布、フェルト、ベルベットのような粗い非金属に使う。
@@ -188,6 +195,17 @@ struct FModel3DSpawnParams
 	 * @return 上塗り強度1の形指定。上塗り粗さの不正値はIsValidで拒否される。
 	 */
 	static FModel3DSpawnParams FromCoatedPrimitive( EMeshPrimitive3D InPrimitive, FVec3 InPosition, FVec3 InColor, f32 InCoatRoughness = 0.08f ) noexcept;
+
+	/**
+	 * 磨き筋に沿って光が伸びる金属形を、色と位置から作る。
+	 *
+	 * @param InPrimitive 使う形。
+	 * @param InPosition 置く場所。
+	 * @param InColor 金属へ使う0から1のRGB。
+	 * @param InAnisotropy 反射を一方向へ伸ばす-1から1の量。符号で向きが入れ替わる。
+	 * @return 金属、粗さ、異方性を揃えた形指定。不正値はIsValidで拒否される。
+	 */
+	static FModel3DSpawnParams FromBrushedMetalPrimitive( EMeshPrimitive3D InPrimitive, FVec3 InPosition, FVec3 InColor, f32 InAnisotropy = 0.75f ) noexcept;
 
 	/**
 	 * 布の毛羽が輪郭へ柔らかく光を返す形を、色と位置から作る。

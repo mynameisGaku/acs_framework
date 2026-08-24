@@ -86,6 +86,9 @@ SpawnModel3D( FModel3DSpawnParams::FromEmissivePrimitive( EMeshPrimitive3D::Sphe
 // 色と上塗り粗さだけで、車の塗装のような光沢コート球を置く
 SpawnModel3D( FModel3DSpawnParams::FromCoatedPrimitive( EMeshPrimitive3D::Sphere, FVec3{ 0, 1, 2 }, FVec3{ 0.8f, 0.1f, 0.06f }, 0.05f ) );
 
+// 色と位置だけで、磨き筋に沿って反射が伸びる金属球を置く
+SpawnModel3D( FModel3DSpawnParams::FromBrushedMetalPrimitive( EMeshPrimitive3D::Sphere, FVec3{ -1, 1, 2 }, FVec3{ 0.58f, 0.64f, 0.72f } ) );
+
 // 表面色と内部色だけで、肌や蝋のように光が回り込む球を置く
 SpawnModel3D( FModel3DSpawnParams::FromSubsurfacePrimitive( EMeshPrimitive3D::Sphere, FVec3{ 1, 1, 2 }, FVec3{ 0.82f, 0.46f, 0.34f }, FVec3{ 1.0f, 0.18f, 0.08f } ) );
 

@@ -501,6 +501,12 @@ void ADemo3DScene::OnEnter() noexcept
 	CoatedMarker.Name = FStringView( "CoatedMarker" );
 	if ( SpawnModel3D( CoatedMarker ) == nullptr ) ACS_LOG_WARN( "Demo3D: 光沢コートマーカーを配置できなかった" );
 
+	// ヘアライン金属のように一方向へ伸びる反射を置き、通常の金属球と見比べられるようにする。
+	FModel3DSpawnParams BrushedMetalMarker = FModel3DSpawnParams::FromBrushedMetalPrimitive( EMeshPrimitive3D::Sphere, FVec3{ -3.2f, 0.42f, -2.2f }, FVec3{ 0.58f, 0.64f, 0.72f }, 0.82f );
+	BrushedMetalMarker.Scale = FVec3{ 0.42f, 0.42f, 0.42f };
+	BrushedMetalMarker.Name = FStringView( "BrushedMetalMarker" );
+	if ( SpawnModel3D( BrushedMetalMarker ) == nullptr ) ACS_LOG_WARN( "Demo3D: ブラッシュドメタルマーカーを配置できなかった" );
+
 	// 肌や蝋のように表面のすぐ下へ光を回し、影の境目が硬く見えない球を置く。
 	FModel3DSpawnParams SubsurfaceMarker = FModel3DSpawnParams::FromSubsurfacePrimitive( EMeshPrimitive3D::Sphere, FVec3{ 0.4f, 0.42f, -2.2f }, FVec3{ 0.82f, 0.46f, 0.34f }, FVec3{ 1.0f, 0.18f, 0.08f }, 0.68f );
 	SubsurfaceMarker.Scale = FVec3{ 0.42f, 0.42f, 0.42f };

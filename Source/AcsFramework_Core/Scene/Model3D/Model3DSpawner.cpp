@@ -176,6 +176,7 @@ void CModel3DSpawner::ApplyMaterial( AMeshComponent3D& Mesh, const FModel3DSpawn
 	Material.pbr.shadingMode = Params.bToonShading ? 1 : 0;
 	Material.pbr.clearcoat = Params.Clearcoat;
 	Material.pbr.clearcoatRoughness = Params.ClearcoatRoughness;
+	Material.pbr.anisotropy = Params.Anisotropy;
 	Material.pbr.sheen = Params.SheenStrength;
 	Material.pbr.sheenRoughness = Params.SheenRoughness;
 	Material.pbr.sheenColor = Params.SheenColor;

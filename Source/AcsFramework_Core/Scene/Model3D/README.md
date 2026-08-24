@@ -39,6 +39,9 @@ SpawnModel3D( FModel3DSpawnParams::FromEmissivePrimitive( EMeshPrimitive3D::Sphe
 // 車の塗装やラッカーのような透明な上塗りは、色と上塗り粗さだけで作る
 SpawnModel3D( FModel3DSpawnParams::FromCoatedPrimitive( EMeshPrimitive3D::Sphere, FVec3{ 0.0f, 1.0f, 2.0f }, FVec3{ 0.78f, 0.10f, 0.06f }, 0.05f ) );
 
+// ヘアライン金属のように一方向へ伸びる反射は、色と位置だけで作る
+SpawnModel3D( FModel3DSpawnParams::FromBrushedMetalPrimitive( EMeshPrimitive3D::Sphere, FVec3{ -1.0f, 1.0f, 2.0f }, FVec3{ 0.58f, 0.64f, 0.72f } ) );
+
 // 肌や蝋のように表面のすぐ下へ光が回る材質は、表面色と内部色だけで作る
 SpawnModel3D( FModel3DSpawnParams::FromSubsurfacePrimitive( EMeshPrimitive3D::Sphere, FVec3{ 1.0f, 1.0f, 2.0f }, FVec3{ 0.82f, 0.46f, 0.34f }, FVec3{ 1.0f, 0.18f, 0.08f } ) );
 
@@ -107,6 +110,11 @@ DestroyCollidableModel3D( SolidObstacle );
 設定する。通常の`Roughness`は元の面、`ClearcoatRoughness`はその上へ重なる透明層だけを変える。
 車の塗装、ラッカー、濡れた面のように細い反射を残したい場合に使う。外部モデルでは2値を直接
 指定でき、どちらも0から1の有限値だけを受け付ける。
+
+`FromBrushedMetalPrimitive`は金属度を1、粗さを0.28へ揃え、指定した`Anisotropy`をACSの
+異方性PBRへ渡す。ヘアライン加工や筋のある金属のように、反射を一方向へ伸ばしたい場合に使う。
+`Anisotropy`は-1から1の有限値を受け付け、0で通常の金属、絶対値を大きくすると方向性が強まり、
+符号を反転すると伸びる向きが90度入れ替わる。光源と実際の反射計算はFrameworkへ複製せずACSへ任せる。
 
 `FromSubsurfacePrimitive`は表面色、内部を通って見える色、光の回り込み量をACSのPBR材質へ渡す。
 肌、蝋、乳白素材のように影の境目を柔らかく見せたい場合に使う。描画器や画面用の一時資源は

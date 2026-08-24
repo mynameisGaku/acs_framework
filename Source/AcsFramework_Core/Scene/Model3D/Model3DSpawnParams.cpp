@@ -61,6 +61,17 @@ FModel3DSpawnParams FModel3DSpawnParams::FromCoatedPrimitive( EMeshPrimitive3D I
 }
 
 
+FModel3DSpawnParams FModel3DSpawnParams::FromBrushedMetalPrimitive( EMeshPrimitive3D InPrimitive, FVec3 InPosition, FVec3 InColor, f32 InAnisotropy ) noexcept
+{
+	FModel3DSpawnParams Params = FromPrimitive( InPrimitive, InPosition );
+	Params.Color = FVec4{ InColor.x, InColor.y, InColor.z, 1.0f };
+	Params.Metallic = 1.0f;
+	Params.Roughness = 0.28f;
+	Params.Anisotropy = InAnisotropy;
+	return Params;
+}
+
+
 FModel3DSpawnParams FModel3DSpawnParams::FromFabricPrimitive( EMeshPrimitive3D InPrimitive, FVec3 InPosition, FVec3 InColor, f32 InStrength ) noexcept
 {
 	FModel3DSpawnParams Params = FromPrimitive( InPrimitive, InPosition );
@@ -105,6 +116,7 @@ bool FModel3DSpawnParams::IsValid() const noexcept
 	if ( MeshAsset && MeshAsset->Type() != AMeshAsset::StaticType() ) return false;
 	if ( !IsMaterialRatioValid_Internal( Clearcoat ) ) return false;
 	if ( !IsMaterialRatioValid_Internal( ClearcoatRoughness ) ) return false;
+	if ( !std::isfinite( Anisotropy ) || Anisotropy < -1.0f || Anisotropy > 1.0f ) return false;
 	if ( !IsMaterialRatioValid_Internal( SheenStrength ) ) return false;
 	if ( !IsMaterialRatioValid_Internal( SheenRoughness ) ) return false;
 	if ( !IsUnitColor3Valid_Internal( SheenColor ) ) return false;
