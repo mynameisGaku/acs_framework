@@ -69,7 +69,7 @@ if (-not (Test-Path -LiteralPath $umbrellaPath -PathType Leaf)) {
 
 Section '公開APIの宣言'
 $apiRows = @([regex]::Matches($apiDocument,
-    '(?m)^\|\s*[^|]+\|\s*`(?<header>[^`]+)`\s*\|\s*`(?<symbol>[^`]+)`\s*\|$'))
+    '(?m)^\|\s*[^|]+\|\s*`(?<header>[^`]+)`\s*\|\s*`(?<symbol>[^`]+)`\s*\|[ \t]*\r?$'))
 if ($apiRows.Count -eq 0) {
     Fail 'public-api-document' '公開API一覧の表がありません'
 } else {
