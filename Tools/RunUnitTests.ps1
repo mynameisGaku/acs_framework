@@ -112,6 +112,7 @@ $sources = @(
 	'AcsFramework_Core\Scene\Checkpoint3D\CheckpointRoute3DProgress.cpp',
 	'AcsFramework_Core\Scene\Checkpoint3D\CheckpointRoute3D.cpp',
 	'AcsFramework_Core\Scene\Checkpoint3D\Test\CheckpointRoute3DTest.cpp',
+	'AcsFramework_Core\Scene\Checkpoint3D\CheckpointRoute3DTimerState.cpp',
 	'AcsFramework_Core\Scene\Checkpoint3D\CheckpointRoute3DTimer.cpp',
 	'AcsFramework_Core\Scene\Checkpoint3D\Test\CheckpointRoute3DTimerTest.cpp',
 	'AcsFramework_Core\Scene\DebugDraw3D\DebugLine3D.cpp',

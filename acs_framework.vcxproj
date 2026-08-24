@@ -545,6 +545,7 @@
     <ClInclude Include="Source\AcsFramework_Core\Scene\Checkpoint3D\CheckpointRoute3DParams.h" />
     <ClInclude Include="Source\AcsFramework_Core\Scene\Checkpoint3D\CheckpointRoute3DProgress.h" />
     <ClInclude Include="Source\AcsFramework_Core\Scene\Checkpoint3D\CheckpointRoute3DTimer.h" />
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Checkpoint3D\CheckpointRoute3DTimerState.h" />
     <ClInclude Include="Source\AcsFramework_Core\Scene\Checkpoint3D\CheckpointRoute3DTimingResult.h" />
     <None Include="Source\AcsFramework_Core\Scene\Checkpoint3D\README.md" />
     <None Include="Source\AcsFramework_Core\Scene\Checkpoint3D\Test\Checkpoint3DTest.cpp" />
@@ -790,6 +791,7 @@
     <ClCompile Include="Source\AcsFramework_Core\Scene\Checkpoint3D\CheckpointRoute3DParams.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Scene\Checkpoint3D\CheckpointRoute3DProgress.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Scene\Checkpoint3D\CheckpointRoute3DTimer.cpp" />
+    <ClCompile Include="Source\AcsFramework_Core\Scene\Checkpoint3D\CheckpointRoute3DTimerState.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Scene\StreetLamp3D\StreetLamp3DSpawner.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Scene\StreetLamp3D\StreetLamp3DSpawnParams.cpp" />
   </ItemGroup>

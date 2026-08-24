@@ -160,6 +160,8 @@ Frameworkは金属度、粗さ、方向性の既定値だけを揃え、実際�
 区間計測が必要なら、呼出側の明示経過秒を`FCheckpointRoute3DTimer::Tick`へ渡し、
 受理された進行結果だけを`RecordAdvance`する。計測器は時計や場面を読まず、停止・再開と
 区間、周回、合計秒だけを保持するため、同じ時間列と発火列を単体で再生できる。
+保存時はルートの`CaptureProgress`と計測器の`CaptureState`を対で取得し、同じルート設定へ
+`RestoreProgress`と`RestoreState`で戻す。計測状態が不正なら現在値を変えずに拒否する。
 
 単一モデルを第三者視点キャラクターとして使う定型処理は`CThirdPersonCharacter3DSpawner`へまとめる。
 静的または骨格モデルの既存生成器、`CSceneCollision3D`、`CThirdPersonCharacter3D`を順に呼ぶだけの

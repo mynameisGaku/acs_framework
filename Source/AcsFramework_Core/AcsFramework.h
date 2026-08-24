@@ -74,6 +74,7 @@
 #include "AcsFramework_Core/Scene/Checkpoint3D/CheckpointRoute3DParams.h"
 #include "AcsFramework_Core/Scene/Checkpoint3D/CheckpointRoute3DProgress.h"
 #include "AcsFramework_Core/Scene/Checkpoint3D/CheckpointRoute3DTimer.h"
+#include "AcsFramework_Core/Scene/Checkpoint3D/CheckpointRoute3DTimerState.h"
 #include "AcsFramework_Core/Scene/Checkpoint3D/CheckpointRoute3DTimingResult.h"
 #include "AcsFramework_Core/Scene/DebugDraw3D/DebugDraw3DLayer.h"
 #include "AcsFramework_Core/Scene/DebugDraw3D/DebugDraw3DQueue.h"

@@ -78,6 +78,32 @@ bool FCheckpointRoute3DTimer::RecordAdvance(
 }
 
 
+FCheckpointRoute3DTimerState FCheckpointRoute3DTimer::CaptureState() const noexcept
+{
+	FCheckpointRoute3DTimerState State;
+	State.TotalElapsedSeconds = m_TotalElapsedSeconds;
+	State.CurrentLapElapsedSeconds = m_CurrentLapElapsedSeconds;
+	State.CurrentSegmentElapsedSeconds = m_CurrentSegmentElapsedSeconds;
+	State.bRunning = m_bRunning;
+	State.bComplete = m_bComplete;
+	return State;
+}
+
+
+bool FCheckpointRoute3DTimer::RestoreState(
+	const FCheckpointRoute3DTimerState& State ) noexcept
+{
+	if ( !State.IsValid() ) return false;
+
+	m_TotalElapsedSeconds = State.TotalElapsedSeconds;
+	m_CurrentLapElapsedSeconds = State.CurrentLapElapsedSeconds;
+	m_CurrentSegmentElapsedSeconds = State.CurrentSegmentElapsedSeconds;
+	m_bRunning = State.bRunning;
+	m_bComplete = State.bComplete;
+	return true;
+}
+
+
 bool FCheckpointRoute3DTimer::IsAdvanceResultValid_Internal(
 	const FCheckpointRoute3DAdvanceResult& Result ) noexcept
 {

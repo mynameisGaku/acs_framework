@@ -151,4 +151,122 @@ void RunCheckpointRoute3DTimerTests( CTestHarness& Harness )
 			&& IsNear( Timer.CurrentSegmentElapsedSeconds(), 0.0 ),
 			"リセットで新しい計測を開始できる初期値へ戻す" );
 	}
+
+	Harness.BeginSuite( "FCheckpointRoute3DTimer / 計測状態を保存して原子的に復元する" );
+
+	{
+		FCheckpointRoute3D Route;
+		Harness.Check( Route.SetParams(
+			FCheckpointRoute3DParams::ForCheckpoints( 2u, 2u ) ),
+			"保存確認用の2地点2周ルートを作る" );
+
+		FCheckpointRoute3DTimer Timer;
+		FCheckpointRoute3DAdvanceResult Advance;
+		FCheckpointRoute3DTimingResult Timing;
+		Harness.Check( Timer.Start() && Timer.Tick( 1.25 )
+			&& Route.Advance( 0u, Advance )
+			&& Timer.RecordAdvance( Advance, Timing )
+			&& Timer.Tick( 0.75 ),
+			"1区間通過後の保存対象時間を作る" );
+		Timer.Pause();
+
+		const FCheckpointRoute3DTimerState Saved = Timer.CaptureState();
+		Harness.Check( Saved.IsValid()
+			&& IsNear( Saved.TotalElapsedSeconds, 2.0 )
+			&& IsNear( Saved.CurrentLapElapsedSeconds, 2.0 )
+			&& IsNear( Saved.CurrentSegmentElapsedSeconds, 0.75 )
+			&& !Saved.bRunning && !Saved.bComplete,
+			"停止中の合計、周回、区間時間をまとめて取得する" );
+
+		FCheckpointRoute3DTimer Restored;
+		Harness.Check( Restored.Start() && Restored.Tick( 9.0 )
+			&& Restored.RestoreState( Saved ),
+			"既存値を有効な保存状態へ置き換える" );
+		Harness.Check( !Restored.IsRunning() && !Restored.IsComplete()
+			&& IsNear( Restored.TotalElapsedSeconds(), 2.0 )
+			&& IsNear( Restored.CurrentLapElapsedSeconds(), 2.0 )
+			&& IsNear( Restored.CurrentSegmentElapsedSeconds(), 0.75 ),
+			"復元後は保存時の停止状態と全時間が一致する" );
+		Harness.Check( Restored.Start() && Restored.Tick( 0.5 )
+			&& IsNear( Restored.TotalElapsedSeconds(), 2.5 )
+			&& IsNear( Restored.CurrentSegmentElapsedSeconds(), 1.25 ),
+			"復元後も保存時の区間から計測を再開できる" );
+
+		const FCheckpointRoute3DTimerState BeforeInvalid = Restored.CaptureState();
+		FCheckpointRoute3DTimerState Invalid = Saved;
+		Invalid.CurrentSegmentElapsedSeconds = 2.5;
+		Harness.Check( !Invalid.IsValid()
+			&& !Restored.RestoreState( Invalid ),
+			"周回時間を超える区間時間を拒否する" );
+		Invalid = Saved;
+		Invalid.TotalElapsedSeconds = std::numeric_limits<f64>::quiet_NaN();
+		Harness.Check( !Restored.RestoreState( Invalid ),
+			"NaNを含む保存状態を拒否する" );
+		Invalid = Saved;
+		Invalid.CurrentLapElapsedSeconds =
+			std::numeric_limits<f64>::infinity();
+		Harness.Check( !Restored.RestoreState( Invalid ),
+			"無限大を含む保存状態を拒否する" );
+		Invalid = Saved;
+		Invalid.CurrentSegmentElapsedSeconds = -0.1;
+		Harness.Check( !Restored.RestoreState( Invalid ),
+			"負の時間を含む保存状態を拒否する" );
+		Invalid = Saved;
+		Invalid.CurrentLapElapsedSeconds = 2.5;
+		Harness.Check( !Restored.RestoreState( Invalid ),
+			"合計時間を超える周回時間を拒否する" );
+		Invalid = Saved;
+		Invalid.bRunning = true;
+		Invalid.bComplete = true;
+		Harness.Check( !Restored.RestoreState( Invalid ),
+			"実行中かつ完了済みの矛盾を拒否する" );
+		Invalid = Saved;
+		Invalid.bComplete = true;
+		Harness.Check( !Restored.RestoreState( Invalid ),
+			"未精算の周回時間を持つ完了状態を拒否する" );
+
+		const FCheckpointRoute3DTimerState AfterInvalid = Restored.CaptureState();
+		Harness.Check( IsNear( AfterInvalid.TotalElapsedSeconds,
+				BeforeInvalid.TotalElapsedSeconds )
+			&& IsNear( AfterInvalid.CurrentLapElapsedSeconds,
+				BeforeInvalid.CurrentLapElapsedSeconds )
+			&& IsNear( AfterInvalid.CurrentSegmentElapsedSeconds,
+				BeforeInvalid.CurrentSegmentElapsedSeconds )
+			&& AfterInvalid.bRunning == BeforeInvalid.bRunning
+			&& AfterInvalid.bComplete == BeforeInvalid.bComplete,
+			"不正な保存状態では現在値を一切変えない" );
+
+		FCheckpointRoute3DTimer RunningRestored;
+		Harness.Check( BeforeInvalid.IsValid()
+			&& RunningRestored.RestoreState( BeforeInvalid )
+			&& RunningRestored.IsRunning()
+			&& RunningRestored.Tick( 0.25 )
+			&& IsNear( RunningRestored.TotalElapsedSeconds(), 2.75 ),
+			"実行中の保存状態は復元直後から計測を続ける" );
+	}
+
+	{
+		FCheckpointRoute3D Route;
+		FCheckpointRoute3DTimer Timer;
+		FCheckpointRoute3DAdvanceResult Advance;
+		FCheckpointRoute3DTimingResult Timing;
+		Harness.Check( Timer.Start() && Timer.Tick( 0.5 )
+			&& Route.Advance( 0u, Advance )
+			&& Timer.RecordAdvance( Advance, Timing ),
+			"既定ルートを完了して保存する" );
+
+		const FCheckpointRoute3DTimerState Complete = Timer.CaptureState();
+		Harness.Check( Complete.IsValid() && Complete.bComplete
+			&& !Complete.bRunning
+			&& IsNear( Complete.TotalElapsedSeconds, 0.5 )
+			&& IsNear( Complete.CurrentLapElapsedSeconds, 0.0 )
+			&& IsNear( Complete.CurrentSegmentElapsedSeconds, 0.0 ),
+			"完了状態は合計だけを保持して停止する" );
+
+		FCheckpointRoute3DTimer Restored;
+		Harness.Check( Restored.RestoreState( Complete )
+			&& Restored.IsComplete() && !Restored.IsRunning()
+			&& !Restored.Start(),
+			"完了状態の復元後もリセットなしの再開を拒否する" );
+	}
 }

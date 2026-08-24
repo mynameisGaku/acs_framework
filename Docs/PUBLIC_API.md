@@ -78,5 +78,6 @@
 | チェックポイント順序結果 | `AcsFramework_Core/Scene/Checkpoint3D/CheckpointRoute3DAdvanceResult.h` | `FCheckpointRoute3DAdvanceResult` |
 | チェックポイント順序進行 | `AcsFramework_Core/Scene/Checkpoint3D/CheckpointRoute3DProgress.h` | `FCheckpointRoute3DProgress` |
 | チェックポイント計測 | `AcsFramework_Core/Scene/Checkpoint3D/CheckpointRoute3DTimer.h` | `FCheckpointRoute3DTimer` |
+| チェックポイント計測状態 | `AcsFramework_Core/Scene/Checkpoint3D/CheckpointRoute3DTimerState.h` | `FCheckpointRoute3DTimerState` |
 | チェックポイント計測結果 | `AcsFramework_Core/Scene/Checkpoint3D/CheckpointRoute3DTimingResult.h` | `FCheckpointRoute3DTimingResult` |
 | 見た目設定 | `AcsFramework_Core/Scene/Visual3D/VisualPreset3D.h` | `EVisualPreset3D` |

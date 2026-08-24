@@ -22,6 +22,7 @@ void RunPublicApiHeaderTests( CTestHarness& Harness )
 	const FCheckpointRoute3DProgress RouteProgress =
 		FCheckpointRoute3D{}.CaptureProgress();
 	FCheckpointRoute3DTimer RouteTimer;
+	const FCheckpointRoute3DTimerState RouteTimerState = RouteTimer.CaptureState();
 	const FCheckpointRoute3DTimingResult RouteTiming{};
 	const EVisualPreset3D Preset = EVisualPreset3D::Balanced;
 
@@ -32,6 +33,7 @@ void RunPublicApiHeaderTests( CTestHarness& Harness )
 	Harness.Check( RouteParams.IsValid() && RouteProgress.IsValid(),
 		"3Dチェックポイント順序ルートの設定と進行値が解決できる" );
 	Harness.Check( !RouteTimer.IsRunning()
+		&& RouteTimerState.IsValid()
 		&& RouteTiming.TotalElapsedSeconds == 0.0,
 		"3Dチェックポイント順序ルートの計測型が解決できる" );
 	Harness.Check( Preset == EVisualPreset3D::Balanced, "3D見た目設定が解決できる" );

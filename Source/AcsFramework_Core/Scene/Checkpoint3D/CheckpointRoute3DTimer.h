@@ -2,6 +2,7 @@
 #pragma once
 
 #include "AcsFramework_Core/Scene/Checkpoint3D/CheckpointRoute3DAdvanceResult.h"
+#include "AcsFramework_Core/Scene/Checkpoint3D/CheckpointRoute3DTimerState.h"
 #include "AcsFramework_Core/Scene/Checkpoint3D/CheckpointRoute3DTimingResult.h"
 
 /**
@@ -43,6 +44,17 @@ public:
 	 */
 	bool RecordAdvance( const FCheckpointRoute3DAdvanceResult& AdvanceResult,
 		FCheckpointRoute3DTimingResult& OutResult ) noexcept;
+
+	/** 現在の全時間と実行・完了状態を、保存可能な値として返す。 */
+	FCheckpointRoute3DTimerState CaptureState() const noexcept;
+
+	/**
+	 * 保存した計測状態を復元する。
+	 *
+	 * @param State `CaptureState`で取得した有限かつ矛盾のない計測状態。
+	 * @return 有効な状態を復元できたらtrue。失敗時は現在の全状態を変えない。
+	 */
+	bool RestoreState( const FCheckpointRoute3DTimerState& State ) noexcept;
 
 	/** 計測開始から現在までの合計秒を返す。 */
 	f64 TotalElapsedSeconds() const noexcept { return m_TotalElapsedSeconds; }

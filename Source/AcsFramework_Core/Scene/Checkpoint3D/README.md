@@ -58,6 +58,9 @@ trueになる。複数周では各`CCheckpoint3D`の`bActivateOnce`をfalseに�
 受理済みの`FCheckpointRoute3DAdvanceResult`を`RecordAdvance`すると、計測開始からの合計、現在周回、
 前回受理地点からの区間秒を同じ結果で返す。順番違い、未受理、矛盾した進行結果は区間境界にせず、
 一時停止中は時間を進めない。最終通過を記録すると自動停止し、新しい計測は`Reset`後に開始する。
+`CaptureState`は3つの時間と実行・完了状態を`FCheckpointRoute3DTimerState`へまとめる。
+`RestoreState`は有限かつ`区間 <= 周回 <= 合計`の保存値だけを復元し、不正値では現在値を変えない。
+ルート進行と計測を同じ時点から再開する場合は、`FCheckpointRoute3DProgress`と対で保存・復元する。
 
 既定の`bActivateOnce`はtrueで、最初の進入だけ発火する。falseなら、一度範囲外へ出た後の
 再進入でも発火する。`ResetActivation`は発火済みと範囲内の記録を両方消すため、対象が現在

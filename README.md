@@ -282,6 +282,14 @@ if ( GoalState.bActivatedThisUpdate
         && Timing.bRouteCompletedThisAdvance ) FinishRace( Timing.TotalElapsedSeconds );
 }
 
+// セーブ時は進行と計測を対で取得し、同じルート設定へ戻す
+const FCheckpointRoute3DProgress SavedRoute = Route.CaptureProgress();
+const FCheckpointRoute3DTimerState SavedTimer = RouteTimer.CaptureState();
+
+// ロード時。Routeには保存時と同じ件数・周回数を設定しておく
+Route.RestoreProgress( SavedRoute );
+RouteTimer.RestoreState( SavedTimer );
+
 // 接続済みキャラクターを、既定の入力割り当てから1回進める
 CActionBindingTable ActionBindings;
 const FThirdPersonCharacter3DActionSet Actions = FThirdPersonCharacter3DActionSet::WithRunAction();
