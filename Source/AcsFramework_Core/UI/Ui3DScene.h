@@ -22,6 +22,7 @@ using namespace acs;
 using namespace acs::game;
 
 struct FAnimatedModel3DSpawnParams;
+struct FBlock3DSpawnParams;
 struct FGround3DSpawnParams;
 struct FLight3DSpawnParams;
 struct FModel3DSpawnParams;
@@ -235,6 +236,30 @@ public:
 		ANode* Parent = nullptr ) noexcept;
 
 	/**
+	 * 表示と箱型衝突の寸法を揃えた3D直方体を1回で置く。
+	 *
+	 * @param Params 中心位置、回転、全寸法、見た目、衝突レイヤー。
+	 * @param Parent この場面が所有する親。空ならroot直下。
+	 * @return 立方体ノードと衝突識別子。失敗時は空で、半端な生成物を残さない。
+	 */
+	FCollidableModel3DSpawnResult SpawnBlock3D( const FBlock3DSpawnParams& Params,
+		ANode* Parent = nullptr ) noexcept;
+
+	/**
+	 * 既定の見た目を使い、全寸法と中心位置だけで衝突付き3D直方体を置く。
+	 *
+	 * @param Size X、Y、Z方向の全寸法。
+	 * @param Position 配置先親から見た直方体の中心位置。root直下ではworld位置。
+	 * @param CollisionLayer 箱が属する非0の衝突レイヤー。
+	 * @param Parent この場面が所有する親。空ならroot直下。
+	 * @return 立方体ノードと衝突識別子。入力または登録に失敗したら空の結果。
+	 */
+	FCollidableModel3DSpawnResult SpawnBlock3D( FVec3 Size,
+		FVec3 Position = FVec3{},
+		u32 CollisionLayer = CCollisionWorld3D::kAllLayers,
+		ANode* Parent = nullptr ) noexcept;
+
+	/**
 	 * プリミティブまたは静的3Dモデルを、必要な読み込みを含めて1回で場面へ置く。
 	 *
 	 * @param Params 形またはモデル名、位置、材質、ノード名。
@@ -306,7 +331,7 @@ public:
 		ANode* Parent = nullptr ) noexcept;
 
 	/**
-	 * 一括生成した通常モデル、骨格モデル、または地面をノードと衝突形状ごと破棄する。
+	 * 一括生成した通常モデル、骨格モデル、地面、または直方体をノードと衝突形状ごと破棄する。
 	 *
 	 * @details ノードと形状がこの場面で対になっていない場合は何も変更しない。
 	 * @param Model 衝突付き生成APIの成功結果。成功時は空の結果になる。

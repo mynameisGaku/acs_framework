@@ -42,7 +42,8 @@ bloomや輪郭補正の影響を受けず、3D場面より手前、ポーズ・�
 `SpawnCollidableAnimatedModel3D`は骨付きモデルと衝突、
 `SpawnInteractableCollidableAnimatedModel3D`は骨付きモデルと衝突と視線操作、
 `SpawnThirdPersonCharacter3D`は静的または骨付きモデルと自己衝突、移動、追従カメラ、任意アニメーション、
-`SpawnGround3D`は表示面と直下の厚み付き箱、`SpawnLight3D`は太陽または点光源、
+`SpawnGround3D`は表示面と直下の厚み付き箱、`SpawnBlock3D`は同寸法の立方体表示と箱型衝突、
+`SpawnLight3D`は太陽または点光源、
 `SpawnWater3D`は水面を扱う。パスを渡した場合だけ場面共通の
 asset窓口で読み、読込済みassetはそのまま使う。通常の衝突付き生成結果は
 `DestroyCollidableModel3D`へ渡すと、ノードと形状を対のまま片付けられる。
@@ -57,16 +58,15 @@ SpawnInteractableCollidableModel3D(
 SpawnImage3D( FSprite3DSpawnParams::FromImage(
     FStringView( "Textures/Sign.png" ), FVec3{ 0.0f, 2.0f, 3.0f }, FVec2{ 1.2f, 0.6f } ) );
 SpawnGround3D( FVec2{ 16.0f, 12.0f } );
+SpawnBlock3D( FVec3{ 4.0f, 2.0f, 0.5f }, FVec3{ 0.0f, 1.0f, 4.0f } );
 SpawnLight3D( FLight3DSpawnParams::Sun( FVec3{ -0.47f, 0.58f, 0.66f } ) );
 
 ANode* const Vehicle = SpawnNode3D( FStringView( "Vehicle" ) );
 if ( Vehicle != nullptr ) SpawnModel3D(
     FModel3DSpawnParams::FromPrimitive( EMeshPrimitive3D::Cube, FVec3{} ), Vehicle );
 
-FCollidableModel3DSpawnResult Wall = SpawnCollidableModel3D(
-    FModel3DSpawnParams::FromMesh(
-        FStringView( "Models/Wall.fbx" ), FVec3{ 0.0f, 0.0f, 8.0f } ),
-    FCollisionShape3DParams::FromBounds( 0x2u ) );
+FCollidableModel3DSpawnResult Wall = SpawnBlock3D(
+    FVec3{ 5.0f, 2.5f, 0.4f }, FVec3{ 0.0f, 1.25f, 8.0f }, 0x2u );
 
 const FCollidableModel3DSpawnResult Enemy = SpawnCollidableAnimatedModel3D(
     FAnimatedModel3DSpawnParams::FromModel(
@@ -132,9 +132,11 @@ world軸平行箱を既存デバッグ線へ一括登録する。線は次の透
 `SpawnCollidableModel3D`はモデル生成とこの衝突登録を一括で行い、ノードと形状番号を返す。
 描画境界、明示箱、明示球を選べ、登録できなければ生成ノードも破棄予定へ戻す。厚さのない
 `Plane`を床にする場合は`FCollisionShape3DParams::FromBox`で歩ける厚みを明示する。
+素材を使わない壁、足場、箱型障害物は`SpawnBlock3D`へ全寸法と中心位置を渡すと、表示と衝突の
+寸法を別々に書かずに済む。既定外の色、向き、材質は`FBlock3DSpawnParams`で変更する。
 `SpawnCollidableAnimatedModel3D`は同じ失敗時巻き戻しを骨付きモデルへ適用し、初期animation再生も
 成功したノードだけを返す。大きく姿勢が変わる人物には、読込時の境界より明示箱または明示球を使う。
-通常モデル、骨付きモデル、地面の一括生成結果は`DestroyCollidableModel3D`へ渡すと、ノードと
+通常モデル、骨付きモデル、地面、直方体の一括生成結果は`DestroyCollidableModel3D`へ渡すと、ノードと
 形状が同じ登録対であることを確認してから両方を片付け、成功時だけ結果を空に戻す。
 
 `SpawnInteractableModel3D`と`SpawnInteractableAnimatedModel3D`は、モデル生成後に

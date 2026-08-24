@@ -42,18 +42,13 @@ SpawnModel3D( FModel3DSpawnParams::FromCoatedPrimitive( EMeshPrimitive3D::Sphere
 // ACS既定の二段影と縁光を使うイラスト調の形も、色と位置だけで作る
 SpawnModel3D( FModel3DSpawnParams::FromToonPrimitive( EMeshPrimitive3D::Sphere, FVec3{ 2.0f, 1.0f, 2.0f }, FVec3{ 0.95f, 0.58f, 0.10f } ) );
 
-// 別の立体に見た目と衝突形状の両方が必要なら、一括生成結果を受け取る
-FModel3DSpawnParams Obstacle = FModel3DSpawnParams::FromPrimitive(
-    EMeshPrimitive3D::Cube, FVec3{ 4.0f, 0.5f, 0.0f } );
-FCollidableModel3DSpawnResult SolidObstacle = SpawnCollidableModel3D(
-    Obstacle, FCollisionShape3DParams::FromBounds( 0x2u ) );
+// 素材を使わない直方体は、全寸法と中心位置だけで表示と箱型衝突を揃える
+FCollidableModel3DSpawnResult SolidObstacle = SpawnBlock3D(
+    FVec3{ 2.0f, 1.0f, 0.5f }, FVec3{ 4.0f, 0.5f, 0.0f }, 0x2u );
 
-// 厚さのない描画面には歩ける箱を明示する
-FModel3DSpawnParams Floor = FModel3DSpawnParams::FromPrimitive( EMeshPrimitive3D::Plane, FVec3{} );
-Floor.Scale = FVec3{ 10.0f, 1.0f, 10.0f };
-const FCollidableModel3DSpawnResult SolidFloor = SpawnCollidableModel3D(
-    Floor, FCollisionShape3DParams::FromBox(
-        FVec3{ 0.0f, -0.5f, 0.0f }, FVec3{ 0.5f, 0.5f, 0.5f }, 0x2u ) );
+// 歩ける平面は広さだけで表示面と直下の厚み付き箱を揃える
+const FCollidableModel3DSpawnResult SolidFloor = SpawnGround3D(
+    FVec2{ 10.0f, 10.0f }, FVec3{}, 0x2u );
 
 // 複数部品を同じ位置・向きで動かす場合は空の親を作る
 ANode* const Character = SpawnNode3D( FStringView( "Character" ) );
@@ -76,6 +71,8 @@ DestroyCollidableModel3D( SolidObstacle );
 破棄予定へ戻すため、「見えるが当たらない」半端な配置を成功として残さない。
 通常の衝突付き結果は`DestroyCollidableModel3D`へ渡すと、ノードと形状の対応を検証したうえで
 両方を片付け、成功時だけ呼出側の結果を空へ戻す。
+素材を使わない直方体は[`SpawnBlock3D`](../Block3D/README.md)、歩ける表示面は
+[`SpawnGround3D`](../Ground3D/README.md)を使うと、表示と衝突の寸法を1個の設定へまとめられる。
 同じ単一モデルを視線操作へも登録する場合は`SpawnInteractableCollidableModel3D`を使うと、
 3処理の途中失敗をまとめて巻き戻せる。
 場面途中では結果を`DestroyInteractableCollidableModel3D`へ渡し、形状と操作対象ごと安全に消せる。

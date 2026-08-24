@@ -46,7 +46,7 @@ WASDで移動、左Shiftで走行、矢印キーで視点、Spaceでジャンプ
 
 | | |
 |---|---|
-| 3D を置く | `SpawnModel3D()` / `SpawnAnimatedModel3D()`と、それぞれの操作対象版・衝突版・操作＋衝突版、`DestroyCollidableModel3D()`、`SpawnNode3D()`、FBX の取り込み、材質 (metallic / roughness / HDR自己発光) |
+| 3D を置く | `SpawnModel3D()` / `SpawnAnimatedModel3D()`と、それぞれの操作対象版・衝突版・操作＋衝突版、`SpawnBlock3D()`、`DestroyCollidableModel3D()`、`SpawnNode3D()`、FBX の取り込み、材質 (metallic / roughness / HDR自己発光) |
 | 3D画像を置く | `SpawnImage3D()`の固定板、`SpawnBillboard3D()`のカメラ追従板、透過PNG、深度判定、HDR合成 |
 | 3D を照らす | `SpawnLight3D()`、方向だけで置ける太陽、位置と距離だけで置ける点光源 |
 | 3D 地面 | `SpawnGround3D()`、広さだけで置ける表示面と直下の厚み付き衝突 |
@@ -96,6 +96,10 @@ SpawnModel3D( Model );
 // 広さだけで、表示面とその直下1mの歩ける衝突を同時に置く
 FCollidableModel3DSpawnResult Ground = SpawnGround3D( FVec2{ 16.0f, 12.0f } );
 
+// 全寸法と中心位置だけで、表示と箱型衝突が揃った壁を置く
+FCollidableModel3DSpawnResult Wall = SpawnBlock3D(
+    FVec3{ 4.0f, 2.0f, 0.5f }, FVec3{ 0.0f, 1.0f, 4.0f } );
+
 // 遮蔽、反射、間接光、bloom、露出、輪郭補正を標準品質へ揃える
 TryApplyVisualPreset3D( EVisualPreset3D::Balanced );
 
@@ -105,11 +109,9 @@ FCollidableModel3DSpawnResult Door = SpawnInteractableCollidableModel3D(
         FStringView( "Models/Door.fbx" ), FVec3{ 0.0f, 0.0f, 4.0f } ),
     FStringView( "E: OPEN" ), FCollisionShape3DParams::FromBounds( 0x2u ) );
 
-// 別の立体を置くと同時に描画境界を衝突へ登録する。両方成功した結果だけが返る
-FModel3DSpawnParams Wall = FModel3DSpawnParams::FromPrimitive(
-    EMeshPrimitive3D::Cube, FVec3{ 4.0f, 0.5f, 0.0f } );
-const FCollidableModel3DSpawnResult SolidWall = SpawnCollidableModel3D(
-    Wall, FCollisionShape3DParams::FromBounds( 0x2u ) );
+// 全寸法と中心位置だけで壁を置く。表示と衝突は同じ寸法になる
+const FCollidableModel3DSpawnResult SolidWall = SpawnBlock3D(
+    FVec3{ 4.0f, 2.0f, 0.5f }, FVec3{ 4.0f, 1.0f, 0.0f }, 0x2u );
 
 // 複数の見た目を1個として動かす空ノードを作り、その下へモデルを置く
 ANode* const Robot = SpawnNode3D( FStringView( "Robot" ) );

@@ -43,15 +43,18 @@ Collision.TrySweepSphere(
 渡すと、ノードと形状を同じ呼出しで片付けられる。
 
 ```cpp
-FCollidableModel3DSpawnResult Wall = SpawnCollidableModel3D(
-    WallModel, FCollisionShape3DParams::FromBounds( 0x2u ) );
+FCollidableModel3DSpawnResult Wall = SpawnBlock3D(
+    FVec3{ 4.0f, 2.0f, 0.5f }, FVec3{ 0.0f, 1.0f, 4.0f }, 0x2u );
 
-const FCollidableModel3DSpawnResult Floor = SpawnCollidableModel3D(
-    FloorPlane, FCollisionShape3DParams::FromBox(
-        FVec3{ 0.0f, -0.5f, 0.0f }, FVec3{ 0.5f, 0.5f, 0.5f }, 0x2u ) );
+const FCollidableModel3DSpawnResult Floor = SpawnGround3D(
+    FVec2{ 12.0f, 10.0f }, FVec3{}, 0x2u );
 
 DestroyCollidableModel3D( Wall );
 ```
+
+素材を使わない直方体と歩ける平面は、`SpawnBlock3D`と`SpawnGround3D`が表示寸法と明示箱を
+一括で揃える。読み込みモデル、球、独自のローカル中心が必要な物は`SpawnCollidableModel3D`へ
+`FCollisionShape3DParams`を渡す。
 
 登録時の中心、半サイズ、半径はノードのローカル座標で指定する。問い合わせ前に位置、回転、拡縮を
 自動同期するため、動くノードを毎フレーム登録し直す必要はない。ノードまたは祖先を無効にすると

@@ -54,6 +54,11 @@ Subsystemにはしない。`AEffect3DScene`がscene単位で`CEffect3DPlayer`を
 厚み、材質、衝突レイヤーを検証し、`CGround3DSpawner`は既存のモデル生成と場面衝突登録だけを
 組み合わせる。表示面と直下の箱は同じノード尺度を使い、後段失敗時は生成ノードも巻き戻す。
 
+3D直方体も局所的な生成処理なのでSubsystemにはしない。`FBlock3DSpawnParams`は中心位置、回転、
+XYZ全寸法、材質、衝突レイヤーを検証し、`CBlock3DSpawner`は既存の立方体生成と明示箱登録だけを
+組み合わせる。表示と衝突は同じノード尺度を使い、回転時の衝突は既存契約どおりworld軸平行箱へ
+安全側に包む。後段失敗時は生成ノードも巻き戻す。
+
 3D天候もsceneごとの空、雲、霧、環境光を変えるためSubsystemにはしない。
 `FWeather3DAppearance`は`CWeatherSystem`の状態だけから決まる検証可能な値、
 `AWeather3DScene`は派生場面が設定した晴天時の環境を基準として記録し、相対値を毎フレーム

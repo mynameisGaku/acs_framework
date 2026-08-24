@@ -480,6 +480,10 @@
     <ClInclude Include="Source\AcsFramework_Core\Scene\Ground3D\Ground3DSpawnParams.h" />
     <None Include="Source\AcsFramework_Core\Scene\Ground3D\README.md" />
     <None Include="Source\AcsFramework_Core\Scene\Ground3D\Test\Ground3DSpawnerTest.cpp" />
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Block3D\Block3DSpawner.h" />
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Block3D\Block3DSpawnParams.h" />
+    <None Include="Source\AcsFramework_Core\Scene\Block3D\README.md" />
+    <None Include="Source\AcsFramework_Core\Scene\Block3D\Test\Block3DSpawnerTest.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Common\Pch.cpp">
@@ -684,6 +688,8 @@
     <ClCompile Include="Source\AcsFramework_Core\Scene\Visual3D\VisualPreset3D.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Scene\Ground3D\Ground3DSpawner.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Scene\Ground3D\Ground3DSpawnParams.cpp" />
+    <ClCompile Include="Source\AcsFramework_Core\Scene\Block3D\Block3DSpawner.cpp" />
+    <ClCompile Include="Source\AcsFramework_Core\Scene\Block3D\Block3DSpawnParams.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -103,6 +103,12 @@
     <Filter Include="Source\AcsFramework_Core\Scene\Billboard3D\Test">
       <UniqueIdentifier>{25c14089-d5b8-f173-7b17-44de6c9a33df}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\AcsFramework_Core\Scene\Block3D">
+      <UniqueIdentifier>{d8581094-62f0-a3b5-0e2b-92d65e953f39}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\AcsFramework_Core\Scene\Block3D\Test">
+      <UniqueIdentifier>{8acdc1cd-cd46-4be4-7fd3-8bd245e29be2}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Source\AcsFramework_Core\Scene\Camera3D">
       <UniqueIdentifier>{6356cf5a-24ae-902d-0c95-4834fea49f27}</UniqueIdentifier>
     </Filter>
@@ -479,6 +485,12 @@
     </ClCompile>
     <ClCompile Include="Source\AcsFramework_Core\Scene\Billboard3D\Billboard3DMath.cpp">
       <Filter>Source\AcsFramework_Core\Scene\Billboard3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Scene\Block3D\Block3DSpawner.cpp">
+      <Filter>Source\AcsFramework_Core\Scene\Block3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Scene\Block3D\Block3DSpawnParams.cpp">
+      <Filter>Source\AcsFramework_Core\Scene\Block3D</Filter>
     </ClCompile>
     <ClCompile Include="Source\AcsFramework_Core\Scene\Camera3D\NodeOrbitCamera3D.cpp">
       <Filter>Source\AcsFramework_Core\Scene\Camera3D</Filter>
@@ -1108,6 +1120,12 @@
     </ClInclude>
     <ClInclude Include="Source\AcsFramework_Core\Scene\Billboard3D\Billboard3DMode.h">
       <Filter>Source\AcsFramework_Core\Scene\Billboard3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Block3D\Block3DSpawner.h">
+      <Filter>Source\AcsFramework_Core\Scene\Block3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Block3D\Block3DSpawnParams.h">
+      <Filter>Source\AcsFramework_Core\Scene\Block3D</Filter>
     </ClInclude>
     <ClInclude Include="Source\AcsFramework_Core\Scene\Camera3D\NodeOrbitCamera3D.h">
       <Filter>Source\AcsFramework_Core\Scene\Camera3D</Filter>
@@ -1809,6 +1827,12 @@
     </None>
     <None Include="Source\AcsFramework_Core\Scene\Billboard3D\Test\Billboard3DTest.cpp">
       <Filter>Source\AcsFramework_Core\Scene\Billboard3D\Test</Filter>
+    </None>
+    <None Include="Source\AcsFramework_Core\Scene\Block3D\README.md">
+      <Filter>Source\AcsFramework_Core\Scene\Block3D</Filter>
+    </None>
+    <None Include="Source\AcsFramework_Core\Scene\Block3D\Test\Block3DSpawnerTest.cpp">
+      <Filter>Source\AcsFramework_Core\Scene\Block3D\Test</Filter>
     </None>
     <None Include="Source\AcsFramework_Core\Scene\Camera3D\README.md">
       <Filter>Source\AcsFramework_Core\Scene\Camera3D</Filter>

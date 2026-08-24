@@ -4,6 +4,7 @@
 #include "AcsFramework_Core/Assets/AssetLoaderSubsystem.h"
 #include "AcsFramework_Core/Audio/Spatial/SpatialAudioSubsystem.h"
 #include "AcsFramework_Core/Scene/Animation3D/AnimatedModel3DSpawner.h"
+#include "AcsFramework_Core/Scene/Block3D/Block3DSpawner.h"
 #include "AcsFramework_Core/Scene/Character3D/ThirdPersonCharacter3D.h"
 #include "AcsFramework_Core/Scene/Character3D/ThirdPersonCharacter3DSpawner.h"
 #include "AcsFramework_Core/Scene/Ground3D/Ground3DSpawner.h"
@@ -224,6 +225,22 @@ FCollidableModel3DSpawnResult AUi3DScene::SpawnGround3D( FVec2 Size,
 	FGround3DSpawnParams Params = FGround3DSpawnParams::FromSize( Size, Position );
 	Params.CollisionLayer = CollisionLayer;
 	return SpawnGround3D( Params, Parent );
+}
+
+
+FCollidableModel3DSpawnResult AUi3DScene::SpawnBlock3D(
+	const FBlock3DSpawnParams& Params, ANode* Parent ) noexcept
+{
+	return CBlock3DSpawner::SpawnInto( Graph(), m_Collision3D, Params, Parent );
+}
+
+
+FCollidableModel3DSpawnResult AUi3DScene::SpawnBlock3D( FVec3 Size,
+	FVec3 Position, u32 CollisionLayer, ANode* Parent ) noexcept
+{
+	FBlock3DSpawnParams Params = FBlock3DSpawnParams::FromSize( Size, Position );
+	Params.CollisionLayer = CollisionLayer;
+	return SpawnBlock3D( Params, Parent );
 }
 
 

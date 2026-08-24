@@ -39,6 +39,8 @@
 #include "AcsFramework_Core/Scene/Billboard3D/Billboard3DLayer.h"
 #include "AcsFramework_Core/Scene/Billboard3D/Billboard3DMath.h"
 #include "AcsFramework_Core/Scene/Billboard3D/Billboard3DMode.h"
+#include "AcsFramework_Core/Scene/Block3D/Block3DSpawner.h"
+#include "AcsFramework_Core/Scene/Block3D/Block3DSpawnParams.h"
 #include "AcsFramework_Core/Scene/Camera3D/NodeOrbitCamera3D.h"
 #include "AcsFramework_Core/Scene/Camera3D/NodeOrbitCamera3DParams.h"
 #include "AcsFramework_Core/Scene/Character3D/CharacterMover3D.h"
