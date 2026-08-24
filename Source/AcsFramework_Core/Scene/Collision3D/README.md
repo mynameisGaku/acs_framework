@@ -49,11 +49,15 @@ FCollidableModel3DSpawnResult Wall = SpawnBlock3D(
 const FCollidableModel3DSpawnResult Floor = SpawnGround3D(
     FVec2{ 12.0f, 10.0f }, FVec3{}, 0x2u );
 
+FCollidableModel3DSpawnResult Ball = SpawnSphere3D(
+    0.75f, FVec3{ 2.0f, 0.75f, 2.0f }, 0x2u );
+
 DestroyCollidableModel3D( Wall );
+DestroyCollidableModel3D( Ball );
 ```
 
-素材を使わない直方体と歩ける平面は、`SpawnBlock3D`と`SpawnGround3D`が表示寸法と明示箱を
-一括で揃える。読み込みモデル、球、独自のローカル中心が必要な物は`SpawnCollidableModel3D`へ
+素材を使わない直方体、歩ける平面、球は、`SpawnBlock3D`、`SpawnGround3D`、`SpawnSphere3D`が
+表示寸法と明示形状を一括で揃える。読み込みモデルや独自のローカル中心が必要な物は`SpawnCollidableModel3D`へ
 `FCollisionShape3DParams`を渡す。
 床と四方の壁をまとめる場合は`SpawnRoom3D`が5組を作り、`DestroyRoom3D`が全組の対応を検証して
 から一括で外す。

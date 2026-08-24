@@ -181,6 +181,12 @@
     <Filter Include="Source\AcsFramework_Core\Scene\Snapshot\Test">
       <UniqueIdentifier>{37058ff1-369f-5831-9a78-e55bb24db45b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\AcsFramework_Core\Scene\Sphere3D">
+      <UniqueIdentifier>{880d1df7-fc1a-5a5c-b07a-2820532e79af}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\AcsFramework_Core\Scene\Sphere3D\Test">
+      <UniqueIdentifier>{d9ab9cbd-c9a0-752d-92b9-6de85f3f6908}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Source\AcsFramework_Core\Scene\Sprite3D">
       <UniqueIdentifier>{c06d668a-dc64-4e37-ad5e-ec60171dc8a0}</UniqueIdentifier>
     </Filter>
@@ -611,6 +617,12 @@
     </ClCompile>
     <ClCompile Include="Source\AcsFramework_Core\Scene\Snapshot\SceneSnapshotWriter.cpp">
       <Filter>Source\AcsFramework_Core\Scene\Snapshot</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Scene\Sphere3D\Sphere3DSpawner.cpp">
+      <Filter>Source\AcsFramework_Core\Scene\Sphere3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Scene\Sphere3D\Sphere3DSpawnParams.cpp">
+      <Filter>Source\AcsFramework_Core\Scene\Sphere3D</Filter>
     </ClCompile>
     <ClCompile Include="Source\AcsFramework_Core\Scene\Sprite3D\Sprite3DSpawner.cpp">
       <Filter>Source\AcsFramework_Core\Scene\Sprite3D</Filter>
@@ -1304,6 +1316,12 @@
     <ClInclude Include="Source\AcsFramework_Core\Scene\Snapshot\SceneSnapshotWriter.h">
       <Filter>Source\AcsFramework_Core\Scene\Snapshot</Filter>
     </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Sphere3D\Sphere3DSpawner.h">
+      <Filter>Source\AcsFramework_Core\Scene\Sphere3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Sphere3D\Sphere3DSpawnParams.h">
+      <Filter>Source\AcsFramework_Core\Scene\Sphere3D</Filter>
+    </ClInclude>
     <ClInclude Include="Source\AcsFramework_Core\Scene\Sprite3D\Sprite3DSpawner.h">
       <Filter>Source\AcsFramework_Core\Scene\Sprite3D</Filter>
     </ClInclude>
@@ -1938,6 +1956,12 @@
     </None>
     <None Include="Source\AcsFramework_Core\Scene\Snapshot\Test\SceneSnapshotTest.cpp">
       <Filter>Source\AcsFramework_Core\Scene\Snapshot\Test</Filter>
+    </None>
+    <None Include="Source\AcsFramework_Core\Scene\Sphere3D\README.md">
+      <Filter>Source\AcsFramework_Core\Scene\Sphere3D</Filter>
+    </None>
+    <None Include="Source\AcsFramework_Core\Scene\Sphere3D\Test\Sphere3DSpawnerTest.cpp">
+      <Filter>Source\AcsFramework_Core\Scene\Sphere3D\Test</Filter>
     </None>
     <None Include="Source\AcsFramework_Core\Scene\Sprite3D\README.md">
       <Filter>Source\AcsFramework_Core\Scene\Sprite3D</Filter>

@@ -36,5 +36,8 @@ const FCollidableModel3DSpawnResult Platform = SpawnBlock3D( Block );
 読み込みモデルやトゥーン、自己発光、光沢コートなど高度な見た目が必要な物は、
 `SpawnCollidableModel3D`と`FModel3DSpawnParams`を使う。
 
+球型障害物は[`SpawnSphere3D`](../Sphere3D/README.md)へ半径と中心位置を渡すと、表示と球衝突を
+同じ半径へ揃えられる。
+
 床と四方の壁を毎回組む用途では[`SpawnRoom3D`](../Room3D/README.md)を使う。内寸と壁高から
 この直方体4個と地面1個を配置し、途中失敗と一括破棄まで扱う。

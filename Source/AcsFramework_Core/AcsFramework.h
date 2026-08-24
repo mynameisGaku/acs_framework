@@ -68,6 +68,8 @@
 #include "AcsFramework_Core/Scene/Room3D/Room3DSpawner.h"
 #include "AcsFramework_Core/Scene/Room3D/Room3DSpawnParams.h"
 #include "AcsFramework_Core/Scene/Room3D/Room3DSpawnResult.h"
+#include "AcsFramework_Core/Scene/Sphere3D/Sphere3DSpawner.h"
+#include "AcsFramework_Core/Scene/Sphere3D/Sphere3DSpawnParams.h"
 #include "AcsFramework_Core/Scene/Sprite3D/Sprite3DSpawner.h"
 #include "AcsFramework_Core/Scene/Trigger3D/ProximityTrigger3D.h"
 #include "AcsFramework_Core/Scene/Trigger3D/ProximityTrigger3DParams.h"

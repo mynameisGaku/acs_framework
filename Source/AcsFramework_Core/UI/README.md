@@ -43,6 +43,7 @@ bloomや輪郭補正の影響を受けず、3D場面より手前、ポーズ・�
 `SpawnInteractableCollidableAnimatedModel3D`は骨付きモデルと衝突と視線操作、
 `SpawnThirdPersonCharacter3D`は静的または骨付きモデルと自己衝突、移動、追従カメラ、任意アニメーション、
 `SpawnGround3D`は表示面と直下の厚み付き箱、`SpawnBlock3D`は同寸法の立方体表示と箱型衝突、
+`SpawnSphere3D`は同半径の球表示と球型衝突、
 `SpawnRoom3D`は歩ける床と四方の壁、
 `SpawnLight3D`は太陽または点光源、
 `SpawnWater3D`は水面を扱う。パスを渡した場合だけ場面共通の
@@ -60,6 +61,7 @@ SpawnImage3D( FSprite3DSpawnParams::FromImage(
     FStringView( "Textures/Sign.png" ), FVec3{ 0.0f, 2.0f, 3.0f }, FVec2{ 1.2f, 0.6f } ) );
 SpawnGround3D( FVec2{ 16.0f, 12.0f } );
 SpawnBlock3D( FVec3{ 4.0f, 2.0f, 0.5f }, FVec3{ 0.0f, 1.0f, 4.0f } );
+FCollidableModel3DSpawnResult Ball = SpawnSphere3D( 0.8f, FVec3{ 2.0f, 0.8f, 2.0f } );
 FRoom3DSpawnResult Room = SpawnRoom3D( FVec2{ 12.0f, 8.0f }, 3.0f );
 SpawnLight3D( FLight3DSpawnParams::Sun( FVec3{ -0.47f, 0.58f, 0.66f } ) );
 
@@ -83,6 +85,7 @@ PlaySound3D( FStringView( "Audio/Hit.wav" ), FVec3{ 1.0f, 0.5f, 3.0f } );
 
 const FSceneRayHit Picked = PickScreen3D( FVec2{ 0.5f, 0.5f }, 100.0f );
 DestroyCollidableModel3D( Wall );
+DestroyCollidableModel3D( Ball );
 DestroyRoom3D( Room );
 ```
 
@@ -137,11 +140,13 @@ world軸平行箱を既存デバッグ線へ一括登録する。線は次の透
 `Plane`を床にする場合は`FCollisionShape3DParams::FromBox`で歩ける厚みを明示する。
 素材を使わない壁、足場、箱型障害物は`SpawnBlock3D`へ全寸法と中心位置を渡すと、表示と衝突の
 寸法を別々に書かずに済む。既定外の色、向き、材質は`FBlock3DSpawnParams`で変更する。
+球型障害物は`SpawnSphere3D`へ半径と中心位置を渡すと、表示と球衝突の半径を別々に書かずに済む。
+既定外の色と材質は`FSphere3DSpawnParams`で変更する。
 床と四方の壁を持つ天井なし空間は`SpawnRoom3D`へ内寸と壁高を渡すと5組をまとめて置ける。
 途中失敗は既生成分まで巻き戻し、`DestroyRoom3D`は全5組を検証してから片付ける。
 `SpawnCollidableAnimatedModel3D`は同じ失敗時巻き戻しを骨付きモデルへ適用し、初期animation再生も
 成功したノードだけを返す。大きく姿勢が変わる人物には、読込時の境界より明示箱または明示球を使う。
-通常モデル、骨付きモデル、地面、直方体の一括生成結果は`DestroyCollidableModel3D`へ渡すと、ノードと
+通常モデル、骨付きモデル、地面、直方体、球の一括生成結果は`DestroyCollidableModel3D`へ渡すと、ノードと
 形状が同じ登録対であることを確認してから両方を片付け、成功時だけ結果を空に戻す。
 
 `SpawnInteractableModel3D`と`SpawnInteractableAnimatedModel3D`は、モデル生成後に

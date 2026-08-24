@@ -46,7 +46,7 @@ WASDで移動、左Shiftで走行、矢印キーで視点、Spaceでジャンプ
 
 | | |
 |---|---|
-| 3D を置く | `SpawnModel3D()` / `SpawnAnimatedModel3D()`と、それぞれの操作対象版・衝突版・操作＋衝突版、`SpawnBlock3D()`、`SpawnRoom3D()`、`DestroyCollidableModel3D()`、`SpawnNode3D()`、FBX の取り込み、材質 (metallic / roughness / HDR自己発光) |
+| 3D を置く | `SpawnModel3D()` / `SpawnAnimatedModel3D()`と、それぞれの操作対象版・衝突版・操作＋衝突版、`SpawnBlock3D()`、`SpawnSphere3D()`、`SpawnRoom3D()`、`DestroyCollidableModel3D()`、`SpawnNode3D()`、FBX の取り込み、材質 (metallic / roughness / HDR自己発光) |
 | 3D画像を置く | `SpawnImage3D()`の固定板、`SpawnBillboard3D()`のカメラ追従板、透過PNG、深度判定、HDR合成 |
 | 3D を照らす | `SpawnLight3D()`、方向だけで置ける太陽、位置と距離だけで置ける点光源 |
 | 3D 地面 | `SpawnGround3D()`、広さだけで置ける表示面と直下の厚み付き衝突 |
@@ -75,10 +75,9 @@ WASDで移動、左Shiftで走行、矢印キーで視点、Spaceでジャンプ
 ## 書き味
 
 ```cpp
-// 置く
-FModel3DSpawnParams Ball = FModel3DSpawnParams::FromPrimitive( EMeshPrimitive3D::Sphere, FVec3{ 0, 1, 0 } );
-Ball.Roughness = 0.2f;
-SpawnModel3D( Ball );
+// 半径と中心だけで、表示と球型衝突が揃った球を置く
+FCollidableModel3DSpawnResult Ball = SpawnSphere3D(
+    1.0f, FVec3{ 0.0f, 1.0f, 0.0f } );
 
 // 色と強度だけで、bloomへ繋がる自己発光球を置く
 SpawnModel3D( FModel3DSpawnParams::FromEmissivePrimitive( EMeshPrimitive3D::Sphere, FVec3{ 2, 1, 0 }, FVec3{ 0.1f, 0.5f, 1.0f }, 4.0f ) );

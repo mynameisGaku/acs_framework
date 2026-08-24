@@ -46,6 +46,10 @@ SpawnModel3D( FModel3DSpawnParams::FromToonPrimitive( EMeshPrimitive3D::Sphere, 
 FCollidableModel3DSpawnResult SolidObstacle = SpawnBlock3D(
     FVec3{ 2.0f, 1.0f, 0.5f }, FVec3{ 4.0f, 0.5f, 0.0f }, 0x2u );
 
+// 素材を使わない球は、半径と中心位置だけで表示と球型衝突を揃える
+FCollidableModel3DSpawnResult SolidBall = SpawnSphere3D(
+    0.75f, FVec3{ 2.0f, 0.75f, 0.0f }, 0x2u );
+
 // 歩ける平面は広さだけで表示面と直下の厚み付き箱を揃える
 const FCollidableModel3DSpawnResult SolidFloor = SpawnGround3D(
     FVec2{ 10.0f, 10.0f }, FVec3{}, 0x2u );
@@ -71,8 +75,9 @@ DestroyCollidableModel3D( SolidObstacle );
 破棄予定へ戻すため、「見えるが当たらない」半端な配置を成功として残さない。
 通常の衝突付き結果は`DestroyCollidableModel3D`へ渡すと、ノードと形状の対応を検証したうえで
 両方を片付け、成功時だけ呼出側の結果を空へ戻す。
-素材を使わない直方体は[`SpawnBlock3D`](../Block3D/README.md)、歩ける表示面は
-[`SpawnGround3D`](../Ground3D/README.md)を使うと、表示と衝突の寸法を1個の設定へまとめられる。
+素材を使わない直方体は[`SpawnBlock3D`](../Block3D/README.md)、球は
+[`SpawnSphere3D`](../Sphere3D/README.md)、歩ける表示面は[`SpawnGround3D`](../Ground3D/README.md)を
+使うと、表示と衝突の寸法を1個の設定へまとめられる。
 床と四方の壁をまとめる場合は[`SpawnRoom3D`](../Room3D/README.md)が5組の生成と巻き戻しを扱う。
 同じ単一モデルを視線操作へも登録する場合は`SpawnInteractableCollidableModel3D`を使うと、
 3処理の途中失敗をまとめて巻き戻せる。

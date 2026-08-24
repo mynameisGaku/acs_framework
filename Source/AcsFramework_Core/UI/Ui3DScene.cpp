@@ -13,6 +13,7 @@
 #include "AcsFramework_Core/Scene/Model3D/Model3DSpawner.h"
 #include "AcsFramework_Core/Scene/Pick3D/ScenePicker.h"
 #include "AcsFramework_Core/Scene/Room3D/Room3DSpawner.h"
+#include "AcsFramework_Core/Scene/Sphere3D/Sphere3DSpawner.h"
 #include "AcsFramework_Core/Scene/Sprite3D/Sprite3DSpawner.h"
 #include "AcsFramework_Core/Scene/Water3D/Water3DSpawner.h"
 #include "AcsFramework_Core/UI/InteractionReticle3D/InteractionReticle3DLayout.h"
@@ -242,6 +243,22 @@ FCollidableModel3DSpawnResult AUi3DScene::SpawnBlock3D( FVec3 Size,
 	FBlock3DSpawnParams Params = FBlock3DSpawnParams::FromSize( Size, Position );
 	Params.CollisionLayer = CollisionLayer;
 	return SpawnBlock3D( Params, Parent );
+}
+
+
+FCollidableModel3DSpawnResult AUi3DScene::SpawnSphere3D(
+	const FSphere3DSpawnParams& Params, ANode* Parent ) noexcept
+{
+	return CSphere3DSpawner::SpawnInto( Graph(), m_Collision3D, Params, Parent );
+}
+
+
+FCollidableModel3DSpawnResult AUi3DScene::SpawnSphere3D( f32 Radius,
+	FVec3 Position, u32 CollisionLayer, ANode* Parent ) noexcept
+{
+	FSphere3DSpawnParams Params = FSphere3DSpawnParams::FromRadius( Radius, Position );
+	Params.CollisionLayer = CollisionLayer;
+	return SpawnSphere3D( Params, Parent );
 }
 
 

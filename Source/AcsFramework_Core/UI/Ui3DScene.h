@@ -28,6 +28,7 @@ struct FGround3DSpawnParams;
 struct FLight3DSpawnParams;
 struct FModel3DSpawnParams;
 struct FRoom3DSpawnParams;
+struct FSphere3DSpawnParams;
 struct FSpatialPlayRequest;
 struct FSprite3DSpawnParams;
 struct FWater3DSpawnParams;
@@ -257,6 +258,30 @@ public:
 	 * @return 立方体ノードと衝突識別子。入力または登録に失敗したら空の結果。
 	 */
 	FCollidableModel3DSpawnResult SpawnBlock3D( FVec3 Size,
+		FVec3 Position = FVec3{},
+		u32 CollisionLayer = CCollisionWorld3D::kAllLayers,
+		ANode* Parent = nullptr ) noexcept;
+
+	/**
+	 * 表示半径と球型衝突半径を揃えた3D球を1回で置く。
+	 *
+	 * @param Params 中心位置、半径、見た目、衝突レイヤー。
+	 * @param Parent この場面が所有する親。空ならroot直下。
+	 * @return 球ノードと衝突識別子。失敗時は空で、半端な生成物を残さない。
+	 */
+	FCollidableModel3DSpawnResult SpawnSphere3D( const FSphere3DSpawnParams& Params,
+		ANode* Parent = nullptr ) noexcept;
+
+	/**
+	 * 既定の見た目を使い、半径と中心位置だけで衝突付き3D球を置く。
+	 *
+	 * @param Radius 表示と衝突へ共通で使う半径。
+	 * @param Position 配置先親から見た球の中心位置。
+	 * @param CollisionLayer 球が属する非0の衝突レイヤー。
+	 * @param Parent この場面が所有する親。空ならroot直下。
+	 * @return 球ノードと衝突識別子。入力または登録に失敗したら空の結果。
+	 */
+	FCollidableModel3DSpawnResult SpawnSphere3D( f32 Radius,
 		FVec3 Position = FVec3{},
 		u32 CollisionLayer = CCollisionWorld3D::kAllLayers,
 		ANode* Parent = nullptr ) noexcept;
