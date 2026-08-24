@@ -267,13 +267,20 @@ FCheckpoint3DUpdateResult GoalState;
 if ( GoalCheckpoint.Update( GoalState ) && GoalState.bActivatedThisUpdate ) SaveGoal();
 DrawCheckpoint3D( GoalCheckpoint );
 
-// 複数のCheckpointを通る順番と2周の完了だけを、入力や時間から独立して管理する
+// 複数のCheckpointを通る順番と2周の完了を管理し、明示時間から区間タイムを測る
 FCheckpointRoute3D Route;
 Route.SetParams( FCheckpointRoute3DParams::ForCheckpoints( 3u, 2u ) );
+FCheckpointRoute3DTimer RouteTimer;
+RouteTimer.Start();
+RouteTimer.Tick( DeltaSeconds );
 FCheckpointRoute3DAdvanceResult RouteState;
 if ( GoalState.bActivatedThisUpdate
-    && Route.Advance( GoalIndex, RouteState )
-    && RouteState.bRouteCompletedThisAdvance ) FinishRace();
+    && Route.Advance( GoalIndex, RouteState ) )
+{
+    FCheckpointRoute3DTimingResult Timing;
+    if ( RouteTimer.RecordAdvance( RouteState, Timing )
+        && Timing.bRouteCompletedThisAdvance ) FinishRace( Timing.TotalElapsedSeconds );
+}
 
 // 接続済みキャラクターを、既定の入力割り当てから1回進める
 CActionBindingTable ActionBindings;

@@ -72,6 +72,7 @@ void RunSceneCollision3DTests( CTestHarness& Harness );
 void RunProximityTrigger3DTests( CTestHarness& Harness );
 void RunCheckpoint3DTests( CTestHarness& Harness );
 void RunCheckpointRoute3DTests( CTestHarness& Harness );
+void RunCheckpointRoute3DTimerTests( CTestHarness& Harness );
 void RunDebugDraw3DQueueTests( CTestHarness& Harness );
 void RunBlock3DSpawnerTests( CTestHarness& Harness );
 void RunBridge3DSpawnerTests( CTestHarness& Harness );
@@ -145,6 +146,7 @@ int main()
 	RunProximityTrigger3DTests( Harness );
 	RunCheckpoint3DTests( Harness );
 	RunCheckpointRoute3DTests( Harness );
+	RunCheckpointRoute3DTimerTests( Harness );
 	RunDebugDraw3DQueueTests( Harness );
 	RunBlock3DSpawnerTests( Harness );
 	RunBridge3DSpawnerTests( Harness );

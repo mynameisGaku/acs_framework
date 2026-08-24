@@ -23,14 +23,26 @@ DrawCheckpoint3D( Checkpoint );
 ```cpp
 FCheckpointRoute3D Route;
 Route.SetParams( FCheckpointRoute3DParams::ForCheckpoints( 3u, 2u ) );
+FCheckpointRoute3DTimer Timer;
+Timer.Start();
+
+// 毎更新。停止中と完了後は有効な時間を渡しても進まない。
+Timer.Tick( DeltaSeconds );
 
 FCheckpoint3DUpdateResult CheckpointState;
 if ( Checkpoints[Index].Update( CheckpointState )
     && CheckpointState.bActivatedThisUpdate )
 {
     FCheckpointRoute3DAdvanceResult RouteState;
-    if ( Route.Advance( Index, RouteState )
-        && RouteState.bRouteCompletedThisAdvance ) FinishRace();
+    if ( Route.Advance( Index, RouteState ) )
+    {
+        FCheckpointRoute3DTimingResult Timing;
+        if ( Timer.RecordAdvance( RouteState, Timing )
+            && Timing.bRouteCompletedThisAdvance )
+        {
+            FinishRace( Timing.TotalElapsedSeconds );
+        }
+    }
 }
 ```
 
@@ -41,6 +53,11 @@ trueになる。複数周では各`CCheckpoint3D`の`bActivateOnce`をfalseに�
 `CaptureProgress`はチェックポイント数、必要周回数、次番号、完了周回数をまとめ、
 `RestoreProgress`は現在の設定と一致する有効値だけを復元する。チェックポイント数・周回数が異なる
 保存値や矛盾した完了値では現在の進行を変えない。
+
+`FCheckpointRoute3DTimer`は時計を内部から読まず、呼出側が渡す有限・非負の経過秒だけを加算する。
+受理済みの`FCheckpointRoute3DAdvanceResult`を`RecordAdvance`すると、計測開始からの合計、現在周回、
+前回受理地点からの区間秒を同じ結果で返す。順番違い、未受理、矛盾した進行結果は区間境界にせず、
+一時停止中は時間を進めない。最終通過を記録すると自動停止し、新しい計測は`Reset`後に開始する。
 
 既定の`bActivateOnce`はtrueで、最初の進入だけ発火する。falseなら、一度範囲外へ出た後の
 再進入でも発火する。`ResetActivation`は発火済みと範囲内の記録を両方消すため、対象が現在
