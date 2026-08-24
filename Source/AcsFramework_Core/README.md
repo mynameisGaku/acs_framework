@@ -176,8 +176,8 @@ Frameworkは金属度、粗さ、方向性の既定値だけを揃え、実際�
 subsystemにはしない。
 衝突付き街灯は`FStreetLamp3DSpawnParams`が床位置から直立ポストとランプの位置を決め、
 `CStreetLamp3DSpawner`が既存の`CBlock3DSpawner`と`CLamp3DSpawner`を合成する。光、材質、衝突を
-再実装せず、3ノードと1形状の途中失敗巻き戻し・所有確認・一括破棄だけを受け持つため、これも
-subsystemにはしない。
+再実装せず、3ノードと1形状の途中失敗巻き戻し、共通親と所有確認後の同期更新、一括破棄だけを
+受け持つため、これもsubsystemにはしない。
 被写体用の`FStudioLightRig3DParams`も中心、見る方向、半径から3灯の点光源指定を決める値に留め、
 `CStudioLightRig3DSpawner`が途中失敗時の巻き戻しと一括破棄を受け持つ。平行光を増やさず、
 既定または時刻連動の太陽を唯一の影付き主光源として保つ。

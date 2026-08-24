@@ -455,6 +455,15 @@ FStreetLamp3DSpawnResult AUi3DScene::SpawnStreetLamp3D(
 }
 
 
+bool AUi3DScene::TryUpdateStreetLamp3D(
+	const FStreetLamp3DSpawnResult& StreetLamp,
+	const FStreetLamp3DSpawnParams& Params ) noexcept
+{
+	return CStreetLamp3DSpawner::TryApplyTo(
+		Graph(), m_Collision3D, StreetLamp, Params );
+}
+
+
 bool AUi3DScene::DestroyStreetLamp3D(
 	FStreetLamp3DSpawnResult& StreetLamp ) noexcept
 {

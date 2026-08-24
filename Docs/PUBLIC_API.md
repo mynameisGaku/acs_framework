@@ -23,7 +23,7 @@
 | 開口壁枠 | `AcsFramework_Core/UI/Ui3DScene.h` | `SpawnDoorway3D` |
 | 柵 | `AcsFramework_Core/UI/Ui3DScene.h` | `SpawnFence3D` |
 | 階段 | `AcsFramework_Core/UI/Ui3DScene.h` | `SpawnStairs3D` |
-| 衝突付き3D街灯 | `AcsFramework_Core/UI/Ui3DScene.h` | `SpawnStreetLamp3D`、`DestroyStreetLamp3D` |
+| 衝突付き3D街灯 | `AcsFramework_Core/UI/Ui3DScene.h` | `SpawnStreetLamp3D`、`TryUpdateStreetLamp3D`、`DestroyStreetLamp3D` |
 | 静的モデル | `AcsFramework_Core/UI/Ui3DScene.h` | `SpawnModel3D` |
 | 衝突付きモデル | `AcsFramework_Core/UI/Ui3DScene.h` | `SpawnCollidableModel3D` |
 | 骨格モデル | `AcsFramework_Core/UI/Ui3DScene.h` | `SpawnAnimatedModel3D` |

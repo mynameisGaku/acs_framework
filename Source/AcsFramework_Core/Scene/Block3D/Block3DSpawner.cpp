@@ -57,11 +57,11 @@ bool CBlock3DSpawner::CanApply_Internal( CSceneNodeGraph& Graph,
 	CSceneCollision3D& Collision,
 	const FCollidableModel3DSpawnResult& Block ) noexcept
 {
-	if ( !Block || !Graph.HasRoot() || Block.Node == &Graph.Root()
-		|| Block.Node->IsPendingDestroy() ) return false;
+	if ( !Block || !Graph.HasRoot() || Block.Node == &Graph.Root() ) return false;
 
 	const FNodeId NodeId = Graph.IdOf( Block.Node );
 	return NodeId.IsValid() && Graph.Get( NodeId ) == Block.Node
+		&& !Block.Node->IsPendingDestroy()
 		&& Collision.IsRegisteredTo( Block.Shape, *Block.Node )
 		&& Block.Node->GetComponent<AMeshComponent3D>() != nullptr;
 }

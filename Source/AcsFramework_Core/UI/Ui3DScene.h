@@ -590,6 +590,18 @@ public:
 		ANode* Parent = nullptr ) noexcept;
 
 	/**
+	 * この場面へ配置した3D街灯のポスト、発光球、点光源を同じ指定へ同期更新する。
+	 *
+	 * @details 別場面の結果、共通親を失った構成、破棄予定部品、不正値では何も変更しない。
+	 * @param StreetLamp `SpawnStreetLamp3D`の成功結果。
+	 * @param Params 新しい床位置、ポスト寸法・材質、ランプ、衝突レイヤー。
+	 * @return 街灯の表示、光、衝突を全て更新できた場合だけtrue。
+	 */
+	bool TryUpdateStreetLamp3D(
+		const FStreetLamp3DSpawnResult& StreetLamp,
+		const FStreetLamp3DSpawnParams& Params ) noexcept;
+
+	/**
 	 * この場面へ一括配置した3D街灯を、3ノードとポスト衝突ごと破棄する。
 	 *
 	 * @details 場面、root、3ノード、衝突形状、重複を先に検証する。
