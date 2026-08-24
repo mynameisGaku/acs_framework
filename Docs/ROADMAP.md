@@ -34,7 +34,7 @@ ACS のモジュールは **438 個**ある。この枠組みが窓口を用意�
 | 画面・フェード・ロード中・ポーズ | `CScreenSubsystem`、`CFadeSubsystem`、`CLoadingScreenSubsystem`、`CPauseScreenSubsystem` |
 | ノード生成・シーン保存 | `CPrefabSubsystem`、`CSceneSnapshotSubsystem` |
 | 3D 地面 | `AUi3DScene::SpawnGround3D`、`FGround3DSpawnParams`、厚み付き箱衝突 |
-| 3D 直方体 | `AUi3DScene::SpawnBlock3D`、`FBlock3DSpawnParams`、表示と同寸法の箱衝突 |
+| 3D 直方体 | `AUi3DScene::SpawnBlock3D` / `TryUpdateBlock3D`、`FBlock3DSpawnParams`、表示と同寸法の箱衝突 |
 | 3D 球 | `AUi3DScene::SpawnSphere3D`、`FSphere3DSpawnParams`、表示と同半径の球衝突 |
 | 3D 部屋 | `AUi3DScene::SpawnRoom3D`、床と四方の壁、5組の失敗時巻き戻し・一括破棄 |
 | 3D 通路 | `AUi3DScene::SpawnCorridor3D`、両端が開いた床と側壁2枚、失敗時巻き戻し・一括破棄 |
@@ -286,7 +286,8 @@ cameraからの距離に応じて大気へ馴染み、雲も実距離まで同�
   生成ノードも巻き戻す
 - ~~壁・足場・箱型障害物の簡単配置~~ → **実装済み** (2026-08-24)。
   `SpawnBlock3D( Size, CenterPosition )`だけで、同じローカル全寸法の立方体表示と箱型衝突を置く。
-  回転、PBR材質、衝突レイヤーを`FBlock3DSpawnParams`で調整でき、登録失敗時は生成ノードも巻き戻す
+  回転、PBR材質、衝突レイヤーを`FBlock3DSpawnParams`で調整でき、`TryUpdateBlock3D`は形状番号を
+  作り直さず表示、変形、衝突レイヤーを同期更新する。登録失敗時は生成ノードも巻き戻す
 - ~~球型障害物の簡単配置~~ → **実装済み** (2026-08-24)。
   `SpawnSphere3D( Radius, CenterPosition )`だけで、同じ半径の球表示と球型衝突を置く。
   PBR材質と衝突レイヤーを`FSphere3DSpawnParams`で調整でき、非一様な親拡縮では最大軸の

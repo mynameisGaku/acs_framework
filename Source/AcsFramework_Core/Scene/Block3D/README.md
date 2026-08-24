@@ -21,6 +21,19 @@ Block.CollisionLayer = 0x2u;
 const FCollidableModel3DSpawnResult Platform = SpawnBlock3D( Block );
 ```
 
+配置後に動かす、伸ばす、材質や衝突レイヤーを変える場合も、同じ設定型で表示と衝突を同期する。
+
+```cpp
+FBlock3DSpawnParams Moved = Block;
+Moved.Position = FVec3{ -1.0f, 2.0f, 0.0f };
+Moved.Size = FVec3{ 5.0f, 0.4f, 2.0f };
+Moved.CollisionLayer = 0x4u;
+const bool bUpdated = TryUpdateBlock3D( Platform, Moved );
+```
+
+`TryUpdateBlock3D`は生成時のノードと形状番号の対応、新指定、表示部品を先に確認する。成功時も
+`Platform.Shape`は変わらず、失敗時は位置、寸法、見た目、衝突レイヤーをどれも変更しない。
+
 `Position`は直方体の中心、`Size`はX、Y、Z方向の全寸法である。表示用の`Cube`とローカル半寸法
 0.5の箱は同じノード尺度を使うため、回転前の寸法を別々に書く必要がない。箱衝突はFrameworkの
 既存契約どおりworld軸平行箱へ変換される。90度単位の回転では表示範囲と一致し、それ以外の角度では
@@ -30,7 +43,8 @@ const FCollidableModel3DSpawnResult Platform = SpawnBlock3D( Block );
 拒否する。
 
 `AUi3DScene`を使わない独自場面では、`CBlock3DSpawner::SpawnInto`へ場面グラフと
-`CSceneCollision3D`を渡す。生成後の衝突登録に失敗した場合はノードも巻き戻される。
+`CSceneCollision3D`を渡す。更新には`CBlock3DSpawner::TryApplyTo`へ同じ2つと生成結果を渡す。
+生成後の衝突登録に失敗した場合はノードも巻き戻される。
 場面途中で外す場合は結果を`DestroyCollidableModel3D`へ渡し、表示ノードと箱を同じ呼出しで片付ける。
 
 読み込みモデルやトゥーン、自己発光、光沢コートなど高度な見た目が必要な物は、

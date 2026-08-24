@@ -57,7 +57,8 @@ Subsystemにはしない。`AEffect3DScene`がscene単位で`CEffect3DPlayer`を
 3D直方体も局所的な生成処理なのでSubsystemにはしない。`FBlock3DSpawnParams`は中心位置、回転、
 XYZ全寸法、材質、衝突レイヤーを検証し、`CBlock3DSpawner`は既存の立方体生成と明示箱登録だけを
 組み合わせる。表示と衝突は同じノード尺度を使い、回転時の衝突は既存契約どおりworld軸平行箱へ
-安全側に包む。後段失敗時は生成ノードも巻き戻す。
+安全側に包む。`TryApplyTo`は所有と形状対応を先に検証し、形状番号を保って表示、変形、レイヤーを
+同期更新する。後段失敗時は生成ノードも巻き戻す。
 
 3D球も局所的な生成処理なのでSubsystemにはしない。`FSphere3DSpawnParams`は中心位置、半径、
 材質、衝突レイヤーと派生直径を検証し、`CSphere3DSpawner`は既存の球生成と明示球登録だけを
