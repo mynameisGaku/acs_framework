@@ -573,6 +573,9 @@
     <ClCompile Include="Source\AcsFramework_Core\Scene\Checkpoint3D\CheckpointRoute3DParams.cpp">
       <Filter>Source\AcsFramework_Core\Scene\Checkpoint3D</Filter>
     </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Scene\Checkpoint3D\CheckpointRoute3DProgress.cpp">
+      <Filter>Source\AcsFramework_Core\Scene\Checkpoint3D</Filter>
+    </ClCompile>
     <ClCompile Include="Source\AcsFramework_Core\Scene\Collision3D\SceneCollision3D.cpp">
       <Filter>Source\AcsFramework_Core\Scene\Collision3D</Filter>
     </ClCompile>
@@ -1281,6 +1284,9 @@
       <Filter>Source\AcsFramework_Core\Scene\Checkpoint3D</Filter>
     </ClInclude>
     <ClInclude Include="Source\AcsFramework_Core\Scene\Checkpoint3D\CheckpointRoute3DParams.h">
+      <Filter>Source\AcsFramework_Core\Scene\Checkpoint3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Checkpoint3D\CheckpointRoute3DProgress.h">
       <Filter>Source\AcsFramework_Core\Scene\Checkpoint3D</Filter>
     </ClInclude>
     <ClInclude Include="Source\AcsFramework_Core\Scene\Collision3D\CollisionShape3DParams.h">

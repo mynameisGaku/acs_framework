@@ -148,7 +148,8 @@ Frameworkは金属度、粗さ、方向性の既定値だけを揃え、実際�
 所有しないため、GPUなしで対象位置と明示更新だけから同じ発火を再現できる。
 複数地点を順番に通る場合は、各`CCheckpoint3D`が発火した0始まり番号だけを
 `FCheckpointRoute3D::Advance`へ渡す。ルートは場面とチェックポイントを所有せず、順番違い、
-周回完了、全体完了を明示結果として返す局所的な値状態に留める。
+周回完了、全体完了を明示結果として返す局所的な値状態に留める。保存時は`CaptureProgress`で
+設定識別付きの進行値を得て、同じ件数・周回数のルートだけへ`RestoreProgress`する。
 
 単一モデルを第三者視点キャラクターとして使う定型処理は`CThirdPersonCharacter3DSpawner`へまとめる。
 静的または骨格モデルの既存生成器、`CSceneCollision3D`、`CThirdPersonCharacter3D`を順に呼ぶだけの

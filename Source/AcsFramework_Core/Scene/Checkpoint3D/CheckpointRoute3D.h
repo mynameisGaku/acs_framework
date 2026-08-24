@@ -3,6 +3,7 @@
 
 #include "AcsFramework_Core/Scene/Checkpoint3D/CheckpointRoute3DAdvanceResult.h"
 #include "AcsFramework_Core/Scene/Checkpoint3D/CheckpointRoute3DParams.h"
+#include "AcsFramework_Core/Scene/Checkpoint3D/CheckpointRoute3DProgress.h"
 
 /**
  * 3Dチェックポイントの発火番号を、決めた順番と周回数で受け付ける状態。
@@ -50,6 +51,18 @@ public:
 
 	/** 指定番号が現在受け付ける順番と一致するならtrue。 */
 	bool IsExpectedCheckpoint( u32 CheckpointIndex ) const noexcept;
+
+	/** 現在の設定と進行を、保存可能な値として返す。 */
+	FCheckpointRoute3DProgress CaptureProgress() const noexcept;
+
+	/**
+	 * 保存した進行を現在のルート設定へ復元する。
+	 *
+	 * @param Progress `CaptureProgress`で取得した設定識別付きの進行値。
+	 * @return 値が有効で現在のチェックポイント数・周回数と一致し、復元できたらtrue。
+	 * 失敗時は現在の進行を変えない。
+	 */
+	bool RestoreProgress( const FCheckpointRoute3DProgress& Progress ) noexcept;
 
 	/** 現在のチェックポイント数と必要周回数を返す。 */
 	const FCheckpointRoute3DParams& Params() const noexcept { return m_Params; }

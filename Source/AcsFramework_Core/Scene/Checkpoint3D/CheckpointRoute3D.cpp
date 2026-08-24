@@ -90,3 +90,29 @@ bool FCheckpointRoute3D::IsExpectedCheckpoint(
 	return !m_bComplete && CheckpointIndex < m_Params.CheckpointCount
 		&& CheckpointIndex == m_NextCheckpointIndex;
 }
+
+
+FCheckpointRoute3DProgress FCheckpointRoute3D::CaptureProgress() const noexcept
+{
+	FCheckpointRoute3DProgress Progress;
+	Progress.CheckpointCount = m_Params.CheckpointCount;
+	Progress.LapCount = m_Params.LapCount;
+	Progress.NextCheckpointIndex = m_NextCheckpointIndex;
+	Progress.CompletedLapCount = m_CompletedLapCount;
+	Progress.bComplete = m_bComplete;
+	return Progress;
+}
+
+
+bool FCheckpointRoute3D::RestoreProgress(
+	const FCheckpointRoute3DProgress& Progress ) noexcept
+{
+	if ( !Progress.IsValid()
+		|| Progress.CheckpointCount != m_Params.CheckpointCount
+		|| Progress.LapCount != m_Params.LapCount ) return false;
+
+	m_NextCheckpointIndex = Progress.NextCheckpointIndex;
+	m_CompletedLapCount = Progress.CompletedLapCount;
+	m_bComplete = Progress.bComplete;
+	return true;
+}

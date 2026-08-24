@@ -38,6 +38,9 @@ if ( Checkpoints[Index].Update( CheckpointState )
 `bLapCompletedThisAdvance`、必要周回数へ到達した瞬間だけ`bRouteCompletedThisAdvance`が
 trueになる。複数周では各`CCheckpoint3D`の`bActivateOnce`をfalseにし、退出後の再進入を
 発火させる。完了後の発火は正常な無変更結果で、`Reset`すると同じ設定の先頭から再開する。
+`CaptureProgress`はチェックポイント数、必要周回数、次番号、完了周回数をまとめ、
+`RestoreProgress`は現在の設定と一致する有効値だけを復元する。チェックポイント数・周回数が異なる
+保存値や矛盾した完了値では現在の進行を変えない。
 
 既定の`bActivateOnce`はtrueで、最初の進入だけ発火する。falseなら、一度範囲外へ出た後の
 再進入でも発火する。`ResetActivation`は発火済みと範囲内の記録を両方消すため、対象が現在

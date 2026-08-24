@@ -528,6 +528,7 @@
     <ClInclude Include="Source\AcsFramework_Core\Scene\Checkpoint3D\CheckpointRoute3D.h" />
     <ClInclude Include="Source\AcsFramework_Core\Scene\Checkpoint3D\CheckpointRoute3DAdvanceResult.h" />
     <ClInclude Include="Source\AcsFramework_Core\Scene\Checkpoint3D\CheckpointRoute3DParams.h" />
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Checkpoint3D\CheckpointRoute3DProgress.h" />
     <None Include="Source\AcsFramework_Core\Scene\Checkpoint3D\README.md" />
     <None Include="Source\AcsFramework_Core\Scene\Checkpoint3D\Test\Checkpoint3DTest.cpp" />
     <None Include="Source\AcsFramework_Core\Scene\Checkpoint3D\Test\CheckpointRoute3DTest.cpp" />
@@ -755,6 +756,7 @@
     <ClCompile Include="Source\AcsFramework_Core\Scene\Checkpoint3D\Checkpoint3DSpawnResult.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Scene\Checkpoint3D\CheckpointRoute3D.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Scene\Checkpoint3D\CheckpointRoute3DParams.cpp" />
+    <ClCompile Include="Source\AcsFramework_Core\Scene\Checkpoint3D\CheckpointRoute3DProgress.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

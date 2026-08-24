@@ -19,13 +19,15 @@ void RunPublicApiHeaderTests( CTestHarness& Harness )
 	const FCheckpoint3DSpawnResult EmptyCheckpoint{};
 	const FCheckpointRoute3DParams RouteParams =
 		FCheckpointRoute3DParams::ForCheckpoints( 3u, 2u );
+	const FCheckpointRoute3DProgress RouteProgress =
+		FCheckpointRoute3D{}.CaptureProgress();
 	const EVisualPreset3D Preset = EVisualPreset3D::Balanced;
 
 	Harness.Check( Position.x == 0.0f, "ACSの基本型が解決できる" );
 	Harness.Check( !EmptyResult.Succeeded(), "3D生成結果が解決できる" );
 	Harness.Check( CheckpointParams.IsValid() && !EmptyCheckpoint.Succeeded(),
 		"3Dチェックポイントの設定と生成結果が解決できる" );
-	Harness.Check( RouteParams.IsValid(),
-		"3Dチェックポイント順序ルートの設定が解決できる" );
+	Harness.Check( RouteParams.IsValid() && RouteProgress.IsValid(),
+		"3Dチェックポイント順序ルートの設定と進行値が解決できる" );
 	Harness.Check( Preset == EVisualPreset3D::Balanced, "3D見た目設定が解決できる" );
 }

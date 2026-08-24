@@ -109,6 +109,7 @@ $sources = @(
 	'AcsFramework_Core\Scene\Checkpoint3D\Checkpoint3DSpawner.cpp',
 	'AcsFramework_Core\Scene\Checkpoint3D\Test\Checkpoint3DTest.cpp',
 	'AcsFramework_Core\Scene\Checkpoint3D\CheckpointRoute3DParams.cpp',
+	'AcsFramework_Core\Scene\Checkpoint3D\CheckpointRoute3DProgress.cpp',
 	'AcsFramework_Core\Scene\Checkpoint3D\CheckpointRoute3D.cpp',
 	'AcsFramework_Core\Scene\Checkpoint3D\Test\CheckpointRoute3DTest.cpp',
 	'AcsFramework_Core\Scene\DebugDraw3D\DebugLine3D.cpp',

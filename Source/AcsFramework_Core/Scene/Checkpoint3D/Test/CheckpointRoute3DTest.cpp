@@ -149,4 +149,108 @@ void RunCheckpointRoute3DTests( CTestHarness& Harness )
 			&& Route.CompletedLapCount() == 0u && !Route.IsComplete(),
 			"有効な再設定では新しい先頭へ初期化する" );
 	}
+
+	Harness.BeginSuite( "FCheckpointRoute3DProgress / 矛盾した保存値を復元前に拒否する" );
+
+	{
+		const FCheckpointRoute3DProgress Empty;
+		Harness.Check( !Empty.IsValid(), "件数を持たない空の保存値を拒否する" );
+
+		FCheckpointRoute3DProgress Progress;
+		Progress.CheckpointCount = 3u;
+		Progress.LapCount = 2u;
+		Progress.NextCheckpointIndex = 1u;
+		Progress.CompletedLapCount = 1u;
+		Harness.Check( Progress.IsValid(),
+			"2周中の1周完了と次番号1を有効な途中進行にする" );
+
+		Progress.NextCheckpointIndex = 3u;
+		Harness.Check( !Progress.IsValid(), "件数以上の次番号を拒否する" );
+		Progress.NextCheckpointIndex = 1u;
+		Progress.CompletedLapCount = 2u;
+		Harness.Check( !Progress.IsValid(),
+			"必要周回数へ達した未完了値を拒否する" );
+
+		Progress.NextCheckpointIndex = 0u;
+		Progress.bComplete = true;
+		Harness.Check( Progress.IsValid(),
+			"必要周回数と一致する完了値を受け付ける" );
+		Progress.NextCheckpointIndex = 1u;
+		Harness.Check( !Progress.IsValid(),
+			"完了後に残った次番号を拒否する" );
+		Progress.NextCheckpointIndex = 0u;
+		Progress.CompletedLapCount = 1u;
+		Harness.Check( !Progress.IsValid(),
+			"必要周回数へ届かない完了値を拒否する" );
+	}
+
+	Harness.BeginSuite( "FCheckpointRoute3D / 設定識別付きの途中進行を復元する" );
+
+	{
+		const FCheckpointRoute3DParams Params =
+			FCheckpointRoute3DParams::ForCheckpoints( 3u, 2u );
+		FCheckpointRoute3D SourceRoute;
+		Harness.Check( SourceRoute.SetParams( Params ),
+			"取得元を3件2周へ設定する" );
+		FCheckpointRoute3DAdvanceResult Result;
+		Harness.Check( SourceRoute.Advance( 0u, Result ) && Result.bAccepted,
+			"1周目の先頭を進める" );
+		Harness.Check( SourceRoute.Advance( 1u, Result ) && Result.bAccepted,
+			"1周目の中央を進める" );
+		Harness.Check( SourceRoute.Advance( 2u, Result )
+			&& Result.bLapCompletedThisAdvance,
+			"1周目を完了する" );
+		Harness.Check( SourceRoute.Advance( 0u, Result ) && Result.bAccepted,
+			"2周目の先頭まで進める" );
+
+		const FCheckpointRoute3DProgress Saved = SourceRoute.CaptureProgress();
+		Harness.Check( Saved.IsValid() && Saved.CheckpointCount == 3u
+			&& Saved.LapCount == 2u && Saved.NextCheckpointIndex == 1u
+			&& Saved.CompletedLapCount == 1u && !Saved.bComplete,
+			"設定識別と途中の次番号を保存値へまとめる" );
+
+		FCheckpointRoute3D RestoredRoute;
+		Harness.Check( RestoredRoute.SetParams( Params )
+			&& RestoredRoute.RestoreProgress( Saved ),
+			"同じ設定の別ルートへ途中進行を復元する" );
+		u32 Next = 0u;
+		Harness.Check( RestoredRoute.CompletedLapCount() == 1u
+			&& RestoredRoute.TryGetNextCheckpointIndex( Next ) && Next == 1u,
+			"復元後は2周目の中央から続ける" );
+		Harness.Check( RestoredRoute.Advance( 1u, Result ) && Result.bAccepted,
+			"復元後の期待番号を受理する" );
+		Harness.Check( RestoredRoute.Advance( 2u, Result )
+			&& Result.bRouteCompletedThisAdvance,
+			"復元後も残りの順番で全体を完了する" );
+
+		const FCheckpointRoute3DProgress Completed =
+			RestoredRoute.CaptureProgress();
+		Harness.Check( Completed.IsValid() && Completed.bComplete,
+			"完了状態も有効な保存値になる" );
+		FCheckpointRoute3D CompletedRoute;
+		Harness.Check( CompletedRoute.SetParams( Params )
+			&& CompletedRoute.RestoreProgress( Completed )
+			&& CompletedRoute.IsComplete(),
+			"完了済みのルートも再完了させず復元する" );
+
+		FCheckpointRoute3D WrongRoute;
+		Harness.Check( WrongRoute.SetParams(
+			FCheckpointRoute3DParams::ForCheckpoints( 2u, 2u ) ),
+			"不一致確認用の設定を作る" );
+		Harness.Check( WrongRoute.Advance( 0u, Result ) && Result.bAccepted,
+			"不一致確認用の途中状態を作る" );
+		Harness.Check( !WrongRoute.RestoreProgress( Saved ),
+			"チェックポイント数が異なる保存値を拒否する" );
+		Next = 0u;
+		Harness.Check( WrongRoute.CompletedLapCount() == 0u
+			&& WrongRoute.TryGetNextCheckpointIndex( Next ) && Next == 1u,
+			"復元拒否時は以前の途中進行を保つ" );
+
+		FCheckpointRoute3D WrongLapRoute;
+		Harness.Check( WrongLapRoute.SetParams(
+			FCheckpointRoute3DParams::ForCheckpoints( 3u, 3u ) ),
+			"周回数不一致の確認用設定を作る" );
+		Harness.Check( !WrongLapRoute.RestoreProgress( Saved ),
+			"必要周回数が異なる保存値も拒否する" );
+	}
 }
