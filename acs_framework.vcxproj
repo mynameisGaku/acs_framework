@@ -488,6 +488,12 @@
     <ClInclude Include="Source\AcsFramework_Core\Scene\Sphere3D\Sphere3DSpawnParams.h" />
     <None Include="Source\AcsFramework_Core\Scene\Sphere3D\README.md" />
     <None Include="Source\AcsFramework_Core\Scene\Sphere3D\Test\Sphere3DSpawnerTest.cpp" />
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Stairs3D\Stairs3DDirection.h" />
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Stairs3D\Stairs3DSpawner.h" />
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Stairs3D\Stairs3DSpawnParams.h" />
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Stairs3D\Stairs3DSpawnResult.h" />
+    <None Include="Source\AcsFramework_Core\Scene\Stairs3D\README.md" />
+    <None Include="Source\AcsFramework_Core\Scene\Stairs3D\Test\Stairs3DSpawnerTest.cpp" />
     <ClInclude Include="Source\AcsFramework_Core\Scene\Room3D\Room3DSpawner.h" />
     <ClInclude Include="Source\AcsFramework_Core\Scene\Room3D\Room3DSpawnParams.h" />
     <ClInclude Include="Source\AcsFramework_Core\Scene\Room3D\Room3DSpawnResult.h" />
@@ -701,6 +707,8 @@
     <ClCompile Include="Source\AcsFramework_Core\Scene\Block3D\Block3DSpawnParams.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Scene\Sphere3D\Sphere3DSpawner.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Scene\Sphere3D\Sphere3DSpawnParams.cpp" />
+    <ClCompile Include="Source\AcsFramework_Core\Scene\Stairs3D\Stairs3DSpawner.cpp" />
+    <ClCompile Include="Source\AcsFramework_Core\Scene\Stairs3D\Stairs3DSpawnParams.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Scene\Room3D\Room3DSpawner.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Scene\Room3D\Room3DSpawnParams.cpp" />
   </ItemGroup>

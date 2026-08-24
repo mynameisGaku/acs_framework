@@ -15,6 +15,7 @@
 #include "AcsFramework_Core/Scene/Room3D/Room3DSpawner.h"
 #include "AcsFramework_Core/Scene/Sphere3D/Sphere3DSpawner.h"
 #include "AcsFramework_Core/Scene/Sprite3D/Sprite3DSpawner.h"
+#include "AcsFramework_Core/Scene/Stairs3D/Stairs3DSpawner.h"
 #include "AcsFramework_Core/Scene/Water3D/Water3DSpawner.h"
 #include "AcsFramework_Core/UI/InteractionReticle3D/InteractionReticle3DLayout.h"
 
@@ -259,6 +260,30 @@ FCollidableModel3DSpawnResult AUi3DScene::SpawnSphere3D( f32 Radius,
 	FSphere3DSpawnParams Params = FSphere3DSpawnParams::FromRadius( Radius, Position );
 	Params.CollisionLayer = CollisionLayer;
 	return SpawnSphere3D( Params, Parent );
+}
+
+
+FStairs3DSpawnResult AUi3DScene::SpawnStairs3D(
+	const FStairs3DSpawnParams& Params, ANode* Parent ) noexcept
+{
+	return CStairs3DSpawner::SpawnInto( Graph(), m_Collision3D, Params, Parent );
+}
+
+
+FStairs3DSpawnResult AUi3DScene::SpawnStairs3D( u32 StepCount,
+	f32 Width, f32 StepDepth, f32 StepHeight, FVec3 BottomEdgeCenter,
+	EStairs3DDirection Direction, u32 CollisionLayer, ANode* Parent ) noexcept
+{
+	FStairs3DSpawnParams Params = FStairs3DSpawnParams::FromSteps(
+		StepCount, Width, StepDepth, StepHeight, BottomEdgeCenter, Direction );
+	Params.CollisionLayer = CollisionLayer;
+	return SpawnStairs3D( Params, Parent );
+}
+
+
+bool AUi3DScene::DestroyStairs3D( FStairs3DSpawnResult& Stairs ) noexcept
+{
+	return CStairs3DSpawner::Destroy( Graph(), m_Collision3D, Stairs );
 }
 
 

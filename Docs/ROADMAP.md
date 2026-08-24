@@ -37,6 +37,7 @@ ACS のモジュールは **438 個**ある。この枠組みが窓口を用意�
 | 3D 直方体 | `AUi3DScene::SpawnBlock3D`、`FBlock3DSpawnParams`、表示と同寸法の箱衝突 |
 | 3D 球 | `AUi3DScene::SpawnSphere3D`、`FSphere3DSpawnParams`、表示と同半径の球衝突 |
 | 3D 部屋 | `AUi3DScene::SpawnRoom3D`、床と四方の壁、5組の失敗時巻き戻し・一括破棄 |
+| 3D 階段 | `AUi3DScene::SpawnStairs3D`、4方向の隙間のない段、失敗時巻き戻し・一括破棄 |
 | 3D 水面 | `AUi3DScene::SpawnWater3D`、`FWater3DSpawnParams`、ACSの動的波紋 |
 | 3D 天候 | `AWeather3DScene`、`FWeather3DAppearance`、ACSの`CWeatherSystem` |
 | 3D エフェクト | `AEffect3DScene`、`CEffect3DPlayer`、同梱の Effekseer |
@@ -267,6 +268,10 @@ cameraからの距離に応じて大気へ馴染み、雲も実距離まで同�
 - ~~歩ける床と四方の壁を持つ検証部屋の簡単配置~~ → **実装済み** (2026-08-24)。
   `SpawnRoom3D( InnerSize, WallHeight )`だけで、内寸を保った床1枚と壁4枚を置く。
   5組の途中失敗は逆順に巻き戻し、`DestroyRoom3D`は全所有関係を先に検証してから一括破棄する
+- ~~隙間のない衝突付き階段の簡単配置~~ → **実装済み** (2026-08-24)。
+  `SpawnStairs3D( StepCount, Width, StepDepth, StepHeight )`だけで、共通底面から積み上がる段を置く。
+  XZの正負4方向と共通親に対応し、最大256段の途中失敗は逆順に巻き戻す。
+  `DestroyStairs3D`は全段の所有関係と重複を先に検証してから一括破棄する
 - ~~3D天候の遷移と描画接続~~ → **実装済み** (2026-08-22)。`AWeather3DScene`で
   `SetWeather( EWeatherKind::Storm, 2.5f )`と書くだけで、ACSの天候状態を雲量、雲影、霧、
   空色、IBL環境光へ同じ遷移率で反映する。雨雪の素材は作品ごとに選べるよう、降水密度と

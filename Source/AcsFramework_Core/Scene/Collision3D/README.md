@@ -61,6 +61,8 @@ DestroyCollidableModel3D( Ball );
 `FCollisionShape3DParams`を渡す。
 床と四方の壁をまとめる場合は`SpawnRoom3D`が5組を作り、`DestroyRoom3D`が全組の対応を検証して
 から一括で外す。
+衝突付き階段は`SpawnStairs3D`が共通底面から段を積み上げ、`DestroyStairs3D`が全段の所有関係と
+重複を検証してから一括で外す。
 
 登録時の中心、半サイズ、半径はノードのローカル座標で指定する。問い合わせ前に位置、回転、拡縮を
 自動同期するため、動くノードを毎フレーム登録し直す必要はない。ノードまたは祖先を無効にすると

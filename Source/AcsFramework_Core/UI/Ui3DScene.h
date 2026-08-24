@@ -14,6 +14,8 @@
 #include "AcsFramework_Core/Scene/Pick3D/SceneRay.h"
 #include "AcsFramework_Core/Scene/Pick3D/SceneRayHit.h"
 #include "AcsFramework_Core/Scene/Room3D/Room3DSpawnResult.h"
+#include "AcsFramework_Core/Scene/Stairs3D/Stairs3DDirection.h"
+#include "AcsFramework_Core/Scene/Stairs3D/Stairs3DSpawnResult.h"
 #include "AcsFramework_Core/Scene/Trigger3D/ProximityTrigger3D.h"
 #include "AcsFramework_Core/Scene/Visual3D/VisualPreset3D.h"
 #include "AcsFramework_Core/UI/InteractionReticle3D/InteractionReticle3DParams.h"
@@ -29,6 +31,7 @@ struct FLight3DSpawnParams;
 struct FModel3DSpawnParams;
 struct FRoom3DSpawnParams;
 struct FSphere3DSpawnParams;
+struct FStairs3DSpawnParams;
 struct FSpatialPlayRequest;
 struct FSprite3DSpawnParams;
 struct FWater3DSpawnParams;
@@ -285,6 +288,45 @@ public:
 		FVec3 Position = FVec3{},
 		u32 CollisionLayer = CCollisionWorld3D::kAllLayers,
 		ANode* Parent = nullptr ) noexcept;
+
+	/**
+	 * 衝突付き直方体を段差ごとに積み上げた軸方向3D階段を1回で置く。
+	 *
+	 * @param Params 基準点、方向、段数、寸法、見た目、衝突レイヤー。
+	 * @param Parent 全段を繋ぐ、この場面が所有する親。空ならroot直下。
+	 * @return 低い側から並ぶ全段。失敗時は空で、有効な半端物を残さない。
+	 */
+	FStairs3DSpawnResult SpawnStairs3D( const FStairs3DSpawnParams& Params,
+		ANode* Parent = nullptr ) noexcept;
+
+	/**
+	 * 既定の見た目を使い、段数と1段の寸法だけで3D階段を置く。方向を省略するとZ正方向へ上る。
+	 *
+	 * @param StepCount 1から256までの段数。
+	 * @param Width 上る方向と直交する全幅。
+	 * @param StepDepth 1段あたりの上る方向への奥行き。
+	 * @param StepHeight 1段上がるごとの高さ。
+	 * @param BottomEdgeCenter 配置先親から見た最下段手前の床上中心。
+	 * @param Direction 低い側から高い側へ段を増やす軸方向。
+	 * @param CollisionLayer 全段が属する非0の衝突レイヤー。
+	 * @param Parent 全段を繋ぐ、この場面が所有する親。空ならroot直下。
+	 * @return 低い側から並ぶ全段。入力または途中登録に失敗したら空の結果。
+	 */
+	FStairs3DSpawnResult SpawnStairs3D( u32 StepCount, f32 Width,
+		f32 StepDepth, f32 StepHeight,
+		FVec3 BottomEdgeCenter = FVec3{},
+		EStairs3DDirection Direction = EStairs3DDirection::PositiveZ,
+		u32 CollisionLayer = CCollisionWorld3D::kAllLayers,
+		ANode* Parent = nullptr ) noexcept;
+
+	/**
+	 * 一括生成した3D階段を、全段のノードと形状ごと高い側から破棄する。
+	 *
+	 * @details 全段がこの場面で重複なく対になっていない場合は何も変更しない。
+	 * @param Stairs `SpawnStairs3D`の成功結果。成功時は空の結果になる。
+	 * @return 全段のノードを破棄予定へ移し、形状も直ちに外せたらtrue。
+	 */
+	bool DestroyStairs3D( FStairs3DSpawnResult& Stairs ) noexcept;
 
 	/**
 	 * 歩ける床と四方の壁を持つ、天井なし3D部屋を1回で置く。
