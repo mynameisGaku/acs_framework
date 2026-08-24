@@ -22,6 +22,7 @@ ACS Frameworkの利用側から見える追加、変更、修正を記録する�
 - 布、フェルト、ベルベットへACSの毛羽反射を短い指定で適用する`FromFabricPrimitive`
 - 肌、蝋、乳白素材へACSの内部散乱を短い指定で適用する`FromSubsurfacePrimitive`
 - ACSの24時間補間から太陽、空、IBL環境光を同時に動かす`EnableTimeOfDay3D`
+- 自己発光球と同色の点光源を位置だけで同期配置・一括破棄する`SpawnLamp3D`
 - 既存の太陽を保ち、中心・見る方向・半径からキー、フィル、リムを置く`SpawnStudioLightRig3D`
 - 3D衝突、近接トリガー、視線操作、第三者視点キャラクター、追従カメラの接続層
 - 指定した1形状の進入を一度限りまたは再進入ごとに発火する`SpawnCheckpoint3D`

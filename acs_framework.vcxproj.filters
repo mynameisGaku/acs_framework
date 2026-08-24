@@ -639,6 +639,15 @@
     <ClCompile Include="Source\AcsFramework_Core\Scene\Interaction3D\InteractionHighlight3DParams.cpp">
       <Filter>Source\AcsFramework_Core\Scene\Interaction3D</Filter>
     </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Scene\Light3D\Lamp3DParams.cpp">
+      <Filter>Source\AcsFramework_Core\Scene\Light3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Scene\Light3D\Lamp3DSpawner.cpp">
+      <Filter>Source\AcsFramework_Core\Scene\Light3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Scene\Light3D\Lamp3DSpawnResult.cpp">
+      <Filter>Source\AcsFramework_Core\Scene\Light3D</Filter>
+    </ClCompile>
     <ClCompile Include="Source\AcsFramework_Core\Scene\Light3D\Light3DSpawner.cpp">
       <Filter>Source\AcsFramework_Core\Scene\Light3D</Filter>
     </ClCompile>
@@ -1412,6 +1421,15 @@
     <ClInclude Include="Source\AcsFramework_Core\Scene\Interaction3D\InteractionHighlight3DParams.h">
       <Filter>Source\AcsFramework_Core\Scene\Interaction3D</Filter>
     </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Light3D\Lamp3DParams.h">
+      <Filter>Source\AcsFramework_Core\Scene\Light3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Light3D\Lamp3DSpawner.h">
+      <Filter>Source\AcsFramework_Core\Scene\Light3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Light3D\Lamp3DSpawnResult.h">
+      <Filter>Source\AcsFramework_Core\Scene\Light3D</Filter>
+    </ClInclude>
     <ClInclude Include="Source\AcsFramework_Core\Scene\Light3D\Light3DSpawner.h">
       <Filter>Source\AcsFramework_Core\Scene\Light3D</Filter>
     </ClInclude>
@@ -2154,6 +2172,9 @@
     </None>
     <None Include="Source\AcsFramework_Core\Scene\Light3D\README.md">
       <Filter>Source\AcsFramework_Core\Scene\Light3D</Filter>
+    </None>
+    <None Include="Source\AcsFramework_Core\Scene\Light3D\Test\Lamp3DTest.cpp">
+      <Filter>Source\AcsFramework_Core\Scene\Light3D\Test</Filter>
     </None>
     <None Include="Source\AcsFramework_Core\Scene\Light3D\Test\Light3DSpawnerTest.cpp">
       <Filter>Source\AcsFramework_Core\Scene\Light3D\Test</Filter>

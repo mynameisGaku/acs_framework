@@ -170,6 +170,8 @@ Frameworkは金属度、粗さ、方向性の既定値だけを揃え、実際�
 3Dライト配置は`FLight3DSpawnParams`を検証可能な値、`CLight3DSpawner`を状態なしの接続層とする。
 位置または光源方向、色、強さ、到達距離から、識別子付きノードと`ALightComponent3D`を作るだけに
 留める。光の収集、上限選択、PBR描画、影はACSへ任せ、Framework側へ照明計算を複製しない。
+見える光源は`FLamp3DParams`から自己発光球と同色の点光源を組み立て、`CLamp3DSpawner`が
+途中失敗時の巻き戻しと一括破棄を受け持つ。局所的な2ノードの生成なのでsubsystemにはしない。
 被写体用の`FStudioLightRig3DParams`も中心、見る方向、半径から3灯の点光源指定を決める値に留め、
 `CStudioLightRig3DSpawner`が途中失敗時の巻き戻しと一括破棄を受け持つ。平行光を増やさず、
 既定または時刻連動の太陽を唯一の影付き主光源として保つ。

@@ -14,6 +14,7 @@
 #include "AcsFramework_Core/Scene/Fence3D/Fence3DSpawner.h"
 #include "AcsFramework_Core/Scene/Ground3D/Ground3DSpawner.h"
 #include "AcsFramework_Core/Scene/Interaction3D/InteractableModel3DSpawner.h"
+#include "AcsFramework_Core/Scene/Light3D/Lamp3DSpawner.h"
 #include "AcsFramework_Core/Scene/Light3D/Light3DSpawner.h"
 #include "AcsFramework_Core/Scene/Light3D/StudioLightRig3DSpawner.h"
 #include "AcsFramework_Core/Scene/Model3D/Model3DSpawner.h"
@@ -663,6 +664,26 @@ FCollidableModel3DSpawnResult AUi3DScene::SpawnCollidableAnimatedModel3D(
 ANode* AUi3DScene::SpawnLight3D( const FLight3DSpawnParams& Params, ANode* Parent ) noexcept
 {
 	return CLight3DSpawner::SpawnInto( Graph(), Params, Parent );
+}
+
+
+FLamp3DSpawnResult AUi3DScene::SpawnLamp3D(
+	const FLamp3DParams& Params, ANode* Parent ) noexcept
+{
+	return CLamp3DSpawner::SpawnInto( Graph(), Params, Parent );
+}
+
+
+FLamp3DSpawnResult AUi3DScene::SpawnLamp3D(
+	FVec3 Position, ANode* Parent ) noexcept
+{
+	return SpawnLamp3D( FLamp3DParams::At( Position ), Parent );
+}
+
+
+bool AUi3DScene::DestroyLamp3D( FLamp3DSpawnResult& Spawned ) noexcept
+{
+	return CLamp3DSpawner::Destroy( Graph(), Spawned );
 }
 
 

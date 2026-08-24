@@ -372,12 +372,16 @@
     <None Include="Source\AcsFramework_Core\Scene\Animation3D\Test\AnimatedModel3DSpawnerTest.cpp" />
     <None Include="Source\AcsFramework_Core\Scene\Animation3D\Test\CharacterAnimation3DProfileTest.cpp" />
     <None Include="Source\AcsFramework_Core\Scene\Animation3D\Test\CharacterAnimator3DTest.cpp" />
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Light3D\Lamp3DParams.h" />
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Light3D\Lamp3DSpawnResult.h" />
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Light3D\Lamp3DSpawner.h" />
     <ClInclude Include="Source\AcsFramework_Core\Scene\Light3D\Light3DSpawnParams.h" />
     <ClInclude Include="Source\AcsFramework_Core\Scene\Light3D\Light3DSpawner.h" />
     <ClInclude Include="Source\AcsFramework_Core\Scene\Light3D\StudioLightRig3DParams.h" />
     <ClInclude Include="Source\AcsFramework_Core\Scene\Light3D\StudioLightRig3DSpawnResult.h" />
     <ClInclude Include="Source\AcsFramework_Core\Scene\Light3D\StudioLightRig3DSpawner.h" />
     <None Include="Source\AcsFramework_Core\Scene\Light3D\README.md" />
+    <None Include="Source\AcsFramework_Core\Scene\Light3D\Test\Lamp3DTest.cpp" />
     <None Include="Source\AcsFramework_Core\Scene\Light3D\Test\Light3DSpawnerTest.cpp" />
     <None Include="Source\AcsFramework_Core\Scene\Light3D\Test\StudioLightRig3DTest.cpp" />
     <ClInclude Include="Source\AcsFramework_Core\Scene\Water3D\Water3DSpawnParams.h" />
@@ -703,6 +707,9 @@
     <ClCompile Include="Source\AcsFramework_Core\Scene\Animation3D\CharacterAnimation3DInput.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Scene\Animation3D\CharacterAnimation3DProfile.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Scene\Animation3D\CharacterAnimator3D.cpp" />
+    <ClCompile Include="Source\AcsFramework_Core\Scene\Light3D\Lamp3DParams.cpp" />
+    <ClCompile Include="Source\AcsFramework_Core\Scene\Light3D\Lamp3DSpawnResult.cpp" />
+    <ClCompile Include="Source\AcsFramework_Core\Scene\Light3D\Lamp3DSpawner.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Scene\Light3D\Light3DSpawnParams.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Scene\Light3D\Light3DSpawner.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Scene\Light3D\StudioLightRig3DParams.cpp" />

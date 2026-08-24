@@ -29,6 +29,7 @@
 | 画像板 | `AcsFramework_Core/UI/Ui3DScene.h` | `SpawnImage3D` |
 | ビルボード | `AcsFramework_Core/UI/Ui3DScene.h` | `SpawnBillboard3D` |
 | 光源 | `AcsFramework_Core/UI/Ui3DScene.h` | `SpawnLight3D` |
+| 見える3Dランプ | `AcsFramework_Core/UI/Ui3DScene.h` | `SpawnLamp3D`、`DestroyLamp3D` |
 | 被写体用3点照明 | `AcsFramework_Core/UI/Ui3DScene.h` | `SpawnStudioLightRig3D`、`DestroyStudioLightRig3D` |
 | 水面 | `AcsFramework_Core/UI/Ui3DScene.h` | `SpawnWater3D` |
 | 衝突破棄 | `AcsFramework_Core/UI/Ui3DScene.h` | `DestroyCollidableModel3D` |
@@ -53,6 +54,8 @@
 | 開口壁枠設定 | `AcsFramework_Core/Scene/Doorway3D/Doorway3DSpawnParams.h` | `FDoorway3DSpawnParams` |
 | 柵設定 | `AcsFramework_Core/Scene/Fence3D/Fence3DSpawnParams.h` | `FFence3DSpawnParams` |
 | 階段設定 | `AcsFramework_Core/Scene/Stairs3D/Stairs3DSpawnParams.h` | `FStairs3DSpawnParams` |
+| 3Dランプ設定 | `AcsFramework_Core/Scene/Light3D/Lamp3DParams.h` | `FLamp3DParams` |
+| 3Dランプ結果 | `AcsFramework_Core/Scene/Light3D/Lamp3DSpawnResult.h` | `FLamp3DSpawnResult` |
 | 衝突形状設定 | `AcsFramework_Core/Scene/Collision3D/CollisionShape3DParams.h` | `FCollisionShape3DParams` |
 | 衝突結果 | `AcsFramework_Core/Scene/Model3D/CollidableModel3DSpawnResult.h` | `FCollidableModel3DSpawnResult` |
 | 部屋結果 | `AcsFramework_Core/Scene/Room3D/Room3DSpawnResult.h` | `FRoom3DSpawnResult` |

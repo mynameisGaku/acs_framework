@@ -20,6 +20,7 @@
 #include "AcsFramework_Core/Scene/Fence3D/Fence3DSpawnResult.h"
 #include "AcsFramework_Core/Scene/Interaction3D/InteractionHighlight3DParams.h"
 #include "AcsFramework_Core/Scene/Interaction3D/InteractionFocus3D.h"
+#include "AcsFramework_Core/Scene/Light3D/Lamp3DSpawnResult.h"
 #include "AcsFramework_Core/Scene/Model3D/CollidableModel3DSpawnResult.h"
 #include "AcsFramework_Core/Scene/Light3D/StudioLightRig3DSpawnResult.h"
 #include "AcsFramework_Core/Scene/Pick3D/SceneRay.h"
@@ -42,6 +43,7 @@ struct FCorridor3DSpawnParams;
 struct FDoorway3DSpawnParams;
 struct FFence3DSpawnParams;
 struct FGround3DSpawnParams;
+struct FLamp3DParams;
 struct FLight3DSpawnParams;
 struct FModel3DSpawnParams;
 struct FRoom3DSpawnParams;
@@ -752,6 +754,35 @@ public:
 	 */
 	ANode* SpawnLight3D( const FLight3DSpawnParams& Params,
 		ANode* Parent = nullptr ) noexcept;
+
+	/**
+	 * 見える自己発光球と周囲を照らす点光源を、1個の3Dランプとして配置する。
+	 *
+	 * @details 発光球と点光源は位置と色を共有する。1個につきACSの点光源枠を1灯使用する。
+	 * @param Params 位置、半径、共有色、発光と照明の強さ、到達距離。
+	 * @param Parent この場面が所有する親。空ならroot直下。
+	 * @return 発光球と点光源を両方配置した結果。失敗時は空で、半端なノードを残さない。
+	 */
+	FLamp3DSpawnResult SpawnLamp3D( const FLamp3DParams& Params,
+		ANode* Parent = nullptr ) noexcept;
+
+	/**
+	 * 位置だけで暖色の見える3Dランプを配置する。
+	 *
+	 * @param Position 配置先親から見たランプ中心。
+	 * @param Parent この場面が所有する親。空ならroot直下。
+	 * @return 既定の発光球と点光源を配置した結果。入力または親が無効なら空。
+	 */
+	FLamp3DSpawnResult SpawnLamp3D( FVec3 Position,
+		ANode* Parent = nullptr ) noexcept;
+
+	/**
+	 * この場面へ一括配置した3Dランプを、発光球と点光源ごと破棄する。
+	 *
+	 * @param Spawned `SpawnLamp3D`の成功結果。成功時は空になる。
+	 * @return この場面の結果と確認し、残る2ノードを破棄予定へ移せたらtrue。
+	 */
+	bool DestroyLamp3D( FLamp3DSpawnResult& Spawned ) noexcept;
 
 	/**
 	 * 被写体の中心、見る方向、半径からキー、フィル、リムの3灯を一括配置する。
