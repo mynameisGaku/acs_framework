@@ -8,12 +8,29 @@
 SpawnLight3D( FLight3DSpawnParams::Sun( FVec3{ -0.47f, 0.58f, 0.66f } ) );
 
 SpawnLight3D( FLight3DSpawnParams::Point( FVec3{ 0.0f, 2.0f, 0.0f }, 8.0f ) );
+
+// 被写体中心、被写体からカメラへの方向、半径だけでキー・フィル・リムを置く
+FStudioLightRig3DSpawnResult Rig = SpawnStudioLightRig3D(
+    FVec3{ 0.0f, 1.0f, 0.0f }, FVec3{ 0.0f, 0.0f, -1.0f }, 1.2f );
+
+// 場面から外すときも3灯を1つの結果で片付ける
+DestroyStudioLightRig3D( Rig );
 ```
 
 `AUi3DScene`を使わない独自の場面グラフでは、低水準の`CLight3DSpawner::SpawnInto`を直接使える。
 配置後に時刻や演出で値を変える場合は`CLight3DSpawner::TryApplyTo`へ同じ
 `FLight3DSpawnParams`を渡す。光の部品が無いノードには部品を追加せず、入力不正時も変形と
 既存の光を変更しないため、内部の回転変換を外部から直接呼ぶ必要はない。
+
+`SpawnStudioLightRig3D`は、被写体を正面左上から照らす暖色のキー、陰側を持ち上げる寒色の
+フィル、背面から輪郭を分けるリムを全て点光源で置く。平行光を増やさないため、既定または
+`EnableTimeOfDay3D`の太陽が影と空を一貫して担当し続ける。ACSが同時描画する点光源4灯のうち
+3灯を使うので、同じ場面で追加する点光源は残り1灯を目安にする。
+
+より細かく調整する場合は`FStudioLightRig3DParams::AroundSubject`で作った値の色、強さ、
+到達距離倍率を変更する。無効な親や値、途中の生成失敗では3灯を半端に残さない。
+`CStudioLightRig3DSpawner`を直接使う場合も、生成結果を`Destroy`へ渡せば、別場面の光を
+巻き込まずにまとめて片付けられる。
 
 平行光の`DirectionToLight`は、光が進む向きではなく、面から光源へ向かう向きである。
 長さそのものは明るさに影響せず、配置時に正規化する。点光源は`Position`と`Range`を使う。

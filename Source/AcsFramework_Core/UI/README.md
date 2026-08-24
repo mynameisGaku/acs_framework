@@ -48,7 +48,8 @@ bloomや輪郭補正の影響を受けず、3D場面より手前、ポーズ・�
 `SpawnCorridor3D`は入口から出口までの床と側壁2枚、
 `SpawnDoorway3D`は開口を残す左右柱と上枠、
 `SpawnStairs3D`は共通底面から積み上がる隙間のない階段、
-`SpawnLight3D`は太陽または点光源、
+`SpawnLight3D`は太陽または点光源、`SpawnStudioLightRig3D`は被写体中心・見る方向・半径から
+既存の太陽を保つキー、フィル、リムの点光源3灯、
 `SpawnWater3D`は水面を扱う。パスを渡した場合だけ場面共通の
 asset窓口で読み、読込済みassetはそのまま使う。通常の衝突付き生成結果は
 `DestroyCollidableModel3D`へ渡すと、ノードと形状を対のまま片付けられる。
@@ -73,6 +74,8 @@ FDoorway3DSpawnResult Doorway = SpawnDoorway3D(
 FStairs3DSpawnResult Stairs = SpawnStairs3D(
     8u, 2.0f, 0.32f, 0.18f, FVec3{ -2.0f, 0.0f, -3.0f } );
 SpawnLight3D( FLight3DSpawnParams::Sun( FVec3{ -0.47f, 0.58f, 0.66f } ) );
+FStudioLightRig3DSpawnResult Rig = SpawnStudioLightRig3D(
+    FVec3{ 0.0f, 1.0f, 0.0f }, FVec3{ 0.0f, 0.0f, -1.0f }, 1.2f );
 
 ANode* const Vehicle = SpawnNode3D( FStringView( "Vehicle" ) );
 if ( Vehicle != nullptr ) SpawnModel3D(

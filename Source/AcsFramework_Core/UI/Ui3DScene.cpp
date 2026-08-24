@@ -14,6 +14,7 @@
 #include "AcsFramework_Core/Scene/Ground3D/Ground3DSpawner.h"
 #include "AcsFramework_Core/Scene/Interaction3D/InteractableModel3DSpawner.h"
 #include "AcsFramework_Core/Scene/Light3D/Light3DSpawner.h"
+#include "AcsFramework_Core/Scene/Light3D/StudioLightRig3DSpawner.h"
 #include "AcsFramework_Core/Scene/Model3D/Model3DSpawner.h"
 #include "AcsFramework_Core/Scene/Pick3D/ScenePicker.h"
 #include "AcsFramework_Core/Scene/Room3D/Room3DSpawner.h"
@@ -637,6 +638,30 @@ FCollidableModel3DSpawnResult AUi3DScene::SpawnCollidableAnimatedModel3D(
 ANode* AUi3DScene::SpawnLight3D( const FLight3DSpawnParams& Params, ANode* Parent ) noexcept
 {
 	return CLight3DSpawner::SpawnInto( Graph(), Params, Parent );
+}
+
+
+FStudioLightRig3DSpawnResult AUi3DScene::SpawnStudioLightRig3D(
+	const FStudioLightRig3DParams& Params, ANode* Parent ) noexcept
+{
+	return CStudioLightRig3DSpawner::SpawnInto( Graph(), Params, Parent );
+}
+
+
+FStudioLightRig3DSpawnResult AUi3DScene::SpawnStudioLightRig3D(
+	FVec3 SubjectCenter, FVec3 ViewDirectionToCamera,
+	f32 SubjectRadius, ANode* Parent ) noexcept
+{
+	return SpawnStudioLightRig3D(
+		FStudioLightRig3DParams::AroundSubject(
+			SubjectCenter, ViewDirectionToCamera, SubjectRadius ), Parent );
+}
+
+
+bool AUi3DScene::DestroyStudioLightRig3D(
+	FStudioLightRig3DSpawnResult& Spawned ) noexcept
+{
+	return CStudioLightRig3DSpawner::Destroy( Graph(), Spawned );
 }
 
 

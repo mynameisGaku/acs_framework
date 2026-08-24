@@ -42,6 +42,7 @@ ACS のモジュールは **438 個**ある。この枠組みが窓口を用意�
 | 3D 柵 | `AUi3DScene::SpawnFence3D`、最大間隔で並ぶ支柱と水平な横桟、失敗時巻き戻し・一括破棄 |
 | 3D 階段 | `AUi3DScene::SpawnStairs3D`、4方向の隙間のない段、失敗時巻き戻し・一括破棄 |
 | 3D 水面 | `AUi3DScene::SpawnWater3D`、`FWater3DSpawnParams`、ACSの動的波紋 |
+| 被写体用3点照明 | `AUi3DScene::SpawnStudioLightRig3D`、太陽を保つキー・フィル・リム、失敗時巻き戻し・一括破棄 |
 | 3D 天候・時刻 | `AWeather3DScene`、`FWeather3DAppearance`、ACSの`CWeatherSystem`と`CAmbientDirector` |
 | 3D エフェクト | `AEffect3DScene`、`CEffect3DPlayer`、同梱の Effekseer |
 | 3D 材質 | PBR、光沢コート、自己発光、トゥーン、布の毛羽反射、肌・蝋向け内部散乱 |
@@ -313,6 +314,9 @@ cameraからの距離に応じて大気へ馴染み、雲も実距離まで同�
 - ~~3D時刻による太陽・空・環境光の同期~~ → **実装済み** (2026-08-25)。
   `EnableTimeOfDay3D( 8.0f )`の1回でACSの24時間補間、専用太陽、物理大気、IBLを接続する。
   太陽軌道の方位と進行速度を場面ごとに変えられ、天候は現在時刻の空と環境光へ後から合成する
+- ~~被写体用3点照明の一括配置~~ → **実装済み** (2026-08-25)。
+  `SpawnStudioLightRig3D`へ中心、被写体からカメラへの方向、半径を渡すだけで、暖色キー、寒色
+  フィル、背面リムを配置する。3灯は点光源なので、既定または時刻連動の太陽と影を置き換えない
 - ~~シーン保存でノード名を残す~~ → **実装済み** (2026-08-22)。ACS v4のバイト列は変更せず、
   Framework形式でDFS先行順のUTF-8名前表を添える。旧Frameworkが保存したACS v2/v3/v4の
   生バイト列も判別して読み込めるため、既存セーブの後方互換性を保つ
@@ -367,6 +371,7 @@ cameraからの距離に応じて大気へ馴染み、雲も実距離まで同�
 | 3D の光 | ACS 側へ実装済み (`ALightComponent3D`) | 2026-08-17 |
 | 光を集める層 | ACS 側へ実装済み (`CLightCollector3D`) | 2026-08-17 |
 | 3D の光を置く窓口 | Framework側へ実装済み (`AUi3DScene::SpawnLight3D`) | 2026-08-23 |
+| 被写体用3点照明 | Framework側へ実装済み (`AUi3DScene::SpawnStudioLightRig3D`) | 2026-08-25 |
 | 追う ACS のブランチ | **`dev`** (main は ABI ガードが逆で使えない) | 2026-08-17 |
 | 配布物の作り方 | `.\Tools\UpdateAcsDist.ps1` で dev の worktree からビルドして配置 | 2026-08-17 |
 | 対応する配布物 | dev から生成したもの (`C:\acs_dev`)。世代差は `Source/Common/Compat/` が吸収 | 2026-08-17 |

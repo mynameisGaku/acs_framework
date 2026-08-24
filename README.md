@@ -49,7 +49,7 @@ WASDで移動、左Shiftで走行、矢印キーで視点、Spaceでジャンプ
 |---|---|
 | 3D を置く | `SpawnModel3D()` / `SpawnAnimatedModel3D()`と、それぞれの操作対象版・衝突版・操作＋衝突版、`SpawnBlock3D()`、`SpawnSphere3D()`、`SpawnRoom3D()`、`SpawnCorridor3D()`、`SpawnDoorway3D()`、`SpawnFence3D()`、`SpawnStairs3D()`、`DestroyCollidableModel3D()`、`SpawnNode3D()`、FBX の取り込み、材質 (metallic / roughness / HDR自己発光 / 布の毛羽反射 / 内部散乱) |
 | 3D画像を置く | `SpawnImage3D()`の固定板、`SpawnBillboard3D()`のカメラ追従板、透過PNG、深度判定、HDR合成 |
-| 3D を照らす | `SpawnLight3D()`、方向だけで置ける太陽、位置と距離だけで置ける点光源 |
+| 3D を照らす | `SpawnLight3D()`の太陽・点光源、`SpawnStudioLightRig3D()`の被写体用キー・フィル・リム |
 | 3D 地面 | `SpawnGround3D()`、広さだけで置ける表示面と直下の厚み付き衝突 |
 | 動かす | `SpawnThirdPersonCharacter3D()`でモデル生成・自己衝突・移動・向き・追従カメラを一括化。既存ノードには`BindThirdPersonCharacter3D()` |
 | 操作を変える | UIでキーボード、ゲームパッドのボタン・軸を選び、自動保存して次回起動時に復元 |
@@ -160,6 +160,10 @@ SpawnBillboard3D( Marker );
 
 // 面から太陽へ向かう方向だけで、影とPBRへ繋がる平行光を置く
 SpawnLight3D( FLight3DSpawnParams::Sun( FVec3{ -0.47f, 0.58f, 0.66f } ) );
+
+// 中心、カメラ方向、半径だけで、太陽を保ったまま被写体用の3点照明を置く
+FStudioLightRig3DSpawnResult StudioLights = SpawnStudioLightRig3D(
+    FVec3{ 0.0f, 1.0f, 0.0f }, FVec3{ 0.0f, 0.0f, -1.0f }, 1.2f );
 
 // 骨付きFBXを読み、自己衝突、移動、追従カメラ、4状態アニメーションへ1回で繋ぐ
 CThirdPersonCharacter3D HeroController;

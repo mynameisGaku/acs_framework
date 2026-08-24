@@ -19,6 +19,7 @@
 #include "AcsFramework_Core/Scene/Interaction3D/InteractionHighlight3DParams.h"
 #include "AcsFramework_Core/Scene/Interaction3D/InteractionFocus3D.h"
 #include "AcsFramework_Core/Scene/Model3D/CollidableModel3DSpawnResult.h"
+#include "AcsFramework_Core/Scene/Light3D/StudioLightRig3DSpawnResult.h"
 #include "AcsFramework_Core/Scene/Pick3D/SceneRay.h"
 #include "AcsFramework_Core/Scene/Pick3D/SceneRayHit.h"
 #include "AcsFramework_Core/Scene/Room3D/Room3DSpawnResult.h"
@@ -45,6 +46,7 @@ struct FSphere3DSpawnParams;
 struct FStairs3DSpawnParams;
 struct FSpatialPlayRequest;
 struct FSprite3DSpawnParams;
+struct FStudioLightRig3DParams;
 struct FWater3DSpawnParams;
 class CThirdPersonCharacter3D;
 
@@ -710,6 +712,41 @@ public:
 	 */
 	ANode* SpawnLight3D( const FLight3DSpawnParams& Params,
 		ANode* Parent = nullptr ) noexcept;
+
+	/**
+	 * 被写体の中心、見る方向、半径からキー、フィル、リムの3灯を一括配置する。
+	 *
+	 * @details 全て点光源として置くため、時刻連動または既定の太陽と影は置き換えない。
+	 * ACSが同時描画する点光源4灯のうち3灯を使用する。
+	 * @param Params 被写体中心、見る方向、半径と3灯の見た目。
+	 * @param Parent この場面が所有する親。空ならroot直下。
+	 * @return 3灯を全て配置した結果。失敗時は空で、半端な光を残さない。
+	 */
+	FStudioLightRig3DSpawnResult SpawnStudioLightRig3D(
+		const FStudioLightRig3DParams& Params,
+		ANode* Parent = nullptr ) noexcept;
+
+	/**
+	 * 被写体の中心、見る方向、半径だけで既定の3点照明を一括配置する。
+	 *
+	 * @param SubjectCenter 配置先親から見た被写体中心。
+	 * @param ViewDirectionToCamera 被写体からカメラへ向かう方向。
+	 * @param SubjectRadius 被写体を覆うおおよその半径。
+	 * @param Parent この場面が所有する親。空ならroot直下。
+	 * @return 3灯を全て配置した結果。入力または親が無効なら空。
+	 */
+	FStudioLightRig3DSpawnResult SpawnStudioLightRig3D(
+		FVec3 SubjectCenter, FVec3 ViewDirectionToCamera,
+		f32 SubjectRadius, ANode* Parent = nullptr ) noexcept;
+
+	/**
+	 * この場面へ一括配置した3点照明を全て破棄する。
+	 *
+	 * @param Spawned `SpawnStudioLightRig3D`の成功結果。成功時は空になる。
+	 * @return この場面の結果と確認し、残る3灯を破棄予定へ移せたらtrue。
+	 */
+	bool DestroyStudioLightRig3D(
+		FStudioLightRig3DSpawnResult& Spawned ) noexcept;
 
 	/**
 	 * 屈折、反射、泡、波紋へ接続済みの3D水面を1回で場面へ置く。
