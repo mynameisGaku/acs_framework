@@ -275,6 +275,15 @@ FCollidableModel3DSpawnResult AUi3DScene::SpawnGround3D( FVec2 Size,
 }
 
 
+bool AUi3DScene::TryUpdateGround3D(
+	const FCollidableModel3DSpawnResult& Ground,
+	const FGround3DSpawnParams& Params ) noexcept
+{
+	return CGround3DSpawner::TryApplyTo(
+		Graph(), m_Collision3D, Ground, Params );
+}
+
+
 FCollidableModel3DSpawnResult AUi3DScene::SpawnBlock3D(
 	const FBlock3DSpawnParams& Params, ANode* Parent ) noexcept
 {

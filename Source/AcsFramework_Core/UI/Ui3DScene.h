@@ -317,6 +317,17 @@ public:
 		ANode* Parent = nullptr ) noexcept;
 
 	/**
+	 * この場面へ配置した3D地面の表示と衝突を同じ指定へ同期更新する。
+	 *
+	 * @details 別場面の結果、破棄予定ノード、不正な新指定では何も変更しない。
+	 * @param Ground `SpawnGround3D`の成功結果。
+	 * @param Params 新しい上面位置、広さ、厚み、見た目、衝突レイヤー。
+	 * @return 表示と衝突を両方更新できた場合だけtrue。
+	 */
+	bool TryUpdateGround3D( const FCollidableModel3DSpawnResult& Ground,
+		const FGround3DSpawnParams& Params ) noexcept;
+
+	/**
 	 * 表示と箱型衝突の寸法を揃えた3D直方体を1回で置く。
 	 *
 	 * @param Params 中心位置、回転、全寸法、見た目、衝突レイヤー。

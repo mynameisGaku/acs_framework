@@ -47,10 +47,10 @@ WASDで移動、左Shiftで走行、矢印キーで視点、Spaceでジャンプ
 
 | | |
 |---|---|
-| 3D を置く | `SpawnModel3D()` / `SpawnAnimatedModel3D()`と、それぞれの操作対象版・衝突版・操作＋衝突版、`SpawnBlock3D()` / `TryUpdateBlock3D()`、`SpawnSphere3D()` / `TryUpdateSphere3D()`、`SpawnRoom3D()`、`SpawnCorridor3D()`、`SpawnBridge3D()`、`SpawnDoorway3D()`、`SpawnFence3D()`、`SpawnStairs3D()`、`SpawnStreetLamp3D()`、`DestroyCollidableModel3D()`、`SpawnNode3D()`、FBX の取り込み、材質 (metallic / roughness / HDR自己発光 / 布の毛羽反射 / 内部散乱) |
+| 3D を置く | `SpawnModel3D()` / `SpawnAnimatedModel3D()`と、それぞれの操作対象版・衝突版・操作＋衝突版、`SpawnGround3D()` / `TryUpdateGround3D()`、`SpawnBlock3D()` / `TryUpdateBlock3D()`、`SpawnSphere3D()` / `TryUpdateSphere3D()`、`SpawnRoom3D()`、`SpawnCorridor3D()`、`SpawnBridge3D()`、`SpawnDoorway3D()`、`SpawnFence3D()`、`SpawnStairs3D()`、`SpawnStreetLamp3D()`、`DestroyCollidableModel3D()`、`SpawnNode3D()`、FBX の取り込み、材質 (metallic / roughness / HDR自己発光 / 布の毛羽反射 / 内部散乱) |
 | 3D画像を置く | `SpawnImage3D()`の固定板、`SpawnBillboard3D()`のカメラ追従板、透過PNG、深度判定、HDR合成 |
 | 3D を照らす | `SpawnLight3D()`の太陽・点光源、`SpawnLamp3D()`の見える発光球＋点光源、`SpawnStreetLamp3D()` / `TryUpdateStreetLamp3D()`の衝突付き金属ポスト＋発光球＋点光源、`SpawnStudioLightRig3D()` / `TryUpdateStudioLightRig3D()`の被写体用キー・フィル・リム |
-| 3D 地面 | `SpawnGround3D()`、広さだけで置ける表示面と直下の厚み付き衝突 |
+| 3D 地面 | `SpawnGround3D()` / `TryUpdateGround3D()`、広さだけで置ける表示面と直下の厚み付き衝突、その同期更新 |
 | 動かす | `SpawnThirdPersonCharacter3D()`でモデル生成・自己衝突・移動・向き・追従カメラを一括化。既存ノードには`BindThirdPersonCharacter3D()` |
 | 操作を変える | UIでキーボード、ゲームパッドのボタン・軸を選び、自動保存して次回起動時に復元 |
 | カメラで追う | `CNodeOrbitCamera3D`、人物の注視点追従、回転・距離操作、遮蔽物回避 |
@@ -113,6 +113,12 @@ SpawnModel3D( Model );
 
 // 広さだけで、表示面とその直下1mの歩ける衝突を同時に置く
 FCollidableModel3DSpawnResult Ground = SpawnGround3D( FVec2{ 16.0f, 12.0f } );
+
+// 上面、広さ、厚みを変えても、表示と歩ける範囲を同じ形状番号のまま揃える
+FGround3DSpawnParams WiderGround = FGround3DSpawnParams::FromSize(
+    FVec2{ 24.0f, 16.0f }, FVec3{ 0.0f, -0.2f, 0.0f } );
+WiderGround.Thickness = 0.6f;
+TryUpdateGround3D( Ground, WiderGround );
 
 // 全寸法と中心位置だけで、表示と箱型衝突が揃った壁を置く
 FCollidableModel3DSpawnResult Wall = SpawnBlock3D(

@@ -14,7 +14,8 @@
 | 基底場面 | `AcsFramework_Core/UI/Ui3DScene.h` | `AUi3DScene` |
 | 見た目 | `AcsFramework_Core/UI/Ui3DScene.h` | `TryApplyVisualPreset3D` |
 | ノード | `AcsFramework_Core/UI/Ui3DScene.h` | `SpawnNode3D` |
-| 地面 | `AcsFramework_Core/UI/Ui3DScene.h` | `SpawnGround3D` |
+| 地面配置 | `AcsFramework_Core/UI/Ui3DScene.h` | `SpawnGround3D` |
+| 地面更新 | `AcsFramework_Core/UI/Ui3DScene.h` | `TryUpdateGround3D` |
 | 箱 | `AcsFramework_Core/UI/Ui3DScene.h` | `SpawnBlock3D`、`TryUpdateBlock3D` |
 | 球配置 | `AcsFramework_Core/UI/Ui3DScene.h` | `SpawnSphere3D` |
 | 球更新 | `AcsFramework_Core/UI/Ui3DScene.h` | `TryUpdateSphere3D` |

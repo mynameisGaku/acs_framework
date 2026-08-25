@@ -125,6 +125,182 @@ void RunGround3DSpawnerTests( CTestHarness& Harness )
 			"指定レイヤーで問い合わせ可能にする" );
 	}
 
+	Harness.BeginSuite( "CGround3DSpawner / 配置済み地面の表示と衝突を同期更新する" );
+
+	{
+		CSceneNodeGraph Graph;
+		CSceneCollision3D Collision{ Graph };
+		const FScene3DSpawnResult Parent = Graph.TrySpawn(
+			FStringView( "MovingGroundRoot" ) );
+		Harness.Check( Parent.Succeeded(), "更新確認用の親を作れる" );
+		if ( Parent.Node != nullptr )
+		{
+			Parent.Node->SetPosition( FVec3{ 10.0f, 1.0f, -5.0f } );
+			Parent.Node->SetScale( FVec3{ 2.0f, 3.0f, 4.0f } );
+		}
+
+		FGround3DSpawnParams Initial = FGround3DSpawnParams::FromSize(
+			FVec2{ 2.0f, 4.0f }, FVec3{ 1.0f, 2.0f, 3.0f } );
+		Initial.Thickness = 0.5f;
+		Initial.CollisionLayer = 0x2u;
+		const FCollidableModel3DSpawnResult Ground = CGround3DSpawner::SpawnInto(
+			Graph, Collision, Initial, Parent.Node );
+		const FCollisionShapeId3D OriginalShape = Ground.Shape;
+
+		FGround3DSpawnParams Updated = FGround3DSpawnParams::FromSize(
+			FVec2{ 6.0f, 4.0f }, FVec3{ -1.0f, 2.0f, 3.0f } );
+		Updated.Thickness = 0.75f;
+		Updated.Color = FVec4{ 0.15f, 0.30f, 0.70f, 1.0f };
+		Updated.Metallic = 0.65f;
+		Updated.Roughness = 0.22f;
+		Updated.bCastsShadow = true;
+		Updated.CollisionLayer = 0x8u;
+		Updated.Name = FStringView( "UpdatedGround" );
+
+		Harness.Check( CGround3DSpawner::TryApplyTo(
+			Graph, Collision, Ground, Updated ),
+			"有効な新指定を一括反映できる" );
+		Harness.Check( Ground.Shape == OriginalShape,
+			"更新しても世代付き衝突形状番号を保つ" );
+		Harness.CheckEqualU64( Collision.ShapeCount(), 1u,
+			"更新で衝突形状を作り直さない" );
+		if ( Ground.Node != nullptr )
+		{
+			Harness.Check( Ground.Node->Parent() == Parent.Node,
+				"更新後も元の親へ繋がる" );
+			Harness.Check( Ground.Node->Name() == FStringView( "UpdatedGround" ),
+				"新しい名前を反映する" );
+			Harness.CheckEqualF32( Ground.Node->Local().position.x, -1.0f,
+				"新しい上面中心Xを反映する" );
+			Harness.CheckEqualF32( Ground.Node->Local().position.y, 2.0f,
+				"新しい上面中心Yを反映する" );
+			Harness.CheckEqualF32( Ground.Node->Local().position.z, 3.0f,
+				"新しい上面中心Zを反映する" );
+			Harness.CheckEqualF32( Ground.Node->Local().scale.x, 6.0f,
+				"新しいX全幅を反映する" );
+			Harness.CheckEqualF32( Ground.Node->Local().scale.y, 0.75f,
+				"新しい厚みを反映する" );
+			Harness.CheckEqualF32( Ground.Node->Local().scale.z, 4.0f,
+				"新しいZ全幅を反映する" );
+		}
+
+		const AMeshComponent3D* const Mesh = GroundMeshOf( Ground );
+		Harness.Check( Mesh != nullptr
+			&& Mesh->Primitive() == EMeshPrimitive3D::Plane,
+			"更新後も平面表示を使う" );
+		if ( Mesh != nullptr )
+		{
+			Harness.CheckEqualF32( Mesh->Color().z, 0.70f,
+				"新しい表面色を反映する" );
+			Harness.CheckEqualF32( Mesh->Material().pbr.metallic, 0.65f,
+				"新しい金属度を反映する" );
+			Harness.CheckEqualF32( Mesh->Material().pbr.roughness, 0.22f,
+				"新しい粗さを反映する" );
+			Harness.Check( Mesh->CastsShadow(), "新しい影設定を反映する" );
+		}
+
+		FWorldCollisionShape3D WorldShape;
+		Harness.Check( Collision.TryGetWorldShape( Ground.Shape, WorldShape ),
+			"更新後のworld衝突を読める" );
+		Harness.CheckNearF32( WorldShape.Box.center.x, 8.0f, 0.001f,
+			"親変形込みの上面中心Xを反映する" );
+		Harness.CheckNearF32( WorldShape.Box.center.y, 5.875f, 0.001f,
+			"親変形込みで上面直下へ衝突中心を置く" );
+		Harness.CheckNearF32( WorldShape.Box.center.z, 7.0f, 0.001f,
+			"親変形込みの上面中心Zを反映する" );
+		Harness.CheckNearF32( WorldShape.Box.half_size.x, 6.0f, 0.001f,
+			"親尺度込みの新しいX半幅を反映する" );
+		Harness.CheckNearF32( WorldShape.Box.half_size.y, 1.125f, 0.001f,
+			"親尺度込みの新しいY半幅を反映する" );
+		Harness.CheckNearF32( WorldShape.Box.half_size.z, 8.0f, 0.001f,
+			"親尺度込みの新しいZ半幅を反映する" );
+		Harness.Check( WorldShape.Layer == 0x8u && WorldShape.bQueryable,
+			"新しい衝突レイヤーを反映する" );
+	}
+
+	Harness.BeginSuite( "CGround3DSpawner / 更新失敗時は表示と衝突を変えない" );
+
+	{
+		CSceneNodeGraph Graph;
+		CSceneCollision3D Collision{ Graph };
+		FGround3DSpawnParams Initial = FGround3DSpawnParams::FromSize(
+			FVec2{ 2.0f, 4.0f }, FVec3{ 1.0f, 2.0f, 3.0f } );
+		Initial.Thickness = 0.5f;
+		Initial.Color = FVec4{ 0.25f, 0.35f, 0.45f, 1.0f };
+		Initial.CollisionLayer = 0x2u;
+		Initial.Name = FStringView( "BeforeUpdate" );
+		const FCollidableModel3DSpawnResult Ground = CGround3DSpawner::SpawnInto(
+			Graph, Collision, Initial );
+
+		FGround3DSpawnParams Updated = FGround3DSpawnParams::FromSize(
+			FVec2{ 8.0f, 6.0f }, FVec3{ 9.0f, 8.0f, 7.0f } );
+		Updated.Thickness = 1.5f;
+		Updated.Color = FVec4{ 0.9f, 0.1f, 0.2f, 1.0f };
+		Updated.CollisionLayer = 0x10u;
+		Updated.Name = FStringView( "AfterUpdate" );
+
+		FGround3DSpawnParams Invalid = Updated;
+		Invalid.Size.x = 0.0f;
+		Harness.Check( !CGround3DSpawner::TryApplyTo(
+			Graph, Collision, Ground, Invalid ),
+			"不正な新指定を拒否する" );
+		Harness.CheckEqualF32( Ground.Node->Local().position.x, 1.0f,
+			"不正値では位置を変えない" );
+		Harness.CheckEqualF32( Ground.Node->Local().scale.y, 0.5f,
+			"不正値では厚みを変えない" );
+		Harness.Check( Ground.Node->Name() == FStringView( "BeforeUpdate" ),
+			"不正値では名前を変えない" );
+		Harness.CheckEqualF32( GroundMeshOf( Ground )->Color().x, 0.25f,
+			"不正値では表面色を変えない" );
+
+		CSceneNodeGraph OtherGraph;
+		CSceneCollision3D OtherCollision{ OtherGraph };
+		Harness.Check( !CGround3DSpawner::TryApplyTo(
+			OtherGraph, OtherCollision, Ground, Updated ),
+			"別場面からの更新を拒否する" );
+		Harness.CheckEqualF32( Ground.Node->Local().position.x, 1.0f,
+			"別場面では位置を変えない" );
+
+		const FCollidableModel3DSpawnResult OtherGround =
+			CGround3DSpawner::SpawnInto( Graph, Collision,
+				FGround3DSpawnParams::FromSize(
+					FVec2{ 1.0f, 1.0f }, FVec3{ -4.0f, 0.0f, 0.0f } ) );
+		const FCollidableModel3DSpawnResult Forged{
+			Ground.Node, OtherGround.Shape };
+		Harness.Check( !CGround3DSpawner::TryApplyTo(
+			Graph, Collision, Forged, Updated ),
+			"別ノードの形状番号を組み合わせた結果を拒否する" );
+		Harness.CheckEqualF32( Ground.Node->Local().position.x, 1.0f,
+			"形状対応不一致では位置を変えない" );
+
+		FWorldCollisionShape3D WorldShape;
+		Harness.Check( Collision.TryGetWorldShape( Ground.Shape, WorldShape ),
+			"失敗後も元のworld衝突を読める" );
+		Harness.Check( WorldShape.Layer == 0x2u,
+			"全失敗後も元の衝突レイヤーを保つ" );
+		Harness.CheckNearF32( WorldShape.Box.center.x, 1.0f, 0.001f,
+			"全失敗後も元の衝突中心Xを保つ" );
+		Harness.CheckNearF32( WorldShape.Box.center.y, 1.75f, 0.001f,
+			"全失敗後も元の衝突中心Yを保つ" );
+		Harness.CheckNearF32( WorldShape.Box.half_size.x, 1.0f, 0.001f,
+			"全失敗後も元のX半幅を保つ" );
+		Harness.CheckNearF32( WorldShape.Box.half_size.y, 0.25f, 0.001f,
+			"全失敗後も元のY半幅を保つ" );
+		Harness.CheckNearF32( WorldShape.Box.half_size.z, 2.0f, 0.001f,
+			"全失敗後も元のZ半幅を保つ" );
+
+		Harness.Check( Graph.Destroy( Graph.IdOf( Ground.Node ) ),
+			"破棄予定の更新検証を準備できる" );
+		Harness.Check( !CGround3DSpawner::TryApplyTo(
+			Graph, Collision, Ground, Updated ),
+			"破棄予定ノードの更新を拒否する" );
+		Harness.CheckEqualF32( Ground.Node->Local().position.x, 1.0f,
+			"破棄予定でも位置を変えない" );
+		Harness.Check( !CGround3DSpawner::TryApplyTo(
+			Graph, Collision, FCollidableModel3DSpawnResult{}, Updated ),
+			"空の生成結果を拒否する" );
+	}
+
 	Harness.BeginSuite( "CGround3DSpawner / 失敗時に半端な地面を残さない" );
 
 	{

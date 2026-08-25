@@ -52,7 +52,8 @@ Subsystemにはしない。`AEffect3DScene`がscene単位で`CEffect3DPlayer`を
 
 3D地面も局所的な生成処理なのでSubsystemにはしない。`FGround3DSpawnParams`は上面位置、広さ、
 厚み、材質、衝突レイヤーを検証し、`CGround3DSpawner`は既存のモデル生成と場面衝突登録だけを
-組み合わせる。表示面と直下の箱は同じノード尺度を使い、後段失敗時は生成ノードも巻き戻す。
+組み合わせる。表示面と直下の箱は同じノード尺度を使い、`TryApplyTo`は所有と形状対応を先に検証し、
+形状番号を保って表示、広さ、厚み、レイヤーを同期更新する。後段失敗時は生成ノードも巻き戻す。
 
 3D直方体も局所的な生成処理なのでSubsystemにはしない。`FBlock3DSpawnParams`は中心位置、回転、
 XYZ全寸法、材質、衝突レイヤーを検証し、`CBlock3DSpawner`は既存の立方体生成と明示箱登録だけを

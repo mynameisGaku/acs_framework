@@ -33,7 +33,7 @@ ACS のモジュールは **438 個**ある。この枠組みが窓口を用意�
 | 入力の割り当て | `CActionBindingTable`、`FActionKeyRebindState`、`CBoundActionSource` |
 | 画面・フェード・ロード中・ポーズ | `CScreenSubsystem`、`CFadeSubsystem`、`CLoadingScreenSubsystem`、`CPauseScreenSubsystem` |
 | ノード生成・シーン保存 | `CPrefabSubsystem`、`CSceneSnapshotSubsystem` |
-| 3D 地面 | `AUi3DScene::SpawnGround3D`、`FGround3DSpawnParams`、厚み付き箱衝突 |
+| 3D 地面 | `AUi3DScene::SpawnGround3D` / `TryUpdateGround3D`、`FGround3DSpawnParams`、厚み付き箱衝突 |
 | 3D 直方体 | `AUi3DScene::SpawnBlock3D` / `TryUpdateBlock3D`、`FBlock3DSpawnParams`、表示と同寸法の箱衝突 |
 | 3D 球 | `AUi3DScene::SpawnSphere3D` / `TryUpdateSphere3D`、`FSphere3DSpawnParams`、表示と同半径の球衝突 |
 | 3D 部屋 | `AUi3DScene::SpawnRoom3D`、床と四方の壁、5組の失敗時巻き戻し・一括破棄 |
@@ -284,10 +284,11 @@ cameraからの距離に応じて大気へ馴染み、雲も実距離まで同�
   `AUi3DScene::SpawnWater3D`へ位置と広さを
   渡すだけで、ACSの屈折、反射、泡、波紋を使う識別子付き水面を置ける。高度な描画実装を
   複製せず、値の検証とシーンへの接続だけをFrameworkが受け持つ
-- ~~歩ける3D地面の簡単配置~~ → **実装済み** (2026-08-23)。
+- ~~歩ける3D地面の簡単配置~~ → **実装済み** (2026-08-23、同期更新は2026-08-25)。
   `SpawnGround3D( FVec2{ 16.0f, 12.0f } )`だけで、同じ尺度の表示面と直下の厚み付き箱衝突を置く。
-  上面位置、厚み、PBR材質、衝突レイヤーを`FGround3DSpawnParams`で調整でき、登録失敗時は
-  生成ノードも巻き戻す
+  上面位置、厚み、PBR材質、衝突レイヤーを`FGround3DSpawnParams`で調整でき、
+  `TryUpdateGround3D`は形状番号を作り直さず表示、広さ、厚み、衝突レイヤーを同期更新する。
+  登録失敗時は生成ノードも巻き戻す
 - ~~壁・足場・箱型障害物の簡単配置~~ → **実装済み** (2026-08-24)。
   `SpawnBlock3D( Size, CenterPosition )`だけで、同じローカル全寸法の立方体表示と箱型衝突を置く。
   回転、PBR材質、衝突レイヤーを`FBlock3DSpawnParams`で調整でき、`TryUpdateBlock3D`は形状番号を

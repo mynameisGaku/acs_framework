@@ -30,4 +30,31 @@ public:
 	static FCollidableModel3DSpawnResult SpawnInto( CSceneNodeGraph& Graph,
 		CSceneCollision3D& Collision, const FGround3DSpawnParams& Params,
 		ANode* Parent = nullptr ) noexcept;
+
+	/**
+	 * 配置済み地面の表示、変形、衝突レイヤーを同じ指定へ同期更新する。
+	 *
+	 * @details 場面所有、形状との対応、表示部品、新指定を先に全て確認する。失敗時は
+	 * ノード、表示部品、衝突レイヤーをどれも変更しない。
+	 * @param Graph 生成時に使った場面グラフ。
+	 * @param Collision 生成時に使った場面衝突集合。
+	 * @param Ground `SpawnInto`の成功結果。
+	 * @param Params 新しい上面位置、広さ、厚み、見た目、衝突レイヤー。
+	 * @return 表示と衝突へ新指定を全て反映できた場合だけtrue。
+	 */
+	static bool TryApplyTo( CSceneNodeGraph& Graph,
+		CSceneCollision3D& Collision,
+		const FCollidableModel3DSpawnResult& Ground,
+		const FGround3DSpawnParams& Params ) noexcept;
+
+private:
+	/** 現在の場面で生存する地面と衝突形状が、更新可能な組ならtrue。 */
+	static bool CanApply_Internal( CSceneNodeGraph& Graph,
+		CSceneCollision3D& Collision,
+		const FCollidableModel3DSpawnResult& Ground ) noexcept;
+
+	/** 検証済みの地面指定を既存ノードと平面表示へ反映する。 */
+	static void ApplyToNode_Internal( ANode& Node,
+		AMeshComponent3D& Mesh,
+		const FGround3DSpawnParams& Params ) noexcept;
 };

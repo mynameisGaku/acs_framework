@@ -42,7 +42,7 @@ bloomや輪郭補正の影響を受けず、3D場面より手前、ポーズ・�
 `SpawnCollidableAnimatedModel3D`は骨付きモデルと衝突、
 `SpawnInteractableCollidableAnimatedModel3D`は骨付きモデルと衝突と視線操作、
 `SpawnThirdPersonCharacter3D`は静的または骨付きモデルと自己衝突、移動、追従カメラ、任意アニメーション、
-`SpawnGround3D`は表示面と直下の厚み付き箱、`SpawnBlock3D` / `TryUpdateBlock3D`は
+`SpawnGround3D` / `TryUpdateGround3D`は表示面と直下の厚み付き箱の配置・同期更新、`SpawnBlock3D` / `TryUpdateBlock3D`は
 同寸法の立方体表示と箱型衝突の配置・同期更新、
 `SpawnSphere3D` / `TryUpdateSphere3D`は同半径の球表示と球型衝突の配置・同期更新、
 `SpawnRoom3D`は歩ける床と四方の壁、
@@ -68,7 +68,10 @@ SpawnInteractableCollidableModel3D(
     FStringView( "E: OPEN" ), FCollisionShape3DParams::FromBounds( 0x2u ) );
 SpawnImage3D( FSprite3DSpawnParams::FromImage(
     FStringView( "Textures/Sign.png" ), FVec3{ 0.0f, 2.0f, 3.0f }, FVec2{ 1.2f, 0.6f } ) );
-SpawnGround3D( FVec2{ 16.0f, 12.0f } );
+FCollidableModel3DSpawnResult Ground = SpawnGround3D( FVec2{ 16.0f, 12.0f } );
+FGround3DSpawnParams WiderGround = FGround3DSpawnParams::FromSize(
+    FVec2{ 24.0f, 16.0f }, FVec3{ 0.0f, -0.2f, 0.0f } );
+TryUpdateGround3D( Ground, WiderGround );
 SpawnBlock3D( FVec3{ 4.0f, 2.0f, 0.5f }, FVec3{ 0.0f, 1.0f, 4.0f } );
 FCollidableModel3DSpawnResult Ball = SpawnSphere3D( 0.8f, FVec3{ 2.0f, 0.8f, 2.0f } );
 FSphere3DSpawnParams MovedBall = FSphere3DSpawnParams::FromRadius(
@@ -196,6 +199,9 @@ world軸平行箱を既存デバッグ線へ一括登録する。線は次の透
 `SpawnCollidableModel3D`はモデル生成とこの衝突登録を一括で行い、ノードと形状番号を返す。
 描画境界、明示箱、明示球を選べ、登録できなければ生成ノードも破棄予定へ戻す。厚さのない
 `Plane`を床にする場合は`FCollisionShape3DParams::FromBox`で歩ける厚みを明示する。
+歩ける地面は`SpawnGround3D`へ広さと上面位置を渡すと、表示面とその直下の箱型衝突を一括生成できる。
+配置後は`TryUpdateGround3D`へ同じ生成結果と新指定を渡すと、形状番号を保ったまま上面、広さ、厚み、
+見た目、衝突レイヤーを揃える。
 素材を使わない壁、足場、箱型障害物は`SpawnBlock3D`へ全寸法と中心位置を渡すと、表示と衝突の
 寸法を別々に書かずに済む。既定外の色、向き、材質は`FBlock3DSpawnParams`で変更する。
 配置後は`TryUpdateBlock3D`へ同じ生成結果と新指定を渡すと、形状番号を保ったまま表示と衝突を揃える。
