@@ -46,7 +46,7 @@ bloomや輪郭補正の影響を受けず、3D場面より手前、ポーズ・�
 同寸法の立方体表示と箱型衝突の配置・同期更新、
 `SpawnSphere3D` / `TryUpdateSphere3D`は同半径の球表示と球型衝突の配置・同期更新、
 `SpawnRoom3D` / `TryUpdateRoom3D`は歩ける床と四方の壁の配置・同期更新、
-`SpawnCorridor3D`は入口から出口までの床と側壁2枚、
+`SpawnCorridor3D` / `TryUpdateCorridor3D`は入口から出口までの床と側壁2枚の配置・同期更新、
 `SpawnBridge3D`は床板と両側柵、
 `SpawnDoorway3D` / `TryUpdateDoorway3D`は開口を残す左右柱と上枠の配置・同期更新、
 `SpawnStairs3D`は共通底面から積み上がる隙間のない階段、
@@ -83,6 +83,10 @@ FRoom3DSpawnParams WiderRoom = FRoom3DSpawnParams::FromInnerSize(
 TryUpdateRoom3D( Room, WiderRoom );
 FCorridor3DSpawnResult Corridor = SpawnCorridor3D(
     3.0f, 10.0f, 3.0f, FVec3{ 0.0f, 0.0f, 4.0f } );
+FCorridor3DSpawnParams TurnedCorridor = FCorridor3DSpawnParams::FromDimensions(
+    4.0f, 14.0f, 3.5f, FVec3{ 2.0f, 0.0f, 8.0f },
+    ECorridor3DDirection::NegativeX );
+TryUpdateCorridor3D( Corridor, TurnedCorridor );
 FBridge3DSpawnResult Bridge = SpawnBridge3D(
     3.0f, 10.0f, 1.15f, FVec3{ 0.0f, 1.0f, -5.0f } );
 FDoorway3DSpawnResult Doorway = SpawnDoorway3D(
@@ -220,8 +224,9 @@ world軸平行箱を既存デバッグ線へ一括登録する。線は次の透
 見た目、衝突レイヤーを同期更新する。途中失敗は既生成分まで巻き戻し、`DestroyRoom3D`は全5組を
 検証してから片付ける。
 両端が開いた通路は`SpawnCorridor3D`へ内幅、長さ、壁高を渡すと、入口から出口まで続く床と側壁2枚を
-XZの正負4方向へ置ける。床は壁外面まで覆い、`DestroyCorridor3D`は全3組の所有関係と重複を検証して
-から片付ける。
+XZの正負4方向へ置ける。床は壁外面まで覆い、`TryUpdateCorridor3D`は形状番号を保ったまま入口、方向、
+寸法、見た目、衝突レイヤーを同期更新する。`DestroyCorridor3D`は全3組の所有関係と重複を検証してから
+片付ける。
 両側柵付きの橋は`SpawnBridge3D`へ床板幅、長さ、柵高を渡すと、歩ける床板と両側の支柱・横桟を
 XZの正負4方向へ置ける。始終端の支柱は床板端から半幅内側へ収まり、支柱数は最大間隔から自動で決まる。
 `DestroyBridge3D`は床板と両側柵の全所有関係と重複を検証してから片付ける。

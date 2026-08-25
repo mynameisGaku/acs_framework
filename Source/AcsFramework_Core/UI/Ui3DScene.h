@@ -463,6 +463,17 @@ public:
 		ANode* Parent = nullptr ) noexcept;
 
 	/**
+	 * この場面へ配置した床と側壁2枚を、新しい通路指定へ同期更新する。
+	 *
+	 * @details 別場面の結果、重複、共通親を失った構成、破棄予定、不正値では何も変更しない。
+	 * @param Corridor `SpawnCorridor3D`の成功結果。
+	 * @param Params 新しい入口、方向、寸法、見た目、名前、衝突レイヤー。
+	 * @return 3部分の表示、変形、名前、衝突レイヤーを全て更新できた場合だけtrue。
+	 */
+	bool TryUpdateCorridor3D( const FCorridor3DSpawnResult& Corridor,
+		const FCorridor3DSpawnParams& Params ) noexcept;
+
+	/**
 	 * 一括生成した3D通路を、床と側壁2枚のノード・形状ごと破棄する。
 	 *
 	 * @details 全3組がこの場面で重複なく対になっていない場合は何も変更しない。

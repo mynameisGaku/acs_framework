@@ -8,7 +8,10 @@
 using namespace acs;
 using namespace acs::game;
 
-/** 既存の3D地面と直方体を、失敗時巻き戻し付きの両端が開いた通路として配置する係。 */
+struct FBlock3DSpawnParams;
+struct FGround3DSpawnParams;
+
+/** 既存の3D地面と直方体を、両端が開いた通路として配置・更新・破棄する係。 */
 class CCorridor3DSpawner
 {
 public:
@@ -27,6 +30,22 @@ public:
 		ANode* Parent = nullptr ) noexcept;
 
 	/**
+	 * 配置済み通路の床と側壁2枚を、新しい入口、方向、寸法、見た目、衝突へ同期更新する。
+	 *
+	 * @details 3組の場面所有、重複、共通親、祖先、表示部品と全派生指定を先に確認する。
+	 * 単一スレッドで場面を更新する契約では、失敗時にどの部分も変更しない。
+	 * @param Graph 生成時に使った場面グラフ。
+	 * @param Collision 生成時に使った衝突集合。
+	 * @param Corridor `SpawnInto`の成功結果。
+	 * @param Params 新しい入口、方向、寸法、見た目、名前、衝突レイヤー。
+	 * @return 既存の3ノードと3形状を保ったまま全指定を反映できた場合だけtrue。
+	 */
+	static bool TryApplyTo( CSceneNodeGraph& Graph,
+		CSceneCollision3D& Collision,
+		const FCorridor3DSpawnResult& Corridor,
+		const FCorridor3DSpawnParams& Params ) noexcept;
+
+	/**
 	 * 一括生成した床と側壁2枚を、ノードと形状を残さず破棄する。
 	 *
 	 * @details 全3組が同じ場面で重複なく対になっていることを先に確認し、不完全な結果では何も変更しない。
@@ -41,6 +60,20 @@ public:
 private:
 	/** 通路を構成する床1個と側壁2個の合計数。 */
 	static constexpr usize kPartCount = 3u;
+
+	/** 通路指定から床、負側壁、正側壁の検証済み個別指定を作る。 */
+	static bool TryBuildParts_Internal( const FCorridor3DSpawnParams& Params,
+		FGround3DSpawnParams& OutFloor,
+		FBlock3DSpawnParams& OutNegativeSideWall,
+		FBlock3DSpawnParams& OutPositiveSideWall ) noexcept;
+
+	/** 全3組が更新に必要な所有、親、祖先、表示部品を持つならtrue。 */
+	static bool CanApply_Internal( CSceneNodeGraph& Graph,
+		CSceneCollision3D& Collision,
+		const FCorridor3DSpawnResult& Corridor ) noexcept;
+
+	/** ノード自身と全祖先が破棄予定でなければtrue。 */
+	static bool IsNodeAlive_Internal( const ANode& Node ) noexcept;
 
 	/** 通路の一部が指定場面で対になったノードと形状か返す。 */
 	static bool IsOwnedPart_Internal( CSceneNodeGraph& Graph,

@@ -376,6 +376,15 @@ FCorridor3DSpawnResult AUi3DScene::SpawnCorridor3D( f32 InnerWidth,
 }
 
 
+bool AUi3DScene::TryUpdateCorridor3D(
+	const FCorridor3DSpawnResult& Corridor,
+	const FCorridor3DSpawnParams& Params ) noexcept
+{
+	return CCorridor3DSpawner::TryApplyTo(
+		Graph(), m_Collision3D, Corridor, Params );
+}
+
+
 bool AUi3DScene::DestroyCorridor3D( FCorridor3DSpawnResult& Corridor ) noexcept
 {
 	return CCorridor3DSpawner::Destroy( Graph(), m_Collision3D, Corridor );

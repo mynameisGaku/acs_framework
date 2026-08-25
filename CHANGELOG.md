@@ -13,7 +13,7 @@ ACS Frameworkの利用側から見える追加、変更、修正を記録する�
 - 表示用球と球型衝突を同じ半径で置き、形状番号を保ったまま同期更新する`SpawnSphere3D` / `TryUpdateSphere3D`
 - 歩ける床と四方の壁を途中失敗時の巻き戻し込みで置き、5形状の番号を保ったまま同期更新する`SpawnRoom3D` / `TryUpdateRoom3D`
 - 段数と1段の寸法から、隙間のない衝突付き階段を4方向へ置く`SpawnStairs3D`
-- 入口、内幅、長さから、床と側壁2枚を持つ両端が開いた通路を4方向へ置く`SpawnCorridor3D`
+- 入口、内幅、長さから、床と側壁2枚を持つ両端が開いた通路を4方向へ配置・同期更新する`SpawnCorridor3D` / `TryUpdateCorridor3D`
 - 幅、長さ、柵高から、床板と両側柵を持つ衝突付き橋を4方向へ置く`SpawnBridge3D`
 - 壁と開口の寸法から、見えない衝突を残さない左右柱と上枠を配置・同期更新する`SpawnDoorway3D` / `TryUpdateDoorway3D`
 - 長さ、高さ、最大支柱間隔から、両端支柱と水平な横桟を4方向へ置く`SpawnFence3D`

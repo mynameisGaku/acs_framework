@@ -27,6 +27,141 @@ namespace
 			&& !Corridor.PositiveSideWall.Node->IsPendingDestroy();
 	}
 
+	/** 通路部品の表示Meshを返す。 */
+	AMeshComponent3D* MeshOf_Internal(
+		const FCollidableModel3DSpawnResult& Part ) noexcept
+	{
+		return Part.Node != nullptr
+			? Part.Node->GetComponent<AMeshComponent3D>() : nullptr;
+	}
+
+	/** 3成分を許容誤差付きで確認する。 */
+	void CheckVector_Internal( CTestHarness& Harness,
+		FVec3 Actual, FVec3 Expected, const char* Message )
+	{
+		Harness.CheckNearF32( Actual.x, Expected.x, 0.001f, Message );
+		Harness.CheckNearF32( Actual.y, Expected.y, 0.001f, Message );
+		Harness.CheckNearF32( Actual.z, Expected.z, 0.001f, Message );
+	}
+
+	/** 更新成功と失敗の基準にする初期通路指定を作る。 */
+	FCorridor3DSpawnParams MakeInitialUpdateParams_Internal() noexcept
+	{
+		FCorridor3DSpawnParams Params = FCorridor3DSpawnParams::FromDimensions(
+			2.0f, 4.0f, 2.0f, FVec3{ 1.0f, 0.0f, 2.0f },
+			ECorridor3DDirection::PositiveZ );
+		Params.FloorColor = FVec4{ 0.20f, 0.30f, 0.40f, 1.0f };
+		Params.WallColor = FVec4{ 0.50f, 0.60f, 0.70f, 1.0f };
+		Params.FloorMetallic = 0.10f;
+		Params.FloorRoughness = 0.80f;
+		Params.WallMetallic = 0.20f;
+		Params.WallRoughness = 0.60f;
+		Params.CollisionLayer = 0x2u;
+		Params.FloorName = FStringView( "BeforeCorridorFloor" );
+		Params.NegativeWallName = FStringView( "BeforeCorridorNegativeWall" );
+		Params.PositiveWallName = FStringView( "BeforeCorridorPositiveWall" );
+		return Params;
+	}
+
+	/** X負方向へ向きを変える更新後の通路指定を作る。 */
+	FCorridor3DSpawnParams MakeUpdatedParams_Internal() noexcept
+	{
+		FCorridor3DSpawnParams Params = FCorridor3DSpawnParams::FromDimensions(
+			4.0f, 6.0f, 2.0f, FVec3{ 2.0f, 3.0f, 4.0f },
+			ECorridor3DDirection::NegativeX );
+		Params.WallThickness = 0.5f;
+		Params.FloorThickness = 0.4f;
+		Params.FloorColor = FVec4{ 0.10f, 0.25f, 0.75f, 1.0f };
+		Params.WallColor = FVec4{ 0.80f, 0.45f, 0.20f, 1.0f };
+		Params.FloorMetallic = 0.60f;
+		Params.FloorRoughness = 0.20f;
+		Params.WallMetallic = 0.30f;
+		Params.WallRoughness = 0.55f;
+		Params.bFloorCastsShadow = true;
+		Params.bWallsCastShadow = false;
+		Params.CollisionLayer = 0x40u;
+		Params.FloorName = FStringView( "AfterCorridorFloor" );
+		Params.NegativeWallName = FStringView( "AfterCorridorNegativeWall" );
+		Params.PositiveWallName = FStringView( "AfterCorridorPositiveWall" );
+		return Params;
+	}
+
+	/** 失敗した更新が初期通路の表示と衝突を部分変更していないか調べる。 */
+	void CheckInitialUpdateState_Internal( CTestHarness& Harness,
+		CSceneCollision3D& Collision,
+		const FCorridor3DSpawnResult& Corridor,
+		bool bPositiveMeshExpected = true )
+	{
+		if ( !Corridor )
+		{
+			Harness.Check( false, "失敗後の状態確認に有効な通路がある" );
+			return;
+		}
+
+		CheckVector_Internal( Harness, Corridor.Floor.Node->Local().position,
+			FVec3{ 1.0f, 0.0f, 4.0f }, "失敗時は床位置を変えない" );
+		CheckVector_Internal( Harness, Corridor.Floor.Node->Local().scale,
+			FVec3{ 2.5f, 0.5f, 4.0f }, "失敗時は床寸法を変えない" );
+		CheckVector_Internal( Harness,
+			Corridor.NegativeSideWall.Node->Local().position,
+			FVec3{ -0.125f, 1.0f, 4.0f }, "失敗時は負側壁位置を変えない" );
+		CheckVector_Internal( Harness,
+			Corridor.PositiveSideWall.Node->Local().position,
+			FVec3{ 2.125f, 1.0f, 4.0f }, "失敗時は正側壁位置を変えない" );
+		CheckVector_Internal( Harness,
+			Corridor.NegativeSideWall.Node->Local().scale,
+			FVec3{ 0.25f, 2.0f, 4.0f }, "失敗時は側壁寸法を変えない" );
+		Harness.Check( Corridor.Floor.Node->Name()
+			== FStringView( "BeforeCorridorFloor" )
+			&& Corridor.NegativeSideWall.Node->Name()
+			== FStringView( "BeforeCorridorNegativeWall" )
+			&& Corridor.PositiveSideWall.Node->Name()
+			== FStringView( "BeforeCorridorPositiveWall" ),
+			"失敗時は3部品の名前を変えない" );
+
+		AMeshComponent3D* const FloorMesh = MeshOf_Internal( Corridor.Floor );
+		AMeshComponent3D* const NegativeMesh = MeshOf_Internal(
+			Corridor.NegativeSideWall );
+		AMeshComponent3D* const PositiveMesh = MeshOf_Internal(
+			Corridor.PositiveSideWall );
+		Harness.Check( FloorMesh != nullptr && NegativeMesh != nullptr,
+			"失敗後も床と負側壁の表示部品を保つ" );
+		Harness.Check( bPositiveMeshExpected
+			? PositiveMesh != nullptr : PositiveMesh == nullptr,
+			"正側壁の事前表示部品状態を変えない" );
+		if ( FloorMesh != nullptr && NegativeMesh != nullptr )
+		{
+			Harness.CheckNearF32( FloorMesh->Color().z, 0.40f, 0.001f,
+				"失敗時は床色を変えない" );
+			Harness.CheckNearF32( FloorMesh->Material().pbr.metallic,
+				0.10f, 0.001f, "失敗時は床金属度を変えない" );
+			Harness.CheckNearF32( NegativeMesh->Color().x, 0.50f, 0.001f,
+				"失敗時は壁色を変えない" );
+			Harness.CheckNearF32( NegativeMesh->Material().pbr.roughness,
+				0.60f, 0.001f, "失敗時は壁粗さを変えない" );
+		}
+
+		FWorldCollisionShape3D FloorShape;
+		FWorldCollisionShape3D NegativeShape;
+		FWorldCollisionShape3D PositiveShape;
+		const bool bHasShapes = Collision.TryGetWorldShape(
+			Corridor.Floor.Shape, FloorShape )
+			&& Collision.TryGetWorldShape(
+				Corridor.NegativeSideWall.Shape, NegativeShape )
+			&& Collision.TryGetWorldShape(
+				Corridor.PositiveSideWall.Shape, PositiveShape );
+		Harness.Check( bHasShapes, "失敗後も3形状を読み出せる" );
+		if ( bHasShapes )
+		{
+			Harness.Check( FloorShape.Layer == 0x2u
+				&& NegativeShape.Layer == 0x2u
+				&& PositiveShape.Layer == 0x2u,
+				"失敗時は3形状のレイヤーを変えない" );
+		}
+		Harness.CheckEqualU64( Collision.ShapeCount(), 3u,
+			"失敗時は3形状を作り直さない" );
+	}
+
 	/** 指定方向の床中心、床寸法、側壁位置と寸法を調べる。 */
 	void CheckDirection( CTestHarness& Harness, ECorridor3DDirection Direction,
 		f32 ExpectedX, f32 ExpectedZ, f32 ExpectedFloorSizeX,
@@ -302,6 +437,267 @@ void RunCorridor3DSpawnerTests( CTestHarness& Harness )
 			"親Z尺度を長さへ反映する" );
 		Harness.Check( CCorridor3DSpawner::Destroy( Graph, Collision, Corridor ),
 			"親付き通路を片付けられる" );
+	}
+
+	Harness.BeginSuite( "CCorridor3DSpawner / 既存3部品を方向変更込みで同期更新する" );
+
+	{
+		CSceneNodeGraph Graph;
+		CSceneCollision3D Collision{ Graph };
+		const FScene3DSpawnResult Parent = Graph.TrySpawn(
+			FStringView( "MovingCorridorRoot" ) );
+		Harness.Check( Parent.Succeeded(), "更新確認用の親を作れる" );
+		if ( Parent.Node != nullptr )
+		{
+			Parent.Node->SetPosition( FVec3{ 10.0f, 1.0f, -5.0f } );
+			Parent.Node->SetScale( FVec3{ 2.0f, 1.0f, 3.0f } );
+		}
+
+		const FCorridor3DSpawnParams Initial =
+			MakeInitialUpdateParams_Internal();
+		const FCorridor3DSpawnResult Corridor = CCorridor3DSpawner::SpawnInto(
+			Graph, Collision, Initial, Parent.Node );
+		Harness.Check( Corridor.Succeeded(), "更新確認用の通路を置ける" );
+		const FNodeId OriginalFloorNode = Graph.IdOf( Corridor.Floor.Node );
+		const FNodeId OriginalNegativeNode = Graph.IdOf(
+			Corridor.NegativeSideWall.Node );
+		const FNodeId OriginalPositiveNode = Graph.IdOf(
+			Corridor.PositiveSideWall.Node );
+		const FCollisionShapeId3D OriginalFloorShape = Corridor.Floor.Shape;
+		const FCollisionShapeId3D OriginalNegativeShape =
+			Corridor.NegativeSideWall.Shape;
+		const FCollisionShapeId3D OriginalPositiveShape =
+			Corridor.PositiveSideWall.Shape;
+
+		const FCorridor3DSpawnParams Updated = MakeUpdatedParams_Internal();
+		Harness.Check( CCorridor3DSpawner::TryApplyTo(
+			Graph, Collision, Corridor, Updated ),
+			"入口と方向を含む新指定を通路全体へ反映できる" );
+		Harness.Check( Graph.IdOf( Corridor.Floor.Node ) == OriginalFloorNode
+			&& Graph.IdOf( Corridor.NegativeSideWall.Node ) == OriginalNegativeNode
+			&& Graph.IdOf( Corridor.PositiveSideWall.Node ) == OriginalPositiveNode,
+			"更新しても床と側壁のノード番号を保つ" );
+		Harness.Check( Corridor.Floor.Shape == OriginalFloorShape
+			&& Corridor.NegativeSideWall.Shape == OriginalNegativeShape
+			&& Corridor.PositiveSideWall.Shape == OriginalPositiveShape,
+			"更新しても3形状の世代付き番号を保つ" );
+		Harness.CheckEqualU64( Graph.RegisteredCount(), 5u,
+			"更新でノードを作り直さない" );
+		Harness.CheckEqualU64( Collision.ShapeCount(), 3u,
+			"更新で衝突形状を作り直さない" );
+		if ( Corridor && Parent.Node != nullptr )
+		{
+			Harness.Check( AllPartsUseParent( Corridor, *Parent.Node ),
+				"更新後も3部品が元の親を共有する" );
+			CheckVector_Internal( Harness, Corridor.Floor.Node->Local().position,
+				FVec3{ -1.0f, 3.0f, 4.0f },
+				"X負方向へ変えた床中心を反映する" );
+			CheckVector_Internal( Harness, Corridor.Floor.Node->Local().scale,
+				FVec3{ 6.0f, 0.4f, 5.0f },
+				"方向変更後の床寸法を反映する" );
+			CheckVector_Internal( Harness,
+				Corridor.NegativeSideWall.Node->Local().position,
+				FVec3{ -1.0f, 4.0f, 1.75f },
+				"方向変更後の負側壁位置を反映する" );
+			CheckVector_Internal( Harness,
+				Corridor.PositiveSideWall.Node->Local().position,
+				FVec3{ -1.0f, 4.0f, 6.25f },
+				"方向変更後の正側壁位置を反映する" );
+			CheckVector_Internal( Harness,
+				Corridor.NegativeSideWall.Node->Local().scale,
+				FVec3{ 6.0f, 2.0f, 0.5f },
+				"方向変更後の側壁寸法を反映する" );
+			Harness.Check( Corridor.Floor.Node->Name()
+				== FStringView( "AfterCorridorFloor" )
+				&& Corridor.NegativeSideWall.Node->Name()
+				== FStringView( "AfterCorridorNegativeWall" )
+				&& Corridor.PositiveSideWall.Node->Name()
+				== FStringView( "AfterCorridorPositiveWall" ),
+				"床と側壁2枚の名前を同期更新する" );
+		}
+
+		AMeshComponent3D* const FloorMesh = MeshOf_Internal( Corridor.Floor );
+		AMeshComponent3D* const NegativeMesh = MeshOf_Internal(
+			Corridor.NegativeSideWall );
+		AMeshComponent3D* const PositiveMesh = MeshOf_Internal(
+			Corridor.PositiveSideWall );
+		Harness.Check( FloorMesh != nullptr && NegativeMesh != nullptr
+			&& PositiveMesh != nullptr, "更新後も3表示部品を保つ" );
+		if ( FloorMesh != nullptr && NegativeMesh != nullptr
+			&& PositiveMesh != nullptr )
+		{
+			Harness.Check( FloorMesh->Primitive() == EMeshPrimitive3D::Plane
+				&& NegativeMesh->Primitive() == EMeshPrimitive3D::Cube
+				&& PositiveMesh->Primitive() == EMeshPrimitive3D::Cube,
+				"床と側壁の表示プリミティブを保つ" );
+			Harness.CheckNearF32( FloorMesh->Color().z, 0.75f, 0.001f,
+				"床を新しい色へ更新する" );
+			Harness.CheckNearF32( FloorMesh->Material().pbr.metallic,
+				0.60f, 0.001f, "床を新しい金属度へ更新する" );
+			Harness.CheckNearF32( FloorMesh->Material().pbr.roughness,
+				0.20f, 0.001f, "床を新しい粗さへ更新する" );
+			Harness.Check( FloorMesh->CastsShadow(),
+				"床を新しい影設定へ更新する" );
+			Harness.CheckNearF32( NegativeMesh->Color().x, 0.80f, 0.001f,
+				"負側壁を新しい色へ更新する" );
+			Harness.CheckNearF32( PositiveMesh->Material().pbr.metallic,
+				0.30f, 0.001f, "正側壁を新しい金属度へ更新する" );
+			Harness.CheckNearF32( PositiveMesh->Material().pbr.roughness,
+				0.55f, 0.001f, "正側壁を新しい粗さへ更新する" );
+			Harness.Check( !NegativeMesh->CastsShadow()
+				&& !PositiveMesh->CastsShadow(),
+				"側壁2枚を新しい影設定へ更新する" );
+		}
+
+		FWorldCollisionShape3D FloorShape;
+		FWorldCollisionShape3D NegativeShape;
+		FWorldCollisionShape3D PositiveShape;
+		const bool bHasWorldShapes = Collision.TryGetWorldShape(
+			Corridor.Floor.Shape, FloorShape )
+			&& Collision.TryGetWorldShape(
+				Corridor.NegativeSideWall.Shape, NegativeShape )
+			&& Collision.TryGetWorldShape(
+				Corridor.PositiveSideWall.Shape, PositiveShape );
+		Harness.Check( bHasWorldShapes, "更新後の3つのworld箱を読める" );
+		if ( bHasWorldShapes )
+		{
+			CheckVector_Internal( Harness, FloorShape.Box.center,
+				FVec3{ 8.0f, 3.8f, 7.0f },
+				"親変形込みの床衝突中心を反映する" );
+			CheckVector_Internal( Harness, FloorShape.Box.half_size,
+				FVec3{ 6.0f, 0.2f, 7.5f },
+				"親変形込みの床衝突半寸法を反映する" );
+			CheckVector_Internal( Harness, NegativeShape.Box.center,
+				FVec3{ 8.0f, 5.0f, 0.25f },
+				"親変形込みの負側壁衝突中心を反映する" );
+			CheckVector_Internal( Harness, PositiveShape.Box.center,
+				FVec3{ 8.0f, 5.0f, 13.75f },
+				"親変形込みの正側壁衝突中心を反映する" );
+			CheckVector_Internal( Harness, NegativeShape.Box.half_size,
+				FVec3{ 6.0f, 1.0f, 0.75f },
+				"親変形込みの側壁衝突半寸法を反映する" );
+			Harness.Check( FloorShape.Layer == 0x40u
+				&& NegativeShape.Layer == 0x40u
+				&& PositiveShape.Layer == 0x40u,
+				"3形状を新しい共通レイヤーへ更新する" );
+		}
+	}
+
+	Harness.BeginSuite( "CCorridor3DSpawner / 更新前検証の失敗では3部品を変えない" );
+
+	{
+		CSceneNodeGraph Graph;
+		CSceneCollision3D Collision{ Graph };
+		const FScene3DSpawnResult Parent = Graph.TrySpawn(
+			FStringView( "CorridorUpdateRoot" ) );
+		const FScene3DSpawnResult OtherParent = Graph.TrySpawn(
+			FStringView( "OtherCorridorRoot" ) );
+		const FCorridor3DSpawnResult Corridor = CCorridor3DSpawner::SpawnInto(
+			Graph, Collision, MakeInitialUpdateParams_Internal(), Parent.Node );
+		Harness.Check( Corridor.Succeeded(), "失敗確認用の通路を置ける" );
+		const FCorridor3DSpawnParams Updated = MakeUpdatedParams_Internal();
+
+		FCorridor3DSpawnParams Invalid = Updated;
+		Invalid.Length = 0.0f;
+		Harness.Check( !CCorridor3DSpawner::TryApplyTo(
+			Graph, Collision, Corridor, Invalid ), "不正な新指定を拒否する" );
+		CheckInitialUpdateState_Internal( Harness, Collision, Corridor );
+
+		CSceneNodeGraph OtherGraph;
+		CSceneCollision3D OtherCollision{ OtherGraph };
+		Harness.Check( !CCorridor3DSpawner::TryApplyTo(
+			OtherGraph, OtherCollision, Corridor, Updated ),
+			"別場面からの更新を拒否する" );
+		CheckInitialUpdateState_Internal( Harness, Collision, Corridor );
+
+		FCorridor3DSpawnResult Forged = Corridor;
+		Forged.NegativeSideWall.Shape = Corridor.PositiveSideWall.Shape;
+		Forged.PositiveSideWall.Shape = Corridor.NegativeSideWall.Shape;
+		Harness.Check( !CCorridor3DSpawner::TryApplyTo(
+			Graph, Collision, Forged, Updated ),
+			"異なるノードと形状を組み直した結果を拒否する" );
+		CheckInitialUpdateState_Internal( Harness, Collision, Corridor );
+
+		FCorridor3DSpawnResult Duplicate = Corridor;
+		Duplicate.PositiveSideWall = Corridor.NegativeSideWall;
+		Harness.Check( !CCorridor3DSpawner::TryApplyTo(
+			Graph, Collision, Duplicate, Updated ),
+			"ノードと形状が重複する結果を拒否する" );
+		CheckInitialUpdateState_Internal( Harness, Collision, Corridor );
+
+		FCorridor3DSpawnResult Missing = Corridor;
+		Missing.PositiveSideWall = FCollidableModel3DSpawnResult{};
+		Harness.Check( !CCorridor3DSpawner::TryApplyTo(
+			Graph, Collision, Missing, Updated ),
+			"側壁が欠けた結果を拒否する" );
+		Harness.Check( !CCorridor3DSpawner::TryApplyTo(
+			Graph, Collision, FCorridor3DSpawnResult{}, Updated ),
+			"空の結果を拒否する" );
+		CheckInitialUpdateState_Internal( Harness, Collision, Corridor );
+
+		if ( Corridor.PositiveSideWall.Node != nullptr
+			&& OtherParent.Node != nullptr )
+			Corridor.PositiveSideWall.Node->Reparent( *OtherParent.Node );
+		Graph.ResolveStructuralChanges();
+		Harness.Check( !CCorridor3DSpawner::TryApplyTo(
+			Graph, Collision, Corridor, Updated ),
+			"3部品の共通親が崩れた更新を拒否する" );
+		CheckInitialUpdateState_Internal( Harness, Collision, Corridor );
+		if ( Corridor.PositiveSideWall.Node != nullptr && Parent.Node != nullptr )
+			Corridor.PositiveSideWall.Node->Reparent( *Parent.Node );
+		Graph.ResolveStructuralChanges();
+	}
+
+	{
+		CSceneNodeGraph Graph;
+		CSceneCollision3D Collision{ Graph };
+		const FScene3DSpawnResult Parent = Graph.TrySpawn(
+			FStringView( "PendingPartRoot" ) );
+		const FCorridor3DSpawnResult Corridor = CCorridor3DSpawner::SpawnInto(
+			Graph, Collision, MakeInitialUpdateParams_Internal(), Parent.Node );
+		Harness.Check( Graph.Destroy( Graph.IdOf(
+			Corridor.NegativeSideWall.Node ) ),
+			"破棄予定部品の更新確認を準備できる" );
+		Harness.Check( !CCorridor3DSpawner::TryApplyTo(
+			Graph, Collision, Corridor, MakeUpdatedParams_Internal() ),
+			"破棄予定の側壁を含む更新を拒否する" );
+		CheckInitialUpdateState_Internal( Harness, Collision, Corridor );
+	}
+
+	{
+		CSceneNodeGraph Graph;
+		CSceneCollision3D Collision{ Graph };
+		const FScene3DSpawnResult Ancestor = Graph.TrySpawn(
+			FStringView( "PendingCorridorAncestor" ) );
+		const FScene3DSpawnResult Parent = Graph.TrySpawn(
+			FStringView( "PendingCorridorParent" ), Ancestor.Node );
+		const FCorridor3DSpawnResult Corridor = CCorridor3DSpawner::SpawnInto(
+			Graph, Collision, MakeInitialUpdateParams_Internal(), Parent.Node );
+		Harness.Check( Graph.Destroy( Ancestor.Id ),
+			"破棄予定祖先の更新確認を準備できる" );
+		Harness.Check( NoPartIsPendingDestroy( Corridor ),
+			"祖先だけが破棄予定で部品自身は生存している" );
+		Harness.Check( !CCorridor3DSpawner::TryApplyTo(
+			Graph, Collision, Corridor, MakeUpdatedParams_Internal() ),
+			"破棄予定の祖先を持つ通路更新を拒否する" );
+		CheckInitialUpdateState_Internal( Harness, Collision, Corridor );
+	}
+
+	{
+		CSceneNodeGraph Graph;
+		CSceneCollision3D Collision{ Graph };
+		const FScene3DSpawnResult Parent = Graph.TrySpawn(
+			FStringView( "MissingMeshCorridorRoot" ) );
+		const FCorridor3DSpawnResult Corridor = CCorridor3DSpawner::SpawnInto(
+			Graph, Collision, MakeInitialUpdateParams_Internal(), Parent.Node );
+		Harness.Check( Corridor.PositiveSideWall.Node != nullptr
+			&& Corridor.PositiveSideWall.Node
+				->RemoveComponent<AMeshComponent3D>(),
+			"表示部品欠落の更新確認を準備できる" );
+		Harness.Check( !CCorridor3DSpawner::TryApplyTo(
+			Graph, Collision, Corridor, MakeUpdatedParams_Internal() ),
+			"表示部品が欠けた通路更新を拒否する" );
+		CheckInitialUpdateState_Internal( Harness, Collision, Corridor, false );
 	}
 
 	Harness.BeginSuite( "CCorridor3DSpawner / 不正入力と別場面で半端物を残さない" );
