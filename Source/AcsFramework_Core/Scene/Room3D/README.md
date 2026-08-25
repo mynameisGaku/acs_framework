@@ -19,6 +19,12 @@ Room.WallColor = FVec4{ 0.52f, 0.58f, 0.68f, 1.0f };
 Room.CollisionLayer = 0x2u;
 
 FRoom3DSpawnResult Placed = SpawnRoom3D( Room );
+
+// 配置済みの5形状を作り直さず、部屋全体を新しい寸法と見た目へ揃える。
+Room.InnerSize = FVec2{ 16.0f, 10.0f };
+Room.WallHeight = 3.8f;
+Room.WallColor = FVec4{ 0.46f, 0.54f, 0.66f, 1.0f };
+TryUpdateRoom3D( Placed, Room );
 ```
 
 `InnerSize`は壁の内側で使えるX、Z方向の全幅である。床は両側の壁厚ぶん外周へ広げ、壁の中心は
@@ -27,6 +33,8 @@ FRoom3DSpawnResult Placed = SpawnRoom3D( Room );
 
 `CRoom3DSpawner`は既存の`CGround3DSpawner`と`CBlock3DSpawner`だけを合成する。5組の途中で
 生成または衝突登録に失敗した場合は、それ以前の組を逆順に破棄予定へ戻して形状も外す。
+配置後の`TryUpdateRoom3D`は5組の所有関係、共通親、重複、破棄予定状態を全て先に検証し、
+同じノードと形状番号のまま床上面、内寸、壁と床の寸法、見た目、衝突レイヤーを同期更新する。
 場面途中で外す場合は`DestroyRoom3D`へ成功結果を渡す。全5組が同じ場面で重複なく対になっている
 ことを確認してから片付け、成功時だけ呼出側の結果を空にする。
 

@@ -19,7 +19,7 @@
 | 箱 | `AcsFramework_Core/UI/Ui3DScene.h` | `SpawnBlock3D`、`TryUpdateBlock3D` |
 | 球配置 | `AcsFramework_Core/UI/Ui3DScene.h` | `SpawnSphere3D` |
 | 球更新 | `AcsFramework_Core/UI/Ui3DScene.h` | `TryUpdateSphere3D` |
-| 部屋 | `AcsFramework_Core/UI/Ui3DScene.h` | `SpawnRoom3D` |
+| 部屋 | `AcsFramework_Core/UI/Ui3DScene.h` | `SpawnRoom3D`、`TryUpdateRoom3D` |
 | 通路 | `AcsFramework_Core/UI/Ui3DScene.h` | `SpawnCorridor3D` |
 | 橋 | `AcsFramework_Core/UI/Ui3DScene.h` | `SpawnBridge3D`、`DestroyBridge3D` |
 | 開口壁枠 | `AcsFramework_Core/UI/Ui3DScene.h` | `SpawnDoorway3D`、`TryUpdateDoorway3D` |

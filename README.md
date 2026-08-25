@@ -47,7 +47,7 @@ WASDで移動、左Shiftで走行、矢印キーで視点、Spaceでジャンプ
 
 | | |
 |---|---|
-| 3D を置く | `SpawnModel3D()` / `SpawnAnimatedModel3D()`と、それぞれの操作対象版・衝突版・操作＋衝突版、`SpawnGround3D()` / `TryUpdateGround3D()`、`SpawnBlock3D()` / `TryUpdateBlock3D()`、`SpawnSphere3D()` / `TryUpdateSphere3D()`、`SpawnRoom3D()`、`SpawnCorridor3D()`、`SpawnBridge3D()`、`SpawnDoorway3D()` / `TryUpdateDoorway3D()`、`SpawnFence3D()`、`SpawnStairs3D()`、`SpawnStreetLamp3D()`、`DestroyCollidableModel3D()`、`SpawnNode3D()`、FBX の取り込み、材質 (metallic / roughness / HDR自己発光 / 布の毛羽反射 / 内部散乱) |
+| 3D を置く | `SpawnModel3D()` / `SpawnAnimatedModel3D()`と、それぞれの操作対象版・衝突版・操作＋衝突版、`SpawnGround3D()` / `TryUpdateGround3D()`、`SpawnBlock3D()` / `TryUpdateBlock3D()`、`SpawnSphere3D()` / `TryUpdateSphere3D()`、`SpawnRoom3D()` / `TryUpdateRoom3D()`、`SpawnCorridor3D()`、`SpawnBridge3D()`、`SpawnDoorway3D()` / `TryUpdateDoorway3D()`、`SpawnFence3D()`、`SpawnStairs3D()`、`SpawnStreetLamp3D()`、`DestroyCollidableModel3D()`、`SpawnNode3D()`、FBX の取り込み、材質 (metallic / roughness / HDR自己発光 / 布の毛羽反射 / 内部散乱) |
 | 3D画像を置く | `SpawnImage3D()`の固定板、`SpawnBillboard3D()`のカメラ追従板、透過PNG、深度判定、HDR合成 |
 | 3D を照らす | `SpawnLight3D()`の太陽・点光源、`SpawnLamp3D()`の見える発光球＋点光源、`SpawnStreetLamp3D()` / `TryUpdateStreetLamp3D()`の衝突付き金属ポスト＋発光球＋点光源、`SpawnStudioLightRig3D()` / `TryUpdateStudioLightRig3D()`の被写体用キー・フィル・リム |
 | 3D 地面 | `SpawnGround3D()` / `TryUpdateGround3D()`、広さだけで置ける表示面と直下の厚み付き衝突、その同期更新 |
@@ -131,6 +131,9 @@ TryUpdateBlock3D( Wall, MovedWall );
 
 // 内寸と壁高だけで、歩ける床と四方の壁をまとめて置く
 FRoom3DSpawnResult Room = SpawnRoom3D( FVec2{ 12.0f, 8.0f }, 3.0f );
+FRoom3DSpawnParams WiderRoom = FRoom3DSpawnParams::FromInnerSize(
+    FVec2{ 16.0f, 10.0f }, 3.5f );
+TryUpdateRoom3D( Room, WiderRoom );
 
 // 内幅と長さだけで、床と側壁を持つ両端が開いた通路を置く
 FCorridor3DSpawnResult Corridor = SpawnCorridor3D(

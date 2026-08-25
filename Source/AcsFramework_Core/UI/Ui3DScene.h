@@ -670,6 +670,17 @@ public:
 		ANode* Parent = nullptr ) noexcept;
 
 	/**
+	 * この場面へ配置済みの天井なし部屋へ、新しい5部品設定を同期反映する。
+	 *
+	 * @details 全5組と共通親を事前確認し、失敗時は表示と衝突を変更しない。
+	 * @param Room `SpawnRoom3D`の成功結果。ノードと形状番号は維持される。
+	 * @param Params 新しい床上面位置、内寸、壁と床の寸法、見た目、衝突レイヤー。
+	 * @return 床と四方の壁を全て更新できた場合だけtrue。
+	 */
+	bool TryUpdateRoom3D( const FRoom3DSpawnResult& Room,
+		const FRoom3DSpawnParams& Params ) noexcept;
+
+	/**
 	 * 一括生成した天井なし部屋を、床と四方の壁のノード・形状ごと破棄する。
 	 *
 	 * @details 全5組がこの場面で重複なく対になっていない場合は何も変更しない。

@@ -12,6 +12,15 @@ namespace
 		return Part.Node != nullptr ? Part.Node->GetComponent<AMeshComponent3D>() : nullptr;
 	}
 
+	/** 3成分を同じ許容差で検証する。 */
+	void CheckVector( CTestHarness& Harness, FVec3 Actual,
+		FVec3 Expected, const char* Message )
+	{
+		Harness.CheckNearF32( Actual.x, Expected.x, 0.001f, Message );
+		Harness.CheckNearF32( Actual.y, Expected.y, 0.001f, Message );
+		Harness.CheckNearF32( Actual.z, Expected.z, 0.001f, Message );
+	}
+
 	/** 部屋の全ノードが指定した親へ繋がっているか返す。 */
 	bool AllPartsUseParent( const FRoom3DSpawnResult& Room, const ANode& Parent ) noexcept
 	{
@@ -244,6 +253,287 @@ void RunRoom3DSpawnerTests( CTestHarness& Harness )
 		Harness.CheckNearF32( FloorShape.Box.center.y, 2.75f, 0.001f, "親のY移動を床へ反映する" );
 		Harness.CheckNearF32( FloorShape.Box.center.z, -2.0f, 0.001f, "親のZ移動を床へ反映する" );
 		Harness.Check( CRoom3DSpawner::Destroy( Graph, Collision, Room ), "親付き部屋を片付けられる" );
+	}
+
+	Harness.BeginSuite( "CRoom3DSpawner / 床と四方の壁を同期更新する" );
+
+	{
+		CSceneNodeGraph Graph;
+		CSceneCollision3D Collision{ Graph };
+		const FScene3DSpawnResult Parent = Graph.TrySpawn(
+			FStringView( "RoomRoot" ) );
+		FRoom3DSpawnResult Room = CRoom3DSpawner::SpawnInto(
+			Graph, Collision, FRoom3DSpawnParams{}, Parent.Node );
+		ANode* const Floor = Room.Floor.Node;
+		ANode* const PositiveZWall = Room.PositiveZWall.Node;
+		ANode* const NegativeZWall = Room.NegativeZWall.Node;
+		ANode* const PositiveXWall = Room.PositiveXWall.Node;
+		ANode* const NegativeXWall = Room.NegativeXWall.Node;
+		const FNodeId FloorId = Graph.IdOf( Floor );
+		const FNodeId PositiveZWallId = Graph.IdOf( PositiveZWall );
+		const FNodeId NegativeZWallId = Graph.IdOf( NegativeZWall );
+		const FNodeId PositiveXWallId = Graph.IdOf( PositiveXWall );
+		const FNodeId NegativeXWallId = Graph.IdOf( NegativeXWall );
+		const FCollisionShapeId3D FloorShapeId = Room.Floor.Shape;
+		const FCollisionShapeId3D PositiveZShapeId = Room.PositiveZWall.Shape;
+		const FCollisionShapeId3D NegativeZShapeId = Room.NegativeZWall.Shape;
+		const FCollisionShapeId3D PositiveXShapeId = Room.PositiveXWall.Shape;
+		const FCollisionShapeId3D NegativeXShapeId = Room.NegativeXWall.Shape;
+
+		FRoom3DSpawnParams Updated = FRoom3DSpawnParams::FromInnerSize(
+			FVec2{ 10.0f, 6.0f }, 4.0f, FVec3{ 2.0f, 1.0f, -3.0f } );
+		Updated.WallThickness = 0.4f;
+		Updated.FloorThickness = 0.8f;
+		Updated.FloorColor = FVec4{ 0.12f, 0.24f, 0.36f, 1.0f };
+		Updated.WallColor = FVec4{ 0.72f, 0.60f, 0.48f, 1.0f };
+		Updated.FloorMetallic = 0.15f;
+		Updated.FloorRoughness = 0.75f;
+		Updated.WallMetallic = 0.35f;
+		Updated.WallRoughness = 0.25f;
+		Updated.bFloorCastsShadow = true;
+		Updated.bWallsCastShadow = false;
+		Updated.CollisionLayer = 0x40u;
+
+		Harness.Check( CRoom3DSpawner::TryApplyTo(
+			Graph, Collision, Room, Updated ),
+			"有効な新指定を床と四方の壁へ一括反映できる" );
+		Harness.Check( Room.Floor.Shape == FloorShapeId
+			&& Room.PositiveZWall.Shape == PositiveZShapeId
+			&& Room.NegativeZWall.Shape == NegativeZShapeId
+			&& Room.PositiveXWall.Shape == PositiveXShapeId
+			&& Room.NegativeXWall.Shape == NegativeXShapeId,
+			"更新しても5形状の世代付き番号を保つ" );
+		Harness.Check( Graph.IdOf( Floor ) == FloorId
+			&& Graph.IdOf( PositiveZWall ) == PositiveZWallId
+			&& Graph.IdOf( NegativeZWall ) == NegativeZWallId
+			&& Graph.IdOf( PositiveXWall ) == PositiveXWallId
+			&& Graph.IdOf( NegativeXWall ) == NegativeXWallId,
+			"更新しても5ノードの世代付き番号を保つ" );
+		Harness.CheckEqualU64( Graph.RegisteredCount(), 7u,
+			"更新で5ノードを作り直さない" );
+		Harness.CheckEqualU64( Collision.ShapeCount(), 5u,
+			"更新で5形状を作り直さない" );
+		Harness.Check( Parent.Node != nullptr
+			&& AllPartsUseParent( Room, *Parent.Node ),
+			"更新後も5部分の共通親を保つ" );
+
+		CheckVector( Harness,
+			Floor != nullptr ? Floor->Local().position : FVec3{},
+			FVec3{ 2.0f, 1.0f, -3.0f },
+			"床を新しい上面中心へ移す" );
+		CheckVector( Harness,
+			Floor != nullptr ? Floor->Local().scale : FVec3{},
+			FVec3{ 10.8f, 0.8f, 6.8f },
+			"床を壁厚込みの新しい外寸へ更新する" );
+		CheckVector( Harness,
+			PositiveZWall != nullptr
+				? PositiveZWall->Local().position : FVec3{},
+			FVec3{ 2.0f, 3.0f, 0.2f },
+			"Z正壁を新しい内寸の外側へ移す" );
+		CheckVector( Harness,
+			NegativeZWall != nullptr
+				? NegativeZWall->Local().position : FVec3{},
+			FVec3{ 2.0f, 3.0f, -6.2f },
+			"Z負壁を新しい内寸の外側へ移す" );
+		CheckVector( Harness,
+			PositiveZWall != nullptr
+				? PositiveZWall->Local().scale : FVec3{},
+			FVec3{ 10.8f, 4.0f, 0.4f },
+			"Z壁を新しい外周幅と壁寸法へ更新する" );
+		CheckVector( Harness,
+			PositiveXWall != nullptr
+				? PositiveXWall->Local().position : FVec3{},
+			FVec3{ 7.2f, 3.0f, -3.0f },
+			"X正壁を新しい内寸の外側へ移す" );
+		CheckVector( Harness,
+			NegativeXWall != nullptr
+				? NegativeXWall->Local().position : FVec3{},
+			FVec3{ -3.2f, 3.0f, -3.0f },
+			"X負壁を新しい内寸の外側へ移す" );
+		CheckVector( Harness,
+			PositiveXWall != nullptr
+				? PositiveXWall->Local().scale : FVec3{},
+			FVec3{ 0.4f, 4.0f, 6.0f },
+			"X壁を新しい壁厚、高さ、内寸Zへ更新する" );
+		Harness.Check( Floor != nullptr
+			&& Floor->Name() == FStringView( "RoomFloor" )
+			&& PositiveZWall != nullptr
+			&& PositiveZWall->Name() == FStringView( "RoomPositiveZWall" )
+			&& NegativeZWall != nullptr
+			&& NegativeZWall->Name() == FStringView( "RoomNegativeZWall" )
+			&& PositiveXWall != nullptr
+			&& PositiveXWall->Name() == FStringView( "RoomPositiveXWall" )
+			&& NegativeXWall != nullptr
+			&& NegativeXWall->Name() == FStringView( "RoomNegativeXWall" ),
+			"更新後も5部分の役割名を揃える" );
+
+		const AMeshComponent3D* const FloorMesh = RoomMeshOf( Room.Floor );
+		const AMeshComponent3D* const WallMesh = RoomMeshOf( Room.PositiveZWall );
+		Harness.Check( FloorMesh != nullptr
+			&& FloorMesh->Primitive() == EMeshPrimitive3D::Plane
+			&& FloorMesh->CastsShadow(),
+			"床の平面表示と影設定を同期更新する" );
+		Harness.Check( WallMesh != nullptr
+			&& WallMesh->Primitive() == EMeshPrimitive3D::Cube
+			&& !WallMesh->CastsShadow(),
+			"壁の立方体表示と影設定を同期更新する" );
+		if ( FloorMesh != nullptr )
+		{
+			Harness.CheckEqualF32( FloorMesh->Color().z, 0.36f,
+				"床へ新しい表面色を反映する" );
+			Harness.CheckEqualF32( FloorMesh->Material().pbr.metallic, 0.15f,
+				"床へ新しい金属度を反映する" );
+			Harness.CheckEqualF32( FloorMesh->Material().pbr.roughness, 0.75f,
+				"床へ新しい粗さを反映する" );
+		}
+		if ( WallMesh != nullptr )
+		{
+			Harness.CheckEqualF32( WallMesh->Color().x, 0.72f,
+				"四方の壁へ新しい表面色を反映する" );
+			Harness.CheckEqualF32( WallMesh->Material().pbr.metallic, 0.35f,
+				"四方の壁へ新しい金属度を反映する" );
+			Harness.CheckEqualF32( WallMesh->Material().pbr.roughness, 0.25f,
+				"四方の壁へ新しい粗さを反映する" );
+		}
+
+		FWorldCollisionShape3D FloorWorldShape;
+		FWorldCollisionShape3D PositiveXWorldShape;
+		Harness.Check( Collision.TryGetWorldShape(
+			Room.Floor.Shape, FloorWorldShape )
+			&& Collision.TryGetWorldShape(
+				Room.PositiveXWall.Shape, PositiveXWorldShape ),
+			"更新後の床と壁のworld衝突を読める" );
+		CheckVector( Harness, FloorWorldShape.Box.center,
+			FVec3{ 2.0f, 0.6f, -3.0f },
+			"床衝突を新しい上面直下へ揃える" );
+		CheckVector( Harness, FloorWorldShape.Box.half_size,
+			FVec3{ 5.4f, 0.4f, 3.4f },
+			"床衝突を新しい外寸と厚みへ揃える" );
+		CheckVector( Harness, PositiveXWorldShape.Box.center,
+			FVec3{ 7.2f, 3.0f, -3.0f },
+			"X正壁の衝突中心を表示へ揃える" );
+		CheckVector( Harness, PositiveXWorldShape.Box.half_size,
+			FVec3{ 0.2f, 2.0f, 3.0f },
+			"X正壁の衝突半寸法を表示へ揃える" );
+		Harness.Check( FloorWorldShape.Layer == 0x40u
+			&& PositiveXWorldShape.Layer == 0x40u,
+			"床と四方の壁を新しい衝突レイヤーへ更新する" );
+	}
+
+	Harness.BeginSuite( "CRoom3DSpawner / 更新失敗時は5部分を変えない" );
+
+	{
+		CSceneNodeGraph Graph;
+		CSceneCollision3D Collision{ Graph };
+		const FScene3DSpawnResult Parent = Graph.TrySpawn(
+			FStringView( "RoomRoot" ) );
+		const FScene3DSpawnResult OtherParent = Graph.TrySpawn(
+			FStringView( "OtherRoot" ) );
+		FRoom3DSpawnParams Initial;
+		Initial.FloorTopPosition = FVec3{ 1.0f, 0.5f, 2.0f };
+		Initial.CollisionLayer = 0x2u;
+		FRoom3DSpawnResult Room = CRoom3DSpawner::SpawnInto(
+			Graph, Collision, Initial, Parent.Node );
+		ANode* const Floor = Room.Floor.Node;
+		ANode* const PositiveZWall = Room.PositiveZWall.Node;
+		ANode* const PositiveXWall = Room.PositiveXWall.Node;
+		ANode* const NegativeXWall = Room.NegativeXWall.Node;
+		const FVec3 FloorPosition = Floor != nullptr
+			? Floor->Local().position : FVec3{};
+		const FVec3 PositiveZPosition = PositiveZWall != nullptr
+			? PositiveZWall->Local().position : FVec3{};
+		const FVec3 PositiveXPosition = PositiveXWall != nullptr
+			? PositiveXWall->Local().position : FVec3{};
+
+		FRoom3DSpawnParams Updated = FRoom3DSpawnParams::FromInnerSize(
+			FVec2{ 12.0f, 7.0f }, 4.0f, FVec3{ 8.0f, 1.0f, -4.0f } );
+		Updated.CollisionLayer = 0x80u;
+		FRoom3DSpawnParams Invalid = Updated;
+		Invalid.InnerSize.x = 0.0f;
+		Harness.Check( !CRoom3DSpawner::TryApplyTo(
+			Graph, Collision, Room, Invalid ),
+			"不正な新指定を拒否する" );
+		CheckVector( Harness,
+			Floor != nullptr ? Floor->Local().position : FVec3{},
+			FloorPosition, "不正入力では床を変えない" );
+		CheckVector( Harness,
+			PositiveZWall != nullptr
+				? PositiveZWall->Local().position : FVec3{},
+			PositiveZPosition, "不正入力ではZ壁を変えない" );
+
+		CSceneNodeGraph WrongGraph;
+		CSceneCollision3D WrongCollision{ WrongGraph };
+		Harness.Check( !CRoom3DSpawner::TryApplyTo(
+			WrongGraph, WrongCollision, Room, Updated ),
+			"別場面からの更新を拒否する" );
+		CSceneCollision3D EmptyCollision{ Graph };
+		Harness.Check( !CRoom3DSpawner::TryApplyTo(
+			Graph, EmptyCollision, Room, Updated ),
+			"5形状を持たない衝突集合を拒否する" );
+
+		if ( NegativeXWall != nullptr && OtherParent.Node != nullptr )
+			NegativeXWall->Reparent( *OtherParent.Node );
+		Graph.ResolveStructuralChanges();
+		Harness.Check( NegativeXWall != nullptr
+			&& NegativeXWall->Parent() == OtherParent.Node,
+			"共通親を崩す更新検証を準備できる" );
+		Harness.Check( !CRoom3DSpawner::TryApplyTo(
+			Graph, Collision, Room, Updated ),
+			"5部分が共通親を失った更新を拒否する" );
+		CheckVector( Harness,
+			PositiveXWall != nullptr
+				? PositiveXWall->Local().position : FVec3{},
+			PositiveXPosition, "共通親不一致ではX壁を変えない" );
+		if ( NegativeXWall != nullptr && Parent.Node != nullptr )
+			NegativeXWall->Reparent( *Parent.Node );
+		Graph.ResolveStructuralChanges();
+
+		FRoom3DSpawnResult Forged = Room;
+		Forged.PositiveXWall.Shape = Room.NegativeXWall.Shape;
+		Harness.Check( !CRoom3DSpawner::TryApplyTo(
+			Graph, Collision, Forged, Updated ),
+			"重複した形状番号を更新前に拒否する" );
+		Forged = Room;
+		Forged.NegativeZWall.Node = Room.PositiveZWall.Node;
+		Harness.Check( !CRoom3DSpawner::TryApplyTo(
+			Graph, Collision, Forged, Updated ),
+			"別部品をZ負壁に見せた結果を更新前に拒否する" );
+
+		FWorldCollisionShape3D FloorWorldShape;
+		FWorldCollisionShape3D PositiveZWorldShape;
+		Harness.Check( Collision.TryGetWorldShape(
+			Room.Floor.Shape, FloorWorldShape )
+			&& Collision.TryGetWorldShape(
+				Room.PositiveZWall.Shape, PositiveZWorldShape ),
+			"全失敗後も元の形状を読める" );
+		Harness.Check( FloorWorldShape.Layer == 0x2u
+			&& PositiveZWorldShape.Layer == 0x2u,
+			"全失敗後も元の衝突レイヤーを保つ" );
+		CheckVector( Harness, FloorWorldShape.Box.center,
+			FVec3{ 1.0f, 0.25f, 2.0f },
+			"全失敗後も元の床衝突中心を保つ" );
+		const AMeshComponent3D* const FloorMesh = RoomMeshOf( Room.Floor );
+		Harness.Check( FloorMesh != nullptr
+			&& FloorMesh->Color().x == Initial.FloorColor.x,
+			"全失敗後も元の床表面色を保つ" );
+		Harness.Check( Floor != nullptr
+			&& Floor->Name() == FStringView( "RoomFloor" )
+			&& PositiveZWall != nullptr
+			&& PositiveZWall->Name() == FStringView( "RoomPositiveZWall" ),
+			"全失敗後も5部分の名前を保つ" );
+
+		const FNodeId ParentId = Graph.IdOf( Parent.Node );
+		Harness.Check( Graph.Destroy( ParentId ),
+			"破棄予定祖先の更新検証を準備できる" );
+		Harness.Check( !CRoom3DSpawner::TryApplyTo(
+			Graph, Collision, Room, Updated ),
+			"共通親が破棄予定なら5部分更新を拒否する" );
+		CheckVector( Harness,
+			Floor != nullptr ? Floor->Local().position : FVec3{},
+			FloorPosition, "破棄予定祖先による失敗でも床を変えない" );
+		Harness.Check( !CRoom3DSpawner::TryApplyTo(
+			Graph, Collision, FRoom3DSpawnResult{}, Updated ),
+			"空の部屋結果を拒否する" );
 	}
 
 	Harness.BeginSuite( "CRoom3DSpawner / 不正入力と別場面で半端物を残さない" );

@@ -45,7 +45,7 @@ bloomや輪郭補正の影響を受けず、3D場面より手前、ポーズ・�
 `SpawnGround3D` / `TryUpdateGround3D`は表示面と直下の厚み付き箱の配置・同期更新、`SpawnBlock3D` / `TryUpdateBlock3D`は
 同寸法の立方体表示と箱型衝突の配置・同期更新、
 `SpawnSphere3D` / `TryUpdateSphere3D`は同半径の球表示と球型衝突の配置・同期更新、
-`SpawnRoom3D`は歩ける床と四方の壁、
+`SpawnRoom3D` / `TryUpdateRoom3D`は歩ける床と四方の壁の配置・同期更新、
 `SpawnCorridor3D`は入口から出口までの床と側壁2枚、
 `SpawnBridge3D`は床板と両側柵、
 `SpawnDoorway3D` / `TryUpdateDoorway3D`は開口を残す左右柱と上枠の配置・同期更新、
@@ -78,6 +78,9 @@ FSphere3DSpawnParams MovedBall = FSphere3DSpawnParams::FromRadius(
     1.1f, FVec3{ 3.0f, 1.1f, 2.0f } );
 TryUpdateSphere3D( Ball, MovedBall );
 FRoom3DSpawnResult Room = SpawnRoom3D( FVec2{ 12.0f, 8.0f }, 3.0f );
+FRoom3DSpawnParams WiderRoom = FRoom3DSpawnParams::FromInnerSize(
+    FVec2{ 16.0f, 10.0f }, 3.5f );
+TryUpdateRoom3D( Room, WiderRoom );
 FCorridor3DSpawnResult Corridor = SpawnCorridor3D(
     3.0f, 10.0f, 3.0f, FVec3{ 0.0f, 0.0f, 4.0f } );
 FBridge3DSpawnResult Bridge = SpawnBridge3D(
@@ -213,7 +216,9 @@ world軸平行箱を既存デバッグ線へ一括登録する。線は次の透
 既定外の色と材質は`FSphere3DSpawnParams`で変更し、配置後は`TryUpdateSphere3D`へ同じ生成結果と
 新指定を渡すと、形状番号を保ったまま表示と衝突を揃える。
 床と四方の壁を持つ天井なし空間は`SpawnRoom3D`へ内寸と壁高を渡すと5組をまとめて置ける。
-途中失敗は既生成分まで巻き戻し、`DestroyRoom3D`は全5組を検証してから片付ける。
+`TryUpdateRoom3D`は全5組と共通親を先に検証し、形状番号を保ったまま床上面、内寸、壁と床の寸法、
+見た目、衝突レイヤーを同期更新する。途中失敗は既生成分まで巻き戻し、`DestroyRoom3D`は全5組を
+検証してから片付ける。
 両端が開いた通路は`SpawnCorridor3D`へ内幅、長さ、壁高を渡すと、入口から出口まで続く床と側壁2枚を
 XZの正負4方向へ置ける。床は壁外面まで覆い、`DestroyCorridor3D`は全3組の所有関係と重複を検証して
 から片付ける。

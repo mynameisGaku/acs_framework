@@ -517,6 +517,14 @@ FRoom3DSpawnResult AUi3DScene::SpawnRoom3D( FVec2 InnerSize,
 }
 
 
+bool AUi3DScene::TryUpdateRoom3D( const FRoom3DSpawnResult& Room,
+	const FRoom3DSpawnParams& Params ) noexcept
+{
+	return CRoom3DSpawner::TryApplyTo(
+		Graph(), m_Collision3D, Room, Params );
+}
+
+
 bool AUi3DScene::DestroyRoom3D( FRoom3DSpawnResult& Room ) noexcept
 {
 	return CRoom3DSpawner::Destroy( Graph(), m_Collision3D, Room );
