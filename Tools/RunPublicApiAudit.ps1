@@ -69,20 +69,32 @@ if (-not (Test-Path -LiteralPath $umbrellaPath -PathType Leaf)) {
 
 Section '公開APIの宣言'
 $apiRows = @([regex]::Matches($apiDocument,
-    '(?m)^\|\s*[^|]+\|\s*`(?<header>[^`]+)`\s*\|\s*`(?<symbol>[^`]+)`\s*\|[ \t]*\r?$'))
+    '(?m)^\|\s*[^|]+\|\s*`(?<header>[^`]+)`\s*\|\s*(?<declarations>[^|\r\n]*)\|[ \t]*\r?$'))
 if ($apiRows.Count -eq 0) {
     Fail 'public-api-document' '公開API一覧の表がありません'
 } else {
-    $seenRows = @{}
+    $seenDeclarations = @{}
+    $apiDeclarationCount = 0
     foreach ($row in $apiRows) {
         $header = $row.Groups['header'].Value
-        $symbol = $row.Groups['symbol'].Value
-        $key = "$header::$symbol"
-        if ($seenRows.ContainsKey($key)) {
-            Fail 'public-api-document' "公開APIが重複しています: $key"
+        $symbols = @([regex]::Matches(
+            $row.Groups['declarations'].Value, '`(?<symbol>[^`]+)`') | ForEach-Object {
+                $_.Groups['symbol'].Value
+            })
+        if ($symbols.Count -eq 0) {
+            Fail 'public-api-document' "公開API宣言がありません: $header"
             continue
         }
-        $seenRows[$key] = $true
+        $apiDeclarationCount += $symbols.Count
+
+        foreach ($symbol in $symbols) {
+            $key = "$header::$symbol"
+            if ($seenDeclarations.ContainsKey($key)) {
+                Fail 'public-api-document' "公開APIが重複しています: $key"
+                continue
+            }
+            $seenDeclarations[$key] = $true
+        }
 
         $headerPath = Get-SourcePath $header
         if (-not (Test-Path -LiteralPath $headerPath -PathType Leaf)) {
@@ -94,13 +106,15 @@ if ($apiRows.Count -eq 0) {
         }
 
         $headerText = Get-Content -LiteralPath $headerPath -Raw
-        $symbolPattern = '(?<![A-Za-z0-9_])' + [regex]::Escape($symbol) + '(?![A-Za-z0-9_])'
-        if ($headerText -notmatch $symbolPattern) {
-            Fail 'public-api-declaration' "$symbol が $header にありません"
+        foreach ($symbol in $symbols) {
+            $symbolPattern = '(?<![A-Za-z0-9_])' + [regex]::Escape($symbol) + '(?![A-Za-z0-9_])'
+            if ($headerText -notmatch $symbolPattern) {
+                Fail 'public-api-declaration' "$symbol が $header にありません"
+            }
         }
     }
     if ($failures.Count -eq 0 -or -not ($failures -match '^public-api-declaration|^public-api-document')) {
-        Pass "$($apiRows.Count)個の公開API宣言を確認"
+        Pass "$($apiDeclarationCount)個の公開API宣言を確認"
     }
 }
 
