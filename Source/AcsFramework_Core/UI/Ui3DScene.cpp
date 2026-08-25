@@ -316,6 +316,15 @@ FCollidableModel3DSpawnResult AUi3DScene::SpawnSphere3D( f32 Radius,
 }
 
 
+bool AUi3DScene::TryUpdateSphere3D(
+	const FCollidableModel3DSpawnResult& Sphere,
+	const FSphere3DSpawnParams& Params ) noexcept
+{
+	return CSphere3DSpawner::TryApplyTo(
+		Graph(), m_Collision3D, Sphere, Params );
+}
+
+
 FBridge3DSpawnResult AUi3DScene::SpawnBridge3D(
 	const FBridge3DSpawnParams& Params, ANode* Parent ) noexcept
 {

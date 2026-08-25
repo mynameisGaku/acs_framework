@@ -21,6 +21,19 @@ Sphere.CollisionLayer = 0x2u;
 const FCollidableModel3DSpawnResult Placed = SpawnSphere3D( Sphere );
 ```
 
+配置後に動かす、半径を変える、材質や衝突レイヤーを変える場合も、同じ設定型で表示と衝突を同期する。
+
+```cpp
+FSphere3DSpawnParams Moved = Sphere;
+Moved.Position = FVec3{ -1.0f, 1.2f, 0.0f };
+Moved.Radius = 1.2f;
+Moved.CollisionLayer = 0x4u;
+const bool bUpdated = TryUpdateSphere3D( Placed, Moved );
+```
+
+`TryUpdateSphere3D`は生成時のノードと形状番号の対応、新指定、表示部品を先に確認する。成功時も
+`Placed.Shape`は変わらず、失敗時は位置、半径、見た目、衝突レイヤーをどれも変更しない。
+
 ACSの球プリミティブと明示球衝突はどちらもローカル半径0.5である。`CSphere3DSpawner`は
 指定半径の2倍をノードの均一尺度へ設定するため、root直下または均一拡縮の親では表示半径と
 衝突半径が一致する。非一様な親拡縮では表示が楕円体になり、衝突は既存契約どおり最大軸で

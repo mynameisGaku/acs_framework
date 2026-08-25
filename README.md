@@ -47,7 +47,7 @@ WASDで移動、左Shiftで走行、矢印キーで視点、Spaceでジャンプ
 
 | | |
 |---|---|
-| 3D を置く | `SpawnModel3D()` / `SpawnAnimatedModel3D()`と、それぞれの操作対象版・衝突版・操作＋衝突版、`SpawnBlock3D()` / `TryUpdateBlock3D()`、`SpawnSphere3D()`、`SpawnRoom3D()`、`SpawnCorridor3D()`、`SpawnBridge3D()`、`SpawnDoorway3D()`、`SpawnFence3D()`、`SpawnStairs3D()`、`SpawnStreetLamp3D()`、`DestroyCollidableModel3D()`、`SpawnNode3D()`、FBX の取り込み、材質 (metallic / roughness / HDR自己発光 / 布の毛羽反射 / 内部散乱) |
+| 3D を置く | `SpawnModel3D()` / `SpawnAnimatedModel3D()`と、それぞれの操作対象版・衝突版・操作＋衝突版、`SpawnBlock3D()` / `TryUpdateBlock3D()`、`SpawnSphere3D()` / `TryUpdateSphere3D()`、`SpawnRoom3D()`、`SpawnCorridor3D()`、`SpawnBridge3D()`、`SpawnDoorway3D()`、`SpawnFence3D()`、`SpawnStairs3D()`、`SpawnStreetLamp3D()`、`DestroyCollidableModel3D()`、`SpawnNode3D()`、FBX の取り込み、材質 (metallic / roughness / HDR自己発光 / 布の毛羽反射 / 内部散乱) |
 | 3D画像を置く | `SpawnImage3D()`の固定板、`SpawnBillboard3D()`のカメラ追従板、透過PNG、深度判定、HDR合成 |
 | 3D を照らす | `SpawnLight3D()`の太陽・点光源、`SpawnLamp3D()`の見える発光球＋点光源、`SpawnStreetLamp3D()` / `TryUpdateStreetLamp3D()`の衝突付き金属ポスト＋発光球＋点光源、`SpawnStudioLightRig3D()` / `TryUpdateStudioLightRig3D()`の被写体用キー・フィル・リム |
 | 3D 地面 | `SpawnGround3D()`、広さだけで置ける表示面と直下の厚み付き衝突 |
@@ -80,6 +80,11 @@ WASDで移動、左Shiftで走行、矢印キーで視点、Spaceでジャンプ
 // 半径と中心だけで、表示と球型衝突が揃った球を置く
 FCollidableModel3DSpawnResult Ball = SpawnSphere3D(
     1.0f, FVec3{ 0.0f, 1.0f, 0.0f } );
+
+// 同じ結果へ新しい半径と中心を渡し、表示と球衝突を揃えたまま動かす
+FSphere3DSpawnParams MovedBall = FSphere3DSpawnParams::FromRadius(
+    1.4f, FVec3{ 2.0f, 1.4f, 0.0f } );
+TryUpdateSphere3D( Ball, MovedBall );
 
 // 色と強度だけで、bloomへ繋がる自己発光球を置く
 SpawnModel3D( FModel3DSpawnParams::FromEmissivePrimitive( EMeshPrimitive3D::Sphere, FVec3{ 2, 1, 0 }, FVec3{ 0.1f, 0.5f, 1.0f }, 4.0f ) );

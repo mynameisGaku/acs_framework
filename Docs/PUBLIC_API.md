@@ -16,7 +16,8 @@
 | ノード | `AcsFramework_Core/UI/Ui3DScene.h` | `SpawnNode3D` |
 | 地面 | `AcsFramework_Core/UI/Ui3DScene.h` | `SpawnGround3D` |
 | 箱 | `AcsFramework_Core/UI/Ui3DScene.h` | `SpawnBlock3D`、`TryUpdateBlock3D` |
-| 球 | `AcsFramework_Core/UI/Ui3DScene.h` | `SpawnSphere3D` |
+| 球配置 | `AcsFramework_Core/UI/Ui3DScene.h` | `SpawnSphere3D` |
+| 球更新 | `AcsFramework_Core/UI/Ui3DScene.h` | `TryUpdateSphere3D` |
 | 部屋 | `AcsFramework_Core/UI/Ui3DScene.h` | `SpawnRoom3D` |
 | 通路 | `AcsFramework_Core/UI/Ui3DScene.h` | `SpawnCorridor3D` |
 | 橋 | `AcsFramework_Core/UI/Ui3DScene.h` | `SpawnBridge3D`、`DestroyBridge3D` |

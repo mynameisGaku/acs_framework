@@ -191,4 +191,166 @@ void RunSphere3DSpawnerTests( CTestHarness& Harness )
 		Harness.CheckEqualU64( Graph.RegisteredCount(), 1u, "登録失敗時に識別子も解放する" );
 		Harness.CheckEqualU64( OtherCollision.ShapeCount(), 0u, "別場面へ形状を残さない" );
 	}
+
+	Harness.BeginSuite( "CSphere3DSpawner / 配置済み球の表示と衝突を同期更新する" );
+
+	{
+		CSceneNodeGraph Graph;
+		CSceneCollision3D Collision{ Graph };
+		const FScene3DSpawnResult Parent = Graph.TrySpawn(
+			FStringView( "MovingSphereRoot" ) );
+		Harness.Check( Parent.Succeeded(), "更新確認用の親を作れる" );
+		if ( Parent.Node != nullptr )
+		{
+			Parent.Node->SetPosition( FVec3{ 10.0f, 1.0f, -5.0f } );
+			Parent.Node->SetScale( FVec3{ 2.0f, 3.0f, 4.0f } );
+		}
+
+		FSphere3DSpawnParams Initial = FSphere3DSpawnParams::FromRadius(
+			0.5f, FVec3{ 1.0f, 2.0f, 3.0f } );
+		Initial.CollisionLayer = 0x2u;
+		const FCollidableModel3DSpawnResult Sphere = CSphere3DSpawner::SpawnInto(
+			Graph, Collision, Initial, Parent.Node );
+		const FCollisionShapeId3D OriginalShape = Sphere.Shape;
+
+		FSphere3DSpawnParams Updated = FSphere3DSpawnParams::FromRadius(
+			1.25f, FVec3{ -1.0f, 1.0f, 2.0f } );
+		Updated.Color = FVec4{ 0.15f, 0.30f, 0.70f, 1.0f };
+		Updated.Metallic = 0.65f;
+		Updated.Roughness = 0.22f;
+		Updated.bCastsShadow = false;
+		Updated.CollisionLayer = 0x8u;
+		Updated.Name = FStringView( "UpdatedSphere" );
+
+		Harness.Check( CSphere3DSpawner::TryApplyTo(
+			Graph, Collision, Sphere, Updated ),
+			"有効な新指定を一括反映できる" );
+		Harness.Check( Sphere.Shape == OriginalShape,
+			"更新しても世代付き衝突形状番号を保つ" );
+		Harness.CheckEqualU64( Collision.ShapeCount(), 1u,
+			"更新で衝突形状を作り直さない" );
+		if ( Sphere.Node != nullptr )
+		{
+			Harness.Check( Sphere.Node->Parent() == Parent.Node,
+				"更新後も元の親へ繋がる" );
+			Harness.Check( Sphere.Node->Name() == FStringView( "UpdatedSphere" ),
+				"新しい名前を反映する" );
+			Harness.CheckEqualF32( Sphere.Node->Local().position.x, -1.0f,
+				"新しい中心Xを反映する" );
+			Harness.CheckEqualF32( Sphere.Node->Local().position.y, 1.0f,
+				"新しい中心Yを反映する" );
+			Harness.CheckEqualF32( Sphere.Node->Local().position.z, 2.0f,
+				"新しい中心Zを反映する" );
+			Harness.CheckEqualF32( Sphere.Node->Local().scale.x, 2.5f,
+				"新しい直径をX尺度へ反映する" );
+			Harness.CheckEqualF32( Sphere.Node->Local().scale.y, 2.5f,
+				"新しい直径をY尺度へ反映する" );
+			Harness.CheckEqualF32( Sphere.Node->Local().scale.z, 2.5f,
+				"新しい直径をZ尺度へ反映する" );
+		}
+
+		const AMeshComponent3D* const Mesh = SphereMeshOf( Sphere );
+		Harness.Check( Mesh != nullptr
+			&& Mesh->Primitive() == EMeshPrimitive3D::Sphere,
+			"更新後も球表示を使う" );
+		if ( Mesh != nullptr )
+		{
+			Harness.CheckEqualF32( Mesh->Color().z, 0.70f,
+				"新しい表面色を反映する" );
+			Harness.CheckEqualF32( Mesh->Material().pbr.metallic, 0.65f,
+				"新しい金属度を反映する" );
+			Harness.CheckEqualF32( Mesh->Material().pbr.roughness, 0.22f,
+				"新しい粗さを反映する" );
+			Harness.Check( !Mesh->CastsShadow(), "新しい影設定を反映する" );
+		}
+
+		FWorldCollisionShape3D WorldShape;
+		Harness.Check( Collision.TryGetWorldShape( Sphere.Shape, WorldShape ),
+			"更新後のworld球を読める" );
+		Harness.CheckNearF32( WorldShape.Sphere.center.x, 8.0f, 0.001f,
+			"親変形込みの新しい衝突中心Xを反映する" );
+		Harness.CheckNearF32( WorldShape.Sphere.center.y, 4.0f, 0.001f,
+			"親変形込みの新しい衝突中心Yを反映する" );
+		Harness.CheckNearF32( WorldShape.Sphere.center.z, 3.0f, 0.001f,
+			"親変形込みの新しい衝突中心Zを反映する" );
+		Harness.CheckNearF32( WorldShape.Sphere.radius, 5.0f, 0.001f,
+			"最大親尺度4で新しい表示を包む外接半径を使う" );
+		Harness.Check( WorldShape.Layer == 0x8u && WorldShape.bQueryable,
+			"新しい衝突レイヤーを反映する" );
+	}
+
+	Harness.BeginSuite( "CSphere3DSpawner / 更新失敗時は表示と衝突を変えない" );
+
+	{
+		CSceneNodeGraph Graph;
+		CSceneCollision3D Collision{ Graph };
+		FSphere3DSpawnParams Initial = FSphere3DSpawnParams::FromRadius(
+			1.0f, FVec3{ 1.0f, 2.0f, 3.0f } );
+		Initial.Color = FVec4{ 0.25f, 0.35f, 0.45f, 1.0f };
+		Initial.CollisionLayer = 0x2u;
+		Initial.Name = FStringView( "BeforeUpdate" );
+		const FCollidableModel3DSpawnResult Sphere = CSphere3DSpawner::SpawnInto(
+			Graph, Collision, Initial );
+
+		FSphere3DSpawnParams Updated = FSphere3DSpawnParams::FromRadius(
+			2.0f, FVec3{ 9.0f, 8.0f, 7.0f } );
+		Updated.Color = FVec4{ 0.9f, 0.1f, 0.2f, 1.0f };
+		Updated.CollisionLayer = 0x10u;
+		Updated.Name = FStringView( "AfterUpdate" );
+
+		FSphere3DSpawnParams Invalid = Updated;
+		Invalid.Radius = 0.0f;
+		Harness.Check( !CSphere3DSpawner::TryApplyTo(
+			Graph, Collision, Sphere, Invalid ),
+			"不正な新指定を拒否する" );
+		Harness.CheckEqualF32( Sphere.Node->Local().position.x, 1.0f,
+			"不正値では位置を変えない" );
+		Harness.CheckEqualF32( Sphere.Node->Local().scale.x, 2.0f,
+			"不正値では直径を変えない" );
+		Harness.Check( Sphere.Node->Name() == FStringView( "BeforeUpdate" ),
+			"不正値では名前を変えない" );
+		Harness.CheckEqualF32( SphereMeshOf( Sphere )->Color().x, 0.25f,
+			"不正値では表面色を変えない" );
+
+		CSceneNodeGraph OtherGraph;
+		CSceneCollision3D OtherCollision{ OtherGraph };
+		Harness.Check( !CSphere3DSpawner::TryApplyTo(
+			OtherGraph, OtherCollision, Sphere, Updated ),
+			"別場面からの更新を拒否する" );
+		Harness.CheckEqualF32( Sphere.Node->Local().position.x, 1.0f,
+			"別場面では位置を変えない" );
+
+		const FCollidableModel3DSpawnResult OtherSphere =
+			CSphere3DSpawner::SpawnInto( Graph, Collision,
+				FSphere3DSpawnParams::FromRadius(
+					0.5f, FVec3{ -4.0f, 0.5f, 0.0f } ) );
+		const FCollidableModel3DSpawnResult Forged{
+			Sphere.Node, OtherSphere.Shape };
+		Harness.Check( !CSphere3DSpawner::TryApplyTo(
+			Graph, Collision, Forged, Updated ),
+			"別ノードの形状番号を組み合わせた結果を拒否する" );
+		Harness.CheckEqualF32( Sphere.Node->Local().position.x, 1.0f,
+			"形状対応不一致では位置を変えない" );
+
+		FWorldCollisionShape3D WorldShape;
+		Harness.Check( Collision.TryGetWorldShape( Sphere.Shape, WorldShape ),
+			"失敗後も元のworld球を読める" );
+		Harness.Check( WorldShape.Layer == 0x2u,
+			"全失敗後も元の衝突レイヤーを保つ" );
+		Harness.CheckNearF32( WorldShape.Sphere.center.x, 1.0f, 0.001f,
+			"全失敗後も元の衝突中心を保つ" );
+		Harness.CheckNearF32( WorldShape.Sphere.radius, 1.0f, 0.001f,
+			"全失敗後も元の衝突半径を保つ" );
+
+		Harness.Check( Graph.Destroy( Graph.IdOf( Sphere.Node ) ),
+			"破棄予定の更新検証を準備できる" );
+		Harness.Check( !CSphere3DSpawner::TryApplyTo(
+			Graph, Collision, Sphere, Updated ),
+			"破棄予定ノードの更新を拒否する" );
+		Harness.CheckEqualF32( Sphere.Node->Local().position.x, 1.0f,
+			"破棄予定でも位置を変えない" );
+		Harness.Check( !CSphere3DSpawner::TryApplyTo(
+			Graph, Collision, FCollidableModel3DSpawnResult{}, Updated ),
+			"空の生成結果を拒否する" );
+	}
 }

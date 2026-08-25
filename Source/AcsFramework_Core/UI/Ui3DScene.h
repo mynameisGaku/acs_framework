@@ -376,6 +376,17 @@ public:
 		ANode* Parent = nullptr ) noexcept;
 
 	/**
+	 * この場面へ配置した3D球の表示と衝突を同じ指定へ同期更新する。
+	 *
+	 * @details 別場面の結果、破棄予定ノード、不正な新指定では何も変更しない。
+	 * @param Sphere `SpawnSphere3D`の成功結果。
+	 * @param Params 新しい中心位置、半径、見た目、衝突レイヤー。
+	 * @return 表示と衝突を両方更新できた場合だけtrue。
+	 */
+	bool TryUpdateSphere3D( const FCollidableModel3DSpawnResult& Sphere,
+		const FSphere3DSpawnParams& Params ) noexcept;
+
+	/**
 	 * 歩ける床板と両側柵を持つ、軸方向の衝突付き3D橋を1回で置く。
 	 *
 	 * @param Params 入口、方向、床板と柵の寸法、見た目、衝突レイヤー。

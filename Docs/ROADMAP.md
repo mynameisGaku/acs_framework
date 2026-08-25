@@ -35,7 +35,7 @@ ACS のモジュールは **438 個**ある。この枠組みが窓口を用意�
 | ノード生成・シーン保存 | `CPrefabSubsystem`、`CSceneSnapshotSubsystem` |
 | 3D 地面 | `AUi3DScene::SpawnGround3D`、`FGround3DSpawnParams`、厚み付き箱衝突 |
 | 3D 直方体 | `AUi3DScene::SpawnBlock3D` / `TryUpdateBlock3D`、`FBlock3DSpawnParams`、表示と同寸法の箱衝突 |
-| 3D 球 | `AUi3DScene::SpawnSphere3D`、`FSphere3DSpawnParams`、表示と同半径の球衝突 |
+| 3D 球 | `AUi3DScene::SpawnSphere3D` / `TryUpdateSphere3D`、`FSphere3DSpawnParams`、表示と同半径の球衝突 |
 | 3D 部屋 | `AUi3DScene::SpawnRoom3D`、床と四方の壁、5組の失敗時巻き戻し・一括破棄 |
 | 3D 通路 | `AUi3DScene::SpawnCorridor3D`、両端が開いた床と側壁2枚、失敗時巻き戻し・一括破棄 |
 | 3D 橋 | `AUi3DScene::SpawnBridge3D`、歩ける床板と両側柵、失敗時巻き戻し・一括破棄 |
@@ -294,8 +294,9 @@ cameraからの距離に応じて大気へ馴染み、雲も実距離まで同�
   作り直さず表示、変形、衝突レイヤーを同期更新する。登録失敗時は生成ノードも巻き戻す
 - ~~球型障害物の簡単配置~~ → **実装済み** (2026-08-24)。
   `SpawnSphere3D( Radius, CenterPosition )`だけで、同じ半径の球表示と球型衝突を置く。
-  PBR材質と衝突レイヤーを`FSphere3DSpawnParams`で調整でき、非一様な親拡縮では最大軸の
-  外接球として安全側に扱う。登録失敗時は生成ノードも巻き戻す
+  PBR材質と衝突レイヤーを`FSphere3DSpawnParams`で調整でき、`TryUpdateSphere3D`は形状番号を
+  作り直さず表示、半径、衝突レイヤーを同期更新する。非一様な親拡縮では最大軸の外接球として
+  安全側に扱い、登録失敗時は生成ノードも巻き戻す
 - ~~歩ける床と四方の壁を持つ検証部屋の簡単配置~~ → **実装済み** (2026-08-24)。
   `SpawnRoom3D( InnerSize, WallHeight )`だけで、内寸を保った床1枚と壁4枚を置く。
   5組の途中失敗は逆順に巻き戻し、`DestroyRoom3D`は全所有関係を先に検証してから一括破棄する
