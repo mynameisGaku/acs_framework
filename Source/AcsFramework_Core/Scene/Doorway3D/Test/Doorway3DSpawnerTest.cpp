@@ -6,6 +6,21 @@
 
 namespace
 {
+	/** 出入口枠の一部から表示用メッシュ部品を取り出す。 */
+	AMeshComponent3D* DoorwayMeshOf( ANode* Node ) noexcept
+	{
+		return Node != nullptr ? Node->GetComponent<AMeshComponent3D>() : nullptr;
+	}
+
+	/** 3成分を小さな浮動小数誤差を許して比較する。 */
+	void CheckVector( CTestHarness& Harness, FVec3 Actual,
+		FVec3 Expected, const char* Label ) noexcept
+	{
+		constexpr f32 kTolerance = 0.0001f;
+		Harness.Check( LengthSq( Actual - Expected )
+			< kTolerance * kTolerance, Label );
+	}
+
 	/** 出入口枠の3部分が指定した親へ繋がっているか返す。 */
 	bool AllPartsUseParent( const FDoorway3DSpawnResult& Doorway,
 		const ANode& Parent ) noexcept
@@ -295,6 +310,303 @@ void RunDoorway3DSpawnerTests( CTestHarness& Harness )
 			"親Z尺度を壁厚へ反映する" );
 		Harness.Check( CDoorway3DSpawner::Destroy( Graph, Collision, Doorway ),
 			"親付き出入口枠を片付けられる" );
+	}
+
+	Harness.BeginSuite( "CDoorway3DSpawner / 向きと開口を3部分へ同期更新する" );
+
+	{
+		CSceneNodeGraph Graph;
+		CSceneCollision3D Collision{ Graph };
+		const FScene3DSpawnResult Parent = Graph.TrySpawn(
+			FStringView( "DoorwayRoot" ) );
+		FDoorway3DSpawnResult Doorway = CDoorway3DSpawner::SpawnInto(
+			Graph, Collision, FDoorway3DSpawnParams{}, Parent.Node );
+		ANode* const NegativePillar = Doorway.NegativePillar.Node;
+		ANode* const PositivePillar = Doorway.PositivePillar.Node;
+		ANode* const Lintel = Doorway.Lintel.Node;
+		const FNodeId NegativePillarId = Graph.IdOf( NegativePillar );
+		const FNodeId PositivePillarId = Graph.IdOf( PositivePillar );
+		const FNodeId LintelId = Graph.IdOf( Lintel );
+		const FCollisionShapeId3D NegativeShape = Doorway.NegativePillar.Shape;
+		const FCollisionShapeId3D PositiveShape = Doorway.PositivePillar.Shape;
+		const FCollisionShapeId3D LintelShapeId = Doorway.Lintel.Shape;
+
+		FDoorway3DSpawnParams Updated = FDoorway3DSpawnParams::FromOpening(
+			6.0f, 4.0f, 2.0f, 2.5f, FVec3{ 3.0f, 1.0f, -2.0f },
+			EDoorway3DOrientation::AlongZ );
+		Updated.WallThickness = 0.4f;
+		Updated.OpeningCenterOffset = 0.5f;
+		Updated.Color = FVec4{ 0.22f, 0.38f, 0.72f, 1.0f };
+		Updated.Metallic = 0.35f;
+		Updated.Roughness = 0.24f;
+		Updated.bCastsShadow = false;
+		Updated.CollisionLayer = 0x20u;
+		Updated.NegativePillarName = FStringView( "UpdatedNegativePillar" );
+		Updated.PositivePillarName = FStringView( "UpdatedPositivePillar" );
+		Updated.LintelName = FStringView( "UpdatedLintel" );
+
+		Harness.Check( CDoorway3DSpawner::TryApplyTo(
+			Graph, Collision, Doorway, Updated ),
+			"有効な新指定を左右柱と上枠へ一括反映できる" );
+		Harness.Check( Doorway.NegativePillar.Shape == NegativeShape
+			&& Doorway.PositivePillar.Shape == PositiveShape
+			&& Doorway.Lintel.Shape == LintelShapeId,
+			"更新しても3形状の世代付き番号を保つ" );
+		Harness.Check( Graph.IdOf( NegativePillar ) == NegativePillarId
+			&& Graph.IdOf( PositivePillar ) == PositivePillarId
+			&& Graph.IdOf( Lintel ) == LintelId,
+			"更新しても3ノードの世代付き番号を保つ" );
+		Harness.CheckEqualU64( Graph.RegisteredCount(), 5u,
+			"更新で3ノードを作り直さない" );
+		Harness.CheckEqualU64( Collision.ShapeCount(), 3u,
+			"更新で3形状を作り直さない" );
+		Harness.Check( Parent.Node != nullptr
+			&& AllPartsUseParent( Doorway, *Parent.Node ),
+			"更新後も3部分の共通親を保つ" );
+
+		CheckVector( Harness,
+			NegativePillar != nullptr
+				? NegativePillar->Local().position : FVec3{},
+			FVec3{ 3.0f, 3.0f, -3.75f },
+			"負側柱をZ負方向の新しい開口端へ移す" );
+		CheckVector( Harness,
+			NegativePillar != nullptr
+				? NegativePillar->Local().scale : FVec3{},
+			FVec3{ 0.4f, 4.0f, 2.5f },
+			"負側柱をZ向きの新しい寸法へ更新する" );
+		CheckVector( Harness,
+			PositivePillar != nullptr
+				? PositivePillar->Local().position : FVec3{},
+			FVec3{ 3.0f, 3.0f, 0.25f },
+			"正側柱をZ正方向の新しい開口端へ移す" );
+		CheckVector( Harness,
+			PositivePillar != nullptr
+				? PositivePillar->Local().scale : FVec3{},
+			FVec3{ 0.4f, 4.0f, 1.5f },
+			"正側柱を横ずらし後の新しい幅へ更新する" );
+		CheckVector( Harness,
+			Lintel != nullptr ? Lintel->Local().position : FVec3{},
+			FVec3{ 3.0f, 4.25f, -1.5f },
+			"上枠を新しい開口中心と上端へ移す" );
+		CheckVector( Harness,
+			Lintel != nullptr ? Lintel->Local().scale : FVec3{},
+			FVec3{ 0.4f, 1.5f, 2.0f },
+			"上枠をZ向きの開口幅と残り高へ更新する" );
+		Harness.Check( NegativePillar != nullptr
+			&& NegativePillar->Name()
+				== FStringView( "UpdatedNegativePillar" )
+			&& PositivePillar != nullptr
+			&& PositivePillar->Name()
+				== FStringView( "UpdatedPositivePillar" )
+			&& Lintel != nullptr
+			&& Lintel->Name() == FStringView( "UpdatedLintel" ),
+			"3部分の役割名を同期更新する" );
+
+		AMeshComponent3D* const NegativeMesh = DoorwayMeshOf( NegativePillar );
+		Harness.Check( NegativeMesh != nullptr
+			&& NegativeMesh->Primitive() == EMeshPrimitive3D::Cube
+			&& !NegativeMesh->CastsShadow(),
+			"更新後も立方体表示を保ち影設定を反映する" );
+		if ( NegativeMesh != nullptr )
+		{
+			Harness.CheckEqualF32( NegativeMesh->Color().z, 0.72f,
+				"3部分へ新しい表面色を反映する" );
+			Harness.CheckEqualF32(
+				NegativeMesh->Material().pbr.metallic, 0.35f,
+				"3部分へ新しい金属度を反映する" );
+			Harness.CheckEqualF32(
+				NegativeMesh->Material().pbr.roughness, 0.24f,
+				"3部分へ新しい粗さを反映する" );
+		}
+
+		FWorldCollisionShape3D NegativeWorldShape;
+		FWorldCollisionShape3D LintelWorldShape;
+		Harness.Check( Collision.TryGetWorldShape(
+			Doorway.NegativePillar.Shape, NegativeWorldShape )
+			&& Collision.TryGetWorldShape(
+				Doorway.Lintel.Shape, LintelWorldShape ),
+			"更新後の柱と上枠のworld衝突を読める" );
+		CheckVector( Harness, NegativeWorldShape.Box.center,
+			FVec3{ 3.0f, 3.0f, -3.75f },
+			"負側柱の衝突中心を表示へ揃える" );
+		CheckVector( Harness, NegativeWorldShape.Box.half_size,
+			FVec3{ 0.2f, 2.0f, 1.25f },
+			"負側柱の衝突半寸法を表示へ揃える" );
+		CheckVector( Harness, LintelWorldShape.Box.center,
+			FVec3{ 3.0f, 4.25f, -1.5f },
+			"上枠の衝突中心を表示へ揃える" );
+		Harness.Check( NegativeWorldShape.Layer == 0x20u
+			&& LintelWorldShape.Layer == 0x20u,
+			"3形状を新しい衝突レイヤーへ更新する" );
+	}
+
+	Harness.BeginSuite( "CDoorway3DSpawner / 更新失敗時は3部分を変えない" );
+
+	{
+		CSceneNodeGraph Graph;
+		CSceneCollision3D Collision{ Graph };
+		const FScene3DSpawnResult Parent = Graph.TrySpawn(
+			FStringView( "DoorwayRoot" ) );
+		const FScene3DSpawnResult OtherParent = Graph.TrySpawn(
+			FStringView( "OtherRoot" ) );
+		FDoorway3DSpawnParams Initial;
+		Initial.BottomCenter = FVec3{ 1.0f, 0.0f, 2.0f };
+		Initial.CollisionLayer = 0x2u;
+		FDoorway3DSpawnResult Doorway = CDoorway3DSpawner::SpawnInto(
+			Graph, Collision, Initial, Parent.Node );
+		ANode* const NegativePillar = Doorway.NegativePillar.Node;
+		ANode* const PositivePillar = Doorway.PositivePillar.Node;
+		ANode* const Lintel = Doorway.Lintel.Node;
+		const FVec3 NegativePosition = NegativePillar != nullptr
+			? NegativePillar->Local().position : FVec3{};
+		const FVec3 PositivePosition = PositivePillar != nullptr
+			? PositivePillar->Local().position : FVec3{};
+		const FVec3 LintelPosition = Lintel != nullptr
+			? Lintel->Local().position : FVec3{};
+
+		FDoorway3DSpawnParams Updated = FDoorway3DSpawnParams::FromOpening(
+			6.0f, 4.0f, 2.0f, 2.5f, FVec3{ 8.0f, 1.0f, -4.0f },
+			EDoorway3DOrientation::AlongZ );
+		Updated.CollisionLayer = 0x80u;
+		FDoorway3DSpawnParams Invalid = Updated;
+		Invalid.OpeningWidth = Invalid.WallWidth;
+		Harness.Check( !CDoorway3DSpawner::TryApplyTo(
+			Graph, Collision, Doorway, Invalid ),
+			"不正な新指定を拒否する" );
+		CheckVector( Harness,
+			NegativePillar != nullptr
+				? NegativePillar->Local().position : FVec3{},
+			NegativePosition, "不正入力では負側柱を変えない" );
+		CheckVector( Harness,
+			PositivePillar != nullptr
+				? PositivePillar->Local().position : FVec3{},
+			PositivePosition, "不正入力では正側柱を変えない" );
+		CheckVector( Harness,
+			Lintel != nullptr ? Lintel->Local().position : FVec3{},
+			LintelPosition, "不正入力では上枠を変えない" );
+
+		CSceneNodeGraph WrongGraph;
+		CSceneCollision3D WrongCollision{ WrongGraph };
+		Harness.Check( !CDoorway3DSpawner::TryApplyTo(
+			WrongGraph, WrongCollision, Doorway, Updated ),
+			"別場面からの更新を拒否する" );
+		CSceneCollision3D EmptyCollision{ Graph };
+		Harness.Check( !CDoorway3DSpawner::TryApplyTo(
+			Graph, EmptyCollision, Doorway, Updated ),
+			"3形状を持たない衝突集合を拒否する" );
+
+		if ( Lintel != nullptr && OtherParent.Node != nullptr )
+			Lintel->Reparent( *OtherParent.Node );
+		Graph.ResolveStructuralChanges();
+		Harness.Check( Lintel != nullptr
+			&& Lintel->Parent() == OtherParent.Node,
+			"共通親を崩す更新検証を準備できる" );
+		Harness.Check( !CDoorway3DSpawner::TryApplyTo(
+			Graph, Collision, Doorway, Updated ),
+			"3部分が共通親を失った更新を拒否する" );
+		CheckVector( Harness,
+			PositivePillar != nullptr
+				? PositivePillar->Local().position : FVec3{},
+			PositivePosition, "共通親不一致では正側柱を変えない" );
+		if ( Lintel != nullptr && Parent.Node != nullptr )
+			Lintel->Reparent( *Parent.Node );
+		Graph.ResolveStructuralChanges();
+		Harness.Check( Lintel != nullptr && Lintel->Parent() == Parent.Node,
+			"上枠を生成時の共通親へ戻せる" );
+
+		FDoorway3DSpawnResult Forged = Doorway;
+		Forged.PositivePillar.Shape = Doorway.NegativePillar.Shape;
+		Harness.Check( !CDoorway3DSpawner::TryApplyTo(
+			Graph, Collision, Forged, Updated ),
+			"重複した形状番号を更新前に拒否する" );
+		Forged = Doorway;
+		Forged.Lintel.Node = Doorway.PositivePillar.Node;
+		Harness.Check( !CDoorway3DSpawner::TryApplyTo(
+			Graph, Collision, Forged, Updated ),
+			"別部品を上枠に見せた結果を更新前に拒否する" );
+
+		FWorldCollisionShape3D NegativeWorldShape;
+		FWorldCollisionShape3D LintelWorldShape;
+		Harness.Check( Collision.TryGetWorldShape(
+			Doorway.NegativePillar.Shape, NegativeWorldShape )
+			&& Collision.TryGetWorldShape(
+				Doorway.Lintel.Shape, LintelWorldShape ),
+			"全失敗後も元の形状を読める" );
+		Harness.Check( NegativeWorldShape.Layer == 0x2u
+			&& LintelWorldShape.Layer == 0x2u,
+			"全失敗後も元の衝突レイヤーを保つ" );
+		CheckVector( Harness, NegativeWorldShape.Box.center,
+			NegativePosition, "全失敗後も元の衝突中心を保つ" );
+		AMeshComponent3D* const NegativeMesh = DoorwayMeshOf( NegativePillar );
+		Harness.Check( NegativeMesh != nullptr
+			&& NegativeMesh->Color().x == Initial.Color.x,
+			"全失敗後も元の表面色を保つ" );
+		Harness.Check( NegativePillar != nullptr
+			&& NegativePillar->Name()
+				== FStringView( "DoorwayNegativePillar" )
+			&& PositivePillar != nullptr
+			&& PositivePillar->Name()
+				== FStringView( "DoorwayPositivePillar" )
+			&& Lintel != nullptr
+			&& Lintel->Name() == FStringView( "DoorwayLintel" ),
+			"全失敗後も3部分の名前を保つ" );
+
+		const FNodeId NegativePillarId = Graph.IdOf( NegativePillar );
+		Harness.Check( Graph.Destroy( NegativePillarId ),
+			"破棄予定部品の更新検証を準備できる" );
+		Harness.Check( !CDoorway3DSpawner::TryApplyTo(
+			Graph, Collision, Doorway, Updated ),
+			"負側柱が破棄予定なら3部分更新を拒否する" );
+		CheckVector( Harness,
+			PositivePillar != nullptr
+				? PositivePillar->Local().position : FVec3{},
+			PositivePosition, "破棄予定による失敗でも正側柱を変えない" );
+		CheckVector( Harness,
+			Lintel != nullptr ? Lintel->Local().position : FVec3{},
+			LintelPosition, "破棄予定による失敗でも上枠を変えない" );
+		Harness.Check( !CDoorway3DSpawner::TryApplyTo(
+			Graph, Collision, FDoorway3DSpawnResult{}, Updated ),
+			"空の出入口枠結果を拒否する" );
+	}
+
+	{
+		CSceneNodeGraph Graph;
+		CSceneCollision3D Collision{ Graph };
+		const FScene3DSpawnResult Parent = Graph.TrySpawn(
+			FStringView( "PendingDoorwayRoot" ) );
+		FDoorway3DSpawnResult Doorway = CDoorway3DSpawner::SpawnInto(
+			Graph, Collision, FDoorway3DSpawnParams{}, Parent.Node );
+		const FVec3 NegativePosition = Doorway.NegativePillar.Node != nullptr
+			? Doorway.NegativePillar.Node->Local().position : FVec3{};
+		const FVec3 LintelScale = Doorway.Lintel.Node != nullptr
+			? Doorway.Lintel.Node->Local().scale : FVec3{};
+
+		FDoorway3DSpawnParams Updated = FDoorway3DSpawnParams::FromOpening(
+			6.0f, 4.0f, 2.0f, 2.5f, FVec3{ 8.0f, 1.0f, -4.0f },
+			EDoorway3DOrientation::AlongZ );
+		Updated.CollisionLayer = 0x40u;
+		Harness.Check( Parent.Node != nullptr
+			&& Graph.Destroy( Graph.IdOf( Parent.Node ) ),
+			"破棄予定の共通親を更新検証へ準備できる" );
+		Harness.Check( !CDoorway3DSpawner::TryApplyTo(
+			Graph, Collision, Doorway, Updated ),
+			"共通親が破棄予定なら3部分更新を拒否する" );
+		CheckVector( Harness,
+			Doorway.NegativePillar.Node != nullptr
+				? Doorway.NegativePillar.Node->Local().position : FVec3{},
+			NegativePosition, "祖先破棄予定では柱位置を変えない" );
+		CheckVector( Harness,
+			Doorway.Lintel.Node != nullptr
+				? Doorway.Lintel.Node->Local().scale : FVec3{},
+			LintelScale, "祖先破棄予定では上枠寸法を変えない" );
+
+		FWorldCollisionShape3D NegativeWorldShape;
+		Harness.Check( Collision.TryGetWorldShape(
+			Doorway.NegativePillar.Shape, NegativeWorldShape ),
+			"祖先破棄予定による失敗後も元の形状を読める" );
+		Harness.Check( NegativeWorldShape.Layer == CCollisionWorld3D::kAllLayers
+			&& !NegativeWorldShape.bQueryable,
+			"元のレイヤーを保ち、破棄予定の祖先では問い合わせ対象外にする" );
 	}
 
 	Harness.BeginSuite( "CDoorway3DSpawner / 不正入力と別場面で半端物を残さない" );

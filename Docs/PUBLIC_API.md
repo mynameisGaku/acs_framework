@@ -22,7 +22,7 @@
 | 部屋 | `AcsFramework_Core/UI/Ui3DScene.h` | `SpawnRoom3D` |
 | 通路 | `AcsFramework_Core/UI/Ui3DScene.h` | `SpawnCorridor3D` |
 | 橋 | `AcsFramework_Core/UI/Ui3DScene.h` | `SpawnBridge3D`、`DestroyBridge3D` |
-| 開口壁枠 | `AcsFramework_Core/UI/Ui3DScene.h` | `SpawnDoorway3D` |
+| 開口壁枠 | `AcsFramework_Core/UI/Ui3DScene.h` | `SpawnDoorway3D`、`TryUpdateDoorway3D` |
 | 柵 | `AcsFramework_Core/UI/Ui3DScene.h` | `SpawnFence3D` |
 | 階段 | `AcsFramework_Core/UI/Ui3DScene.h` | `SpawnStairs3D` |
 | 衝突付き3D街灯 | `AcsFramework_Core/UI/Ui3DScene.h` | `SpawnStreetLamp3D`、`TryUpdateStreetLamp3D`、`DestroyStreetLamp3D` |

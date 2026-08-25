@@ -20,6 +20,13 @@ Doorway.Color = FVec4{ 0.52f, 0.58f, 0.68f, 1.0f };
 Doorway.CollisionLayer = 0x2u;
 
 FDoorway3DSpawnResult Placed = SpawnDoorway3D( Doorway );
+
+// 配置後も3形状を作り直さず、向き、開口、見た目をまとめて変える。
+FDoorway3DSpawnParams Moved = Doorway;
+Moved.BottomCenter = FVec3{ 2.0f, 0.0f, 3.0f };
+Moved.Orientation = EDoorway3DOrientation::AlongX;
+Moved.OpeningCenterOffset = -0.4f;
+TryUpdateDoorway3D( Placed, Moved );
 ```
 
 `BottomCenter`は壁全体の下辺中央で、`Orientation`は壁幅を伸ばす軸である。開口は床から始まり、
@@ -27,9 +34,11 @@ FDoorway3DSpawnResult Placed = SpawnDoorway3D( Doorway );
 開口部分には見えない箱型衝突を残さない。
 
 `CDoorway3DSpawner`は既存の`CBlock3DSpawner`だけを合成する。3組の途中で失敗した場合は、
-それ以前の部分を上枠側から逆順に破棄予定へ戻して形状も外す。場面途中で外す場合は
-`DestroyDoorway3D`へ成功結果を渡す。全3組が同じ場面で重複なく対になっていることを確認してから
-片付け、成功時だけ呼出側の結果を空にする。
+それ以前の部分を上枠側から逆順に破棄予定へ戻して形状も外す。配置後は同じ生成結果と新指定を
+`TryUpdateDoorway3D`へ渡すと、3ノードと3形状の番号、共通親を保ったまま同期更新できる。
+別場面、重複、共通親を失った構成、破棄予定、不正値はどの部分も変更せず拒否する。
+場面途中で外す場合は`DestroyDoorway3D`へ成功結果を渡す。全3組が同じ場面で重複なく対になって
+いることを確認してから片付け、成功時だけ呼出側の結果を空にする。
 
 この機能は開口壁枠だけを作り、扉板、開閉、鍵、操作対象は固定しない。作品に必要なら開口の親ノードへ
 任意のモデルや`SpawnInteractableCollidableModel3D`を追加する。

@@ -48,7 +48,7 @@ bloomや輪郭補正の影響を受けず、3D場面より手前、ポーズ・�
 `SpawnRoom3D`は歩ける床と四方の壁、
 `SpawnCorridor3D`は入口から出口までの床と側壁2枚、
 `SpawnBridge3D`は床板と両側柵、
-`SpawnDoorway3D`は開口を残す左右柱と上枠、
+`SpawnDoorway3D` / `TryUpdateDoorway3D`は開口を残す左右柱と上枠の配置・同期更新、
 `SpawnStairs3D`は共通底面から積み上がる隙間のない階段、
 `SpawnLight3D`は太陽または点光源、`SpawnLamp3D`は見える自己発光球と同色の点光源、
 `SpawnStreetLamp3D` / `TryUpdateStreetLamp3D`は衝突付き金属ポスト、発光球、点光源を
@@ -84,6 +84,10 @@ FBridge3DSpawnResult Bridge = SpawnBridge3D(
     3.0f, 10.0f, 1.15f, FVec3{ 0.0f, 1.0f, -5.0f } );
 FDoorway3DSpawnResult Doorway = SpawnDoorway3D(
     4.0f, 3.0f, 1.2f, 2.2f, 0.25f, FVec3{ 0.0f, 0.0f, 14.0f } );
+FDoorway3DSpawnParams MovedDoorway = FDoorway3DSpawnParams::FromOpening(
+    5.0f, 3.2f, 1.5f, 2.3f, FVec3{ 2.0f, 0.0f, 12.0f },
+    EDoorway3DOrientation::AlongZ );
+TryUpdateDoorway3D( Doorway, MovedDoorway );
 FStairs3DSpawnResult Stairs = SpawnStairs3D(
     8u, 2.0f, 0.32f, 0.18f, FVec3{ -2.0f, 0.0f, -3.0f } );
 FStreetLamp3DSpawnResult StreetLamp = SpawnStreetLamp3D(
@@ -217,8 +221,9 @@ XZの正負4方向へ置ける。床は壁外面まで覆い、`DestroyCorridor3
 XZの正負4方向へ置ける。始終端の支柱は床板端から半幅内側へ収まり、支柱数は最大間隔から自動で決まる。
 `DestroyBridge3D`は床板と両側柵の全所有関係と重複を検証してから片付ける。
 開口壁枠は`SpawnDoorway3D`へ壁幅、壁高、開口幅、開口高を渡すと、左右柱と上枠だけを置ける。
-開口の横位置とX/Z軸を変えても通過部分には見えない衝突を残さず、`DestroyDoorway3D`は全3組を
-検証してから片付ける。扉板、開閉、鍵、操作対象は作品側で必要なものだけ追加する。
+`TryUpdateDoorway3D`は形状番号を保ったまま開口の横位置、X/Z軸、寸法、見た目、衝突レイヤーを
+3組へ同期反映する。通過部分には見えない衝突を残さず、`DestroyDoorway3D`は全3組を検証してから
+片付ける。扉板、開閉、鍵、操作対象は作品側で必要なものだけ追加する。
 衝突付き柵は`SpawnFence3D`へ長さ、高さ、最大支柱間隔を渡すと、両端を含む支柱を均等配置して
 水平な横桟で繋ぐ。XZの正負4方向、最大256区間、最大8本の横桟を扱い、`DestroyFence3D`は
 全支柱と横桟の所有関係と重複を検証してから片付ける。

@@ -402,6 +402,15 @@ FDoorway3DSpawnResult AUi3DScene::SpawnDoorway3D( f32 WallWidth,
 }
 
 
+bool AUi3DScene::TryUpdateDoorway3D(
+	const FDoorway3DSpawnResult& Doorway,
+	const FDoorway3DSpawnParams& Params ) noexcept
+{
+	return CDoorway3DSpawner::TryApplyTo(
+		Graph(), m_Collision3D, Doorway, Params );
+}
+
+
 bool AUi3DScene::DestroyDoorway3D( FDoorway3DSpawnResult& Doorway ) noexcept
 {
 	return CDoorway3DSpawner::Destroy( Graph(), m_Collision3D, Doorway );

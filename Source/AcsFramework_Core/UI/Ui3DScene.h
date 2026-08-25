@@ -503,6 +503,17 @@ public:
 		ANode* Parent = nullptr ) noexcept;
 
 	/**
+	 * この場面へ配置した左右柱と上枠を、新しい開口指定へ同期更新する。
+	 *
+	 * @details 別場面の結果、重複、共通親を失った構成、破棄予定、不正値では何も変更しない。
+	 * @param Doorway `SpawnDoorway3D`の成功結果。
+	 * @param Params 新しい下辺中央、向き、壁と開口の寸法、見た目、衝突レイヤー。
+	 * @return 3部分の表示、変形、名前、衝突レイヤーを全て更新できた場合だけtrue。
+	 */
+	bool TryUpdateDoorway3D( const FDoorway3DSpawnResult& Doorway,
+		const FDoorway3DSpawnParams& Params ) noexcept;
+
+	/**
 	 * 一括生成した3D壁枠を、左右柱と上枠のノード・形状ごと破棄する。
 	 *
 	 * @details 全3組がこの場面で重複なく対になっていない場合は何も変更しない。
