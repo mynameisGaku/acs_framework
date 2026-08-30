@@ -57,6 +57,7 @@ CActionInputTape (記録 / 再生)     ← 種 + 入力列。これがあれば�
 CSimulationSubsystem ── CFixedStepDriver (ACS CFixedStepClock)
         ↓ FSimulationContext     └ CDeterministicRandom (ACS FRandom + 種と引いた回数)
    ISimulationRule (ゲーム側が実装)
+		├→ FActionAxisResponse         ← 1軸または2軸の遊びを除き応答曲線を適用
 		├→ FActionInputBuffer          ← 通常履歴または固定ステップ入力から押下を短時間保持
 		└→ FActionHoldTracker          ← 通常履歴または固定ステップ入力から短押しと長押しを判定
         ↓ FSimulationEvent
@@ -76,7 +77,7 @@ CSimulationEventQueue → 読む側 (Actor / Audio / VFX)
 | 直下 | 部品 | `CFixedStepDriver`、`CDeterministicRandom`、`CActionInputTape`、`CSimulationEventQueue`、`CReplayFile` |
 | 直下 | 途中から始める | `CSimulationSnapshot`、`CSimulationSnapshotFile` |
 | 直下 | 所有と順番 | `CSimulationSubsystem` |
-| `Input/` | 装置 → アクションの変換、通常履歴、通常・固定の両方で使う局所入力判定 | `IActionDeviceReader`、`CActionBindingTable`、`CActionInputTracker`、`FActionInputBuffer`、`FActionHoldTracker`、`FActionKeyRebindState`、`FActionGamepadRebindState`、`CDeviceActionReader`、`CBoundActionSource` |
+| `Input/` | 装置 → アクションの変換、通常履歴、通常・固定の両方で使う局所入力判定 | `IActionDeviceReader`、`CActionBindingTable`、`CActionInputTracker`、`FActionAxisResponse`、`FActionInputBuffer`、`FActionHoldTracker`、`FActionKeyRebindState`、`FActionGamepadRebindState`、`CDeviceActionReader`、`CBoundActionSource` |
 | `Test/` | ゲーム抜きで回す自己テスト | `SimulationDeterminismTest.cpp` |
 
 **ゲームのルールはここへ置かない。** `ISimulationRule` を実装するのはゲーム側。
@@ -134,6 +135,37 @@ const FActionInputBufferState SavedInputBuffer = InputBuffer.CaptureState();
 
 if ( !InputBuffer.RestoreState( SavedInputBuffer ) ) return false;
 ```
+
+### アナログ軸の遊びを除く
+
+ゲームパッドの中心ずれを止めながら、移動、視点、照準を最大値まで使う場合は
+`FActionAxisResponse`を設定値として持つ。内側の遊びを単に0へ切るのではなく、残った範囲を
+0から1へ詰め直す。2軸版は入力方向を変えずに長さへ適用するため、斜め入力も歪まない。
+
+```cpp
+FActionAxisResponse MoveResponse;
+MoveResponse.InnerDeadZone = 0.15f;
+MoveResponse.OuterDeadZone = 0.02f;
+MoveResponse.ResponseExponent = 1.4f;
+
+CActionInputTracker Input;
+Input.GetBindings().BindGamepadAxis(
+	kMoveXAxis, EGamepadAxis::LeftX, 0u, 0.0f );
+Input.GetBindings().BindGamepadAxis(
+	kMoveYAxis, EGamepadAxis::LeftY, 0u, 0.0f );
+
+Input.Update();
+FVec2 MoveAxes;
+if ( !MoveResponse.TryApplyRadial(
+		Input.GetCurrentInput(), kMoveXAxis, kMoveYAxis, MoveAxes ) ) return;
+```
+
+円形応答へ渡すゲームパッド2軸は、`BindGamepadAxis`の`DeadZone`を`0.0f`にする。
+既定の`0.15f`を残すと各成分が円形応答より先に個別で0へ切られ、斜め方向を復元できない。
+キーから同じ軸へ加える割り当ては最大値を返すため、この指定の影響を受けない。
+
+入力値が1を超えた場合は方向を保って長さ1へ止める。設定値、入力値、軸番号が不正なら
+出力を変えずfalseを返すため、最後に有効だった操作量を明示的に維持できる。
 
 ### 短押しと長押しを分ける
 

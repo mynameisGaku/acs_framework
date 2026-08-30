@@ -123,6 +123,7 @@
 #include "AcsFramework_Core/Simulation/ActionInput.h"
 #include "AcsFramework_Core/Simulation/IActionInputSource.h"
 #include "AcsFramework_Core/Simulation/ISimulationRule.h"
+#include "AcsFramework_Core/Simulation/Input/ActionAxisResponse.h"
 #include "AcsFramework_Core/Simulation/Input/ActionBindingTable.h"
 #include "AcsFramework_Core/Simulation/Input/ActionHoldTracker.h"
 #include "AcsFramework_Core/Simulation/Input/ActionHoldTrackerState.h"

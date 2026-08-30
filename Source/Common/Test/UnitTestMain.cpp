@@ -42,6 +42,7 @@ void RunInternedNamePoolTests( CTestHarness& Harness );
 void RunAcsArchiveFileTests( CTestHarness& Harness );
 void RunActionInputTapeTests( CTestHarness& Harness );
 void RunSimulationSnapshotTests( CTestHarness& Harness );
+void RunActionAxisResponseTests( CTestHarness& Harness );
 void RunActionBindingTableTests( CTestHarness& Harness );
 void RunActionHoldTrackerTests( CTestHarness& Harness );
 void RunActionInputBufferTests( CTestHarness& Harness );
@@ -119,6 +120,7 @@ int main()
 	RunAcsArchiveFileTests( Harness );
 	RunActionInputTapeTests( Harness );
 	RunSimulationSnapshotTests( Harness );
+	RunActionAxisResponseTests( Harness );
 	RunActionBindingTableTests( Harness );
 	RunActionHoldTrackerTests( Harness );
 	RunActionInputBufferTests( Harness );
