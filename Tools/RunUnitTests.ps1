@@ -216,6 +216,7 @@ $sources = @(
     'AcsFramework_Core\Simulation\Test\ActionInputTapeTest.cpp',
     'AcsFramework_Core\Simulation\Test\SimulationSnapshotTest.cpp',
     'AcsFramework_Core\Simulation\SimulationSnapshot.cpp',
+	'AcsFramework_Core\Simulation\SimulationSubsystem.cpp',
     'AcsFramework_Core\Simulation\FixedStepDriver.cpp',
     'AcsFramework_Core\Simulation\DeterministicRandom.cpp',
     'AcsFramework_Core\Simulation\Test\ActionBindingTableTest.cpp',

@@ -113,7 +113,7 @@ bool CSimulationSubsystem::TryCaptureSnapshot( CSimulationSnapshot& OutSnapshot 
 {
 	if ( !m_Rule ) return false;
 
-	return OutSnapshot.TryCaptureFrom( m_Driver, m_Random, *m_Rule );
+	return OutSnapshot.TryCaptureFrom( m_Driver, m_Random, *m_Rule, m_LastInput, m_PreviousInput );
 }
 
 
@@ -121,7 +121,12 @@ bool CSimulationSubsystem::TryRestoreSnapshot( const CSimulationSnapshot& Snapsh
 {
 	if ( !m_Rule ) return false;
 
-	if ( !Snapshot.TryRestoreTo( m_Driver, m_Random, *m_Rule ) ) return false;
+	FActionInput RestoredLastInput;
+	FActionInput RestoredPreviousInput;
+	if ( !Snapshot.TryRestoreTo( m_Driver, m_Random, *m_Rule, RestoredLastInput, RestoredPreviousInput ) ) return false;
+
+	m_LastInput = RestoredLastInput;
+	m_PreviousInput = RestoredPreviousInput;
 
 	// 戻る前のフレームで溜まったものを持ち越すと、同じことが二度起きたように見える。
 	m_Events.Clear();

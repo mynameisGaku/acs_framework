@@ -5,7 +5,7 @@
 
 namespace
 {
-	/** ファイルへ書く形式の版。中身の並びを変えたら上げる。 */
+	/** 外側の保管形式の版。内側のスナップショット形式は自身の版で移行する。 */
 	constexpr u32 kSnapshotFileVersion = 1u;
 }
 

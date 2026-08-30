@@ -417,7 +417,7 @@ int main()
 		StepRange( Rule, LoadedTape, Driver, Random, Events, Current, Previous, kHalf );
 
 		CSimulationSnapshot Snapshot;
-		const bool bCaptured = Snapshot.TryCaptureFrom( Driver, Random, Rule );
+		const bool bCaptured = Snapshot.TryCaptureFrom( Driver, Random, Rule, Current, Previous );
 
 		// 写した地点から後だけを比べたいので、ここで一度捨てる。
 		// 前半ぶんを残したまま比べると «区間の違う 2 つ» を比べることになる。
@@ -434,7 +434,7 @@ int main()
 		Current = FActionInput();
 		Previous = FActionInput();
 
-		const bool bRestored = bCaptured && Snapshot.TryRestoreTo( Driver, Random, Rule );
+		const bool bRestored = bCaptured && Snapshot.TryRestoreTo( Driver, Random, Rule, Current, Previous );
 
 		StepRange( Rule, LoadedTape, Driver, Random, Events, Current, Previous, kStepCount - kHalf );
 
@@ -483,7 +483,7 @@ int main()
 
 				FileDriver.Configure( 1.0 / 60.0, 8u );
 
-				if ( !FromFile.TryRestoreTo( FileDriver, FileRandom, FileRule ) )
+				if ( !FromFile.TryRestoreTo( FileDriver, FileRandom, FileRule, FileCurrent, FilePrevious ) )
 				{
 					std::printf( "  [NG] ファイルから戻せません\n" );
 					bAllOk = false;

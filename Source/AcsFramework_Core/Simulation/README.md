@@ -120,24 +120,26 @@ InputBuffer.Update( Input, DeltaSeconds );
 if ( CanDodge() && InputBuffer.Consume( kActionDodge ) ) Dodge();
 ```
 
-固定ステップへ組み込む場合は、バッファだけでなく現在・前回の入力履歴も復元対象になる。
-現在の`CSimulationSnapshot`は`CSimulationSubsystem`内の入力履歴を保存しないため、途中状態から
-同じ続きを再現する規則では、この制約が解消されるまで通常フレーム用途に限る。
+固定ステップへ組み込む場合は`InputBuffer.Update( Context.Input, Context.PreviousInput,
+Context.StepSeconds )`を使う。`CSimulationSubsystem`のスナップショットは現在・前回の入力履歴も
+復元するため、長押しを新しい押下として二重発火させない。バッファの残り時間はゲーム規則が持つ
+盤面なので、途中状態から再現する場合は`ISimulationRule`の保存状態へ含める。
 
 ---
 
 ## 途中から始める
 
 最初から流し直すのでは足りない場面がある（長い記録の後半だけ見たい、バグの瞬間へ戻りたい、
-1 フレーム戻して確かめたい）。続きから同じ道を進むには 3 つが要る。**1 つでも欠けると別の道になる。**
+1 フレーム戻して確かめたい）。続きから同じ道を進むには 4 つが要る。**1 つでも欠けると別の道になる。**
 
 | 写すもの | 欠けるとどうなるか |
 |---|---|
 | 盤面 (`ISimulationRule::TrySaveState`) | そもそも別の局面から始まる |
 | 時計 (`CFixedStepDriver`) | ティックがずれ、テープの読み出し位置が合わない |
 | 乱数 (`CDeterministicRandom`) | 同じ入力でも違う出目になる |
+| 入力履歴 (`FActionInput`) | 長押しを新しい押下と誤認し、操作が二重に発火する |
 
-`CSimulationSnapshot` がこの 3 つを 1 つに束ねる。テープは含めない（テープは「どう操作したか」、
+`CSimulationSnapshot` がこの 4 つを 1 つに束ねる。テープは含めない（テープは「どう操作したか」、
 スナップショットは「どうなっていたか」）。途中から再生するときは 2 つを組み合わせる。
 
 ```cpp
@@ -151,7 +153,7 @@ CSimulationSnapshotFile::Save( Snapshot, FString( "Saved/Replay/bug.acssave" ) )
 **規則が `TrySaveState` を実装していないと写せない**（既定は false）。実装するときは、
 結果に影響する値を漏らさず入れること。時計と乱数は枠組みが別に写すので入れなくてよい。
 
-戻す処理は「3 つとも戻せるか」を先に確かめてから実際に戻す。途中で失敗して一部だけ戻った
+戻す処理は「4 つとも戻せるか」を先に確かめてから実際に戻す。途中で失敗して一部だけ戻った
 状態から進むと、原因の分からないずれ方をするため。
 
 ## ルールを書くときの約束
