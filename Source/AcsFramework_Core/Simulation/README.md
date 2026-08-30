@@ -49,8 +49,8 @@
 装置 (キー / パッド)
         ↓ IActionDeviceReader     ← ここだけが acs::CInput を知る。テストでは偽物を差せる
 CActionBindingTable               ← 「この操作はこのアクション」の対応表
-        ↓
-IActionInputSource (Player / AI / 台本)
+        ├→ CActionInputTracker    ← 通常フレームの現在・前回・押下・解放
+        └→ IActionInputSource (Player / AI / 台本)
         ↓ FActionInput            ← 装置ではなくアクション。だから Player と AI が同じ口を通る
 CActionInputTape (記録 / 再生)     ← 種 + 入力列。これがあればバグを再現できる
         ↓ CReplayFile で保存・読込
@@ -74,10 +74,34 @@ CSimulationEventQueue → 読む側 (Actor / Audio / VFX)
 | 直下 | 部品 | `CFixedStepDriver`、`CDeterministicRandom`、`CActionInputTape`、`CSimulationEventQueue`、`CReplayFile` |
 | 直下 | 途中から始める | `CSimulationSnapshot`、`CSimulationSnapshotFile` |
 | 直下 | 所有と順番 | `CSimulationSubsystem` |
-| `Input/` | 装置 → アクションの変換 | `IActionDeviceReader`、`CActionBindingTable`、`FActionKeyRebindState`、`FActionGamepadRebindState`、`CDeviceActionReader`、`CBoundActionSource` |
+| `Input/` | 装置 → アクションの変換と通常フレームの履歴 | `IActionDeviceReader`、`CActionBindingTable`、`CActionInputTracker`、`FActionKeyRebindState`、`FActionGamepadRebindState`、`CDeviceActionReader`、`CBoundActionSource` |
 | `Test/` | ゲーム抜きで回す自己テスト | `SimulationDeterminismTest.cpp` |
 
 **ゲームのルールはここへ置かない。** `ISimulationRule` を実装するのはゲーム側。
+
+---
+
+## 通常の場面で入力を読む
+
+固定ステップを使わない場面では、`CActionInputTracker`を場面のfieldとして持つ。
+現在値と前フレーム値を手で入れ替える必要はなく、実機、偽装置、完成済みのアクション入力を
+同じ履歴判定へ渡せる。
+
+```cpp
+// OnEnterなどで1回
+Input.GetBindings().BindKey( kActionJump, EKey::Space );
+Input.GetBindings().BindGamepadButton( kActionJump, EGamepadButton::South );
+
+// OnUpdateで1フレームに1回
+Input.Update();
+if ( Input.WasPressed( kActionJump ) ) Jump();
+if ( Input.WasReleased( kActionJump ) ) StopCharging();
+const f32 MoveX = Input.GetAxis( kAxisMoveX );
+```
+
+AIや入力再生なら`Input.Update( ActionInput )`、装置なしのテストなら
+`Input.Update( FakeDeviceReader )`を使う。固定ステップでは1描画フレームに複数ティック進むことが
+あるため、このトラッカーではなく`FSimulationContext::WasPressed` / `WasReleased`を使う。
 
 ---
 

@@ -422,8 +422,8 @@ void ADemo3DScene::OnEnter() noexcept
 	m_WaterSurfaceId = FNodeId{};
 	m_ThirdPersonCharacter.Unbind();
 	m_CharacterNode = nullptr;
-	m_CharacterActionBindings.Clear();
-	m_PreviousCharacterInput = FActionInput{};
+	m_CharacterInput.GetBindings().Clear();
+	m_CharacterInput.Reset();
 
 	// 磨いた床。水面の直下だけ穴を空け、屈折が極浅い床を拾って白くならないようにする。
 	constexpr FVec4 FloorColor{ 0.55f, 0.56f, 0.58f, 1.0f };
@@ -668,14 +668,14 @@ void ADemo3DScene::OnEnter() noexcept
 		if ( Settings != nullptr ) Settings->SetInt( FString( kFxaaKeySetting ), static_cast<i32>( LoadedKey ) );
 	}
 
-	m_ActionBindings.Clear();
-	m_PreviousActionInput = FActionInput{};
+	m_ActionInput.GetBindings().Clear();
+	m_ActionInput.Reset();
 	m_bSuppressBoundActionPress = false;
 	m_bSuppressJumpButtonUntilReleased = false;
 	m_bSuppressMoveAxisUntilCentered = false;
 	m_bRestoreFreeCameraAfterUpdate = false;
 	m_FxaaKeyRebind.SetCurrentKey( LoadedKey );
-	if ( !m_ActionBindings.ReplaceKeyBinding( kFxaaActionIndex, LoadedKey ) )
+	if ( !m_ActionInput.GetBindings().ReplaceKeyBinding( kFxaaActionIndex, LoadedKey ) )
 	{
 		ACS_LOG_WARN( "Demo3D: FXAAキー割り当ての初期化に失敗" );
 	}
@@ -752,8 +752,8 @@ void ADemo3DScene::OnExit() noexcept
 	m_bSuppressJumpButtonUntilReleased = false;
 	m_bSuppressMoveAxisUntilCentered = false;
 	m_ThirdPersonCharacter.Unbind();
-	m_CharacterActionBindings.Clear();
-	m_PreviousCharacterInput = FActionInput{};
+	m_CharacterInput.GetBindings().Clear();
+	m_CharacterInput.Reset();
 	m_GeometryPickDebugRemainingSeconds = 0.0f;
 	m_CharacterNode = nullptr;
 	m_Spinner = FCollidableModel3DSpawnResult{};
@@ -805,8 +805,8 @@ bool ADemo3DScene::TryInitializeThirdPersonCharacter() noexcept
 	}
 
 	m_CharacterNode = Character;
-	m_CharacterActionBindings = Move( BuiltBindings );
-	m_PreviousCharacterInput = FActionInput{};
+	m_CharacterInput.GetBindings() = Move( BuiltBindings );
+	m_CharacterInput.Reset();
 	FWorldLabel3DParams CharacterLabel;
 	CharacterLabel.Text = FStringView( "PLAYER" );
 	CharacterLabel.WorldOffset = FVec3{ 0.0f, 2.15f, 0.0f };
@@ -827,7 +827,7 @@ void ADemo3DScene::UpdateThirdPersonCharacter( f32 DeltaSeconds ) noexcept
 {
 	if ( !m_ThirdPersonCharacter.IsBound() || m_CharacterNode == nullptr ) return;
 
-	FActionInput CurrentInput = m_CharacterActionBindings.Resolve( m_ActionReader );
+	FActionInput CurrentInput = m_CharacterInput.GetBindings().Resolve( m_ActionReader );
 	bool bSuppressInput = IsInputCaptureActive() || m_bSuppressBoundActionPress;
 	if ( m_bSuppressJumpButtonUntilReleased )
 	{
@@ -841,9 +841,9 @@ void ADemo3DScene::UpdateThirdPersonCharacter( f32 DeltaSeconds ) noexcept
 		else m_bSuppressMoveAxisUntilCentered = false;
 	}
 	if ( bSuppressInput ) CurrentInput = FActionInput{};
+	m_CharacterInput.Update( CurrentInput );
 	const FThirdPersonCharacter3DActionSet Actions = FThirdPersonCharacter3DActionSet::WithRunAction();
-	m_ThirdPersonCharacter.Update( CurrentInput, m_PreviousCharacterInput, DeltaSeconds, Actions );
-	m_PreviousCharacterInput = CurrentInput;
+	m_ThirdPersonCharacter.Update( m_CharacterInput.GetCurrentInput(), m_CharacterInput.GetPreviousInput(), DeltaSeconds, Actions );
 }
 
 
@@ -903,11 +903,8 @@ void ADemo3DScene::OnUpdate( f32 DeltaSeconds ) noexcept
 		RefreshGamepadRebindText();
 	}
 
-	const FActionInput CurrentActionInput = m_ActionBindings.Resolve( m_ActionReader );
-	bool bBoundActionPressed = !IsInputCaptureActive()
-		&& CurrentActionInput.IsDown( kFxaaActionIndex )
-		&& !m_PreviousActionInput.IsDown( kFxaaActionIndex );
-	m_PreviousActionInput = CurrentActionInput;
+	m_ActionInput.Update( m_ActionReader );
+	bool bBoundActionPressed = !IsInputCaptureActive() && m_ActionInput.WasPressed( kFxaaActionIndex );
 	UpdateThirdPersonCharacter( DeltaSeconds );
 	RefreshSpatialAudioListener();
 
@@ -1010,7 +1007,7 @@ void ADemo3DScene::OnEvent( const FEvent& Event ) noexcept
 		if ( Result == FActionKeyRebindState::EResult::Applied )
 		{
 			const EKey AppliedKey = m_FxaaKeyRebind.CurrentKey();
-			if ( !IsDemoFxaaKey( AppliedKey ) || !m_ActionBindings.ReplaceKeyBinding( kFxaaActionIndex, AppliedKey ) )
+			if ( !IsDemoFxaaKey( AppliedKey ) || !m_ActionInput.GetBindings().ReplaceKeyBinding( kFxaaActionIndex, AppliedKey ) )
 			{
 				m_FxaaKeyRebind.SetCurrentKey( PreviousKey );
 				ACS_LOG_WARN( "Demo3D: FXAAキー割り当てを適用できなかった" );
@@ -1099,7 +1096,7 @@ void ADemo3DScene::UpdateGamepadRebinding() noexcept
 		const EGamepadButton PreviousButton = m_JumpGamepadRebind.CurrentButton();
 		if ( m_JumpGamepadRebind.HandlePressedButton( PressedButton ) != FActionGamepadRebindState::EResult::Applied ) return;
 		const EGamepadButton AppliedButton = m_JumpGamepadRebind.CurrentButton();
-		if ( !m_CharacterActionBindings.ReplaceGamepadButtonBinding( Actions.JumpAction, AppliedButton, kGamepadPlayerIndex ) )
+		if ( !m_CharacterInput.GetBindings().ReplaceGamepadButtonBinding( Actions.JumpAction, AppliedButton, kGamepadPlayerIndex ) )
 		{
 			m_JumpGamepadRebind.SetCurrentButton( PreviousButton );
 			ACS_LOG_WARN( "Demo3D: ジャンプボタン割り当てを適用できなかった" );
@@ -1127,7 +1124,7 @@ void ADemo3DScene::UpdateGamepadRebinding() noexcept
 	const EGamepadAxis PreviousAxis = m_MoveGamepadRebind.CurrentAxis();
 	if ( m_MoveGamepadRebind.HandleActiveAxis( ActiveAxis ) != FActionGamepadRebindState::EResult::Applied ) return;
 	const EGamepadAxis AppliedAxis = m_MoveGamepadRebind.CurrentAxis();
-	if ( !m_CharacterActionBindings.ReplaceGamepadAxisBinding( Actions.MoveForwardAxis, AppliedAxis, kGamepadPlayerIndex, kGamepadDeadZone, 1.0f ) )
+	if ( !m_CharacterInput.GetBindings().ReplaceGamepadAxisBinding( Actions.MoveForwardAxis, AppliedAxis, kGamepadPlayerIndex, kGamepadDeadZone, 1.0f ) )
 	{
 		m_MoveGamepadRebind.SetCurrentAxis( PreviousAxis );
 		ACS_LOG_WARN( "Demo3D: 前後移動軸割り当てを適用できなかった" );

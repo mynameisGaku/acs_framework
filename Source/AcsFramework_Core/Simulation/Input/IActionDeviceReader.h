@@ -15,8 +15,9 @@ using namespace acs;
  *
  * 実機では CDeviceActionReader が `acs::CInput` を読む。
  *
- * ここで «押された/離された» は扱わない。差分は前ティックとの突き合わせで決まるので、
- * FSimulationContext が答える。ここが答えるのは「いま押されているか」だけ。
+ * ここで «押された/離された» は扱わない。差分は前状態との突き合わせで決まるので、
+ * 固定ステップでは`FSimulationContext`、通常の場面更新では`CActionInputTracker`が答える。
+ * ここが答えるのは「いま押されているか」だけ。
  */
 class IActionDeviceReader
 {

@@ -322,14 +322,14 @@ const FCheckpointRoute3DTimerState SavedTimer = RouteTimer.CaptureState();
 Route.RestoreProgress( SavedRoute );
 RouteTimer.RestoreState( SavedTimer );
 
-// 接続済みキャラクターを、既定の入力割り当てから1回進める
-CActionBindingTable ActionBindings;
+// Sceneのfieldとして保持し、接続済みキャラクターを毎フレーム進める
+CActionInputTracker CharacterInput;
 const FThirdPersonCharacter3DActionSet Actions = FThirdPersonCharacter3DActionSet::WithRunAction();
-FThirdPersonCharacter3DControlPreset{}.TryBuildBindings( ActionBindings, Actions );
-FActionInput PreviousCharacterInput;
-const FActionInput CharacterInput = ActionBindings.Resolve( InputReader );
-HeroController.Update( CharacterInput, PreviousCharacterInput, DeltaSeconds, Actions );
-PreviousCharacterInput = CharacterInput;
+FThirdPersonCharacter3DControlPreset{}.TryBuildBindings( CharacterInput.GetBindings(), Actions );
+
+// OnUpdate。実機入力を読み、現在と前フレームを自動で入れ替える
+CharacterInput.Update();
+HeroController.Update( CharacterInput.GetCurrentInput(), CharacterInput.GetPreviousInput(), DeltaSeconds, Actions );
 HeroController.OrbitCamera().TryShakePreset( EShakePreset::HitImpact ); // 被弾時
 
 // ノードの頭上へ、ポスト処理でぼけない文字を追従させる

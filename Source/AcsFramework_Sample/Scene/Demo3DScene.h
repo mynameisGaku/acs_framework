@@ -7,8 +7,8 @@
 #include "AcsFramework_Core/Scene/Model3D/CollidableModel3DSpawnResult.h"
 #include "AcsFramework_Core/Scene/Trigger3D/ProximityTrigger3D.h"
 #include "AcsFramework_Core/Scene/Weather3D/Weather3DScene.h"
-#include "AcsFramework_Core/Simulation/Input/ActionBindingTable.h"
 #include "AcsFramework_Core/Simulation/Input/ActionGamepadRebindState.h"
+#include "AcsFramework_Core/Simulation/Input/ActionInputTracker.h"
 #include "AcsFramework_Core/Simulation/Input/ActionKeyRebindState.h"
 #include "AcsFramework_Core/Simulation/Input/DeviceActionReader.h"
 
@@ -152,11 +152,8 @@ private:
 	/** 操作対象の足元ノード。所有はしない。 */
 	ANode* m_CharacterNode = nullptr;
 
-	/** WASDとゲームパッドを第三者視点操作へ変換する専用表。 */
-	CActionBindingTable m_CharacterActionBindings;
-
-	/** ジャンプの押した瞬間を判定する前フレームの操作入力。 */
-	FActionInput m_PreviousCharacterInput;
+	/** WASDとゲームパッドを第三者視点操作へ変換し、前フレームも保持する入力。 */
+	CActionInputTracker m_CharacterInput;
 
 	/** 波紋を追加する水面の世代付き識別子。 */
 	FNodeId m_WaterSurfaceId;
@@ -239,14 +236,11 @@ private:
 	/** 視線対象の有無と直近の決定結果を示す文字。 */
 	u32 m_InteractionStatusText = 0u;
 
-	/** 実機キーをFXAA操作へ変換する割り当て表。 */
-	CActionBindingTable m_ActionBindings;
+	/** 実機キーをFXAA操作へ変換し、押下開始を判定する入力。 */
+	CActionInputTracker m_ActionInput;
 
 	/** 実機キー状態を割り当て表へ渡す読み口。 */
 	CDeviceActionReader m_ActionReader;
-
-	/** 押下開始を判定するために保持する前フレームのアクション入力。 */
-	FActionInput m_PreviousActionInput;
 
 	/** FXAA操作の現在キーと、次のキーを待つ状態。 */
 	FActionKeyRebindState m_FxaaKeyRebind;

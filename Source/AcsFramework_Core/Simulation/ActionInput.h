@@ -20,8 +20,8 @@ inline constexpr u32 kActionAxisCount = 4u;
  * キー割り当てを変えただけで再生が壊れる)。
  *
  * 何が押されているかだけを持ち、「今フレーム押された」といった差分は持たない。
- * 差分は前ティックと突き合わせて初めて決まるので、両方を知っている
- * FSimulationContext 側が答える。
+ * 差分は前ティックまたは前フレームと突き合わせて初めて決まるので、固定ステップでは
+ * `FSimulationContext`、通常の場面更新では`CActionInputTracker`が答える。
  */
 struct FActionInput
 {

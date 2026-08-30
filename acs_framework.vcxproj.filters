@@ -804,6 +804,9 @@
     <ClCompile Include="Source\AcsFramework_Core\Simulation\Input\ActionGamepadRebindState.cpp">
       <Filter>Source\AcsFramework_Core\Simulation\Input</Filter>
     </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Simulation\Input\ActionInputTracker.cpp">
+      <Filter>Source\AcsFramework_Core\Simulation\Input</Filter>
+    </ClCompile>
     <ClCompile Include="Source\AcsFramework_Core\Simulation\Input\ActionKeyRebindState.cpp">
       <Filter>Source\AcsFramework_Core\Simulation\Input</Filter>
     </ClCompile>
@@ -1637,6 +1640,9 @@
     <ClInclude Include="Source\AcsFramework_Core\Simulation\Input\ActionGamepadRebindState.h">
       <Filter>Source\AcsFramework_Core\Simulation\Input</Filter>
     </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Simulation\Input\ActionInputTracker.h">
+      <Filter>Source\AcsFramework_Core\Simulation\Input</Filter>
+    </ClInclude>
     <ClInclude Include="Source\AcsFramework_Core\Simulation\Input\ActionKeyRebindState.h">
       <Filter>Source\AcsFramework_Core\Simulation\Input</Filter>
     </ClInclude>
@@ -2315,6 +2321,9 @@
       <Filter>Source\AcsFramework_Core\Simulation\Test</Filter>
     </None>
     <None Include="Source\AcsFramework_Core\Simulation\Test\ActionInputTapeTest.cpp">
+      <Filter>Source\AcsFramework_Core\Simulation\Test</Filter>
+    </None>
+    <None Include="Source\AcsFramework_Core\Simulation\Test\ActionInputTrackerTest.cpp">
       <Filter>Source\AcsFramework_Core\Simulation\Test</Filter>
     </None>
     <None Include="Source\AcsFramework_Core\Simulation\Test\ActionKeyRebindStateTest.cpp">
