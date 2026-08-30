@@ -123,7 +123,16 @@ if ( CanDodge() && InputBuffer.Consume( kActionDodge ) ) Dodge();
 固定ステップへ組み込む場合は`InputBuffer.Update( Context.Input, Context.PreviousInput,
 Context.StepSeconds )`を使う。`CSimulationSubsystem`のスナップショットは現在・前回の入力履歴も
 復元するため、長押しを新しい押下として二重発火させない。バッファの残り時間はゲーム規則が持つ
-盤面なので、途中状態から再現する場合は`ISimulationRule`の保存状態へ含める。
+盤面なので、途中状態から再現する場合は`CaptureState()`で`FActionInputBufferState`を取得し、
+`ISimulationRule`の保存状態へ各項目を含める。読み込み時は`RestoreState()`へ渡すと、有限性と
+残り時間の矛盾を検証し、失敗時に現在のバッファを変えず復元できる。
+
+```cpp
+const FActionInputBufferState SavedInputBuffer = InputBuffer.CaptureState();
+// SavedInputBufferの各項目を、ゲーム規則の盤面と一緒に保存する
+
+if ( !InputBuffer.RestoreState( SavedInputBuffer ) ) return false;
+```
 
 ---
 

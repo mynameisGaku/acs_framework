@@ -209,6 +209,7 @@ $sources = @(
     'AcsFramework_Core\Simulation\SimulationEventQueue.cpp',
     'AcsFramework_Core\Simulation\Input\ActionBindingTable.cpp',
     'AcsFramework_Core\Simulation\Input\ActionInputBuffer.cpp',
+    'AcsFramework_Core\Simulation\Input\ActionInputBufferState.cpp',
     'AcsFramework_Core\Simulation\Input\ActionInputTracker.cpp',
     'AcsFramework_Core\Simulation\Input\ActionGamepadRebindState.cpp',
     'AcsFramework_Core\Simulation\Input\ActionKeyRebindState.cpp',

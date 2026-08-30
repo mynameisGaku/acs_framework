@@ -4,6 +4,7 @@
 #include <acs.h>
 
 #include "AcsFramework_Core/Simulation/ActionInput.h"
+#include "AcsFramework_Core/Simulation/Input/ActionInputBufferState.h"
 
 using namespace acs;
 
@@ -109,6 +110,17 @@ public:
 
 	/** 全操作の保持状態を空にする。猶予設定は維持する。 */
 	void Reset() noexcept;
+
+	/** 現在の猶予設定と全操作の残り時間を保存可能な値として返す。 */
+	FActionInputBufferState CaptureState() const noexcept;
+
+	/**
+	 * 保存した猶予設定と全操作の残り時間を復元する。
+	 *
+	 * @param State `CaptureState`で取得した有限かつ矛盾のない状態。
+	 * @return 復元できたらtrue。不正な状態では現在値を一切変えずfalse。
+	 */
+	bool RestoreState( const FActionInputBufferState& State ) noexcept;
 
 	/**
 	 * 指定操作を保持できる残り秒数を返す。

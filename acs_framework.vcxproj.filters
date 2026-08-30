@@ -807,6 +807,9 @@
     <ClCompile Include="Source\AcsFramework_Core\Simulation\Input\ActionInputBuffer.cpp">
       <Filter>Source\AcsFramework_Core\Simulation\Input</Filter>
     </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Simulation\Input\ActionInputBufferState.cpp">
+      <Filter>Source\AcsFramework_Core\Simulation\Input</Filter>
+    </ClCompile>
     <ClCompile Include="Source\AcsFramework_Core\Simulation\Input\ActionInputTracker.cpp">
       <Filter>Source\AcsFramework_Core\Simulation\Input</Filter>
     </ClCompile>
@@ -1644,6 +1647,9 @@
       <Filter>Source\AcsFramework_Core\Simulation\Input</Filter>
     </ClInclude>
     <ClInclude Include="Source\AcsFramework_Core\Simulation\Input\ActionInputBuffer.h">
+      <Filter>Source\AcsFramework_Core\Simulation\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Simulation\Input\ActionInputBufferState.h">
       <Filter>Source\AcsFramework_Core\Simulation\Input</Filter>
     </ClInclude>
     <ClInclude Include="Source\AcsFramework_Core\Simulation\Input\ActionInputTracker.h">

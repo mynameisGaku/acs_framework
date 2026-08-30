@@ -6,6 +6,26 @@
 #include <limits>
 
 
+namespace
+{
+	/** 押下猶予バッファの保存値が全項目で一致するか返す。 */
+	bool InputBufferStatesEqual( const FActionInputBufferState& Left,
+		const FActionInputBufferState& Right ) noexcept
+	{
+		if ( Left.WindowSeconds != Right.WindowSeconds ) return false;
+
+		for ( u32 ActionIndex = 0u; ActionIndex < kActionButtonCount; ++ActionIndex )
+		{
+			if ( Left.RemainingSeconds[ActionIndex] != Right.RemainingSeconds[ActionIndex]
+				|| Left.CapturedWindowSeconds[ActionIndex]
+					!= Right.CapturedWindowSeconds[ActionIndex] ) return false;
+		}
+
+		return true;
+	}
+}
+
+
 /**
  * 押下の保持、経過、消費と、不正入力で状態を壊さない境界を検証する。
  *
@@ -163,5 +183,60 @@ void RunActionInputBufferTests( CTestHarness& Harness )
 		const FActionInputBuffer InvalidBuffer{ -1.0f };
 		Harness.CheckNearF32( InvalidBuffer.GetWindowSeconds(), 0.12f, 0.0001f,
 			"不正な構築値では既定の猶予を保つ" );
+	}
+
+	Harness.BeginSuite( "FActionInputBuffer / 保存と原子的復元" );
+
+	{
+		FActionInputBuffer Source{ 0.20f };
+		Source.BufferAction( kJumpAction );
+		Source.SetWindowSeconds( 0.08f );
+		Source.BufferAction( kDodgeAction );
+		FActionInput NeutralInput;
+		Source.Update( NeutralInput, NeutralInput, 0.03f );
+
+		const FActionInputBufferState Saved = Source.CaptureState();
+		Harness.Check( Saved.IsValid(), "異なる装填時猶予を含む状態を保存できる" );
+		Harness.CheckNearF32( Saved.WindowSeconds, 0.08f, 0.000001f,
+			"今後の押下に使う猶予を保存する" );
+		Harness.CheckNearF32( Saved.CapturedWindowSeconds[kJumpAction], 0.20f, 0.000001f,
+			"既存操作には装填時の猶予を保存する" );
+
+		FActionInputBuffer Restored{ 0.50f };
+		Restored.BufferAction( 1u );
+		Harness.Check( Restored.RestoreState( Saved ), "別状態のバッファへ復元できる" );
+		Harness.Check( InputBufferStatesEqual( Restored.CaptureState(), Saved ),
+			"猶予設定と全操作の残り時間を完全に戻す" );
+
+		Source.Update( NeutralInput, NeutralInput, 0.049f );
+		Restored.Update( NeutralInput, NeutralInput, 0.049f );
+		Harness.Check( InputBufferStatesEqual( Restored.CaptureState(), Source.CaptureState() ),
+			"復元後も元の状態と同じ失効境界を進む" );
+
+		const FActionInputBufferState BeforeFailure = Restored.CaptureState();
+		FActionInputBufferState Invalid = BeforeFailure;
+		Invalid.WindowSeconds = 0.0f;
+		Harness.Check( !Restored.RestoreState( Invalid ), "0秒の保存猶予を拒否する" );
+		Harness.Check( InputBufferStatesEqual( Restored.CaptureState(), BeforeFailure ),
+			"不正な猶予では現在状態を変えない" );
+
+		Invalid = BeforeFailure;
+		Invalid.RemainingSeconds[kJumpAction] =
+			static_cast<f64>( Invalid.CapturedWindowSeconds[kJumpAction] ) + 1.0;
+		Harness.Check( !Restored.RestoreState( Invalid ), "装填時猶予を超える残り時間を拒否する" );
+		Harness.Check( InputBufferStatesEqual( Restored.CaptureState(), BeforeFailure ),
+			"矛盾した操作状態でも全状態を変えない" );
+
+		Invalid = BeforeFailure;
+		Invalid.RemainingSeconds[kDodgeAction] = std::numeric_limits<f64>::quiet_NaN();
+		Harness.Check( !Invalid.IsValid() && !Restored.RestoreState( Invalid ),
+			"NaNを含む操作状態を拒否する" );
+		Harness.Check( InputBufferStatesEqual( Restored.CaptureState(), BeforeFailure ),
+			"非有限値でも全状態を変えない" );
+
+		const FActionInputBufferState EmptyState;
+		Harness.Check( Restored.RestoreState( EmptyState )
+			&& InputBufferStatesEqual( Restored.CaptureState(), EmptyState ),
+			"既定状態の復元で全操作を空にする" );
 	}
 }

@@ -83,6 +83,35 @@ void FActionInputBuffer::Reset() noexcept
 }
 
 
+FActionInputBufferState FActionInputBuffer::CaptureState() const noexcept
+{
+	FActionInputBufferState State;
+	State.WindowSeconds = m_WindowSeconds;
+	for ( u32 ActionIndex = 0u; ActionIndex < kActionButtonCount; ++ActionIndex )
+	{
+		State.RemainingSeconds[ActionIndex] = m_RemainingSeconds[ActionIndex];
+		State.CapturedWindowSeconds[ActionIndex] = m_CapturedWindowSeconds[ActionIndex];
+	}
+
+	return State;
+}
+
+
+bool FActionInputBuffer::RestoreState( const FActionInputBufferState& State ) noexcept
+{
+	if ( !State.IsValid() ) return false;
+
+	m_WindowSeconds = State.WindowSeconds;
+	for ( u32 ActionIndex = 0u; ActionIndex < kActionButtonCount; ++ActionIndex )
+	{
+		m_RemainingSeconds[ActionIndex] = State.RemainingSeconds[ActionIndex];
+		m_CapturedWindowSeconds[ActionIndex] = State.CapturedWindowSeconds[ActionIndex];
+	}
+
+	return true;
+}
+
+
 f32 FActionInputBuffer::GetRemainingSeconds( u32 ActionIndex ) const noexcept
 {
 	return ActionIndex < kActionButtonCount
