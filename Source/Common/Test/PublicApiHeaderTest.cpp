@@ -25,6 +25,7 @@ void RunPublicApiHeaderTests( CTestHarness& Harness )
 	const FCheckpointRoute3DTimerState RouteTimerState = RouteTimer.CaptureState();
 	const FCheckpointRoute3DTimingResult RouteTiming{};
 	const EVisualPreset3D Preset = EVisualPreset3D::Balanced;
+	const FActionInputBuffer ActionBuffer;
 	const CActionInputTracker ActionInput;
 
 	Harness.Check( Position.x == 0.0f, "ACSの基本型が解決できる" );
@@ -38,5 +39,6 @@ void RunPublicApiHeaderTests( CTestHarness& Harness )
 		&& RouteTiming.TotalElapsedSeconds == 0.0,
 		"3Dチェックポイント順序ルートの計測型が解決できる" );
 	Harness.Check( Preset == EVisualPreset3D::Balanced, "3D見た目設定が解決できる" );
+	Harness.Check( !ActionBuffer.IsBuffered( 0u ), "入力猶予の公開型が解決できる" );
 	Harness.Check( ActionInput.GetCurrentInput().IsNeutral(), "通常フレームのアクション入力が解決できる" );
 }

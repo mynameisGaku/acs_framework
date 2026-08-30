@@ -124,6 +124,7 @@
 #include "AcsFramework_Core/Simulation/IActionInputSource.h"
 #include "AcsFramework_Core/Simulation/ISimulationRule.h"
 #include "AcsFramework_Core/Simulation/Input/ActionBindingTable.h"
+#include "AcsFramework_Core/Simulation/Input/ActionInputBuffer.h"
 #include "AcsFramework_Core/Simulation/Input/ActionInputTracker.h"
 #include "AcsFramework_Core/Simulation/Input/ActionKeyRebindState.h"
 #include "AcsFramework_Core/Simulation/Input/BoundActionSource.h"

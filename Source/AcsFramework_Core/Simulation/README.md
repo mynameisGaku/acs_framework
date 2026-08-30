@@ -50,6 +50,7 @@
         ↓ IActionDeviceReader     ← ここだけが acs::CInput を知る。テストでは偽物を差せる
 CActionBindingTable               ← 「この操作はこのアクション」の対応表
         ├→ CActionInputTracker    ← 通常フレームの現在・前回・押下・解放
+        │       └→ FActionInputBuffer ← 実行可能になるまで押下を短時間保持
         └→ IActionInputSource (Player / AI / 台本)
         ↓ FActionInput            ← 装置ではなくアクション。だから Player と AI が同じ口を通る
 CActionInputTape (記録 / 再生)     ← 種 + 入力列。これがあればバグを再現できる
@@ -74,7 +75,7 @@ CSimulationEventQueue → 読む側 (Actor / Audio / VFX)
 | 直下 | 部品 | `CFixedStepDriver`、`CDeterministicRandom`、`CActionInputTape`、`CSimulationEventQueue`、`CReplayFile` |
 | 直下 | 途中から始める | `CSimulationSnapshot`、`CSimulationSnapshotFile` |
 | 直下 | 所有と順番 | `CSimulationSubsystem` |
-| `Input/` | 装置 → アクションの変換と通常フレームの履歴 | `IActionDeviceReader`、`CActionBindingTable`、`CActionInputTracker`、`FActionKeyRebindState`、`FActionGamepadRebindState`、`CDeviceActionReader`、`CBoundActionSource` |
+| `Input/` | 装置 → アクションの変換と通常フレームの履歴 | `IActionDeviceReader`、`CActionBindingTable`、`CActionInputTracker`、`FActionInputBuffer`、`FActionKeyRebindState`、`FActionGamepadRebindState`、`CDeviceActionReader`、`CBoundActionSource` |
 | `Test/` | ゲーム抜きで回す自己テスト | `SimulationDeterminismTest.cpp` |
 
 **ゲームのルールはここへ置かない。** `ISimulationRule` を実装するのはゲーム側。
@@ -102,6 +103,26 @@ const f32 MoveX = Input.GetAxis( kAxisMoveX );
 AIや入力再生なら`Input.Update( ActionInput )`、装置なしのテストなら
 `Input.Update( FakeDeviceReader )`を使う。固定ステップでは1描画フレームに複数ティック進むことが
 あるため、このトラッカーではなく`FSimulationContext::WasPressed` / `WasReleased`を使う。
+
+### 入力を取りこぼさない
+
+着地、硬直終了、対象への接近など、操作を受理できる瞬間が少し後に来る場合は
+`FActionInputBuffer`を操作対象のfieldとして持つ。入力を押しっぱなしにしても再装填せず、
+`Consume()`に成功した1回だけ実行する。
+
+```cpp
+// field。猶予は用途ごとに決める
+FActionInputBuffer InputBuffer{ 0.12f };
+
+// OnUpdate
+Input.Update();
+InputBuffer.Update( Input, DeltaSeconds );
+if ( CanDodge() && InputBuffer.Consume( kActionDodge ) ) Dodge();
+```
+
+固定ステップへ組み込む場合は、バッファだけでなく現在・前回の入力履歴も復元対象になる。
+現在の`CSimulationSnapshot`は`CSimulationSubsystem`内の入力履歴を保存しないため、途中状態から
+同じ続きを再現する規則では、この制約が解消されるまで通常フレーム用途に限る。
 
 ---
 
