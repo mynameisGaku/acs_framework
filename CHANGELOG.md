@@ -37,6 +37,7 @@ ACS Frameworkの利用側から見える追加、変更、修正を記録する�
 - 通常の場面更新で、実機、AI、再生入力の現在・前回・押下・解放・軸を共通利用する`CActionInputTracker`
 - 着地や硬直終了の直前に押した操作を短時間保持し、受理時に1回だけ消費する`FActionInputBuffer`
 - 押下猶予の設定と残り時間を検証付きで保存・原子的復元する`FActionInputBufferState`
+- 明示時間から短押し、長押し閾値到達、長押し解放を1回ずつ判定し、途中状態も復元できる`FActionHoldTracker`
 - 固定ステップの途中復元で長押しを再発火させない、入力履歴付き`CSimulationSnapshot` v2
 - 入力再割り当て、保存、シーンスナップショット、多言語、固定更新、記録再生、開発支援
 - ローカルとGitHub Actionsで共有するDebug/Release完全検証コマンド

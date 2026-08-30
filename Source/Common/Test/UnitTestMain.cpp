@@ -43,6 +43,7 @@ void RunAcsArchiveFileTests( CTestHarness& Harness );
 void RunActionInputTapeTests( CTestHarness& Harness );
 void RunSimulationSnapshotTests( CTestHarness& Harness );
 void RunActionBindingTableTests( CTestHarness& Harness );
+void RunActionHoldTrackerTests( CTestHarness& Harness );
 void RunActionInputBufferTests( CTestHarness& Harness );
 void RunActionInputTrackerTests( CTestHarness& Harness );
 void RunActionGamepadRebindStateTests( CTestHarness& Harness );
@@ -119,6 +120,7 @@ int main()
 	RunActionInputTapeTests( Harness );
 	RunSimulationSnapshotTests( Harness );
 	RunActionBindingTableTests( Harness );
+	RunActionHoldTrackerTests( Harness );
 	RunActionInputBufferTests( Harness );
 	RunActionInputTrackerTests( Harness );
 	RunActionGamepadRebindStateTests( Harness );

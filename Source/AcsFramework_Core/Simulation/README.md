@@ -50,14 +50,15 @@
         ↓ IActionDeviceReader     ← ここだけが acs::CInput を知る。テストでは偽物を差せる
 CActionBindingTable               ← 「この操作はこのアクション」の対応表
         ├→ CActionInputTracker    ← 通常フレームの現在・前回・押下・解放
-        │       └→ FActionInputBuffer ← 実行可能になるまで押下を短時間保持
-        └→ IActionInputSource (Player / AI / 台本)
+		└→ IActionInputSource (Player / AI / 台本)
         ↓ FActionInput            ← 装置ではなくアクション。だから Player と AI が同じ口を通る
 CActionInputTape (記録 / 再生)     ← 種 + 入力列。これがあればバグを再現できる
         ↓ CReplayFile で保存・読込
 CSimulationSubsystem ── CFixedStepDriver (ACS CFixedStepClock)
         ↓ FSimulationContext     └ CDeterministicRandom (ACS FRandom + 種と引いた回数)
    ISimulationRule (ゲーム側が実装)
+		├→ FActionInputBuffer          ← 通常履歴または固定ステップ入力から押下を短時間保持
+		└→ FActionHoldTracker          ← 通常履歴または固定ステップ入力から短押しと長押しを判定
         ↓ FSimulationEvent
 CSimulationEventQueue → 読む側 (Actor / Audio / VFX)
 ```
@@ -75,7 +76,7 @@ CSimulationEventQueue → 読む側 (Actor / Audio / VFX)
 | 直下 | 部品 | `CFixedStepDriver`、`CDeterministicRandom`、`CActionInputTape`、`CSimulationEventQueue`、`CReplayFile` |
 | 直下 | 途中から始める | `CSimulationSnapshot`、`CSimulationSnapshotFile` |
 | 直下 | 所有と順番 | `CSimulationSubsystem` |
-| `Input/` | 装置 → アクションの変換と通常フレームの履歴 | `IActionDeviceReader`、`CActionBindingTable`、`CActionInputTracker`、`FActionInputBuffer`、`FActionKeyRebindState`、`FActionGamepadRebindState`、`CDeviceActionReader`、`CBoundActionSource` |
+| `Input/` | 装置 → アクションの変換、通常履歴、通常・固定の両方で使う局所入力判定 | `IActionDeviceReader`、`CActionBindingTable`、`CActionInputTracker`、`FActionInputBuffer`、`FActionHoldTracker`、`FActionKeyRebindState`、`FActionGamepadRebindState`、`CDeviceActionReader`、`CBoundActionSource` |
 | `Test/` | ゲーム抜きで回す自己テスト | `SimulationDeterminismTest.cpp` |
 
 **ゲームのルールはここへ置かない。** `ISimulationRule` を実装するのはゲーム側。
@@ -133,6 +134,28 @@ const FActionInputBufferState SavedInputBuffer = InputBuffer.CaptureState();
 
 if ( !InputBuffer.RestoreState( SavedInputBuffer ) ) return false;
 ```
+
+### 短押しと長押しを分ける
+
+チャージ、長押しインタラクト、短押しと長押しで異なる操作には`FActionHoldTracker`を
+操作対象のfieldとして持つ。押している間の進行率、閾値へ届いた1回、短押しで離した1回、
+長押し後に離した1回を同じ値状態から取得できる。
+
+```cpp
+FActionHoldTracker InteractHold{ 0.4f };
+
+Input.Update();
+if ( !InteractHold.Update( Input, kActionInteract, DeltaSeconds ) ) return;
+if ( InteractHold.WasTapped() ) Inspect();
+if ( InteractHold.WasThresholdReached() ) BeginInteraction();
+DrawHoldGauge( InteractHold.GetProgress() );
+```
+
+固定ステップでは`Update( Context.Input, Context.PreviousInput, kActionInteract,
+Context.StepSeconds )`を使う。閾値を押下中に変更しても、現在の押下は開始時の値を保ち、次の
+押下から新しい値を使う。途中状態を再現する場合は`CaptureState()`で得た
+`FActionHoldTrackerState`の各項目を`ISimulationRule`の盤面へ含め、読み込み時に
+`RestoreState()`へ渡す。追跡中の秒、操作番号、開始時閾値も戻るため、復元後の到達tickがずれない。
 
 ---
 
