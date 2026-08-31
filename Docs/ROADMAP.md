@@ -29,7 +29,7 @@ ACS のモジュールは **438 個**ある。この枠組みが窓口を用意�
 | アセット読み込み | `CAssetLoaderSubsystem` |
 | 音 (BGM・効果音・位置) | `CAudioSubsystem`、`CMusicSubsystem`、`AUi3DScene::PlaySound3D` |
 | セーブ・設定 | `CSaveSubsystem`、`CGameSettingsSubsystem` |
-| 時間・待機 | `CTimeSubsystem`、`CTimerSubsystem` |
+| 時間・待機 | `CTimeSubsystem`、`CTimerSubsystem`、`FGameplayCooldown` |
 | 入力・押下判定 | `CActionBindingTable`、`CActionInputTracker`、`FActionInputMask`、`FActionChord`、`FActionCommandSequenceTracker`、`FActionAxisResponse`、`FActionInputBuffer`、`FActionHoldTracker`、`FActionTapSequenceTracker`、`FActionKeyRebindState`、`CBoundActionSource` |
 | 画面・フェード・ロード中・ポーズ | `CScreenSubsystem`、`CFadeSubsystem`、`CLoadingScreenSubsystem`、`CPauseScreenSubsystem` |
 | ノード生成・シーン保存 | `CPrefabSubsystem`、`CSceneSnapshotSubsystem` |

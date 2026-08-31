@@ -121,6 +121,8 @@
 #include "AcsFramework_Core/Screen/ScreenSubsystem.h"
 #include "AcsFramework_Core/Settings/GameSettingsSubsystem.h"
 #include "AcsFramework_Core/Simulation/ActionInput.h"
+#include "AcsFramework_Core/Simulation/GameplayCooldown.h"
+#include "AcsFramework_Core/Simulation/GameplayCooldownState.h"
 #include "AcsFramework_Core/Simulation/IActionInputSource.h"
 #include "AcsFramework_Core/Simulation/ISimulationRule.h"
 #include "AcsFramework_Core/Simulation/Input/ActionAxisResponse.h"

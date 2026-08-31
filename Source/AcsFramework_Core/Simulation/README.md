@@ -63,7 +63,8 @@ CSimulationSubsystem ── CFixedStepDriver (ACS CFixedStepClock)
 		├→ FActionInputMask            ← ゲーム状態ごとに許可した入力だけを履歴ごと残す
 		├→ FActionInputBuffer          ← 通常履歴または固定ステップ入力から押下を短時間保持
 		├→ FActionHoldTracker          ← 通常履歴または固定ステップ入力から短押しと長押しを判定
-		└→ FActionTapSequenceTracker   ← 押下間隔からダブルタップや複数回タップを判定
+		├→ FActionTapSequenceTracker   ← 押下間隔からダブルタップや複数回タップを判定
+		└→ FGameplayCooldown           ← 使用成功から再使用可能までを明示時間で進める
         ↓ FSimulationEvent
 CSimulationEventQueue → 読む側 (Actor / Audio / VFX)
 ```
@@ -76,7 +77,7 @@ CSimulationEventQueue → 読む側 (Actor / Audio / VFX)
 
 | 置き場所 | 置いてよいもの | 例 |
 |---|---|---|
-| 直下 | 値型 | `FActionInput`、`FSimulationEvent`、`FSimulationContext` |
+| 直下 | 値型 | `FActionInput`、`FSimulationEvent`、`FSimulationContext`、`FGameplayCooldown` |
 | 直下 | 差込口 | `IActionInputSource`、`ISimulationRule` |
 | 直下 | 部品 | `CFixedStepDriver`、`CDeterministicRandom`、`CActionInputTape`、`CSimulationEventQueue`、`CReplayFile` |
 | 直下 | 途中から始める | `CSimulationSnapshot`、`CSimulationSnapshotFile` |
@@ -280,6 +281,27 @@ Context.StepSeconds )`を使う。最大間隔を超えてから押すと、古�
 数える。待機中に`Configure()`しても現在の列は開始時の回数と間隔を保ち、次の列から新設定になる。
 途中状態を再現する場合は`CaptureState()`で得た`FActionTapSequenceTrackerState`をゲーム規則の盤面へ
 含め、`RestoreState()`へ渡す。途中回数、直前の押下からの時間、開始時設定と操作番号をまとめて戻せる。
+
+### 再使用までの待ち時間を扱う
+
+攻撃、回避、能力、操作装置などを連続使用させたくない場合は`FGameplayCooldown`を対象のfieldとして
+持つ。最初は使用可能で、実行条件を満たしたときに`TryUse()`がtrueなら処理を行う。待機中の
+`TryUse()`は残り時間を巻き戻さずfalseになるため、入力を押し続けても再使用時刻は後ろへずれない。
+
+```cpp
+FGameplayCooldown DashCooldown{ 0.8f };
+
+// 固定ステップごと
+DashCooldown.Update( Context.StepSeconds );
+if ( Context.WasPressed( kActionDash ) && DashCooldown.TryUse() ) Dash();
+DrawCooldown( DashCooldown.GetProgress() );
+```
+
+`Update()`へ渡したゲーム時間だけ進むため、固定ステップ、記録再生、時間停止の規則を利用側で
+揃えられる。callbackを予約する`CTimerSubsystem`とは異なり、`CaptureState()` / `RestoreState()`で
+開始時設定、経過秒、今回の完了通知まで盤面へ含められる。待機中に秒数を変更しても現在の待機は
+開始時設定を保ち、次の`TryUse()`から新しい値を使う。`WasCompleted()`は完了した`Update()`から
+次の有効な`Update()`まで保持されるため、同じ固定ステップ内ですぐ再使用しても完了通知を読める。
 
 ---
 

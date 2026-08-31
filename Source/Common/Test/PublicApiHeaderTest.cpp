@@ -39,6 +39,9 @@ void RunPublicApiHeaderTests( CTestHarness& Harness )
 	const FActionTapSequenceTracker ActionTapSequence;
 	const FActionTapSequenceTrackerState ActionTapSequenceState =
 		ActionTapSequence.CaptureState();
+	const FGameplayCooldown GameplayCooldown;
+	const FGameplayCooldownState GameplayCooldownState =
+		GameplayCooldown.CaptureState();
 
 	Harness.Check( Position.x == 0.0f, "ACSの基本型が解決できる" );
 	Harness.Check( !EmptyResult.Succeeded(), "3D生成結果が解決できる" );
@@ -70,4 +73,7 @@ void RunPublicApiHeaderTests( CTestHarness& Harness )
 	Harness.Check( !ActionTapSequence.IsWaitingForNextTap()
 		&& ActionTapSequenceState.IsValid(),
 		"複数回タップ判定と保存状態の公開型が解決できる" );
+	Harness.Check( GameplayCooldown.IsReady()
+		&& GameplayCooldownState.IsValid(),
+		"再使用待ちと保存状態の公開型が解決できる" );
 }
