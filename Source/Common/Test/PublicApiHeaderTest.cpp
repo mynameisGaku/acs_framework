@@ -45,6 +45,10 @@ void RunPublicApiHeaderTests( CTestHarness& Harness )
 	const FGameplayCooldown GameplayCooldown;
 	const FGameplayCooldownState GameplayCooldownState =
 		GameplayCooldown.CaptureState();
+	CDeterministicRandom WeightedRandom;
+	constexpr f32 PublicWeights[] = { 1.0f };
+	usize WeightedIndex = 9u;
+	WeightedRandom.Reseed( 1u );
 
 	Harness.Check( Position.x == 0.0f, "ACSの基本型が解決できる" );
 	Harness.Check( !EmptyResult.Succeeded(), "3D生成結果が解決できる" );
@@ -81,4 +85,8 @@ void RunPublicApiHeaderTests( CTestHarness& Harness )
 	Harness.Check( GameplayCooldown.IsReady()
 		&& GameplayCooldownState.IsValid(),
 		"再使用待ちと保存状態の公開型が解決できる" );
+	Harness.Check( WeightedRandom.TryChooseWeightedIndex(
+			PublicWeights, 1u, WeightedIndex )
+		&& WeightedIndex == 0u,
+		"決定論的な重み付き抽選の公開APIが解決できる" );
 }

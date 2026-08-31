@@ -10,8 +10,8 @@ using namespace acs::game;
  * 種を握れる乱数。
  *
  * @details
- * 乱数そのものは Engine (`acs::FRandom`) が持っている。ここが引き受けるのは
- * **種を覚えておくこと**と、**何回引いたかを数えること**の 2 つ。
+ * 乱数そのものは Engine (`acs::FRandom`) が持っている。ここは**種を覚えること**、
+ * **何回引いたかを数えること**、同じ乱数列からゲーム規則用の共通抽選へ変換することを引き受ける。
  *
  * 種を覚えていないと、記録した入力を流し直しても同じ結果にならない。
  * 引いた回数が分かると、再生がずれ始めた地点を絞り込める (同じティックで
@@ -60,6 +60,18 @@ public:
 	 * @return 範囲内の値。
 	 */
 	f32 NextRangeFloat( f32 Min, f32 Max ) noexcept;
+
+	/**
+	 * 非負の重みから1項目の添字を選ぶ。
+	 *
+	 * @details 成功時だけ32bit乱数を2個進め、53bit相当で選ぶ。0の項目は選ばない。
+	 * @param Weights 有限かつ0以上の重みを並べた配列。
+	 * @param WeightCount 重みの件数。1以上であること。
+	 * @param OutIndex 選んだ添字の出力先。失敗時は変更しない。
+	 * @return 1つ以上の正の重みから選べたらtrue。
+	 */
+	bool TryChooseWeightedIndex( const f32* Weights, usize WeightCount,
+		usize& OutIndex ) noexcept;
 
 	/**
 	 * いまの内部状態を写し取る。

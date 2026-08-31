@@ -3,6 +3,8 @@
 #include "AcsFramework_Core/Simulation/FixedStepDriver.h"
 #include "Common/Test/TestHarness.h"
 
+#include <limits>
+
 
 void RunFixedStepDriverTests( CTestHarness& Harness )
 {
@@ -164,5 +166,126 @@ void RunFixedStepDriverTests( CTestHarness& Harness )
 		Harness.Check( bInRange, "指定した範囲に収まる" );
 		Harness.Check( bInIntRange, "整数も範囲に収まる" );
 		Harness.CheckEqualU64( Random.GetDrawCount(), 600u, "引いた回数が合う" );
+	}
+
+	Harness.BeginSuite( "CDeterministicRandom / 重み付き抽選" );
+
+	{
+		constexpr f32 Weights[] = { 1.0f, 3.0f, 6.0f };
+		CDeterministicRandom A;
+		CDeterministicRandom Reference;
+		A.Reseed( 20260831u );
+		Reference.Reseed( 20260831u );
+
+		bool bExpectedSequence = true;
+		bool bInRange = true;
+		for ( u32 Draw = 0u; Draw < 128u; ++Draw )
+		{
+			usize AIndex = 99u;
+			const u64 RandomBits =
+				( static_cast<u64>( Reference.NextU32() ) << 21u )
+				| static_cast<u64>( Reference.NextU32() >> 11u );
+			constexpr f64 kUnitDivisor = 9007199254740992.0;
+			const f64 Unit = static_cast<f64>( RandomBits ) / kUnitDivisor;
+			const usize ExpectedIndex = Unit < 0.1 ? 0u : ( Unit < 0.4 ? 1u : 2u );
+			if ( !A.TryChooseWeightedIndex( Weights, 3u, AIndex )
+				|| AIndex != ExpectedIndex ) bExpectedSequence = false;
+			if ( AIndex >= 3u ) bInRange = false;
+		}
+
+		Harness.Check( bExpectedSequence,
+			"同じ種の単位乱数を重み区間へ割り当てる" );
+		Harness.Check( bInRange, "重み配列の範囲に収まる" );
+		Harness.CheckEqualU64( A.GetDrawCount(), 256u,
+			"成功1回につき32bit乱数を2個進める" );
+	}
+
+	{
+		constexpr f32 SinglePositive[] = { 0.0f, 0.0f, 2.0f, 0.0f };
+		CDeterministicRandom Random;
+		Random.Reseed( 9u );
+
+		bool bOnlyPositiveSelected = true;
+		for ( u32 Draw = 0u; Draw < 32u; ++Draw )
+		{
+			usize Index = 99u;
+			if ( !Random.TryChooseWeightedIndex( SinglePositive, 4u, Index )
+				|| Index != 2u ) bOnlyPositiveSelected = false;
+		}
+
+		Harness.Check( bOnlyPositiveSelected, "0の項目を選ばない" );
+	}
+
+	{
+		const f32 Negative[] = { 1.0f, -1.0f };
+		const f32 NotFinite[] = {
+			1.0f, std::numeric_limits<f32>::infinity() };
+		const f32 NotANumber[] = {
+			1.0f, std::numeric_limits<f32>::quiet_NaN() };
+		const f32 AllZero[] = { 0.0f, 0.0f };
+		CDeterministicRandom Random;
+		CDeterministicRandom Expected;
+		Random.Reseed( 42u );
+		Expected.Reseed( 42u );
+		usize Index = 77u;
+
+		const bool bRejected =
+			!Random.TryChooseWeightedIndex( nullptr, 2u, Index )
+			&& !Random.TryChooseWeightedIndex( AllZero, 0u, Index )
+			&& !Random.TryChooseWeightedIndex( Negative, 2u, Index )
+			&& !Random.TryChooseWeightedIndex( NotFinite, 2u, Index )
+			&& !Random.TryChooseWeightedIndex( NotANumber, 2u, Index )
+			&& !Random.TryChooseWeightedIndex( AllZero, 2u, Index );
+
+		Harness.Check( bRejected && Index == 77u,
+			"空、負、非有限、全0を出力変更なしで拒否する" );
+		Harness.CheckEqualU64( Random.GetDrawCount(), 0u,
+			"不正入力では乱数を進めない" );
+		Harness.CheckEqualU64( Random.NextU32(), Expected.NextU32(),
+			"拒否後も次の乱数値が変わらない" );
+	}
+
+	Harness.BeginSuite( "CDeterministicRandom / 重み付き抽選を写して戻す" );
+
+	{
+		constexpr f32 Weights[] = { 2.0f, 5.0f, 3.0f };
+		CDeterministicRandom Random;
+		Random.Reseed( 314159u );
+
+		usize WarmupIndex = 0u;
+		for ( u32 Draw = 0u; Draw < 3u; ++Draw )
+		{
+			Random.TryChooseWeightedIndex( Weights, 3u, WarmupIndex );
+		}
+
+		FRandomSnapshot Snapshot{};
+		u64 SnapshotDrawCount = 0u;
+		Random.CaptureSnapshot( Snapshot, SnapshotDrawCount );
+		constexpr usize kExpectedCount = 16u;
+		usize ExpectedIndices[kExpectedCount]{};
+		bool bExpectedCreated = true;
+		for ( usize Index = 0u; Index < kExpectedCount; ++Index )
+		{
+			if ( !Random.TryChooseWeightedIndex(
+					Weights, 3u, ExpectedIndices[Index] ) ) bExpectedCreated = false;
+		}
+
+		const bool bRestored =
+			Random.TryRestoreSnapshot( Snapshot, SnapshotDrawCount );
+		bool bReplayed = bRestored;
+		for ( usize Index = 0u; Index < kExpectedCount; ++Index )
+		{
+			usize ReplayedIndex = 99u;
+			if ( !Random.TryChooseWeightedIndex( Weights, 3u, ReplayedIndex )
+				|| ReplayedIndex != ExpectedIndices[Index] ) bReplayed = false;
+		}
+
+		Harness.Check( bExpectedCreated && SnapshotDrawCount == 6u,
+			"抽選後の再生位置を32bit消費数で写す" );
+		Harness.Check( bReplayed,
+			"復元後に同じ重み付き抽選列を再生する" );
+		Harness.CheckEqualU64( Random.GetDrawCount(),
+			SnapshotDrawCount + kExpectedCount * 2u,
+			"復元後の抽選でも消費数が一致する" );
 	}
 }

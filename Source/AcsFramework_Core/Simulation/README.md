@@ -90,6 +90,29 @@ CSimulationEventQueue → 読む側 (Actor / Audio / VFX)
 
 ---
 
+## 重み付き抽選を再現する
+
+出現候補、演出候補、AIの選択肢などから比率で1つ選ぶ場合は、ゲーム規則の中で
+`Context.Random->TryChooseWeightedIndex()`を使う。抽選対象そのものや結果の適用はゲーム側が持ち、
+この関数は有限かつ0以上の重みから添字を1つ返すだけに留める。
+
+```cpp
+constexpr f32 Weights[] = { 1.0f, 3.0f, 6.0f };
+usize ChosenIndex = 0u;
+if ( Context.Random == nullptr
+	|| !Context.Random->TryChooseWeightedIndex( Weights, 3u, ChosenIndex ) ) return;
+```
+
+成功時だけ32bit乱数を2個進め、53bit相当の離散点で選ぶため、同じ種と同じ重み列なら同じ添字列になる。
+0の項目は選ばず、
+空、負、非有限、全0の重みは、出力と乱数位置を変えずfalseにする。抽選結果へ影響する重みは
+盤面または明示した設定として管理し、現在時刻やシングルトンから隠れて取得しないこと。
+
+離散的な乱数なので、総重みに対する比率が`2^-53`（約`1.11e-16`）未満の項目には抽選点が
+割り当たらない場合がある。そのような極端な比率は、重みを正規化または調整してから渡す。
+
+---
+
 ## 通常の場面で入力を読む
 
 固定ステップを使わない場面では、`CActionInputTracker`を場面のfieldとして持つ。

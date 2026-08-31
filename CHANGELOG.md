@@ -45,6 +45,7 @@ ACS Frameworkの利用側から見える追加、変更、修正を記録する�
 - 明示時間から短押し、長押し閾値到達、長押し解放を1回ずつ判定し、途中状態も復元できる`FActionHoldTracker`
 - 押し続けを重複させず、明示した押下間隔と回数でダブルタップや複数回タップを判定する`FActionTapSequenceTracker`
 - 使用成功から再使用可能までを明示時間で進め、進行率と途中状態を保存できる`FGameplayCooldown`
+- 有限な非負重みから53bit相当で添字を1つ選び、不正入力では乱数位置と出力を変えない`CDeterministicRandom::TryChooseWeightedIndex`
 - 固定ステップの途中復元で長押しを再発火させない、入力履歴付き`CSimulationSnapshot` v2
 - 入力再割り当て、保存、シーンスナップショット、多言語、固定更新、記録再生、開発支援
 - ローカルとGitHub Actionsで共有するDebug/Release完全検証コマンド
