@@ -51,6 +51,7 @@ void RunPublicApiHeaderTests( CTestHarness& Harness )
 	u32 PublicOrder[] = { 0u, 1u, 2u };
 	usize PublicRandomIndex = 9u;
 	FVec3 PublicSpherePoint{};
+	FVec3 PublicConeDirection{};
 	bool bPublicChanceOccurred = false;
 	WeightedRandom.Reseed( 1u );
 
@@ -109,4 +110,8 @@ void RunPublicApiHeaderTests( CTestHarness& Harness )
 			2.0f, PublicSpherePoint )
 		&& LengthSq( PublicSpherePoint ) <= 4.0f,
 		"決定論的な3D球内部抽選の公開APIが解決できる" );
+	Harness.Check( WeightedRandom.TryDirectionInCone3D(
+			FVec3::Forward(), 15.0f, PublicConeDirection )
+		&& Dot( FVec3::Forward(), PublicConeDirection ) > 0.9f,
+		"決定論的な3D円錐方向抽選の公開APIが解決できる" );
 }

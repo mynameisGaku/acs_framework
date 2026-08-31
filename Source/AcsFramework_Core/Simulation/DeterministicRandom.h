@@ -133,6 +133,19 @@ public:
 	bool TryPointInSphere3D( f32 Radius, FVec3& OutPoint ) noexcept;
 
 	/**
+	 * 指定軸を中心とする3D円錐内から均等な単位方向を選ぶ。
+	 *
+	 * @details 角度ではなく立体角に対して均等に選ぶ。半角0度では正規化した軸を返し、
+	 * 乱数を進めない。0度より大きい場合は32bit乱数を2個進める。
+	 * @param AxisDirection 有限かつ0でない円錐の中心方向。長さは問わない。
+	 * @param HalfAngleDegrees 有限かつ0以上180以下の円錐半角。度単位。
+	 * @param OutDirection 選んだ単位方向。失敗時は変更しない。
+	 * @return 有効な軸と半角から選べたらtrue。
+	 */
+	bool TryDirectionInCone3D( FVec3 AxisDirection, f32 HalfAngleDegrees,
+		FVec3& OutDirection ) noexcept;
+
+	/**
 	 * いまの内部状態を写し取る。
 	 *
 	 * @details 途中から再生を始めるときに使う。

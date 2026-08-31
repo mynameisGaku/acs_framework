@@ -4,6 +4,62 @@
 #include <cmath>
 
 
+namespace
+{
+	/** 度をラジアンへ直す係数。 */
+	constexpr f64 kDegreesToRadians =
+		3.14159265358979323846 / 180.0;
+
+	/** 1周を表すラジアン値。 */
+	constexpr f64 kFullTurnRadians = 6.28318530717958647692;
+
+	/** 3成分が全て有限ならtrue。 */
+	bool IsFiniteVector_Internal( FVec3 Value ) noexcept
+	{
+		return std::isfinite( Value.x ) && std::isfinite( Value.y )
+			&& std::isfinite( Value.z );
+	}
+
+	/** 有限かつ0でない方向を、極端な大きさでも安全に正規化する。 */
+	bool TryNormalizeDirection_Internal( FVec3 Value,
+		FVec3& OutDirection ) noexcept
+	{
+		if ( !IsFiniteVector_Internal( Value ) ) return false;
+
+		f64 MaximumComponent = std::abs( static_cast<f64>( Value.x ) );
+		const f64 AbsoluteY = std::abs( static_cast<f64>( Value.y ) );
+		const f64 AbsoluteZ = std::abs( static_cast<f64>( Value.z ) );
+		if ( AbsoluteY > MaximumComponent ) MaximumComponent = AbsoluteY;
+		if ( AbsoluteZ > MaximumComponent ) MaximumComponent = AbsoluteZ;
+		if ( MaximumComponent == 0.0 ) return false;
+
+		const f64 ScaledX = static_cast<f64>( Value.x ) / MaximumComponent;
+		const f64 ScaledY = static_cast<f64>( Value.y ) / MaximumComponent;
+		const f64 ScaledZ = static_cast<f64>( Value.z ) / MaximumComponent;
+		const f64 Length = std::sqrt( ScaledX * ScaledX
+			+ ScaledY * ScaledY + ScaledZ * ScaledZ );
+		OutDirection = FVec3{
+			static_cast<f32>( ScaledX / Length ),
+			static_cast<f32>( ScaledY / Length ),
+			static_cast<f32>( ScaledZ / Length ) };
+		return IsFiniteVector_Internal( OutDirection );
+	}
+
+	/** 指定方向へ直交する2本の単位方向を作る。 */
+	bool TryMakePerpendicularBasis_Internal( FVec3 Direction,
+		FVec3& OutFirst, FVec3& OutSecond ) noexcept
+	{
+		/** 真上・真下でも退化しない、指定方向と交差させる基準軸。 */
+		const FVec3 ReferenceAxis = std::abs( Direction.y ) < 0.999f
+			? FVec3::Up() : FVec3::Forward();
+		return TryNormalizeDirection_Internal(
+			Cross( ReferenceAxis, Direction ), OutFirst )
+			&& TryNormalizeDirection_Internal(
+				Cross( Direction, OutFirst ), OutSecond );
+	}
+}
+
+
 void CDeterministicRandom::Reseed( u64 Seed ) noexcept
 {
 	m_Random.Seed( Seed );
@@ -163,6 +219,48 @@ bool CDeterministicRandom::TryPointInSphere3D( f32 Radius,
 	/** 体積比がrの3乗で増えるため、単位乱数を立方根へ戻す。 */
 	const f32 Distance = Radius * std::cbrt( NextUnitFloat() );
 	OutPoint = Direction * Distance;
+	return true;
+}
+
+
+bool CDeterministicRandom::TryDirectionInCone3D( FVec3 AxisDirection,
+	f32 HalfAngleDegrees, FVec3& OutDirection ) noexcept
+{
+	if ( !std::isfinite( HalfAngleDegrees )
+		|| HalfAngleDegrees < 0.0f || HalfAngleDegrees > 180.0f ) return false;
+
+	FVec3 Axis;
+	if ( !TryNormalizeDirection_Internal( AxisDirection, Axis ) ) return false;
+	if ( HalfAngleDegrees == 0.0f )
+	{
+		OutDirection = Axis;
+		return true;
+	}
+
+	FVec3 FirstPerpendicular;
+	FVec3 SecondPerpendicular;
+	if ( !TryMakePerpendicularBasis_Internal(
+		Axis, FirstPerpendicular, SecondPerpendicular ) ) return false;
+
+	/** 円錐端で中心軸との内積になる最小値。 */
+	const f64 MinimumCosine = std::cos(
+		static_cast<f64>( HalfAngleDegrees ) * kDegreesToRadians );
+	/** 立体角を均等にする、最小値以上1以下の中心軸との内積。 */
+	const f64 AxisCosine = 1.0 - ( 1.0 - MinimumCosine )
+		* static_cast<f64>( NextUnitFloat() );
+	/** 中心軸まわりの0以上2π以下の角度。 */
+	const f64 Azimuth = kFullTurnRadians
+		* static_cast<f64>( NextUnitFloat() );
+	const f64 RadialSquared = 1.0 - AxisCosine * AxisCosine;
+	const f64 Radial = std::sqrt(
+		RadialSquared > 0.0 ? RadialSquared : 0.0 );
+	const f32 FirstScale = static_cast<f32>(
+		std::cos( Azimuth ) * Radial );
+	const f32 SecondScale = static_cast<f32>(
+		std::sin( Azimuth ) * Radial );
+	OutDirection = Axis * static_cast<f32>( AxisCosine )
+		+ FirstPerpendicular * FirstScale
+		+ SecondPerpendicular * SecondScale;
 	return true;
 }
 

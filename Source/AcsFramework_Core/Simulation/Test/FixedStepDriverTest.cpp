@@ -741,4 +741,170 @@ void RunFixedStepDriverTests( CTestHarness& Harness )
 		Harness.CheckEqualU64( Random.NextU32(), Expected.NextU32(),
 			"拒否と半径0の後も次の乱数値が変わらない" );
 	}
+
+	Harness.BeginSuite( "CDeterministicRandom / 3D円錐内を立体角で選ぶ" );
+
+	{
+		constexpr usize kSampleCount = 4096u;
+		constexpr f32 kHalfAngleDegrees = 40.0f;
+		constexpr f64 kDegreesToRadians =
+			3.14159265358979323846 / 180.0;
+		const FVec3 Axis = Normalize( FVec3{ 1.0f, 2.0f, 3.0f } );
+		const f64 MinimumCosine = std::cos(
+			static_cast<f64>( kHalfAngleDegrees ) * kDegreesToRadians );
+		const f64 ExpectedMeanCosine = ( 1.0 + MinimumCosine ) * 0.5;
+		CDeterministicRandom A;
+		CDeterministicRandom B;
+		A.Reseed( 20260831u );
+		B.Reseed( 20260831u );
+		bool bSameAndInside = true;
+		FVec3 DirectionSum{};
+		f64 AxisCosineSum = 0.0;
+
+		for ( usize SampleIndex = 0u; SampleIndex < kSampleCount;
+			++SampleIndex )
+		{
+			FVec3 DirectionA{};
+			FVec3 DirectionB{};
+			const bool bChosenA = A.TryDirectionInCone3D(
+				FVec3{ 1.0f, 2.0f, 3.0f }, kHalfAngleDegrees,
+				DirectionA );
+			const bool bChosenB = B.TryDirectionInCone3D(
+				FVec3{ 2.0f, 4.0f, 6.0f }, kHalfAngleDegrees,
+				DirectionB );
+			const f64 AxisCosine = static_cast<f64>(
+				Dot( Axis, DirectionA ) );
+			const f64 LengthSquared = static_cast<f64>(
+				LengthSq( DirectionA ) );
+			if ( !bChosenA || !bChosenB
+				|| DirectionA.x != DirectionB.x
+				|| DirectionA.y != DirectionB.y
+				|| DirectionA.z != DirectionB.z
+				|| AxisCosine < MinimumCosine - 0.00001
+				|| std::abs( LengthSquared - 1.0 ) > 0.00001 )
+			{
+				bSameAndInside = false;
+			}
+
+			DirectionSum = DirectionSum + DirectionA;
+			AxisCosineSum += AxisCosine;
+		}
+
+		const f64 InverseCount = 1.0 / static_cast<f64>( kSampleCount );
+		Harness.Check( bSameAndInside,
+			"軸の長さに依らず同じ円錐内の単位方向を再生する" );
+		Harness.Check( std::abs(
+			AxisCosineSum * InverseCount - ExpectedMeanCosine ) < 0.02,
+			"中心軸との内積を均等にして立体角へ比例させる" );
+		Harness.Check(
+			std::abs( static_cast<f64>( DirectionSum.x ) * InverseCount
+				- static_cast<f64>( Axis.x ) * ExpectedMeanCosine ) < 0.02
+			&& std::abs( static_cast<f64>( DirectionSum.y ) * InverseCount
+				- static_cast<f64>( Axis.y ) * ExpectedMeanCosine ) < 0.02
+			&& std::abs( static_cast<f64>( DirectionSum.z ) * InverseCount
+				- static_cast<f64>( Axis.z ) * ExpectedMeanCosine ) < 0.02,
+			"方位角の偏りを残さず平均方向を中心軸へ戻す" );
+		Harness.CheckEqualU64( A.GetDrawCount(), kSampleCount * 2u,
+			"円錐方向1個につき32bit乱数を2個進める" );
+	}
+
+	{
+		const f32 NotANumber =
+			std::numeric_limits<f32>::quiet_NaN();
+		const f32 Infinity = std::numeric_limits<f32>::infinity();
+		CDeterministicRandom Random;
+		CDeterministicRandom Expected;
+		Random.Reseed( 42u );
+		Expected.Reseed( 42u );
+		FVec3 Direction{ 7.0f, 8.0f, 9.0f };
+		const bool bRejected =
+			!Random.TryDirectionInCone3D(
+				FVec3{}, 30.0f, Direction )
+			&& !Random.TryDirectionInCone3D(
+				FVec3{ NotANumber, 0.0f, 1.0f }, 30.0f, Direction )
+			&& !Random.TryDirectionInCone3D(
+				FVec3{ Infinity, 0.0f, 1.0f }, 30.0f, Direction )
+			&& !Random.TryDirectionInCone3D(
+				FVec3::Forward(), -0.01f, Direction )
+			&& !Random.TryDirectionInCone3D(
+				FVec3::Forward(), 180.01f, Direction )
+			&& !Random.TryDirectionInCone3D(
+				FVec3::Forward(), NotANumber, Direction );
+		Harness.Check( bRejected && Direction.x == 7.0f
+			&& Direction.y == 8.0f && Direction.z == 9.0f,
+			"無効な軸と角度を出力変更なしで拒否する" );
+
+		FVec3 ZeroAngle{};
+		FVec3 LargeAxis{};
+		const bool bZeroAngles = Random.TryDirectionInCone3D(
+			FVec3{ 2.0f, 0.0f, 0.0f }, 0.0f, ZeroAngle )
+			&& Random.TryDirectionInCone3D(
+				FVec3{ std::numeric_limits<f32>::max(), 0.0f, 0.0f },
+				0.0f, LargeAxis )
+			&& ZeroAngle.x == 1.0f && ZeroAngle.y == 0.0f
+			&& ZeroAngle.z == 0.0f && LargeAxis.x == 1.0f
+			&& LargeAxis.y == 0.0f && LargeAxis.z == 0.0f;
+		Harness.Check( bZeroAngles,
+			"0度は極端に大きい有限軸も安全に正規化して返す" );
+		Harness.CheckEqualU64( Random.GetDrawCount(), 0u,
+			"拒否と0度では乱数を進めない" );
+		Harness.CheckEqualU64( Random.NextU32(), Expected.NextU32(),
+			"拒否と0度の後も次の乱数値が変わらない" );
+	}
+
+	{
+		CDeterministicRandom Random;
+		Random.Reseed( 314159u );
+		FVec3 FullSphereDirection{};
+		const bool bFullSphere = Random.TryDirectionInCone3D(
+			FVec3::Up(), 180.0f, FullSphereDirection );
+		Harness.Check( bFullSphere && std::abs(
+			static_cast<f64>( LengthSq( FullSphereDirection ) ) - 1.0 )
+			< 0.00001,
+			"180度を球面全体として扱う" );
+		Harness.CheckEqualU64( Random.GetDrawCount(), 2u,
+			"180度でも方向抽選の消費数を固定する" );
+	}
+
+	{
+		constexpr usize kReplayCount = 64u;
+		CDeterministicRandom Random;
+		Random.Reseed( 271828u );
+		FVec3 Warmup{};
+		Random.TryDirectionInCone3D(
+			FVec3::Forward(), 25.0f, Warmup );
+		FRandomSnapshot Snapshot{};
+		u64 SnapshotDrawCount = 0u;
+		Random.CaptureSnapshot( Snapshot, SnapshotDrawCount );
+		FVec3 ExpectedDirections[kReplayCount]{};
+		for ( usize Index = 0u; Index < kReplayCount; ++Index )
+		{
+			Random.TryDirectionInCone3D(
+				FVec3::Forward(), 25.0f, ExpectedDirections[Index] );
+		}
+
+		const bool bRestored = Random.TryRestoreSnapshot(
+			Snapshot, SnapshotDrawCount );
+		bool bReplayed = bRestored;
+		for ( usize Index = 0u; Index < kReplayCount; ++Index )
+		{
+			FVec3 Direction{};
+			if ( !Random.TryDirectionInCone3D(
+				FVec3::Forward(), 25.0f, Direction )
+				|| Direction.x != ExpectedDirections[Index].x
+				|| Direction.y != ExpectedDirections[Index].y
+				|| Direction.z != ExpectedDirections[Index].z )
+			{
+				bReplayed = false;
+			}
+		}
+
+		Harness.Check( SnapshotDrawCount == 2u,
+			"円錐方向抽選後の乱数位置を写す" );
+		Harness.Check( bReplayed,
+			"復元後に同じ円錐方向列を再生する" );
+		Harness.CheckEqualU64( Random.GetDrawCount(),
+			SnapshotDrawCount + kReplayCount * 2u,
+			"復元後の円錐方向でも消費数が一致する" );
+	}
 }
