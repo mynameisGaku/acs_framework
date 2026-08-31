@@ -66,6 +66,7 @@ CSimulationSubsystem ── CFixedStepDriver (ACS CFixedStepClock)
 		├→ FActionHoldTracker          ← 通常履歴または固定ステップ入力から短押しと長押しを判定
 		├→ FActionRepeatTracker        ← 押下直後と長押し後の一定間隔を発火回数へ変換
 		├→ FActionTapSequenceTracker   ← 押下間隔からダブルタップや複数回タップを判定
+		├→ FActionToggle               ← 押下開始だけで有効・無効を反転
 		├→ FGameplayChargePool         ← 整数チャージの消費と自動回復を明示時間で進める
 		├→ FGameplayCooldown           ← 使用成功から再使用可能までを明示時間で進める
 		├→ FGameplayInterval           ← 一定間隔の到達回数を明示時間で進める
@@ -88,7 +89,7 @@ CSimulationEventQueue → 読む側 (Actor / Audio / VFX)
 | 直下 | 部品 | `CFixedStepDriver`、`CDeterministicRandom`、`CActionInputTape`、`CSimulationEventQueue`、`CReplayFile` |
 | 直下 | 途中から始める | `CSimulationSnapshot`、`CSimulationSnapshotFile` |
 | 直下 | 所有と順番 | `CSimulationSubsystem` |
-| `Input/` | 装置 → アクションの変換、通常履歴、通常・固定の両方で使う局所入力判定 | `IActionDeviceReader`、`CActionBindingTable`、`CActionInputTracker`、`FActionInputMask`、`FActionInputMaskStack`、`FActionChord`、`FActionCommandSequenceTracker`、`FActionAxisResponse`、`FActionInputBuffer`、`FActionHoldTracker`、`FActionRepeatTracker`、`FActionTapSequenceTracker`、`FActionKeyRebindState`、`FActionGamepadRebindState`、`CDeviceActionReader`、`CBoundActionSource` |
+| `Input/` | 装置 → アクションの変換、通常履歴、通常・固定の両方で使う局所入力判定 | `IActionDeviceReader`、`CActionBindingTable`、`CActionInputTracker`、`FActionInputMask`、`FActionInputMaskStack`、`FActionChord`、`FActionCommandSequenceTracker`、`FActionAxisResponse`、`FActionInputBuffer`、`FActionHoldTracker`、`FActionRepeatTracker`、`FActionTapSequenceTracker`、`FActionToggle`、`FActionKeyRebindState`、`FActionGamepadRebindState`、`CDeviceActionReader`、`CBoundActionSource` |
 | `Test/` | ゲーム抜きで回す自己テスト | `SimulationDeterminismTest.cpp` |
 
 **ゲームのルールはここへ置かない。** `ISimulationRule` を実装するのはゲーム側。
@@ -538,6 +539,25 @@ Context.StepSeconds )`を使う。最大間隔を超えてから押すと、古�
 数える。待機中に`Configure()`しても現在の列は開始時の回数と間隔を保ち、次の列から新設定になる。
 途中状態を再現する場合は`CaptureState()`で得た`FActionTapSequenceTrackerState`をゲーム規則の盤面へ
 含め、`RestoreState()`へ渡す。途中回数、直前の押下からの時間、開始時設定と操作番号をまとめて戻せる。
+
+### 押すたびに有効・無効を切り替える
+
+構え、しゃがみ、走行、照準、UI選択など、押すたびに2状態を切り替える操作には
+`FActionToggle`を操作対象のfieldとして持つ。押下開始だけを使うため、ボタンを押し続けても
+毎更新で反転しない。
+
+```cpp
+FActionToggle AimToggle;
+
+Input.Update();
+bool bAimChanged = false;
+if ( !AimToggle.Update( Input, kActionAim, bAimChanged ) ) return;
+if ( bAimChanged ) ApplyAimState( AimToggle.IsEnabled() );
+```
+
+固定ステップでは現在と前回の`FActionInput`を明示する`Update()`を使う。切替状態を保存する場合は
+`IsEnabled()`のboolをゲーム規則の盤面へ含め、読み込み時に`SetEnabled()`へ渡す。
+`Toggle()`はUIなど入力履歴を介さない明示操作にも使え、`Reset()`は無効へ戻す。
 
 ### 体力やスタミナの数値だけを安全に扱う
 

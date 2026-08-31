@@ -150,6 +150,7 @@
 #include "AcsFramework_Core/Simulation/Input/ActionInputTracker.h"
 #include "AcsFramework_Core/Simulation/Input/ActionTapSequenceTracker.h"
 #include "AcsFramework_Core/Simulation/Input/ActionTapSequenceTrackerState.h"
+#include "AcsFramework_Core/Simulation/Input/ActionToggle.h"
 #include "AcsFramework_Core/Simulation/Input/ActionKeyRebindState.h"
 #include "AcsFramework_Core/Simulation/Input/BoundActionSource.h"
 #include "AcsFramework_Core/Simulation/ReplayFile.h"

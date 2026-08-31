@@ -31,7 +31,7 @@ ACS のモジュールは **438 個**ある。この枠組みが窓口を用意�
 | セーブ・設定 | `CSaveSubsystem`、`CGameSettingsSubsystem` |
 | 時間・待機 | `CTimeSubsystem`、`CTimerSubsystem`、`FGameplayChargePool`、`FGameplayCooldown`、`FGameplayInterval`、`FGameplayTimer` |
 | ゲーム規則の局所値 | 意味を固定せず上限・現在値・消費・回復だけを持つ`FGameplayResource`、整数回数と自動回復を持つ`FGameplayChargePool` |
-| 入力・押下判定 | `CActionBindingTable`、`CActionInputTracker`、`FActionInputMask`、`FActionInputMaskStack`、`FActionChord`、`FActionCommandSequenceTracker`、`FActionAxisResponse`、`FActionInputBuffer`、`FActionHoldTracker`、`FActionRepeatTracker`、`FActionTapSequenceTracker`、`FActionKeyRebindState`、`CBoundActionSource` |
+| 入力・押下判定 | `CActionBindingTable`、`CActionInputTracker`、`FActionInputMask`、`FActionInputMaskStack`、`FActionChord`、`FActionCommandSequenceTracker`、`FActionAxisResponse`、`FActionInputBuffer`、`FActionHoldTracker`、`FActionRepeatTracker`、`FActionTapSequenceTracker`、`FActionToggle`、`FActionKeyRebindState`、`CBoundActionSource` |
 | 画面・フェード・ロード中・ポーズ | `CScreenSubsystem`、`CFadeSubsystem`、`CLoadingScreenSubsystem`、`CPauseScreenSubsystem` |
 | ノード生成・シーン保存 | `CPrefabSubsystem`、`CSceneSnapshotSubsystem` |
 | 3D 地面 | `AUi3DScene::SpawnGround3D` / `TryUpdateGround3D`、`FGround3DSpawnParams`、厚み付き箱衝突 |

@@ -571,7 +571,9 @@
     <None Include="Source\AcsFramework_Core\Simulation\Test\ActionInputBufferTest.cpp" />
     <ClInclude Include="Source\AcsFramework_Core\Simulation\Input\ActionTapSequenceTracker.h" />
     <ClInclude Include="Source\AcsFramework_Core\Simulation\Input\ActionTapSequenceTrackerState.h" />
+    <ClInclude Include="Source\AcsFramework_Core\Simulation\Input\ActionToggle.h" />
     <None Include="Source\AcsFramework_Core\Simulation\Test\ActionTapSequenceTrackerTest.cpp" />
+    <None Include="Source\AcsFramework_Core\Simulation\Test\ActionToggleTest.cpp" />
     <ClInclude Include="Source\AcsFramework_Core\Simulation\Input\ActionInputMask.h" />
     <None Include="Source\AcsFramework_Core\Simulation\Test\ActionInputMaskTest.cpp" />
     <ClInclude Include="Source\AcsFramework_Core\Simulation\Input\ActionInputMaskStack.h" />
@@ -845,6 +847,7 @@
     <ClCompile Include="Source\AcsFramework_Core\Simulation\Input\ActionInputBufferState.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Simulation\Input\ActionTapSequenceTracker.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Simulation\Input\ActionTapSequenceTrackerState.cpp" />
+    <ClCompile Include="Source\AcsFramework_Core\Simulation\Input\ActionToggle.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Simulation\Input\ActionInputMask.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Simulation\Input\ActionInputMaskStack.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Simulation\Input\ActionInputMaskStackState.cpp" />

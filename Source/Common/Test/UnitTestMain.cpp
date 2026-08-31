@@ -53,6 +53,7 @@ void RunActionInputMaskTests( CTestHarness& Harness );
 void RunActionInputMaskStackTests( CTestHarness& Harness );
 void RunActionInputTrackerTests( CTestHarness& Harness );
 void RunActionTapSequenceTrackerTests( CTestHarness& Harness );
+void RunActionToggleTests( CTestHarness& Harness );
 void RunActionGamepadRebindStateTests( CTestHarness& Harness );
 void RunActionKeyRebindStateTests( CTestHarness& Harness );
 void RunGameplayCooldownTests( CTestHarness& Harness );
@@ -142,6 +143,7 @@ int main()
 	RunActionInputMaskStackTests( Harness );
 	RunActionInputTrackerTests( Harness );
 	RunActionTapSequenceTrackerTests( Harness );
+	RunActionToggleTests( Harness );
 	RunActionGamepadRebindStateTests( Harness );
 	RunActionKeyRebindStateTests( Harness );
 	RunGameplayCooldownTests( Harness );

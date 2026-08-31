@@ -46,6 +46,7 @@ void RunPublicApiHeaderTests( CTestHarness& Harness )
 	const FActionTapSequenceTracker ActionTapSequence;
 	const FActionTapSequenceTrackerState ActionTapSequenceState =
 		ActionTapSequence.CaptureState();
+	const FActionToggle ActionToggle;
 	const FGameplayCooldown GameplayCooldown;
 	const FGameplayCooldownState GameplayCooldownState =
 		GameplayCooldown.CaptureState();
@@ -112,6 +113,8 @@ void RunPublicApiHeaderTests( CTestHarness& Harness )
 	Harness.Check( !ActionTapSequence.IsWaitingForNextTap()
 		&& ActionTapSequenceState.IsValid(),
 		"複数回タップ判定と保存状態の公開型が解決できる" );
+	Harness.Check( !ActionToggle.IsEnabled(),
+		"押下トグルの公開型が解決できる" );
 	Harness.Check( GameplayCooldown.IsReady()
 		&& GameplayCooldownState.IsValid(),
 		"再使用待ちと保存状態の公開型が解決できる" );
