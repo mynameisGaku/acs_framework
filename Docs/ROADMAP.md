@@ -55,7 +55,7 @@ ACS のモジュールは **438 個**ある。この枠組みが窓口を用意�
 | 3D デバッグ描画 | `DrawLine3D`、`DrawArrow3D`、`DrawAxes3D`、`DrawGrid3D`、`DrawCircle3D`、`DrawCone3D`、`DrawCylinder3D`、`DrawBox3D`、`DrawAabb3D`、`DrawSphere3D`、ACSの`FDebugDraw3D` |
 | 遊ぶ人向け UI | `AUi3DScene`、`CUiLayer`、ACSの `AWidget` 群 |
 | 多言語 | `CLocalizationSubsystem` |
-| 決定性 (記録と再生) | `CSimulationSubsystem`、`CDeterministicRandom`の確率判定、均等・重み付き抽選、配列シャッフル、3D箱内部・円盤内部・球面・球内部・円錐方向抽選 |
+| 決定性 (記録と再生) | `CSimulationSubsystem`、`CDeterministicRandom`の確率判定、均等・重み付き抽選、配列シャッフル、3D箱内部・円盤内部・円柱内部・球面・球内部・円錐方向抽選 |
 | 開発支援 | `CPerfBudgetSubsystem`、`CDevConsoleSubsystem`、`CHotReloadSubsystem`、`DebugTop` |
 
 ### 覆えていないもの (v1.0.0 で埋める)

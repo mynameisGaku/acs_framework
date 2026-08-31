@@ -137,6 +137,22 @@ public:
 		FVec3& OutPoint ) noexcept;
 
 	/**
+	 * 指定軸を持つ原点中心の3D円柱内部から、体積に対して均等に1点を選ぶ。
+	 *
+	 * @details 軸方向は-HalfHeight以上HalfHeight以下。半径と半高が共に0では原点を返し、
+	 * 乱数を進めない。それ以外は円盤または線へ退化していても32bit乱数を3個進める。
+	 * 出力の全成分を有限に保つため、指定軸で取り得る各world成分がf32範囲内であることも要求する。
+	 * 利用側は返ったoffsetへ任意の中心位置を加える。
+	 * @param AxisDirection 有限かつ0でない円柱の中心軸。長さは問わない。
+	 * @param Radius 有限かつ0以上の円柱半径。
+	 * @param HalfHeight 有限かつ0以上の円柱半高。
+	 * @param OutPoint 選んだ原点相対位置。失敗時は変更しない。
+	 * @return 有効な軸と寸法から選べたらtrue。
+	 */
+	bool TryPointInCylinder3D( FVec3 AxisDirection, f32 Radius,
+		f32 HalfHeight, FVec3& OutPoint ) noexcept;
+
+	/**
 	 * 原点中心の3D球面から均等に1点を選ぶ。
 	 *
 	 * @details Yを上下軸として全方向を同じ面積確率で選ぶ。半径0では原点を返し、

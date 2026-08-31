@@ -201,6 +201,28 @@ const FVec3 SpawnPosition = AreaCenter + Offset;
 
 ---
 
+## 3D円柱へ均等に散らす
+
+高さを持つ出現範囲、探索候補、局所的な体積などを円柱範囲へ散らす場合は、原点中心の
+ローカルoffsetを`TryPointInCylinder3D()`で作る。円柱の中心軸は任意の長さで渡せ、半高は
+中心から軸の正負端までの距離で指定する。返ったoffsetは利用側の中心位置へ加える。
+
+```cpp
+FVec3 Offset{};
+if ( Context.Random == nullptr
+	|| !Context.Random->TryPointInCylinder3D(
+		AreaAxis, 5.0f, 2.0f, Offset ) ) return;
+const FVec3 SpawnPosition = AreaCenter + Offset;
+```
+
+断面は単位乱数の平方根を半径へ使って面積に対して均等にし、軸方向は負端から正端まで均等に選ぶため、
+円柱の体積に比例した分布になる。半径と半高が共に0なら原点を乱数なしで返す。それ以外は半径0の線、
+半高0の円盤へ退化していても、半径、方位角、軸位置に32bit乱数を1個ずつ使い、常に合計3個進める。
+同じ種、同じ乱数位置、同じ軸と寸法なら同じ点になり、snapshotからも再生できる。0方向または非有限の軸、
+負または非有限の寸法、指定軸でf32出力範囲を保証できない寸法は、出力と乱数位置を変えずfalseにする。
+
+---
+
 ## 3D球へ均等に散らす
 
 エフェクト、出現位置、探索方向などを球状に散らす場合は、原点相対の位置を

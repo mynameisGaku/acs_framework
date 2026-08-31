@@ -2,6 +2,7 @@
 #include "AcsFramework_Core/Simulation/DeterministicRandom.h"
 
 #include <cmath>
+#include <limits>
 
 
 namespace
@@ -56,6 +57,92 @@ namespace
 			Cross( ReferenceAxis, Direction ), OutFirst )
 			&& TryNormalizeDirection_Internal(
 				Cross( Direction, OutFirst ), OutSecond );
+	}
+
+	/** 直交する2本の単位方向と角度から、丸め誤差を除いた面内単位方向を作る。 */
+	FVec3 MakeUnitCircleDirection3D_Internal( FVec3 FirstPerpendicular,
+		FVec3 SecondPerpendicular, f64 Azimuth ) noexcept
+	{
+		const f64 Cosine = std::cos( Azimuth );
+		const f64 Sine = std::sin( Azimuth );
+		const f64 DirectionX = static_cast<f64>( FirstPerpendicular.x ) * Cosine
+			+ static_cast<f64>( SecondPerpendicular.x ) * Sine;
+		const f64 DirectionY = static_cast<f64>( FirstPerpendicular.y ) * Cosine
+			+ static_cast<f64>( SecondPerpendicular.y ) * Sine;
+		const f64 DirectionZ = static_cast<f64>( FirstPerpendicular.z ) * Cosine
+			+ static_cast<f64>( SecondPerpendicular.z ) * Sine;
+		const f64 DirectionLength = std::sqrt(
+			DirectionX * DirectionX + DirectionY * DirectionY
+			+ DirectionZ * DirectionZ );
+		return FVec3{
+			static_cast<f32>( DirectionX / DirectionLength ),
+			static_cast<f32>( DirectionY / DirectionLength ),
+			static_cast<f32>( DirectionZ / DirectionLength ) };
+	}
+
+	/** 円柱の1つのworld成分が全ての抽選結果でf32範囲に収まるならtrue。 */
+	bool DoesCylinderComponentFit_Internal( f32 AxisComponent,
+		f32 FirstPerpendicularComponent, f32 SecondPerpendicularComponent,
+		f64 MinimumRadialDirectionLength, f32 Radius,
+		f32 HalfHeight ) noexcept
+	{
+		/** 正規化前の面内方向がこの成分へ持てる最大絶対値。 */
+		const f64 RadialNumerator = std::hypot(
+			static_cast<f64>( FirstPerpendicularComponent ),
+			static_cast<f64>( SecondPerpendicularComponent ) );
+		f64 MaximumRadialComponent = 0.0;
+		if ( RadialNumerator > 0.0 )
+		{
+			/** f32へ丸めた面内単位方向も覆う保守的な成分上限。 */
+			MaximumRadialComponent = RadialNumerator
+				/ MinimumRadialDirectionLength
+				+ static_cast<f64>( std::numeric_limits<f32>::epsilon() );
+			if ( MaximumRadialComponent > 1.0 ) MaximumRadialComponent = 1.0;
+		}
+
+		/** 断面端と軸端が同じ符号で重なる場合の最大絶対成分。 */
+		const f64 MaximumComponentMagnitude = static_cast<f64>( Radius )
+			* MaximumRadialComponent
+			+ static_cast<f64>( HalfHeight )
+			* std::abs( static_cast<f64>( AxisComponent ) );
+		return MaximumComponentMagnitude
+			<= static_cast<f64>( std::numeric_limits<f32>::max() );
+	}
+
+	/** 円柱の全抽選結果を有限なFVec3で表せるならtrue。 */
+	bool CanRepresentCylinderPoint3D_Internal( FVec3 Axis,
+		FVec3 FirstPerpendicular, FVec3 SecondPerpendicular,
+		f32 Radius, f32 HalfHeight ) noexcept
+	{
+		const f64 FirstLengthSquared =
+			static_cast<f64>( FirstPerpendicular.x ) * FirstPerpendicular.x
+			+ static_cast<f64>( FirstPerpendicular.y ) * FirstPerpendicular.y
+			+ static_cast<f64>( FirstPerpendicular.z ) * FirstPerpendicular.z;
+		const f64 SecondLengthSquared =
+			static_cast<f64>( SecondPerpendicular.x ) * SecondPerpendicular.x
+			+ static_cast<f64>( SecondPerpendicular.y ) * SecondPerpendicular.y
+			+ static_cast<f64>( SecondPerpendicular.z ) * SecondPerpendicular.z;
+		const f64 BasisDot =
+			static_cast<f64>( FirstPerpendicular.x ) * SecondPerpendicular.x
+			+ static_cast<f64>( FirstPerpendicular.y ) * SecondPerpendicular.y
+			+ static_cast<f64>( FirstPerpendicular.z ) * SecondPerpendicular.z;
+		/** 面内合成方向の長さ2乗が取り得る最小値。 */
+		const f64 MinimumLengthSquared = 0.5 * (
+			FirstLengthSquared + SecondLengthSquared
+			- std::sqrt( ( FirstLengthSquared - SecondLengthSquared )
+				* ( FirstLengthSquared - SecondLengthSquared )
+				+ 4.0 * BasisDot * BasisDot ) );
+		if ( MinimumLengthSquared <= 0.0 ) return false;
+		const f64 MinimumDirectionLength = std::sqrt( MinimumLengthSquared );
+		return DoesCylinderComponentFit_Internal( Axis.x,
+				FirstPerpendicular.x, SecondPerpendicular.x,
+				MinimumDirectionLength, Radius, HalfHeight )
+			&& DoesCylinderComponentFit_Internal( Axis.y,
+				FirstPerpendicular.y, SecondPerpendicular.y,
+				MinimumDirectionLength, Radius, HalfHeight )
+			&& DoesCylinderComponentFit_Internal( Axis.z,
+				FirstPerpendicular.z, SecondPerpendicular.z,
+				MinimumDirectionLength, Radius, HalfHeight );
 	}
 }
 
@@ -247,25 +334,59 @@ bool CDeterministicRandom::TryPointInDisk3D( FVec3 NormalDirection,
 	/** 円盤面内の0以上2π以下の角度。 */
 	const f64 Azimuth = kFullTurnRadians
 		* static_cast<f64>( NextUnitFloat() );
-	const f64 Cosine = std::cos( Azimuth );
-	const f64 Sine = std::sin( Azimuth );
-	/** f32の直交基底を合成した後、丸め誤差を除いて長さ1へ戻す面内方向。 */
-	const f64 DirectionX = static_cast<f64>( FirstPerpendicular.x ) * Cosine
-		+ static_cast<f64>( SecondPerpendicular.x ) * Sine;
-	const f64 DirectionY = static_cast<f64>( FirstPerpendicular.y ) * Cosine
-		+ static_cast<f64>( SecondPerpendicular.y ) * Sine;
-	const f64 DirectionZ = static_cast<f64>( FirstPerpendicular.z ) * Cosine
-		+ static_cast<f64>( SecondPerpendicular.z ) * Sine;
-	const f64 DirectionLength = std::sqrt(
-		DirectionX * DirectionX + DirectionY * DirectionY
-		+ DirectionZ * DirectionZ );
-	const f32 UnitX = static_cast<f32>( DirectionX / DirectionLength );
-	const f32 UnitY = static_cast<f32>( DirectionY / DirectionLength );
-	const f32 UnitZ = static_cast<f32>( DirectionZ / DirectionLength );
+	const FVec3 Direction = MakeUnitCircleDirection3D_Internal(
+		FirstPerpendicular, SecondPerpendicular, Azimuth );
 	OutPoint = FVec3{
-		static_cast<f32>( Distance * static_cast<f64>( UnitX ) ),
-		static_cast<f32>( Distance * static_cast<f64>( UnitY ) ),
-		static_cast<f32>( Distance * static_cast<f64>( UnitZ ) ) };
+		static_cast<f32>( Distance * static_cast<f64>( Direction.x ) ),
+		static_cast<f32>( Distance * static_cast<f64>( Direction.y ) ),
+		static_cast<f32>( Distance * static_cast<f64>( Direction.z ) ) };
+	return true;
+}
+
+
+bool CDeterministicRandom::TryPointInCylinder3D( FVec3 AxisDirection,
+	f32 Radius, f32 HalfHeight, FVec3& OutPoint ) noexcept
+{
+	if ( !std::isfinite( Radius ) || Radius < 0.0f
+		|| !std::isfinite( HalfHeight ) || HalfHeight < 0.0f ) return false;
+
+	FVec3 Axis;
+	if ( !TryNormalizeDirection_Internal( AxisDirection, Axis ) ) return false;
+	if ( Radius == 0.0f && HalfHeight == 0.0f )
+	{
+		OutPoint = FVec3{};
+		return true;
+	}
+
+	FVec3 FirstPerpendicular;
+	FVec3 SecondPerpendicular;
+	if ( !TryMakePerpendicularBasis_Internal(
+		Axis, FirstPerpendicular, SecondPerpendicular ) ) return false;
+	if ( !CanRepresentCylinderPoint3D_Internal(
+		Axis, FirstPerpendicular, SecondPerpendicular,
+		Radius, HalfHeight ) ) return false;
+
+	/** 円柱断面の面積へ比例させる0以上1以下の半径。 */
+	const f64 RadialDistance = static_cast<f64>( Radius ) * std::sqrt(
+		static_cast<f64>( NextUnitFloat() ) );
+	/** 円柱軸まわりの0以上2π以下の角度。 */
+	const f64 Azimuth = kFullTurnRadians
+		* static_cast<f64>( NextUnitFloat() );
+	const FVec3 RadialDirection = MakeUnitCircleDirection3D_Internal(
+		FirstPerpendicular, SecondPerpendicular, Azimuth );
+	/** 負端より大きく正端以下へ均等に移す軸方向距離。 */
+	const f64 AxialDistance = static_cast<f64>( HalfHeight )
+		* ( 1.0 - 2.0 * static_cast<f64>( NextUnitFloat() ) );
+	OutPoint = FVec3{
+		static_cast<f32>( RadialDistance
+			* static_cast<f64>( RadialDirection.x )
+			+ AxialDistance * static_cast<f64>( Axis.x ) ),
+		static_cast<f32>( RadialDistance
+			* static_cast<f64>( RadialDirection.y )
+			+ AxialDistance * static_cast<f64>( Axis.y ) ),
+		static_cast<f32>( RadialDistance
+			* static_cast<f64>( RadialDirection.z )
+			+ AxialDistance * static_cast<f64>( Axis.z ) ) };
 	return true;
 }
 

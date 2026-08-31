@@ -1029,6 +1029,290 @@ void RunFixedStepDriverTests( CTestHarness& Harness )
 			"連続した2回の円盤抽選で4個の乱数を進める" );
 	}
 
+	Harness.BeginSuite( "CDeterministicRandom / 3D円柱内部を体積で選ぶ" );
+
+	{
+		constexpr usize kSampleCount = 4096u;
+		constexpr f32 kRadius = 3.0f;
+		constexpr f32 kHalfHeight = 4.0f;
+		/** 任意向きの円柱を確認する単位軸。 */
+		const FVec3 Axis = Normalize( FVec3{ 1.0f, 2.0f, 3.0f } );
+		/** 円柱断面の統計を測る1本目の単位方向。 */
+		const FVec3 FirstPerpendicular = Normalize(
+			Cross( FVec3::Up(), Axis ) );
+		/** 円柱断面の統計を測る2本目の単位方向。 */
+		const FVec3 SecondPerpendicular = Normalize(
+			Cross( Axis, FirstPerpendicular ) );
+		CDeterministicRandom A;
+		CDeterministicRandom B;
+		A.Reseed( 20260831u );
+		B.Reseed( 20260831u );
+		bool bSameAndInside = true;
+		f64 SumFirst = 0.0;
+		f64 SumSecond = 0.0;
+		f64 SumHeight = 0.0;
+		f64 SumRadiusSquared = 0.0;
+		f64 SumHeightSquared = 0.0;
+		f64 SumFirstSecond = 0.0;
+		f64 SumFirstHeight = 0.0;
+		f64 SumSecondHeight = 0.0;
+		/** 断面半径の2乗を8等分した度数。 */
+		u32 RadiusBinCounts[8]{};
+		/** 円柱軸を8等分した度数。 */
+		u32 HeightBinCounts[8]{};
+		/** 円柱断面の角度を8等分した度数。 */
+		u32 AngleBinCounts[8]{};
+		for ( usize SampleIndex = 0u; SampleIndex < kSampleCount;
+			++SampleIndex )
+		{
+			FVec3 PointA{};
+			FVec3 PointB{};
+			if ( !A.TryPointInCylinder3D(
+					FVec3{ 1.0f, 2.0f, 3.0f }, kRadius,
+					kHalfHeight, PointA )
+				|| !B.TryPointInCylinder3D(
+					FVec3{ 2.0f, 4.0f, 6.0f }, kRadius,
+					kHalfHeight, PointB )
+				|| !std::isfinite( PointA.x ) || !std::isfinite( PointA.y )
+				|| !std::isfinite( PointA.z )
+				|| PointA.x != PointB.x || PointA.y != PointB.y
+				|| PointA.z != PointB.z )
+			{
+				bSameAndInside = false;
+				continue;
+			}
+
+			const f64 LocalFirst = static_cast<f64>(
+				Dot( FirstPerpendicular, PointA ) ) / kRadius;
+			const f64 LocalSecond = static_cast<f64>(
+				Dot( SecondPerpendicular, PointA ) ) / kRadius;
+			const f64 LocalHeight = static_cast<f64>(
+				Dot( Axis, PointA ) ) / kHalfHeight;
+			const f64 NormalizedRadiusSquared =
+				LocalFirst * LocalFirst + LocalSecond * LocalSecond;
+			if ( !std::isfinite( LocalFirst )
+				|| !std::isfinite( LocalSecond )
+				|| !std::isfinite( LocalHeight )
+				|| NormalizedRadiusSquared > 1.00001
+				|| std::abs( LocalHeight ) > 1.00001 )
+			{
+				bSameAndInside = false;
+				continue;
+			}
+
+			SumFirst += LocalFirst;
+			SumSecond += LocalSecond;
+			SumHeight += LocalHeight;
+			SumRadiusSquared += NormalizedRadiusSquared;
+			SumHeightSquared += LocalHeight * LocalHeight;
+			SumFirstSecond += LocalFirst * LocalSecond;
+			SumFirstHeight += LocalFirst * LocalHeight;
+			SumSecondHeight += LocalSecond * LocalHeight;
+			/** 許容誤差内で1を超えた半径2乗を末尾へ収める値。 */
+			const f64 BinnedRadiusSquared = NormalizedRadiusSquared > 1.0
+				? 1.0 : NormalizedRadiusSquared;
+			usize RadiusBin = static_cast<usize>(
+				BinnedRadiusSquared * 8.0 );
+			if ( RadiusBin >= 8u ) RadiusBin = 7u;
+			++RadiusBinCounts[RadiusBin];
+			/** 許容誤差内で範囲を越えた軸位置を端へ収める値。 */
+			const f64 BinnedHeight = LocalHeight < -1.0 ? -1.0
+				: ( LocalHeight > 1.0 ? 1.0 : LocalHeight );
+			usize HeightBin = static_cast<usize>(
+				( BinnedHeight + 1.0 ) * 4.0 );
+			if ( HeightBin >= 8u ) HeightBin = 7u;
+			++HeightBinCounts[HeightBin];
+			f64 Angle = std::atan2( LocalSecond, LocalFirst );
+			if ( Angle < 0.0 ) Angle += 6.28318530717958647692;
+			usize AngleBin = static_cast<usize>(
+				Angle * ( 8.0 / 6.28318530717958647692 ) );
+			if ( AngleBin >= 8u ) AngleBin = 7u;
+			++AngleBinCounts[AngleBin];
+		}
+
+		const f64 InverseCount = 1.0 / static_cast<f64>( kSampleCount );
+		bool bBinsBalanced = true;
+		constexpr u32 kExpectedBinCount =
+			static_cast<u32>( kSampleCount / 8u );
+		constexpr u32 kBinTolerance = 96u;
+		for ( usize BinIndex = 0u; BinIndex < 8u; ++BinIndex )
+		{
+			if ( RadiusBinCounts[BinIndex]
+					< kExpectedBinCount - kBinTolerance
+				|| RadiusBinCounts[BinIndex]
+					> kExpectedBinCount + kBinTolerance
+				|| HeightBinCounts[BinIndex]
+					< kExpectedBinCount - kBinTolerance
+				|| HeightBinCounts[BinIndex]
+					> kExpectedBinCount + kBinTolerance
+				|| AngleBinCounts[BinIndex]
+					< kExpectedBinCount - kBinTolerance
+				|| AngleBinCounts[BinIndex]
+					> kExpectedBinCount + kBinTolerance )
+			{
+				bBinsBalanced = false;
+			}
+		}
+
+		Harness.Check( bSameAndInside,
+			"軸の長さに依らず同じ円柱内部位置を選ぶ" );
+		Harness.Check( std::abs( SumFirst * InverseCount ) < 0.03
+			&& std::abs( SumSecond * InverseCount ) < 0.03
+			&& std::abs( SumHeight * InverseCount ) < 0.03,
+			"円柱内部位置の平均が中心付近へ戻る" );
+		Harness.Check( std::abs(
+				SumRadiusSquared * InverseCount - 0.5 ) < 0.03
+			&& std::abs(
+				SumHeightSquared * InverseCount - ( 1.0 / 3.0 ) ) < 0.03,
+			"断面面積と軸方向長さへ比例して分布する" );
+		Harness.Check( std::abs( SumFirstSecond * InverseCount ) < 0.03
+			&& std::abs( SumFirstHeight * InverseCount ) < 0.03
+			&& std::abs( SumSecondHeight * InverseCount ) < 0.03,
+			"断面2方向と軸方向へ相関を残さない" );
+		Harness.Check( bBinsBalanced,
+			"半径2乗、軸位置、方位角の各8区間へ偏りなく分布する" );
+		Harness.CheckEqualU64( A.GetDrawCount(), kSampleCount * 3u,
+			"円柱内部1点につき32bit乱数を3個進める" );
+	}
+
+	Harness.BeginSuite( "CDeterministicRandom / 3D円柱抽選を安全に復元する" );
+
+	{
+		constexpr usize kReplayCount = 64u;
+		CDeterministicRandom Random;
+		Random.Reseed( 271828u );
+		FVec3 Warmup{};
+		Random.TryPointInCylinder3D(
+			FVec3::Forward(), 2.0f, 3.0f, Warmup );
+		FRandomSnapshot Snapshot{};
+		u64 SnapshotDrawCount = 0u;
+		Random.CaptureSnapshot( Snapshot, SnapshotDrawCount );
+		FVec3 ExpectedPoints[kReplayCount]{};
+		for ( usize Index = 0u; Index < kReplayCount; ++Index )
+		{
+			Random.TryPointInCylinder3D( FVec3{ 1.0f, 2.0f, 3.0f },
+				4.0f, 5.0f, ExpectedPoints[Index] );
+		}
+
+		const bool bRestored = Random.TryRestoreSnapshot(
+			Snapshot, SnapshotDrawCount );
+		bool bReplayed = bRestored;
+		for ( usize Index = 0u; Index < kReplayCount; ++Index )
+		{
+			FVec3 Point{};
+			if ( !Random.TryPointInCylinder3D(
+					FVec3{ 1.0f, 2.0f, 3.0f }, 4.0f, 5.0f, Point )
+				|| Point.x != ExpectedPoints[Index].x
+				|| Point.y != ExpectedPoints[Index].y
+				|| Point.z != ExpectedPoints[Index].z )
+			{
+				bReplayed = false;
+			}
+		}
+
+		Harness.CheckEqualU64( SnapshotDrawCount, 3u,
+			"円柱抽選後の消費数を写す" );
+		Harness.Check( bReplayed,
+			"途中状態へ戻すと同じ円柱内部位置列を再生する" );
+		Harness.CheckEqualU64( Random.GetDrawCount(),
+			SnapshotDrawCount + kReplayCount * 3u,
+			"復元後の円柱抽選でも消費数が一致する" );
+	}
+
+	{
+		CDeterministicRandom Random;
+		CDeterministicRandom Expected;
+		Random.Reseed( 42u );
+		Expected.Reseed( 42u );
+		FVec3 Point{ 7.0f, 8.0f, 9.0f };
+		const f32 NotANumber =
+			std::numeric_limits<f32>::quiet_NaN();
+		const f32 Infinity = std::numeric_limits<f32>::infinity();
+		const f32 MaximumValue = std::numeric_limits<f32>::max();
+		const bool bRejected =
+			!Random.TryPointInCylinder3D(
+				FVec3{}, 1.0f, 1.0f, Point )
+			&& !Random.TryPointInCylinder3D(
+				FVec3{ NotANumber, 0.0f, 1.0f }, 1.0f, 1.0f, Point )
+			&& !Random.TryPointInCylinder3D(
+				FVec3{ Infinity, 0.0f, 1.0f }, 1.0f, 1.0f, Point )
+			&& !Random.TryPointInCylinder3D(
+				FVec3::Up(), -1.0f, 1.0f, Point )
+			&& !Random.TryPointInCylinder3D(
+				FVec3::Up(), 1.0f, -1.0f, Point )
+			&& !Random.TryPointInCylinder3D(
+				FVec3::Up(), NotANumber, 1.0f, Point )
+			&& !Random.TryPointInCylinder3D(
+				FVec3::Up(), 1.0f, Infinity, Point )
+			&& !Random.TryPointInCylinder3D(
+				FVec3{ 1.0f, 1.0f, 0.0f }, MaximumValue * 0.75f,
+				MaximumValue * 0.75f, Point );
+		Harness.Check( bRejected && Point.x == 7.0f
+			&& Point.y == 8.0f && Point.z == 9.0f,
+			"無効な軸、寸法、world成分範囲を出力変更なしで拒否する" );
+		Harness.CheckEqualU64( Random.GetDrawCount(), 0u,
+			"不正な円柱入力では乱数を進めない" );
+
+		FVec3 ZeroPoint{ 1.0f, 2.0f, 3.0f };
+		Harness.Check( Random.TryPointInCylinder3D(
+				FVec3::Up(), 0.0f, 0.0f, ZeroPoint )
+			&& ZeroPoint.x == 0.0f && ZeroPoint.y == 0.0f
+			&& ZeroPoint.z == 0.0f,
+			"半径と半高0は有効軸を確認して乱数なしで原点を返す" );
+		Harness.CheckEqualU64( Random.GetDrawCount(), 0u,
+			"全寸法0でも乱数を進めない" );
+		Harness.CheckEqualU64( Random.NextU32(), Expected.NextU32(),
+			"拒否と全寸法0の後も次の乱数値が変わらない" );
+	}
+
+	{
+		CDeterministicRandom Random;
+		Random.Reseed( 314159u );
+		FVec3 LinePoint{};
+		const bool bLine = Random.TryPointInCylinder3D(
+			FVec3::Up(), 0.0f, 2.0f, LinePoint );
+		Harness.Check( bLine && LinePoint.x == 0.0f
+			&& std::abs( LinePoint.y ) <= 2.0f
+			&& LinePoint.z == 0.0f,
+			"半径0は軸上の線へ退化する" );
+		Harness.CheckEqualU64( Random.GetDrawCount(), 3u,
+			"線へ退化しても円柱抽選の消費数を固定する" );
+
+		FVec3 DiskPoint{};
+		const bool bDisk = Random.TryPointInCylinder3D(
+			FVec3::Up(), 2.0f, 0.0f, DiskPoint );
+		Harness.Check( bDisk && DiskPoint.y == 0.0f
+			&& LengthSq( DiskPoint ) <= 4.00001f,
+			"半高0は軸に直交する円盤へ退化する" );
+		Harness.CheckEqualU64( Random.GetDrawCount(), 6u,
+			"円盤へ退化しても円柱抽選の消費数を固定する" );
+	}
+
+	{
+		const f32 MaximumValue = std::numeric_limits<f32>::max();
+		CDeterministicRandom Random;
+		Random.Reseed( 161803u );
+		FVec3 WidePoint{};
+		FVec3 TallPoint{};
+		FVec3 WideAndTallPoint{};
+		const bool bWide = Random.TryPointInCylinder3D(
+			FVec3::Up(), MaximumValue, 0.0f, WidePoint );
+		const bool bTall = Random.TryPointInCylinder3D(
+			FVec3::Forward(), 0.0f, MaximumValue, TallPoint );
+		const bool bWideAndTall = Random.TryPointInCylinder3D(
+			FVec3::Up(), MaximumValue, MaximumValue, WideAndTallPoint );
+		Harness.Check( bWide && bTall && bWideAndTall
+			&& std::isfinite( WidePoint.x ) && WidePoint.y == 0.0f
+			&& std::isfinite( WidePoint.z ) && TallPoint.x == 0.0f
+			&& TallPoint.y == 0.0f && std::isfinite( TallPoint.z )
+			&& std::isfinite( WideAndTallPoint.x )
+			&& std::isfinite( WideAndTallPoint.y )
+			&& std::isfinite( WideAndTallPoint.z ),
+			"軸別に収まる最大有限半径と半高を過剰拒否しない" );
+		Harness.CheckEqualU64( Random.GetDrawCount(), 9u,
+			"最大有限の円柱3回で9個の乱数を進める" );
+	}
+
 	Harness.BeginSuite( "CDeterministicRandom / 3D球面を均等に選ぶ" );
 
 	{
