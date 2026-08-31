@@ -51,6 +51,7 @@ void RunPublicApiHeaderTests( CTestHarness& Harness )
 	u32 PublicOrder[] = { 0u, 1u, 2u };
 	usize PublicRandomIndex = 9u;
 	FVec3 PublicSpherePoint{};
+	bool bPublicChanceOccurred = false;
 	WeightedRandom.Reseed( 1u );
 
 	Harness.Check( Position.x == 0.0f, "ACSの基本型が解決できる" );
@@ -88,6 +89,9 @@ void RunPublicApiHeaderTests( CTestHarness& Harness )
 	Harness.Check( GameplayCooldown.IsReady()
 		&& GameplayCooldownState.IsValid(),
 		"再使用待ちと保存状態の公開型が解決できる" );
+	Harness.Check( WeightedRandom.TryChance( 1.0f, bPublicChanceOccurred )
+		&& bPublicChanceOccurred,
+		"決定論的な成功確率判定の公開APIが解決できる" );
 	Harness.Check( WeightedRandom.TryChooseWeightedIndex(
 			PublicWeights, 1u, WeightedIndex )
 		&& WeightedIndex == 0u,

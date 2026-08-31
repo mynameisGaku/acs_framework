@@ -64,6 +64,17 @@ public:
 	f32 NextRangeFloat( f32 Min, f32 Max ) noexcept;
 
 	/**
+	 * 指定した成功確率を決定論的に判定する。
+	 *
+	 * @details 0は必ず失敗、1は必ず成功として乱数を進めない。
+	 * その間は32bit乱数を1個進め、2^-32刻みへ切り下げた確率で判定する。
+	 * @param Probability 有限かつ0以上1以下の成功確率。
+	 * @param OutOccurred 抽選で出来事が起きたかの出力先。失敗時は変更しない。
+	 * @return 有効な確率を判定できたらtrue。
+	 */
+	bool TryChance( f32 Probability, bool& OutOccurred ) noexcept;
+
+	/**
 	 * 同じ確率で1項目の添字を選ぶ。
 	 *
 	 * @details 剰余の余りに当たる出目を棄却し、添字ごとの確率を揃える。

@@ -169,6 +169,113 @@ void RunFixedStepDriverTests( CTestHarness& Harness )
 		Harness.CheckEqualU64( Random.GetDrawCount(), 600u, "引いた回数が合う" );
 	}
 
+	Harness.BeginSuite( "CDeterministicRandom / 成功確率を判定する" );
+
+	{
+		constexpr usize kSampleCount = 4096u;
+		/** 32bit全出目の先頭25%に当たる排他的上限。 */
+		constexpr u64 kQuarterThreshold = 1ull << 30u;
+		CDeterministicRandom Random;
+		CDeterministicRandom Reference;
+		Random.Reseed( 20260831u );
+		Reference.Reseed( 20260831u );
+		usize SuccessCount = 0u;
+		bool bMatchesReference = true;
+
+		for ( usize SampleIndex = 0u; SampleIndex < kSampleCount;
+			++SampleIndex )
+		{
+			bool bOccurred = false;
+			const bool bExpected = static_cast<u64>( Reference.NextU32() )
+				< kQuarterThreshold;
+			if ( !Random.TryChance( 0.25f, bOccurred )
+				|| bOccurred != bExpected ) bMatchesReference = false;
+			if ( bOccurred ) ++SuccessCount;
+		}
+
+		Harness.Check( bMatchesReference,
+			"25%を32bit出目の先頭4分の1へ正確に割り当てる" );
+		Harness.Check( SuccessCount > 900u && SuccessCount < 1150u,
+			"十分な回数では成功数が指定確率の近くへ集まる" );
+		Harness.CheckEqualU64( Random.GetDrawCount(), kSampleCount,
+			"途中確率1回につき32bit乱数を1個進める" );
+	}
+
+	{
+		const f32 InvalidProbabilities[] = {
+			-0.01f,
+			1.01f,
+			std::numeric_limits<f32>::quiet_NaN(),
+			std::numeric_limits<f32>::infinity() };
+		CDeterministicRandom Random;
+		CDeterministicRandom Expected;
+		Random.Reseed( 42u );
+		Expected.Reseed( 42u );
+		bool bOccurred = true;
+		const bool bZeroAccepted = Random.TryChance( 0.0f, bOccurred )
+			&& !bOccurred;
+		const bool bOneAccepted = Random.TryChance( 1.0f, bOccurred )
+			&& bOccurred;
+		bool bInvalidRejectedAtomically = true;
+
+		for ( usize ProbabilityIndex = 0u;
+			ProbabilityIndex < sizeof( InvalidProbabilities )
+				/ sizeof( InvalidProbabilities[0] );
+			++ProbabilityIndex )
+		{
+			bOccurred = ( ProbabilityIndex % 2u ) == 0u;
+			const bool bBefore = bOccurred;
+			if ( Random.TryChance( InvalidProbabilities[ProbabilityIndex],
+				bOccurred ) || bOccurred != bBefore )
+			{
+				bInvalidRejectedAtomically = false;
+			}
+		}
+
+		Harness.Check( bZeroAccepted && bOneAccepted,
+			"0と1は乱数を使わず確定結果にする" );
+		Harness.Check( bInvalidRejectedAtomically,
+			"範囲外と非有限の確率では出力を変えない" );
+		Harness.CheckEqualU64( Random.GetDrawCount(), 0u,
+			"確定結果と拒否では乱数位置を進めない" );
+		Harness.CheckEqualU64( Random.NextU32(), Expected.NextU32(),
+			"確定結果と拒否後も次の乱数値が変わらない" );
+	}
+
+	{
+		constexpr usize kReplayCount = 64u;
+		CDeterministicRandom Random;
+		Random.Reseed( 271828u );
+		bool bWarmupOccurred = false;
+		Random.TryChance( 0.4f, bWarmupOccurred );
+		FRandomSnapshot Snapshot{};
+		u64 SnapshotDrawCount = 0u;
+		Random.CaptureSnapshot( Snapshot, SnapshotDrawCount );
+		bool Expected[kReplayCount]{};
+		for ( usize Index = 0u; Index < kReplayCount; ++Index )
+		{
+			Random.TryChance( 0.4f, Expected[Index] );
+		}
+
+		const bool bRestored = Random.TryRestoreSnapshot(
+			Snapshot, SnapshotDrawCount );
+		bool bReplayed = bRestored;
+		for ( usize Index = 0u; Index < kReplayCount; ++Index )
+		{
+			bool bOccurred = false;
+			if ( !Random.TryChance( 0.4f, bOccurred )
+				|| bOccurred != Expected[Index] ) bReplayed = false;
+		}
+
+		Harness.Check( SnapshotDrawCount == 1u,
+			"確率判定後の乱数位置を写す" );
+		Harness.Check( bReplayed,
+			"復元後に同じ確率判定列を再生する" );
+		Harness.CheckEqualU64( Random.GetDrawCount(),
+			SnapshotDrawCount + kReplayCount,
+			"復元後の確率判定でも消費数が一致する" );
+	}
+
 	Harness.BeginSuite( "CDeterministicRandom / 均等な添字抽選" );
 
 	{

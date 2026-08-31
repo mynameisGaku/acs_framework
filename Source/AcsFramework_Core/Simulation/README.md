@@ -90,6 +90,28 @@ CSimulationEventQueue → 読む側 (Actor / Audio / VFX)
 
 ---
 
+## 確率分岐を同じ結果で再生する
+
+会心、ドロップ、AIの分岐などを確率で決める場合は、固定ステップへ渡された乱数から
+`TryChance()`を呼ぶ。現在時刻やglobalな乱数を直接読むと、入力を再生しても結果が揃わない。
+
+```cpp
+bool bCriticalHit = false;
+if ( Context.Random == nullptr
+	|| !Context.Random->TryChance( 0.15f, bCriticalHit ) ) return;
+if ( bCriticalHit ) ApplyCriticalHit();
+```
+
+0は必ずfalse、1は必ずtrueになり、確定結果では乱数を進めない。0より大きく1未満では
+32bit乱数を1個だけ進め、同じ種と同じ呼出順なら同じ判定列を返す。負、1超過、NaN、無限大は
+出力と乱数位置を変えずfalseにする。
+
+途中確率は`floor(Probability * 2^32) / 2^32`へ切り下げるため、最大誤差は`2^-32`
+（約`2.33e-10`）未満になる。これより小さい正の確率を区別する必要がある場合は、
+ゲーム側で長期保証回数を持つか、重み付き抽選として明示する。
+
+---
+
 ## 重み付き抽選を再現する
 
 出現候補、演出候補、AIの選択肢などから比率で1つ選ぶ場合は、ゲーム規則の中で

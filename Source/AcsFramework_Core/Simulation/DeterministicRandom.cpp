@@ -44,6 +44,33 @@ f32 CDeterministicRandom::NextRangeFloat( f32 Min, f32 Max ) noexcept
 }
 
 
+bool CDeterministicRandom::TryChance( f32 Probability,
+	bool& OutOccurred ) noexcept
+{
+	if ( !std::isfinite( Probability )
+		|| Probability < 0.0f || Probability > 1.0f ) return false;
+
+	if ( Probability == 0.0f )
+	{
+		OutOccurred = false;
+		return true;
+	}
+	if ( Probability == 1.0f )
+	{
+		OutOccurred = true;
+		return true;
+	}
+
+	/** 32bit乱数が取り得る値の総数。 */
+	constexpr f64 kSourceValueCount = 4294967296.0;
+	/** 成功へ割り当てる先頭側の出目数。 */
+	const u64 SuccessValueCount = static_cast<u64>(
+		static_cast<f64>( Probability ) * kSourceValueCount );
+	OutOccurred = static_cast<u64>( NextU32() ) < SuccessValueCount;
+	return true;
+}
+
+
 bool CDeterministicRandom::TryChooseIndex( usize ItemCount,
 	usize& OutIndex ) noexcept
 {
