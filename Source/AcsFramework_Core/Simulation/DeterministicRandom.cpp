@@ -44,6 +44,17 @@ f32 CDeterministicRandom::NextRangeFloat( f32 Min, f32 Max ) noexcept
 }
 
 
+bool CDeterministicRandom::TryChooseIndex( usize ItemCount,
+	usize& OutIndex ) noexcept
+{
+	if ( ItemCount == 0u || ItemCount > kMaximumItemCount ) return false;
+
+	OutIndex = static_cast<usize>( NextBounded_Internal(
+		static_cast<u32>( ItemCount ) ) );
+	return true;
+}
+
+
 bool CDeterministicRandom::TryChooseWeightedIndex( const f32* Weights,
 	usize WeightCount, usize& OutIndex ) noexcept
 {
@@ -93,6 +104,30 @@ bool CDeterministicRandom::TryChooseWeightedIndex( const f32* Weights,
 	// 累積加算の丸めで境界が残った場合も、最後の正の項目へ収める。
 	OutIndex = LastPositiveIndex;
 	return true;
+}
+
+
+u32 CDeterministicRandom::NextBounded_Internal(
+	u32 ExclusiveUpperBound ) noexcept
+{
+	if ( ExclusiveUpperBound <= 1u ) return 0u;
+
+	/** 32bit乱数が取り得る値の総数。 */
+	constexpr u64 kSourceValueCount = 1ull << 32u;
+	const u64 Bound = static_cast<u64>( ExclusiveUpperBound );
+	/** 各結果へ同数ずつ割り当てられる最大の排他的上限。 */
+	const u64 AcceptanceLimit = kSourceValueCount
+		- ( kSourceValueCount % Bound );
+
+	for ( ;; )
+	{
+		/** 範囲へ割り当てる32bitの出目。 */
+		const u32 Sample = NextU32();
+		if ( static_cast<u64>( Sample ) < AcceptanceLimit )
+		{
+			return static_cast<u32>( static_cast<u64>( Sample ) % Bound );
+		}
+	}
 }
 
 

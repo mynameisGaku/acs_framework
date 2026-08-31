@@ -168,6 +168,95 @@ void RunFixedStepDriverTests( CTestHarness& Harness )
 		Harness.CheckEqualU64( Random.GetDrawCount(), 600u, "引いた回数が合う" );
 	}
 
+	Harness.BeginSuite( "CDeterministicRandom / 均等な添字抽選" );
+
+	{
+		CDeterministicRandom A;
+		CDeterministicRandom B;
+		A.Reseed( 20260831u );
+		B.Reseed( 20260831u );
+		bool bSameAndInRange = true;
+		for ( usize Draw = 0u; Draw < 128u; ++Draw )
+		{
+			usize AIndex = 99u;
+			usize BIndex = 99u;
+			if ( !A.TryChooseIndex( 7u, AIndex )
+				|| !B.TryChooseIndex( 7u, BIndex )
+				|| AIndex != BIndex || AIndex >= 7u ) bSameAndInRange = false;
+		}
+
+		Harness.Check( bSameAndInRange,
+			"同じ種と件数から同じ範囲内の添字を選ぶ" );
+		Harness.CheckEqualU64( A.GetDrawCount(), 128u,
+			"棄却のない小さい件数では成功ごとに1個進める" );
+	}
+
+	{
+		constexpr usize kWideItemCount =
+			static_cast<usize>( 0x80000001u );
+		constexpr u64 kSourceValueCount = 1ull << 32u;
+		const u64 AcceptanceLimit = kSourceValueCount
+			- ( kSourceValueCount % static_cast<u64>( kWideItemCount ) );
+		CDeterministicRandom SeedFinder;
+		u64 RejectionSeed = 0u;
+		for ( u64 CandidateSeed = 1u; CandidateSeed <= 1024u;
+			++CandidateSeed )
+		{
+			SeedFinder.Reseed( CandidateSeed );
+			if ( static_cast<u64>( SeedFinder.NextU32() ) >= AcceptanceLimit )
+			{
+				RejectionSeed = CandidateSeed;
+				break;
+			}
+		}
+
+		CDeterministicRandom Reference;
+		Reference.Reseed( RejectionSeed );
+		u32 AcceptedSample = 0u;
+		u64 ExpectedDrawCount = 0u;
+		do
+		{
+			AcceptedSample = Reference.NextU32();
+			++ExpectedDrawCount;
+		}
+		while ( static_cast<u64>( AcceptedSample ) >= AcceptanceLimit );
+		const usize ExpectedIndex = static_cast<usize>(
+			static_cast<u64>( AcceptedSample ) % kWideItemCount );
+
+		CDeterministicRandom Random;
+		Random.Reseed( RejectionSeed );
+		usize Index = 99u;
+		const bool bChosen = Random.TryChooseIndex( kWideItemCount, Index );
+		Harness.Check( RejectionSeed != 0u && ExpectedDrawCount > 1u,
+			"広い件数で棄却が起きる種を固定範囲から見つける" );
+		Harness.Check( bChosen && Index == ExpectedIndex,
+			"棄却後の最初の受理値を均等な添字へ変える" );
+		Harness.CheckEqualU64( Random.GetDrawCount(), ExpectedDrawCount,
+			"棄却した32bit乱数も消費数へ含める" );
+	}
+
+	{
+		CDeterministicRandom Random;
+		CDeterministicRandom Expected;
+		Random.Reseed( 42u );
+		Expected.Reseed( 42u );
+		usize Index = 77u;
+		constexpr usize kTooManyItems =
+			static_cast<usize>( 0xffffffffu ) + 1u;
+
+		const bool bRejected = !Random.TryChooseIndex( 0u, Index )
+			&& !Random.TryChooseIndex( kTooManyItems, Index );
+		usize SingleIndex = 99u;
+		const bool bSingle = Random.TryChooseIndex( 1u, SingleIndex );
+		Harness.Check( bRejected && Index == 77u
+			&& bSingle && SingleIndex == 0u,
+			"空と過大件数を拒否し、1件を乱数なしで選ぶ" );
+		Harness.CheckEqualU64( Random.GetDrawCount(), 0u,
+			"選べない件数と1件では乱数を進めない" );
+		Harness.CheckEqualU64( Random.NextU32(), Expected.NextU32(),
+			"拒否後も次の乱数値が変わらない" );
+	}
+
 	Harness.BeginSuite( "CDeterministicRandom / 重み付き抽選" );
 
 	{
@@ -287,5 +376,94 @@ void RunFixedStepDriverTests( CTestHarness& Harness )
 		Harness.CheckEqualU64( Random.GetDrawCount(),
 			SnapshotDrawCount + kExpectedCount * 2u,
 			"復元後の抽選でも消費数が一致する" );
+	}
+
+	Harness.BeginSuite( "CDeterministicRandom / 配列を偏りなく並べ替える" );
+
+	{
+		constexpr usize kItemCount = 8u;
+		u32 A[kItemCount] = { 0u, 1u, 2u, 3u, 4u, 5u, 6u, 7u };
+		u32 B[kItemCount] = { 0u, 1u, 2u, 3u, 4u, 5u, 6u, 7u };
+		CDeterministicRandom RandomA;
+		CDeterministicRandom RandomB;
+		RandomA.Reseed( 20260831u );
+		RandomB.Reseed( 20260831u );
+
+		const bool bShuffledA = RandomA.TryShuffle( A, kItemCount );
+		const bool bShuffledB = RandomB.TryShuffle( B, kItemCount );
+		bool bSame = bShuffledA && bShuffledB;
+		bool bChanged = false;
+		bool bPermutation = true;
+		bool bSeen[kItemCount]{};
+		for ( usize Index = 0u; Index < kItemCount; ++Index )
+		{
+			if ( A[Index] != B[Index] ) bSame = false;
+			if ( A[Index] != Index ) bChanged = true;
+			if ( A[Index] >= kItemCount || bSeen[A[Index]] )
+			{
+				bPermutation = false;
+				continue;
+			}
+			bSeen[A[Index]] = true;
+		}
+
+		Harness.Check( bSame, "同じ種と項目数なら同じ並びになる" );
+		Harness.Check( bChanged && bPermutation,
+			"全項目を重複や欠落なしで並べ替える" );
+		Harness.CheckEqualU64( RandomA.GetDrawCount(), 7u,
+			"棄却のない8項目では32bit乱数を7個進める" );
+	}
+
+	{
+		CDeterministicRandom Random;
+		Random.Reseed( 314159u );
+		u32 Warmup[] = { 0u, 1u, 2u };
+		Random.TryShuffle( Warmup, 3u );
+
+		FRandomSnapshot Snapshot{};
+		u64 SnapshotDrawCount = 0u;
+		Random.CaptureSnapshot( Snapshot, SnapshotDrawCount );
+		u32 Expected[] = { 10u, 20u, 30u, 40u, 50u, 60u };
+		u32 Replayed[] = { 10u, 20u, 30u, 40u, 50u, 60u };
+		const bool bExpected = Random.TryShuffle( Expected, 6u );
+		const u64 ExpectedDrawCount = Random.GetDrawCount();
+		const bool bRestored = Random.TryRestoreSnapshot(
+			Snapshot, SnapshotDrawCount );
+		const bool bReplayed = Random.TryShuffle( Replayed, 6u );
+		bool bSame = bExpected && bRestored && bReplayed;
+		for ( usize Index = 0u; Index < 6u; ++Index )
+		{
+			if ( Expected[Index] != Replayed[Index] ) bSame = false;
+		}
+
+		Harness.Check( bSame,
+			"途中状態へ戻すと同じ並べ替えを再生する" );
+		Harness.CheckEqualU64( Random.GetDrawCount(), ExpectedDrawCount,
+			"復元後の並べ替えでも消費数が一致する" );
+	}
+
+	{
+		u32 Items[] = { 4u, 5u, 6u };
+		CDeterministicRandom Random;
+		CDeterministicRandom Expected;
+		Random.Reseed( 42u );
+		Expected.Reseed( 42u );
+		constexpr usize kTooManyItems =
+			static_cast<usize>( 0xffffffffu ) + 1u;
+
+		const bool bRejected =
+			!Random.TryShuffle<u32>( nullptr, 1u )
+			&& !Random.TryShuffle( Items, kTooManyItems );
+		const bool bEmptyAccepted = Random.TryShuffle<u32>( nullptr, 0u );
+		const bool bSingleAccepted = Random.TryShuffle( Items, 1u );
+
+		Harness.Check( bRejected && bEmptyAccepted && bSingleAccepted,
+			"null、過大件数を拒否し、空と1件を乱数なしで受理する" );
+		Harness.Check( Items[0] == 4u && Items[1] == 5u && Items[2] == 6u,
+			"拒否または1件では配列を変えない" );
+		Harness.CheckEqualU64( Random.GetDrawCount(), 0u,
+			"並べ替えない入力では乱数を進めない" );
+		Harness.CheckEqualU64( Random.NextU32(), Expected.NextU32(),
+			"拒否後も次の乱数値が変わらない" );
 	}
 }

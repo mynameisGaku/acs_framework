@@ -48,6 +48,8 @@ void RunPublicApiHeaderTests( CTestHarness& Harness )
 	CDeterministicRandom WeightedRandom;
 	constexpr f32 PublicWeights[] = { 1.0f };
 	usize WeightedIndex = 9u;
+	u32 PublicOrder[] = { 0u, 1u, 2u };
+	usize PublicRandomIndex = 9u;
 	WeightedRandom.Reseed( 1u );
 
 	Harness.Check( Position.x == 0.0f, "ACSの基本型が解決できる" );
@@ -89,4 +91,9 @@ void RunPublicApiHeaderTests( CTestHarness& Harness )
 			PublicWeights, 1u, WeightedIndex )
 		&& WeightedIndex == 0u,
 		"決定論的な重み付き抽選の公開APIが解決できる" );
+	Harness.Check( WeightedRandom.TryShuffle( PublicOrder, 3u ),
+		"決定論的な配列シャッフルの公開APIが解決できる" );
+	Harness.Check( WeightedRandom.TryChooseIndex( 3u, PublicRandomIndex )
+		&& PublicRandomIndex < 3u,
+		"決定論的な均等index抽選の公開APIが解決できる" );
 }
