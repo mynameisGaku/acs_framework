@@ -561,6 +561,8 @@
     <ClInclude Include="Source\AcsFramework_Core\Simulation\Input\ActionAxisResponse.h" />
     <ClInclude Include="Source\AcsFramework_Core\Simulation\Input\ActionDirection2D.h" />
     <ClInclude Include="Source\AcsFramework_Core\Simulation\Input\ActionDirectionQuantizer.h" />
+    <ClInclude Include="Source\AcsFramework_Core\Simulation\Input\ActionDirectionTracker.h" />
+    <ClInclude Include="Source\AcsFramework_Core\Simulation\Input\ActionDirectionTrackerState.h" />
     <ClInclude Include="Source\AcsFramework_Core\Simulation\Input\ActionHoldTracker.h" />
     <ClInclude Include="Source\AcsFramework_Core\Simulation\Input\ActionHoldTrackerState.h" />
     <ClInclude Include="Source\AcsFramework_Core\Simulation\Input\ActionRepeatTracker.h" />
@@ -569,6 +571,7 @@
     <ClInclude Include="Source\AcsFramework_Core\Simulation\Input\ActionInputBufferState.h" />
     <None Include="Source\AcsFramework_Core\Simulation\Test\ActionAxisResponseTest.cpp" />
     <None Include="Source\AcsFramework_Core\Simulation\Test\ActionDirectionQuantizerTest.cpp" />
+    <None Include="Source\AcsFramework_Core\Simulation\Test\ActionDirectionTrackerTest.cpp" />
     <None Include="Source\AcsFramework_Core\Simulation\Test\ActionHoldTrackerTest.cpp" />
     <None Include="Source\AcsFramework_Core\Simulation\Test\ActionRepeatTrackerTest.cpp" />
     <None Include="Source\AcsFramework_Core\Simulation\Test\ActionInputBufferTest.cpp" />
@@ -844,6 +847,8 @@
     <ClCompile Include="Source\AcsFramework_Core\Simulation\Input\ActionAxisResponse.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Simulation\Input\ActionDirection2D.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Simulation\Input\ActionDirectionQuantizer.cpp" />
+    <ClCompile Include="Source\AcsFramework_Core\Simulation\Input\ActionDirectionTracker.cpp" />
+    <ClCompile Include="Source\AcsFramework_Core\Simulation\Input\ActionDirectionTrackerState.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Simulation\Input\ActionHoldTracker.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Simulation\Input\ActionHoldTrackerState.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Simulation\Input\ActionRepeatTracker.cpp" />

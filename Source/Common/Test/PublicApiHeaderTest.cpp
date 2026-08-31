@@ -31,6 +31,9 @@ void RunPublicApiHeaderTests( CTestHarness& Harness )
 	const FActionDirectionQuantizer ActionDirectionQuantizer;
 	EActionDirection2D PublicActionDirection = EActionDirection2D::None;
 	FVec2 PublicActionDirectionVector{};
+	const FActionDirectionTracker ActionDirectionTracker;
+	const FActionDirectionTrackerState ActionDirectionTrackerState =
+		ActionDirectionTracker.CaptureState();
 	const FActionChord ActionChord{ 0u };
 	const FActionCommandSequenceTracker ActionCommandSequence;
 	const FActionCommandSequenceTrackerState ActionCommandSequenceState =
@@ -103,6 +106,9 @@ void RunPublicApiHeaderTests( CTestHarness& Harness )
 			PublicActionDirection, PublicActionDirectionVector )
 		&& PublicActionDirectionVector.x == 1.0f,
 		"2軸の離散方向変換を共通ヘッダーから使える" );
+	Harness.Check( !ActionDirectionTracker.IsActive()
+		&& ActionDirectionTrackerState.IsValid(),
+		"離散方向追跡と保存状態の公開型が解決できる" );
 	Harness.Check( ActionChord.IsValid() && ActionChord.IsActionRequired( 0u ),
 		"アクション同時押しの公開型が解決できる" );
 	Harness.Check( !ActionCommandSequence.IsConfigured()

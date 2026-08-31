@@ -849,6 +849,12 @@
     <ClCompile Include="Source\AcsFramework_Core\Simulation\Input\ActionDirectionQuantizer.cpp">
       <Filter>Source\AcsFramework_Core\Simulation\Input</Filter>
     </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Simulation\Input\ActionDirectionTracker.cpp">
+      <Filter>Source\AcsFramework_Core\Simulation\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Simulation\Input\ActionDirectionTrackerState.cpp">
+      <Filter>Source\AcsFramework_Core\Simulation\Input</Filter>
+    </ClCompile>
     <ClCompile Include="Source\AcsFramework_Core\Simulation\Input\ActionGamepadRebindState.cpp">
       <Filter>Source\AcsFramework_Core\Simulation\Input</Filter>
     </ClCompile>
@@ -1769,6 +1775,12 @@
     <ClInclude Include="Source\AcsFramework_Core\Simulation\Input\ActionDirectionQuantizer.h">
       <Filter>Source\AcsFramework_Core\Simulation\Input</Filter>
     </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Simulation\Input\ActionDirectionTracker.h">
+      <Filter>Source\AcsFramework_Core\Simulation\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Simulation\Input\ActionDirectionTrackerState.h">
+      <Filter>Source\AcsFramework_Core\Simulation\Input</Filter>
+    </ClInclude>
     <ClInclude Include="Source\AcsFramework_Core\Simulation\Input\ActionGamepadRebindState.h">
       <Filter>Source\AcsFramework_Core\Simulation\Input</Filter>
     </ClInclude>
@@ -2495,6 +2507,9 @@
       <Filter>Source\AcsFramework_Core\Simulation\Test</Filter>
     </None>
     <None Include="Source\AcsFramework_Core\Simulation\Test\ActionDirectionQuantizerTest.cpp">
+      <Filter>Source\AcsFramework_Core\Simulation\Test</Filter>
+    </None>
+    <None Include="Source\AcsFramework_Core\Simulation\Test\ActionDirectionTrackerTest.cpp">
       <Filter>Source\AcsFramework_Core\Simulation\Test</Filter>
     </None>
     <None Include="Source\AcsFramework_Core\Simulation\Test\ActionGamepadRebindStateTest.cpp">

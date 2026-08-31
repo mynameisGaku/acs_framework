@@ -59,6 +59,7 @@ CSimulationSubsystem ── CFixedStepDriver (ACS CFixedStepClock)
    ISimulationRule (ゲーム側が実装)
 		├→ FActionAxisResponse         ← 1軸または2軸の遊びを除き応答曲線を適用
 		├→ FActionDirectionQuantizer   ← 2軸を開始・解除閾値付きの4方向または8方向へ変換
+		├→ FActionDirectionTracker     ← 離散方向の開始・変更・解除を今回結果として保持
 		├→ FActionChord                ← 必要操作と禁止操作から同時押しを判定
 		├→ FActionCommandSequenceTracker ← 異なる操作の順番と間隔からコマンド完了を判定
 		├→ FActionInputMask            ← 1つのゲーム状態で許可した入力だけを履歴ごと残す
@@ -90,7 +91,7 @@ CSimulationEventQueue → 読む側 (Actor / Audio / VFX)
 | 直下 | 部品 | `CFixedStepDriver`、`CDeterministicRandom`、`CActionInputTape`、`CSimulationEventQueue`、`CReplayFile` |
 | 直下 | 途中から始める | `CSimulationSnapshot`、`CSimulationSnapshotFile` |
 | 直下 | 所有と順番 | `CSimulationSubsystem` |
-| `Input/` | 装置 → アクションの変換、通常履歴、通常・固定の両方で使う局所入力判定 | `IActionDeviceReader`、`CActionBindingTable`、`CActionInputTracker`、`FActionInputMask`、`FActionInputMaskStack`、`FActionChord`、`FActionCommandSequenceTracker`、`FActionAxisResponse`、`FActionDirectionQuantizer`、`FActionInputBuffer`、`FActionHoldTracker`、`FActionRepeatTracker`、`FActionTapSequenceTracker`、`FActionToggle`、`FActionKeyRebindState`、`FActionGamepadRebindState`、`CDeviceActionReader`、`CBoundActionSource` |
+| `Input/` | 装置 → アクションの変換、通常履歴、通常・固定の両方で使う局所入力判定 | `IActionDeviceReader`、`CActionBindingTable`、`CActionInputTracker`、`FActionInputMask`、`FActionInputMaskStack`、`FActionChord`、`FActionCommandSequenceTracker`、`FActionAxisResponse`、`FActionDirectionQuantizer`、`FActionDirectionTracker`、`FActionInputBuffer`、`FActionHoldTracker`、`FActionRepeatTracker`、`FActionTapSequenceTracker`、`FActionToggle`、`FActionKeyRebindState`、`FActionGamepadRebindState`、`CDeviceActionReader`、`CBoundActionSource` |
 | `Test/` | ゲーム抜きで回す自己テスト | `SimulationDeterminismTest.cpp` |
 
 **ゲームのルールはここへ置かない。** `ISimulationRule` を実装するのはゲーム側。
@@ -505,6 +506,33 @@ const FVec3 WorldDirection{ Direction2D.x, 0.0f, Direction2D.y };
 `true`では22.5度ごとの境界で8方向へ分ける。`EActionDirection2D`のYは入力上の上下なので、
 水平な3D移動へ使う例ではXをworld X、Yをworld Zへ割り当てる。固定ステップやsnapshotでは
 前回の`EActionDirection2D`をゲーム規則の盤面へ含めることで、開始・解除判定も同じになる。
+
+### 離散方向の開始・変更・解除を追う
+
+毎更新で前回方向を受け渡さず、方向別アニメーション、格子移動、メニュー移動などの遷移を
+読みたい場合は`FActionDirectionTracker`をfieldとして持つ。量子化設定、現在方向、1回前の方向を
+まとめて保持し、開始・方向変更・解除を成功した更新ごとに1回だけ返す。
+
+```cpp
+FActionDirectionTracker MoveDirection;
+
+Input.Update();
+if ( !MoveDirection.Update( Input, kMoveXAxis, kMoveYAxis ) ) return;
+
+if ( MoveDirection.WasStarted() ) BeginMove();
+if ( MoveDirection.WasChanged() ) ChangeMoveAnimation();
+if ( MoveDirection.WasReleased() ) StopMove();
+
+FVec2 Direction2D;
+if ( !TryGetActionDirection2DVector(
+		MoveDirection.GetDirection(), Direction2D ) ) return;
+const FVec3 WorldDirection{ Direction2D.x, 0.0f, Direction2D.y };
+```
+
+`WasChanged()`は開始と解除も含む。純粋な方向切替だけが必要なら、`WasChanged()`がtrueかつ
+`WasStarted()`と`WasReleased()`がfalseの更新を使う。量子化設定を変える場合は`Configure()`、
+保存と途中再開には`CaptureState()` / `RestoreState()`を使う。snapshotへ入れるときは
+`FActionDirectionTrackerState`の量子化設定、現在方向、前回方向をゲーム規則の盤面へ保存する。
 
 ### 短押しと長押しを分ける
 
