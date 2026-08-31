@@ -27,6 +27,9 @@ void RunPublicApiHeaderTests( CTestHarness& Harness )
 	const EVisualPreset3D Preset = EVisualPreset3D::Balanced;
 	const FActionAxisResponse AxisResponse;
 	const FActionChord ActionChord{ 0u };
+	const FActionCommandSequenceTracker ActionCommandSequence;
+	const FActionCommandSequenceTrackerState ActionCommandSequenceState =
+		ActionCommandSequence.CaptureState();
 	const FActionHoldTracker ActionHold;
 	const FActionHoldTrackerState ActionHoldState = ActionHold.CaptureState();
 	const FActionInputBuffer ActionBuffer;
@@ -53,6 +56,9 @@ void RunPublicApiHeaderTests( CTestHarness& Harness )
 		"アナログ軸応答の公開型が解決できる" );
 	Harness.Check( ActionChord.IsValid() && ActionChord.IsActionRequired( 0u ),
 		"アクション同時押しの公開型が解決できる" );
+	Harness.Check( !ActionCommandSequence.IsConfigured()
+		&& ActionCommandSequenceState.IsValid(),
+		"アクション順序入力と保存状態の公開型が解決できる" );
 	Harness.Check( !ActionHold.IsHolding() && ActionHoldState.IsValid(),
 		"長押し判定と保存状態の公開型が解決できる" );
 	Harness.Check( !ActionBuffer.IsBuffered( 0u ) && ActionBufferState.IsValid(),

@@ -126,6 +126,8 @@
 #include "AcsFramework_Core/Simulation/Input/ActionAxisResponse.h"
 #include "AcsFramework_Core/Simulation/Input/ActionBindingTable.h"
 #include "AcsFramework_Core/Simulation/Input/ActionChord.h"
+#include "AcsFramework_Core/Simulation/Input/ActionCommandSequenceTracker.h"
+#include "AcsFramework_Core/Simulation/Input/ActionCommandSequenceTrackerState.h"
 #include "AcsFramework_Core/Simulation/Input/ActionHoldTracker.h"
 #include "AcsFramework_Core/Simulation/Input/ActionHoldTrackerState.h"
 #include "AcsFramework_Core/Simulation/Input/ActionInputBuffer.h"

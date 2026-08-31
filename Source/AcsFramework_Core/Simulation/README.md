@@ -59,6 +59,7 @@ CSimulationSubsystem ── CFixedStepDriver (ACS CFixedStepClock)
    ISimulationRule (ゲーム側が実装)
 		├→ FActionAxisResponse         ← 1軸または2軸の遊びを除き応答曲線を適用
 		├→ FActionChord                ← 必要操作と禁止操作から同時押しを判定
+		├→ FActionCommandSequenceTracker ← 異なる操作の順番と間隔からコマンド完了を判定
 		├→ FActionInputMask            ← ゲーム状態ごとに許可した入力だけを履歴ごと残す
 		├→ FActionInputBuffer          ← 通常履歴または固定ステップ入力から押下を短時間保持
 		├→ FActionHoldTracker          ← 通常履歴または固定ステップ入力から短押しと長押しを判定
@@ -80,7 +81,7 @@ CSimulationEventQueue → 読む側 (Actor / Audio / VFX)
 | 直下 | 部品 | `CFixedStepDriver`、`CDeterministicRandom`、`CActionInputTape`、`CSimulationEventQueue`、`CReplayFile` |
 | 直下 | 途中から始める | `CSimulationSnapshot`、`CSimulationSnapshotFile` |
 | 直下 | 所有と順番 | `CSimulationSubsystem` |
-| `Input/` | 装置 → アクションの変換、通常履歴、通常・固定の両方で使う局所入力判定 | `IActionDeviceReader`、`CActionBindingTable`、`CActionInputTracker`、`FActionInputMask`、`FActionChord`、`FActionAxisResponse`、`FActionInputBuffer`、`FActionHoldTracker`、`FActionTapSequenceTracker`、`FActionKeyRebindState`、`FActionGamepadRebindState`、`CDeviceActionReader`、`CBoundActionSource` |
+| `Input/` | 装置 → アクションの変換、通常履歴、通常・固定の両方で使う局所入力判定 | `IActionDeviceReader`、`CActionBindingTable`、`CActionInputTracker`、`FActionInputMask`、`FActionChord`、`FActionCommandSequenceTracker`、`FActionAxisResponse`、`FActionInputBuffer`、`FActionHoldTracker`、`FActionTapSequenceTracker`、`FActionKeyRebindState`、`FActionGamepadRebindState`、`CDeviceActionReader`、`CBoundActionSource` |
 | `Test/` | ゲーム抜きで回す自己テスト | `SimulationDeterminismTest.cpp` |
 
 **ゲームのルールはここへ置かない。** `ISimulationRule` を実装するのはゲーム側。
@@ -154,6 +155,28 @@ if ( FocusAttack.WasDeactivated( Input ) ) CancelFocusAttack();
 必要操作を離すと`WasDeactivated()`がtrueになる。固定ステップでは
 `WasActivated( Context.Input, Context.PreviousInput )`を使う。`FActionInputMask`で変換した履歴も
 同じ入口へ渡せる。設定を保存する場合は2つのmaskを取得し、`TrySetMasks()`で重なりを検証して戻す。
+
+### 異なるアクションを順番に判定する
+
+方向操作から攻撃へ繋ぐ技、決まった順番の連続操作、短いメニューコマンドには
+`FActionCommandSequenceTracker`を操作対象のfieldとして持つ。入力装置のキー名ではなく
+アクション番号を並べるため、キーボード、ゲームパッド、AI、再生入力で同じ列を使える。
+
+```cpp
+constexpr u32 RollCommandActions[] = {
+	kActionDown, kActionForward, kActionDodge };
+FActionCommandSequenceTracker RollCommand{ RollCommandActions, 0.22f };
+
+Input.Update();
+RollCommand.Update( Input, DeltaSeconds );
+if ( RollCommand.WasCompleted() ) StartRoll();
+```
+
+列に含まれない操作は途中入力を壊さない。列内の順番違いでも、直近の押下が新しい列の先頭と
+重なるぶんは残して続ける。同じ更新で列内操作が複数押された場合は順番を推測しない。
+固定ステップでは`Update( Context.Input, Context.PreviousInput, Context.StepSeconds )`を使う。
+同じ入力標本を複数回渡さず、通常フレームまたは固定ステップごとに1回だけ更新する。
+`CaptureState()` / `RestoreState()`で設定、途中位置、経過秒、今回完了結果をまとめて保存できる。
 
 ### 入力を取りこぼさない
 
