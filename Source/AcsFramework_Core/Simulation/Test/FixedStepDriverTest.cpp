@@ -797,6 +797,238 @@ void RunFixedStepDriverTests( CTestHarness& Harness )
 			"連続した2回の箱抽選で6個の乱数を進める" );
 	}
 
+	Harness.BeginSuite( "CDeterministicRandom / 3D円盤内部を面積で選ぶ" );
+
+	{
+		constexpr usize kSampleCount = 4096u;
+		constexpr f32 kRadius = 4.0f;
+		/** 任意向きの円盤を確認する単位法線。 */
+		const FVec3 Normal = Normalize( FVec3{ 1.0f, 2.0f, 3.0f } );
+		/** 円盤面内の統計を測る1本目の単位方向。 */
+		const FVec3 FirstPerpendicular = Normalize(
+			Cross( FVec3::Up(), Normal ) );
+		/** 円盤面内の統計を測る2本目の単位方向。 */
+		const FVec3 SecondPerpendicular = Normalize(
+			Cross( Normal, FirstPerpendicular ) );
+		CDeterministicRandom A;
+		CDeterministicRandom B;
+		A.Reseed( 20260831u );
+		B.Reseed( 20260831u );
+		bool bSameAndInside = true;
+		f64 SumFirst = 0.0;
+		f64 SumSecond = 0.0;
+		f64 SumFirstSquared = 0.0;
+		f64 SumSecondSquared = 0.0;
+		f64 SumCross = 0.0;
+		f64 SumRadiusSquared = 0.0;
+		/** 半径の2乗を8等分した度数。 */
+		u32 RadiusBinCounts[8]{};
+		/** 円盤面内の角度を8等分した度数。 */
+		u32 AngleBinCounts[8]{};
+		for ( usize SampleIndex = 0u; SampleIndex < kSampleCount;
+			++SampleIndex )
+		{
+			FVec3 PointA{};
+			FVec3 PointB{};
+			if ( !A.TryPointInDisk3D(
+					FVec3{ 1.0f, 2.0f, 3.0f }, kRadius, PointA )
+				|| !B.TryPointInDisk3D(
+					FVec3{ 2.0f, 4.0f, 6.0f }, kRadius, PointB )
+				|| !std::isfinite( PointA.x ) || !std::isfinite( PointA.y )
+				|| !std::isfinite( PointA.z )
+				|| PointA.x != PointB.x || PointA.y != PointB.y
+				|| PointA.z != PointB.z )
+			{
+				bSameAndInside = false;
+				continue;
+			}
+
+			const f64 PlaneDistance = static_cast<f64>( Dot( Normal, PointA ) );
+			const f64 LocalFirst = static_cast<f64>(
+				Dot( FirstPerpendicular, PointA ) ) / kRadius;
+			const f64 LocalSecond = static_cast<f64>(
+				Dot( SecondPerpendicular, PointA ) ) / kRadius;
+			const f64 NormalizedRadiusSquared =
+				LocalFirst * LocalFirst + LocalSecond * LocalSecond;
+			if ( !std::isfinite( PlaneDistance )
+				|| !std::isfinite( NormalizedRadiusSquared )
+				|| std::abs( PlaneDistance ) > 0.00001
+				|| NormalizedRadiusSquared > 1.00001 )
+			{
+				bSameAndInside = false;
+				continue;
+			}
+
+			SumFirst += LocalFirst;
+			SumSecond += LocalSecond;
+			SumFirstSquared += LocalFirst * LocalFirst;
+			SumSecondSquared += LocalSecond * LocalSecond;
+			SumCross += LocalFirst * LocalSecond;
+			SumRadiusSquared += NormalizedRadiusSquared;
+			/** 端点1を末尾へ収める半径2乗の度数位置。 */
+			usize RadiusBin = static_cast<usize>(
+				NormalizedRadiusSquared * 8.0 );
+			if ( RadiusBin >= 8u ) RadiusBin = 7u;
+			++RadiusBinCounts[RadiusBin];
+			/** 負角度を0以上2π未満へ移した方位角。 */
+			f64 Angle = std::atan2( LocalSecond, LocalFirst );
+			if ( Angle < 0.0 ) Angle += 6.28318530717958647692;
+			usize AngleBin = static_cast<usize>(
+				Angle * ( 8.0 / 6.28318530717958647692 ) );
+			if ( AngleBin >= 8u ) AngleBin = 7u;
+			++AngleBinCounts[AngleBin];
+		}
+
+		const f64 InverseCount = 1.0 / static_cast<f64>( kSampleCount );
+		bool bBinsBalanced = true;
+		constexpr u32 kExpectedBinCount =
+			static_cast<u32>( kSampleCount / 8u );
+		constexpr u32 kBinTolerance = 96u;
+		for ( usize BinIndex = 0u; BinIndex < 8u; ++BinIndex )
+		{
+			if ( RadiusBinCounts[BinIndex]
+					< kExpectedBinCount - kBinTolerance
+				|| RadiusBinCounts[BinIndex]
+					> kExpectedBinCount + kBinTolerance
+				|| AngleBinCounts[BinIndex]
+					< kExpectedBinCount - kBinTolerance
+				|| AngleBinCounts[BinIndex]
+					> kExpectedBinCount + kBinTolerance )
+			{
+				bBinsBalanced = false;
+			}
+		}
+
+		Harness.Check( bSameAndInside,
+			"軸の長さに依らず同じ円盤内部位置を面上へ選ぶ" );
+		Harness.Check( std::abs( SumFirst * InverseCount ) < 0.03
+			&& std::abs( SumSecond * InverseCount ) < 0.03,
+			"円盤内部位置の平均が中心付近へ戻る" );
+		Harness.Check( std::abs(
+				SumRadiusSquared * InverseCount - 0.5 ) < 0.03,
+			"半径の2乗を均等にして面積へ比例させる" );
+		Harness.Check( std::abs(
+				SumFirstSquared * InverseCount - 0.25 ) < 0.03
+			&& std::abs(
+				SumSecondSquared * InverseCount - 0.25 ) < 0.03
+			&& std::abs( SumCross * InverseCount ) < 0.03,
+			"円盤面の2方向へ偏りや相関を残さない" );
+		Harness.Check( bBinsBalanced,
+			"半径2乗と方位角の各8区間へ過度な偏りなく分布する" );
+		Harness.CheckEqualU64( A.GetDrawCount(), kSampleCount * 2u,
+			"円盤内部1点につき32bit乱数を2個進める" );
+	}
+
+	Harness.BeginSuite( "CDeterministicRandom / 3D円盤抽選を安全に復元する" );
+
+	{
+		constexpr usize kReplayCount = 64u;
+		CDeterministicRandom Random;
+		Random.Reseed( 271828u );
+		FVec3 Warmup{};
+		Random.TryPointInDisk3D( FVec3::Forward(), 2.0f, Warmup );
+		FRandomSnapshot Snapshot{};
+		u64 SnapshotDrawCount = 0u;
+		Random.CaptureSnapshot( Snapshot, SnapshotDrawCount );
+		FVec3 ExpectedPoints[kReplayCount]{};
+		for ( usize Index = 0u; Index < kReplayCount; ++Index )
+		{
+			Random.TryPointInDisk3D(
+				FVec3{ 1.0f, 2.0f, 3.0f }, 4.0f, ExpectedPoints[Index] );
+		}
+
+		const bool bRestored = Random.TryRestoreSnapshot(
+			Snapshot, SnapshotDrawCount );
+		bool bReplayed = bRestored;
+		for ( usize Index = 0u; Index < kReplayCount; ++Index )
+		{
+			FVec3 Point{};
+			if ( !Random.TryPointInDisk3D(
+					FVec3{ 1.0f, 2.0f, 3.0f }, 4.0f, Point )
+				|| Point.x != ExpectedPoints[Index].x
+				|| Point.y != ExpectedPoints[Index].y
+				|| Point.z != ExpectedPoints[Index].z )
+			{
+				bReplayed = false;
+			}
+		}
+
+		Harness.CheckEqualU64( SnapshotDrawCount, 2u,
+			"円盤抽選後の消費数を写す" );
+		Harness.Check( bReplayed,
+			"途中状態へ戻すと同じ円盤内部位置列を再生する" );
+		Harness.CheckEqualU64( Random.GetDrawCount(),
+			SnapshotDrawCount + kReplayCount * 2u,
+			"復元後の円盤抽選でも消費数が一致する" );
+	}
+
+	{
+		CDeterministicRandom Random;
+		CDeterministicRandom Expected;
+		Random.Reseed( 42u );
+		Expected.Reseed( 42u );
+		FVec3 Point{ 7.0f, 8.0f, 9.0f };
+		const f32 NotANumber =
+			std::numeric_limits<f32>::quiet_NaN();
+		const f32 Infinity = std::numeric_limits<f32>::infinity();
+		const bool bRejected =
+			!Random.TryPointInDisk3D( FVec3{}, 1.0f, Point )
+			&& !Random.TryPointInDisk3D(
+				FVec3{ NotANumber, 0.0f, 1.0f }, 1.0f, Point )
+			&& !Random.TryPointInDisk3D(
+				FVec3{ Infinity, 0.0f, 1.0f }, 1.0f, Point )
+			&& !Random.TryPointInDisk3D( FVec3::Up(), -1.0f, Point )
+			&& !Random.TryPointInDisk3D(
+				FVec3::Up(), NotANumber, Point )
+			&& !Random.TryPointInDisk3D(
+				FVec3::Up(), Infinity, Point );
+		Harness.Check( bRejected && Point.x == 7.0f
+			&& Point.y == 8.0f && Point.z == 9.0f,
+			"無効な法線と半径を出力変更なしで拒否する" );
+		Harness.CheckEqualU64( Random.GetDrawCount(), 0u,
+			"不正な法線と半径では乱数を進めない" );
+
+		FVec3 ZeroPoint{ 1.0f, 2.0f, 3.0f };
+		Harness.Check( Random.TryPointInDisk3D(
+				FVec3::Up(), 0.0f, ZeroPoint )
+			&& ZeroPoint.x == 0.0f && ZeroPoint.y == 0.0f
+			&& ZeroPoint.z == 0.0f,
+			"半径0は有効な法線を確認して乱数なしで原点を返す" );
+		Harness.CheckEqualU64( Random.GetDrawCount(), 0u,
+			"半径0でも乱数を進めない" );
+		Harness.CheckEqualU64( Random.NextU32(), Expected.NextU32(),
+			"拒否と半径0の後も次の乱数値が変わらない" );
+	}
+
+	{
+		CDeterministicRandom Random;
+		Random.Reseed( 314159u );
+		FVec3 VerticalPoint{};
+		const bool bVertical = Random.TryPointInDisk3D(
+			FVec3::Up(), 2.0f, VerticalPoint );
+		Harness.Check( bVertical && std::isfinite( VerticalPoint.x )
+			&& VerticalPoint.y == 0.0f
+			&& std::isfinite( VerticalPoint.z )
+			&& LengthSq( VerticalPoint ) <= 4.00001f,
+			"真上向きの円盤でも面内へ安全に散らす" );
+
+		const f32 MaximumValue = std::numeric_limits<f32>::max();
+		FVec3 HugePoint{};
+		const bool bHuge = Random.TryPointInDisk3D(
+			FVec3{ MaximumValue, MaximumValue * 0.5f, 1.0f },
+			MaximumValue, HugePoint );
+		const f64 HugeLength = std::sqrt(
+			static_cast<f64>( HugePoint.x ) * HugePoint.x
+			+ static_cast<f64>( HugePoint.y ) * HugePoint.y
+			+ static_cast<f64>( HugePoint.z ) * HugePoint.z );
+		Harness.Check( bHuge && std::isfinite( HugePoint.x )
+			&& std::isfinite( HugePoint.y ) && std::isfinite( HugePoint.z )
+			&& HugeLength <= static_cast<f64>( MaximumValue ) * 1.000001,
+			"最大有限半径でもoverflowせず円盤内部へ収める" );
+		Harness.CheckEqualU64( Random.GetDrawCount(), 4u,
+			"連続した2回の円盤抽選で4個の乱数を進める" );
+	}
+
 	Harness.BeginSuite( "CDeterministicRandom / 3D球面を均等に選ぶ" );
 
 	{

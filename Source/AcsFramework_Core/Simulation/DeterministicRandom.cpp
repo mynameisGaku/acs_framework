@@ -223,6 +223,53 @@ bool CDeterministicRandom::TryPointInBox3D( FVec3 HalfExtents,
 }
 
 
+bool CDeterministicRandom::TryPointInDisk3D( FVec3 NormalDirection,
+	f32 Radius, FVec3& OutPoint ) noexcept
+{
+	if ( !std::isfinite( Radius ) || Radius < 0.0f ) return false;
+
+	FVec3 Normal;
+	if ( !TryNormalizeDirection_Internal( NormalDirection, Normal ) ) return false;
+	if ( Radius == 0.0f )
+	{
+		OutPoint = FVec3{};
+		return true;
+	}
+
+	FVec3 FirstPerpendicular;
+	FVec3 SecondPerpendicular;
+	if ( !TryMakePerpendicularBasis_Internal(
+		Normal, FirstPerpendicular, SecondPerpendicular ) ) return false;
+
+	/** 面積比が半径の2乗で増えるため、単位乱数を平方根へ戻した距離。 */
+	const f64 Distance = static_cast<f64>( Radius ) * std::sqrt(
+		static_cast<f64>( NextUnitFloat() ) );
+	/** 円盤面内の0以上2π以下の角度。 */
+	const f64 Azimuth = kFullTurnRadians
+		* static_cast<f64>( NextUnitFloat() );
+	const f64 Cosine = std::cos( Azimuth );
+	const f64 Sine = std::sin( Azimuth );
+	/** f32の直交基底を合成した後、丸め誤差を除いて長さ1へ戻す面内方向。 */
+	const f64 DirectionX = static_cast<f64>( FirstPerpendicular.x ) * Cosine
+		+ static_cast<f64>( SecondPerpendicular.x ) * Sine;
+	const f64 DirectionY = static_cast<f64>( FirstPerpendicular.y ) * Cosine
+		+ static_cast<f64>( SecondPerpendicular.y ) * Sine;
+	const f64 DirectionZ = static_cast<f64>( FirstPerpendicular.z ) * Cosine
+		+ static_cast<f64>( SecondPerpendicular.z ) * Sine;
+	const f64 DirectionLength = std::sqrt(
+		DirectionX * DirectionX + DirectionY * DirectionY
+		+ DirectionZ * DirectionZ );
+	const f32 UnitX = static_cast<f32>( DirectionX / DirectionLength );
+	const f32 UnitY = static_cast<f32>( DirectionY / DirectionLength );
+	const f32 UnitZ = static_cast<f32>( DirectionZ / DirectionLength );
+	OutPoint = FVec3{
+		static_cast<f32>( Distance * static_cast<f64>( UnitX ) ),
+		static_cast<f32>( Distance * static_cast<f64>( UnitY ) ),
+		static_cast<f32>( Distance * static_cast<f64>( UnitZ ) ) };
+	return true;
+}
+
+
 bool CDeterministicRandom::TryPointOnSphere3D( f32 Radius,
 	FVec3& OutPoint ) noexcept
 {

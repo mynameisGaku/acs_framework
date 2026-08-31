@@ -179,6 +179,27 @@ const FVec3 SpawnPosition = AreaCenter + Offset;
 
 ---
 
+## 3D円盤へ均等に散らす
+
+地面や壁に沿う出現位置、範囲演出、探索候補などを平らな円形範囲へ散らす場合は、原点中心の
+ローカルoffsetを`TryPointInDisk3D()`で作る。円盤面の法線は任意の長さで渡せ、利用側の中心位置へ
+返ったoffsetを加える。
+
+```cpp
+FVec3 Offset{};
+if ( Context.Random == nullptr
+	|| !Context.Random->TryPointInDisk3D(
+		GroundNormal, 5.0f, Offset ) ) return;
+const FVec3 SpawnPosition = AreaCenter + Offset;
+```
+
+単位乱数の平方根を中心からの距離へ使うため、中心寄りへ偏らず円盤面積に対して均等になる。
+半径が正なら、距離と方位角に32bit乱数を1個ずつ使い、常に合計2個進める。同じ種、同じ乱数位置、
+同じ法線と半径なら同じ点になり、snapshotからも再生できる。半径0は有効な法線を確認して原点を
+乱数なしで返す。0方向または非有限の法線、負または非有限の半径は、出力と乱数位置を変えずfalseにする。
+
+---
+
 ## 3D球へ均等に散らす
 
 エフェクト、出現位置、探索方向などを球状に散らす場合は、原点相対の位置を
