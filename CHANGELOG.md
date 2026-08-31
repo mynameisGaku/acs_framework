@@ -40,6 +40,7 @@ ACS Frameworkの利用側から見える追加、変更、修正を記録する�
 - 必要操作と禁止操作を組み合わせ、最後の必要操作を押した瞬間だけ同時押しを有効化する`FActionChord`
 - 最大8操作の順番と間隔を追跡し、誤入力、同時押し、途中保存を決定論的に扱う`FActionCommandSequenceTracker`
 - アナログ1軸と2軸の遊びを除き、最大入力と方向を保って応答曲線を適用する`FActionAxisResponse`
+- 2軸入力を開始・解除閾値付きの4方向または8方向へ変換する`FActionDirectionQuantizer`
 - 着地や硬直終了の直前に押した操作を短時間保持し、受理時に1回だけ消費する`FActionInputBuffer`
 - 押下猶予の設定と残り時間を検証付きで保存・原子的復元する`FActionInputBufferState`
 - 明示時間から短押し、長押し閾値到達、長押し解放を1回ずつ判定し、途中状態も復元できる`FActionHoldTracker`
@@ -76,3 +77,4 @@ ACS Frameworkの利用側から見える追加、変更、修正を記録する�
 
 - 同じPowerShellプロセスでDebug/Releaseを連続検証するとMSVC環境が重複し、
   Windowsのコマンド行上限を超える問題を修正
+- 単体テストのソース追加で`cl.exe`のコマンド行上限を超える問題を、UTF-16応答ファイルで修正

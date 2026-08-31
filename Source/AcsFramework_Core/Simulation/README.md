@@ -58,6 +58,7 @@ CSimulationSubsystem ── CFixedStepDriver (ACS CFixedStepClock)
         ↓ FSimulationContext     └ CDeterministicRandom (ACS FRandom + 種と引いた回数)
    ISimulationRule (ゲーム側が実装)
 		├→ FActionAxisResponse         ← 1軸または2軸の遊びを除き応答曲線を適用
+		├→ FActionDirectionQuantizer   ← 2軸を開始・解除閾値付きの4方向または8方向へ変換
 		├→ FActionChord                ← 必要操作と禁止操作から同時押しを判定
 		├→ FActionCommandSequenceTracker ← 異なる操作の順番と間隔からコマンド完了を判定
 		├→ FActionInputMask            ← 1つのゲーム状態で許可した入力だけを履歴ごと残す
@@ -89,7 +90,7 @@ CSimulationEventQueue → 読む側 (Actor / Audio / VFX)
 | 直下 | 部品 | `CFixedStepDriver`、`CDeterministicRandom`、`CActionInputTape`、`CSimulationEventQueue`、`CReplayFile` |
 | 直下 | 途中から始める | `CSimulationSnapshot`、`CSimulationSnapshotFile` |
 | 直下 | 所有と順番 | `CSimulationSubsystem` |
-| `Input/` | 装置 → アクションの変換、通常履歴、通常・固定の両方で使う局所入力判定 | `IActionDeviceReader`、`CActionBindingTable`、`CActionInputTracker`、`FActionInputMask`、`FActionInputMaskStack`、`FActionChord`、`FActionCommandSequenceTracker`、`FActionAxisResponse`、`FActionInputBuffer`、`FActionHoldTracker`、`FActionRepeatTracker`、`FActionTapSequenceTracker`、`FActionToggle`、`FActionKeyRebindState`、`FActionGamepadRebindState`、`CDeviceActionReader`、`CBoundActionSource` |
+| `Input/` | 装置 → アクションの変換、通常履歴、通常・固定の両方で使う局所入力判定 | `IActionDeviceReader`、`CActionBindingTable`、`CActionInputTracker`、`FActionInputMask`、`FActionInputMaskStack`、`FActionChord`、`FActionCommandSequenceTracker`、`FActionAxisResponse`、`FActionDirectionQuantizer`、`FActionInputBuffer`、`FActionHoldTracker`、`FActionRepeatTracker`、`FActionTapSequenceTracker`、`FActionToggle`、`FActionKeyRebindState`、`FActionGamepadRebindState`、`CDeviceActionReader`、`CBoundActionSource` |
 | `Test/` | ゲーム抜きで回す自己テスト | `SimulationDeterminismTest.cpp` |
 
 **ゲームのルールはここへ置かない。** `ISimulationRule` を実装するのはゲーム側。
@@ -476,6 +477,34 @@ if ( !MoveResponse.TryApplyRadial(
 
 入力値が1を超えた場合は方向を保って長さ1へ止める。設定値、入力値、軸番号が不正なら
 出力を変えずfalseを返すため、最後に有効だった操作量を明示的に維持できる。
+
+### 2軸入力を4方向または8方向へ揃える
+
+メニュー、格子移動、キャラクターの向き、方向別アニメーションなど、連続した2軸を離散方向へ
+揃える場合は`FActionDirectionQuantizer`を使う。入力開始より解除の閾値を低くできるため、
+スティックが中心付近で揺れても`None`と方向入力を繰り返しにくい。
+
+```cpp
+FActionDirectionQuantizer MoveDirections;
+EActionDirection2D MoveDirection = EActionDirection2D::None;
+
+FVec2 MoveAxes;
+if ( !MoveResponse.TryApplyRadial(
+		Input.GetCurrentInput(), kMoveXAxis, kMoveYAxis, MoveAxes ) ) return;
+
+EActionDirection2D NextDirection = MoveDirection;
+if ( !MoveDirections.TryResolve( MoveAxes, MoveDirection, NextDirection ) ) return;
+MoveDirection = NextDirection;
+
+FVec2 Direction2D;
+if ( !TryGetActionDirection2DVector( MoveDirection, Direction2D ) ) return;
+const FVec3 WorldDirection{ Direction2D.x, 0.0f, Direction2D.y };
+```
+
+`bAllowDiagonal=false`では絶対値が大きい軸を選ぶ4方向になり、同値ならY軸を優先する。
+`true`では22.5度ごとの境界で8方向へ分ける。`EActionDirection2D`のYは入力上の上下なので、
+水平な3D移動へ使う例ではXをworld X、Yをworld Zへ割り当てる。固定ステップやsnapshotでは
+前回の`EActionDirection2D`をゲーム規則の盤面へ含めることで、開始・解除判定も同じになる。
 
 ### 短押しと長押しを分ける
 

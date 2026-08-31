@@ -134,6 +134,8 @@
 #include "AcsFramework_Core/Simulation/IActionInputSource.h"
 #include "AcsFramework_Core/Simulation/ISimulationRule.h"
 #include "AcsFramework_Core/Simulation/Input/ActionAxisResponse.h"
+#include "AcsFramework_Core/Simulation/Input/ActionDirection2D.h"
+#include "AcsFramework_Core/Simulation/Input/ActionDirectionQuantizer.h"
 #include "AcsFramework_Core/Simulation/Input/ActionBindingTable.h"
 #include "AcsFramework_Core/Simulation/Input/ActionChord.h"
 #include "AcsFramework_Core/Simulation/Input/ActionCommandSequenceTracker.h"

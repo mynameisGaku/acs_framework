@@ -28,6 +28,9 @@ void RunPublicApiHeaderTests( CTestHarness& Harness )
 	const FCheckpointRoute3DTimingResult RouteTiming{};
 	const EVisualPreset3D Preset = EVisualPreset3D::Balanced;
 	const FActionAxisResponse AxisResponse;
+	const FActionDirectionQuantizer ActionDirectionQuantizer;
+	EActionDirection2D PublicActionDirection = EActionDirection2D::None;
+	FVec2 PublicActionDirectionVector{};
 	const FActionChord ActionChord{ 0u };
 	const FActionCommandSequenceTracker ActionCommandSequence;
 	const FActionCommandSequenceTrackerState ActionCommandSequenceState =
@@ -93,6 +96,13 @@ void RunPublicApiHeaderTests( CTestHarness& Harness )
 	f32 AxisValue = 9.0f;
 	Harness.Check( AxisResponse.TryApply( 0.0f, AxisValue ) && AxisValue == 0.0f,
 		"アナログ軸応答の公開型が解決できる" );
+	Harness.Check( ActionDirectionQuantizer.TryResolve( FVec2{ 1.0f, 0.0f },
+			EActionDirection2D::None, PublicActionDirection )
+		&& PublicActionDirection == EActionDirection2D::Right
+		&& TryGetActionDirection2DVector(
+			PublicActionDirection, PublicActionDirectionVector )
+		&& PublicActionDirectionVector.x == 1.0f,
+		"2軸の離散方向変換を共通ヘッダーから使える" );
 	Harness.Check( ActionChord.IsValid() && ActionChord.IsActionRequired( 0u ),
 		"アクション同時押しの公開型が解決できる" );
 	Harness.Check( !ActionCommandSequence.IsConfigured()

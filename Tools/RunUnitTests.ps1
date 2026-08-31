@@ -13,6 +13,36 @@ param(
 )
 $ErrorActionPreference = 'Stop'
 
+function ConvertTo-MsvcResponseArgument {
+    param([string]$Argument)
+
+    if ($Argument.Length -gt 0 -and $Argument -notmatch '[\s"]') { return $Argument }
+
+    # Windowsの引数規則に合わせ、引用符前と末尾のbackslashを二重化する。
+    $builder = [System.Text.StringBuilder]::new()
+    [void]$builder.Append('"')
+    $backslashCount = 0
+    foreach ($character in $Argument.ToCharArray()) {
+        if ($character -eq '\') {
+            ++$backslashCount
+            continue
+        }
+        if ($character -eq '"') {
+            [void]$builder.Append(('\' * ($backslashCount * 2 + 1)))
+            [void]$builder.Append('"')
+            $backslashCount = 0
+            continue
+        }
+
+        [void]$builder.Append(('\' * $backslashCount))
+        [void]$builder.Append($character)
+        $backslashCount = 0
+    }
+    [void]$builder.Append(('\' * ($backslashCount * 2)))
+    [void]$builder.Append('"')
+    return $builder.ToString()
+}
+
 # C:\acs is the 2026-08-03 distribution and is missing most of the current API.
 # UpdateAcsDist.ps1 deploys to C:\acs_dev, so agree with it. Falling back to the
 # stale one produces "not a member of acs" errors that read like source bugs.
@@ -26,6 +56,22 @@ $src  = Join-Path $repo 'Source'
 $out  = Join-Path $repo "x64\UnitTest\$Configuration"
 
 New-Item -ItemType Directory -Force -Path $out | Out-Null
+
+# 応答ファイルの空白path、末尾backslash、引用符を実際のMSVC解析で検証する強制include。
+$responseContractDirectory = Join-Path $out 'Response File Contract'
+$responseContractHeader = Join-Path $responseContractDirectory 'ResponseFileContract.h'
+New-Item -ItemType Directory -Force -Path $responseContractDirectory | Out-Null
+Set-Content -LiteralPath $responseContractHeader -Encoding ascii -Value @'
+#pragma once
+#ifndef ACS_UNIT_TEST_RESPONSE_VALUE
+#error ACS_UNIT_TEST_RESPONSE_VALUE is required.
+#endif
+inline constexpr char kAcsUnitTestResponseValue[] = ACS_UNIT_TEST_RESPONSE_VALUE;
+static_assert(sizeof(kAcsUnitTestResponseValue) == 13u);
+static_assert(kAcsUnitTestResponseValue[0] == 'q');
+static_assert(kAcsUnitTestResponseValue[6] == ' ');
+static_assert(kAcsUnitTestResponseValue[11] == 'e');
+'@
 
 # Visual Studio 2026のlauncherは日本語のvswhere JSONを誤解析することがあるため、
 # install pathを直接選ぶ。同じプロセスで複数構成を検証するときは、PATHを重複追加しない。
@@ -218,6 +264,8 @@ $sources = @(
     'AcsFramework_Core\Simulation\GameplayTimerState.cpp',
     'AcsFramework_Core\Simulation\SimulationEventQueue.cpp',
     'AcsFramework_Core\Simulation\Input\ActionAxisResponse.cpp',
+    'AcsFramework_Core\Simulation\Input\ActionDirection2D.cpp',
+    'AcsFramework_Core\Simulation\Input\ActionDirectionQuantizer.cpp',
     'AcsFramework_Core\Simulation\Input\ActionBindingTable.cpp',
     'AcsFramework_Core\Simulation\Input\ActionChord.cpp',
     'AcsFramework_Core\Simulation\Input\ActionCommandSequenceTracker.cpp',
@@ -245,6 +293,7 @@ $sources = @(
     'AcsFramework_Core\Simulation\FixedStepDriver.cpp',
     'AcsFramework_Core\Simulation\DeterministicRandom.cpp',
     'AcsFramework_Core\Simulation\Test\ActionAxisResponseTest.cpp',
+    'AcsFramework_Core\Simulation\Test\ActionDirectionQuantizerTest.cpp',
     'AcsFramework_Core\Simulation\Test\ActionBindingTableTest.cpp',
     'AcsFramework_Core\Simulation\Test\ActionChordTest.cpp',
     'AcsFramework_Core\Simulation\Test\ActionCommandSequenceTrackerTest.cpp',
@@ -301,10 +350,23 @@ $code = 1
 Push-Location $out
 try {
     $libPath = Join-Path $AcsDistRoot "lib\x64\$Configuration"
-    $clArgs = $flags + @('/I', $AcsDistRoot, '/I', $src) + $sources +
+    $responseContractInclude = $responseContractDirectory + [System.IO.Path]::DirectorySeparatorChar
+    $clArgs = $flags + @(
+        "/I$AcsDistRoot", "/I$src", "/I$responseContractInclude",
+        '/FIResponseFileContract.h', '/DACS_UNIT_TEST_RESPONSE_VALUE="quoted value"'
+    ) + $sources +
               @('/FeUnitTests.exe', '/link', "/LIBPATH:$libPath", '/SUBSYSTEM:CONSOLE')
 
-    $buildLog = & $compilerPath @clArgs 2>&1 | Out-String
+    # ソース追加でWindowsのコマンド行上限へ届かないよう、引数を応答ファイルへ分離する。
+    $responseFile = Join-Path $out 'UnitTests.rsp'
+    $responseArguments = @($clArgs | ForEach-Object {
+        ConvertTo-MsvcResponseArgument ([string]$_)
+    })
+    $responseEncoding = [System.Text.UnicodeEncoding]::new($false, $true)
+    [System.IO.File]::WriteAllText(
+        $responseFile, ($responseArguments -join ' '), $responseEncoding)
+
+    $buildLog = & $compilerPath "@$responseFile" 2>&1 | Out-String
     if ($LASTEXITCODE -ne 0) {
         Write-Host $buildLog
         throw "build failed"
