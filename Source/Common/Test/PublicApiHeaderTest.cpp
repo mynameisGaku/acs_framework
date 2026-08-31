@@ -45,6 +45,9 @@ void RunPublicApiHeaderTests( CTestHarness& Harness )
 	const FGameplayCooldown GameplayCooldown;
 	const FGameplayCooldownState GameplayCooldownState =
 		GameplayCooldown.CaptureState();
+	FGameplayResource GameplayResource{ 100.0f, 40.0f };
+	const FGameplayResourceState GameplayResourceState =
+		GameplayResource.CaptureState();
 	CDeterministicRandom WeightedRandom;
 	constexpr f32 PublicWeights[] = { 1.0f };
 	usize WeightedIndex = 9u;
@@ -90,6 +93,10 @@ void RunPublicApiHeaderTests( CTestHarness& Harness )
 	Harness.Check( GameplayCooldown.IsReady()
 		&& GameplayCooldownState.IsValid(),
 		"再使用待ちと保存状態の公開型が解決できる" );
+	Harness.Check( GameplayResourceState.IsValid()
+		&& GameplayResource.TrySpend( 10.0f )
+		&& GameplayResource.GetCurrentValue() == 30.0f,
+		"上限付きゲーム資源と保存状態の公開型が解決できる" );
 	Harness.Check( WeightedRandom.TryChance( 1.0f, bPublicChanceOccurred )
 		&& bPublicChanceOccurred,
 		"決定論的な成功確率判定の公開APIが解決できる" );

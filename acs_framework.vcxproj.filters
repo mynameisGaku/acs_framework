@@ -804,6 +804,12 @@
     <ClCompile Include="Source\AcsFramework_Core\Simulation\GameplayCooldownState.cpp">
       <Filter>Source\AcsFramework_Core\Simulation</Filter>
     </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Simulation\GameplayResource.cpp">
+      <Filter>Source\AcsFramework_Core\Simulation</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Simulation\GameplayResourceState.cpp">
+      <Filter>Source\AcsFramework_Core\Simulation</Filter>
+    </ClCompile>
     <ClCompile Include="Source\AcsFramework_Core\Simulation\Input\ActionAxisResponse.cpp">
       <Filter>Source\AcsFramework_Core\Simulation\Input</Filter>
     </ClCompile>
@@ -1679,6 +1685,12 @@
     <ClInclude Include="Source\AcsFramework_Core\Simulation\GameplayCooldownState.h">
       <Filter>Source\AcsFramework_Core\Simulation</Filter>
     </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Simulation\GameplayResource.h">
+      <Filter>Source\AcsFramework_Core\Simulation</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Simulation\GameplayResourceState.h">
+      <Filter>Source\AcsFramework_Core\Simulation</Filter>
+    </ClInclude>
     <ClInclude Include="Source\AcsFramework_Core\Simulation\IActionInputSource.h">
       <Filter>Source\AcsFramework_Core\Simulation</Filter>
     </ClInclude>
@@ -2447,6 +2459,9 @@
       <Filter>Source\AcsFramework_Core\Simulation\Test</Filter>
     </None>
     <None Include="Source\AcsFramework_Core\Simulation\Test\GameplayCooldownTest.cpp">
+      <Filter>Source\AcsFramework_Core\Simulation\Test</Filter>
+    </None>
+    <None Include="Source\AcsFramework_Core\Simulation\Test\GameplayResourceTest.cpp">
       <Filter>Source\AcsFramework_Core\Simulation\Test</Filter>
     </None>
     <None Include="Source\AcsFramework_Core\Simulation\Test\SimulationDeterminismTest.cpp">

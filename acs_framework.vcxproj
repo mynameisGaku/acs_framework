@@ -582,6 +582,9 @@
     <ClInclude Include="Source\AcsFramework_Core\Simulation\GameplayCooldown.h" />
     <ClInclude Include="Source\AcsFramework_Core\Simulation\GameplayCooldownState.h" />
     <None Include="Source\AcsFramework_Core\Simulation\Test\GameplayCooldownTest.cpp" />
+    <ClInclude Include="Source\AcsFramework_Core\Simulation\GameplayResource.h" />
+    <ClInclude Include="Source\AcsFramework_Core\Simulation\GameplayResourceState.h" />
+    <None Include="Source\AcsFramework_Core\Simulation\Test\GameplayResourceTest.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Common\Pch.cpp">
@@ -836,6 +839,8 @@
     <ClCompile Include="Source\AcsFramework_Core\Simulation\Input\ActionCommandSequenceTrackerState.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Simulation\GameplayCooldown.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Simulation\GameplayCooldownState.cpp" />
+    <ClCompile Include="Source\AcsFramework_Core\Simulation\GameplayResource.cpp" />
+    <ClCompile Include="Source\AcsFramework_Core\Simulation\GameplayResourceState.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

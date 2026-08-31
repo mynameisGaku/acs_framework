@@ -30,6 +30,7 @@ ACS のモジュールは **438 個**ある。この枠組みが窓口を用意�
 | 音 (BGM・効果音・位置) | `CAudioSubsystem`、`CMusicSubsystem`、`AUi3DScene::PlaySound3D` |
 | セーブ・設定 | `CSaveSubsystem`、`CGameSettingsSubsystem` |
 | 時間・待機 | `CTimeSubsystem`、`CTimerSubsystem`、`FGameplayCooldown` |
+| ゲーム規則の局所値 | 意味を固定せず上限・現在値・消費・回復だけを持つ`FGameplayResource` |
 | 入力・押下判定 | `CActionBindingTable`、`CActionInputTracker`、`FActionInputMask`、`FActionInputMaskStack`、`FActionChord`、`FActionCommandSequenceTracker`、`FActionAxisResponse`、`FActionInputBuffer`、`FActionHoldTracker`、`FActionTapSequenceTracker`、`FActionKeyRebindState`、`CBoundActionSource` |
 | 画面・フェード・ロード中・ポーズ | `CScreenSubsystem`、`CFadeSubsystem`、`CLoadingScreenSubsystem`、`CPauseScreenSubsystem` |
 | ノード生成・シーン保存 | `CPrefabSubsystem`、`CSceneSnapshotSubsystem` |
@@ -75,6 +76,9 @@ ACS には遊びの部品が大量に在るが、**どれもゲームごとに�
 `Pathfinding`、`Perception`、`WaveSpawner`、`DungeonGenerator`、`PartySystem`、`Progression`、
 `ScoreSystem`、`AchievementManager`、`SeasonPass`、`EconomyDirector`、`DialogueSystem`、
 `CinematicsDirector`、`PhotoMode`、`HungerSystem` ほか
+
+`FGameplayResource`は`HealthSystem`ではない。値の意味、減らし方、0になった結果、時間回復などは
+ゲーム側へ残し、複数ゲームで共通になる有限な上限管理と保存復元だけを提供する。
 
 同じく範囲外: ネットワーク (`Lockstep`、`RollbackSession`、`NetSnapshot`)、VR (`OpenXrBridge`)、
 Steam (`SteamworksBridge`)、スクリプト (`ScriptHost`)、機械学習 (`MlRuntime`)、

@@ -55,6 +55,7 @@ void RunActionTapSequenceTrackerTests( CTestHarness& Harness );
 void RunActionGamepadRebindStateTests( CTestHarness& Harness );
 void RunActionKeyRebindStateTests( CTestHarness& Harness );
 void RunGameplayCooldownTests( CTestHarness& Harness );
+void RunGameplayResourceTests( CTestHarness& Harness );
 void RunMusicStateArbiterTests( CTestHarness& Harness );
 void RunSpatialSourceRegistryTests( CTestHarness& Harness );
 void RunSpatialAudioSubsystemTests( CTestHarness& Harness );
@@ -139,6 +140,7 @@ int main()
 	RunActionGamepadRebindStateTests( Harness );
 	RunActionKeyRebindStateTests( Harness );
 	RunGameplayCooldownTests( Harness );
+	RunGameplayResourceTests( Harness );
 	RunMusicStateArbiterTests( Harness );
 	RunSpatialSourceRegistryTests( Harness );
 	RunSpatialAudioSubsystemTests( Harness );

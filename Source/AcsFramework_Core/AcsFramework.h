@@ -123,6 +123,8 @@
 #include "AcsFramework_Core/Simulation/ActionInput.h"
 #include "AcsFramework_Core/Simulation/GameplayCooldown.h"
 #include "AcsFramework_Core/Simulation/GameplayCooldownState.h"
+#include "AcsFramework_Core/Simulation/GameplayResource.h"
+#include "AcsFramework_Core/Simulation/GameplayResourceState.h"
 #include "AcsFramework_Core/Simulation/IActionInputSource.h"
 #include "AcsFramework_Core/Simulation/ISimulationRule.h"
 #include "AcsFramework_Core/Simulation/Input/ActionAxisResponse.h"

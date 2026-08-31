@@ -65,7 +65,8 @@ CSimulationSubsystem ── CFixedStepDriver (ACS CFixedStepClock)
 		├→ FActionInputBuffer          ← 通常履歴または固定ステップ入力から押下を短時間保持
 		├→ FActionHoldTracker          ← 通常履歴または固定ステップ入力から短押しと長押しを判定
 		├→ FActionTapSequenceTracker   ← 押下間隔からダブルタップや複数回タップを判定
-		└→ FGameplayCooldown           ← 使用成功から再使用可能までを明示時間で進める
+		├→ FGameplayCooldown           ← 使用成功から再使用可能までを明示時間で進める
+		└→ FGameplayResource           ← 上限内の消費と回復だけを決定論的に扱う
         ↓ FSimulationEvent
 CSimulationEventQueue → 読む側 (Actor / Audio / VFX)
 ```
@@ -78,7 +79,7 @@ CSimulationEventQueue → 読む側 (Actor / Audio / VFX)
 
 | 置き場所 | 置いてよいもの | 例 |
 |---|---|---|
-| 直下 | 値型 | `FActionInput`、`FSimulationEvent`、`FSimulationContext`、`FGameplayCooldown` |
+| 直下 | 値型 | `FActionInput`、`FSimulationEvent`、`FSimulationContext`、`FGameplayCooldown`、`FGameplayResource` |
 | 直下 | 差込口 | `IActionInputSource`、`ISimulationRule` |
 | 直下 | 部品 | `CFixedStepDriver`、`CDeterministicRandom`、`CActionInputTape`、`CSimulationEventQueue`、`CReplayFile` |
 | 直下 | 途中から始める | `CSimulationSnapshot`、`CSimulationSnapshotFile` |
@@ -403,6 +404,29 @@ Context.StepSeconds )`を使う。最大間隔を超えてから押すと、古�
 数える。待機中に`Configure()`しても現在の列は開始時の回数と間隔を保ち、次の列から新設定になる。
 途中状態を再現する場合は`CaptureState()`で得た`FActionTapSequenceTrackerState`をゲーム規則の盤面へ
 含め、`RestoreState()`へ渡す。途中回数、直前の押下からの時間、開始時設定と操作番号をまとめて戻せる。
+
+### 体力やスタミナの数値だけを安全に扱う
+
+体力、スタミナ、魔力、シールドなど、0から上限までの値をゲーム規則のfieldへ持つ場合は
+`FGameplayResource`を使う。これはダメージ、死亡、再生、無敵を決める`HealthSystem`ではなく、
+利用側が決めた量を上限内で消費・回復するだけの値型である。
+
+```cpp
+FGameplayResource Stamina{ 100.0f };
+
+if ( Context.WasPressed( kActionDash ) && Stamina.TrySpend( 25.0f ) ) Dash();
+
+f32 RestoredAmount = 0.0f;
+if ( !Stamina.TryRestore( 10.0f, RestoredAmount ) ) return;
+DrawGauge( Stamina.GetRatio() );
+```
+
+`TrySpend()`は全量を払える場合だけ現在値を減らし、不足時は状態を変えない。`TryRestore()`は
+上限で止め、必要なら実際に増えた量も返す。上限を下げた場合だけ現在値を新上限へ収め、上限を
+上げても自動で満杯にはしない。負、非有限、矛盾した上限・現在値は全状態と出力を変えず拒否する。
+途中状態は`CaptureState()`で`FGameplayResourceState`へ写し、`RestoreState()`で原子的に戻せる。
+
+---
 
 ### 再使用までの待ち時間を扱う
 
