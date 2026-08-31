@@ -66,6 +66,7 @@ CSimulationSubsystem ── CFixedStepDriver (ACS CFixedStepClock)
 		├→ FActionHoldTracker          ← 通常履歴または固定ステップ入力から短押しと長押しを判定
 		├→ FActionTapSequenceTracker   ← 押下間隔からダブルタップや複数回タップを判定
 		├→ FGameplayCooldown           ← 使用成功から再使用可能までを明示時間で進める
+		├→ FGameplayInterval           ← 一定間隔の到達回数を明示時間で進める
 		├→ FGameplayResource           ← 上限内の消費と回復だけを決定論的に扱う
 		└→ FGameplayTimer              ← 開始・停止・再開できる局所時間を明示入力で進める
         ↓ FSimulationEvent
@@ -80,7 +81,7 @@ CSimulationEventQueue → 読む側 (Actor / Audio / VFX)
 
 | 置き場所 | 置いてよいもの | 例 |
 |---|---|---|
-| 直下 | 値型 | `FActionInput`、`FSimulationEvent`、`FSimulationContext`、`FGameplayCooldown`、`FGameplayResource`、`FGameplayTimer` |
+| 直下 | 値型 | `FActionInput`、`FSimulationEvent`、`FSimulationContext`、`FGameplayCooldown`、`FGameplayInterval`、`FGameplayResource`、`FGameplayTimer` |
 | 直下 | 差込口 | `IActionInputSource`、`ISimulationRule` |
 | 直下 | 部品 | `CFixedStepDriver`、`CDeterministicRandom`、`CActionInputTape`、`CSimulationEventQueue`、`CReplayFile` |
 | 直下 | 途中から始める | `CSimulationSnapshot`、`CSimulationSnapshotFile` |
@@ -492,6 +493,34 @@ DrawTimeLimit( TimeLimit.GetRemainingSeconds(), TimeLimit.GetProgress() );
 `WasCompleted()`は完了した更新から次の有効な`Update()`まで保持されるため、同じ固定ステップ内で
 `Restart()`しても完了処理を読み落とさない。途中状態は`FGameplayTimerState`へ保存して原子的に戻せる。
 完了時の場面遷移、ダメージ、得点などの意味はタイマーへ固定せず、利用側の規則が決める。
+
+---
+
+### 一定間隔の処理回数を得る
+
+定期回復、継続効果、出現判定など、一定間隔へ到達した回数をゲーム規則のfieldで扱う場合は
+`FGameplayInterval`を使う。callbackや場面の時計を所有せず、呼出側が渡したゲーム時間だけから
+今回処理する回数を返すため、固定ステップ、記録再生、保存復元へ同じ形で組み込める。
+
+```cpp
+FGameplayInterval PeriodicRule{ 0.25f };
+PeriodicRule.Start();
+
+// 固定ステップごと
+u32 OccurrenceCount = 0u;
+if ( !PeriodicRule.Update( Context.StepSeconds, OccurrenceCount, 8u ) ) return;
+for ( u32 Index = 0u; Index < OccurrenceCount; ++Index )
+{
+	ApplyPeriodicRule();
+}
+```
+
+1更新の追い付き上限を超えた回数ぶんの時間は捨てず、次回以降へ持ち越す。時間を進めない
+`Update( 0.0f, ... )`でも持越し分を取り出せるため、重い1フレームの後に無制限の処理を行わず、
+ゲーム側が決めた上限で追い付ける。上限を省略した既定は64回である。`Pause()`と`Resume()`は
+持越し秒を保ち、`Restart()`は最新設定の0秒地点から始め直す。実行中や一時停止中に間隔設定を
+変えても現在の計測は開始時設定を保ち、次の再開始から新設定を使う。途中状態は
+`FGameplayIntervalState`へ保存して原子的に戻せる。到達時に何を行うかは利用側の規則が決める。
 
 ---
 

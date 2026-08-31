@@ -47,6 +47,9 @@ void RunPublicApiHeaderTests( CTestHarness& Harness )
 	const FGameplayCooldown GameplayCooldown;
 	const FGameplayCooldownState GameplayCooldownState =
 		GameplayCooldown.CaptureState();
+	FGameplayInterval GameplayInterval{ 0.5f };
+	const FGameplayIntervalState GameplayIntervalState =
+		GameplayInterval.CaptureState();
 	FGameplayResource GameplayResource{ 100.0f, 40.0f };
 	const FGameplayResourceState GameplayResourceState =
 		GameplayResource.CaptureState();
@@ -62,6 +65,7 @@ void RunPublicApiHeaderTests( CTestHarness& Harness )
 	FVec3 PublicDiskPoint{};
 	FVec3 PublicSpherePoint{};
 	FVec3 PublicConeDirection{};
+	u32 PublicOccurrenceCount = 0u;
 	bool bPublicChanceOccurred = false;
 	WeightedRandom.Reseed( 1u );
 
@@ -100,6 +104,11 @@ void RunPublicApiHeaderTests( CTestHarness& Harness )
 	Harness.Check( GameplayCooldown.IsReady()
 		&& GameplayCooldownState.IsValid(),
 		"再使用待ちと保存状態の公開型が解決できる" );
+	Harness.Check( GameplayIntervalState.IsValid()
+		&& GameplayInterval.Start()
+		&& GameplayInterval.Update( 0.5f, PublicOccurrenceCount )
+		&& PublicOccurrenceCount == 1u,
+		"周期到達回数と保存状態の公開型が解決できる" );
 	Harness.Check( GameplayResourceState.IsValid()
 		&& GameplayResource.TrySpend( 10.0f )
 		&& GameplayResource.GetCurrentValue() == 30.0f,

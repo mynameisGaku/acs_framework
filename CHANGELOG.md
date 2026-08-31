@@ -45,6 +45,7 @@ ACS Frameworkの利用側から見える追加、変更、修正を記録する�
 - 明示時間から短押し、長押し閾値到達、長押し解放を1回ずつ判定し、途中状態も復元できる`FActionHoldTracker`
 - 押し続けを重複させず、明示した押下間隔と回数でダブルタップや複数回タップを判定する`FActionTapSequenceTracker`
 - 使用成功から再使用可能までを明示時間で進め、進行率と途中状態を保存できる`FGameplayCooldown`
+- 一定間隔の到達回数を上限付きで返し、超過ぶんを失わず保存復元できる`FGameplayInterval`
 - 上限内の現在値を全量消費・回復し、途中状態を原子的に保存復元できる局所値型`FGameplayResource`
 - 制限時間や状態持続時間を開始・一時停止・再開し、完了通知と途中状態を保存できる`FGameplayTimer`
 - 0〜1の成功確率を32bit乱数1個で判定し、確定値と不正入力では乱数位置を変えない`CDeterministicRandom::TryChance`
