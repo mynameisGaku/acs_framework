@@ -51,6 +51,7 @@ ACS Frameworkの利用側から見える追加、変更、修正を記録する�
 - 有限な非負重みから53bit相当で添字を1つ選び、不正入力では乱数位置と出力を変えない`CDeterministicRandom::TryChooseWeightedIndex`
 - 候補数から均等な添字を選び、棄却した出目も消費数へ含める`CDeterministicRandom::TryChooseIndex`
 - 任意の配列を棄却法で偏りなく並べ、消費乱数と途中再生を一致させる`CDeterministicRandom::TryShuffle`
+- 原点中心のローカル3D箱内部へ各軸の長さに対して均等なoffsetを作る決定論的抽選
 - Y軸を上下とする3D球面と球内部から、面積・体積に対して均等な原点相対位置を選ぶ決定論的抽選
 - 任意長の中心軸と度単位の半角から、3D円錐の立体角に対して均等な単位方向を選ぶ決定論的抽選
 - 固定ステップの途中復元で長押しを再発火させない、入力履歴付き`CSimulationSnapshot` v2

@@ -575,6 +575,228 @@ void RunFixedStepDriverTests( CTestHarness& Harness )
 			"拒否後も次の乱数値が変わらない" );
 	}
 
+	Harness.BeginSuite( "CDeterministicRandom / 3D箱内部を各軸へ均等に選ぶ" );
+
+	{
+		constexpr usize kSampleCount = 4096u;
+		/** 各軸で異なる範囲を確認する箱の半寸法。 */
+		const FVec3 HalfExtents{ 2.0f, 3.0f, 4.0f };
+		CDeterministicRandom A;
+		CDeterministicRandom B;
+		A.Reseed( 20260831u );
+		B.Reseed( 20260831u );
+		bool bSameAndInside = true;
+		f64 SumX = 0.0;
+		f64 SumY = 0.0;
+		f64 SumZ = 0.0;
+		f64 SumNormalizedX2 = 0.0;
+		f64 SumNormalizedY2 = 0.0;
+		f64 SumNormalizedZ2 = 0.0;
+		f64 SumNormalizedXY = 0.0;
+		f64 SumNormalizedXZ = 0.0;
+		f64 SumNormalizedYZ = 0.0;
+		/** 3軸それぞれを8等分した度数。 */
+		u32 AxisBinCounts[3][8]{};
+		for ( usize SampleIndex = 0u; SampleIndex < kSampleCount;
+			++SampleIndex )
+		{
+			FVec3 PointA{};
+			FVec3 PointB{};
+			if ( !A.TryPointInBox3D( HalfExtents, PointA )
+				|| !B.TryPointInBox3D( HalfExtents, PointB )
+				|| !std::isfinite( PointA.x ) || !std::isfinite( PointA.y )
+				|| !std::isfinite( PointA.z )
+				|| PointA.x != PointB.x || PointA.y != PointB.y
+				|| PointA.z != PointB.z
+				|| std::abs( PointA.x ) > HalfExtents.x
+				|| std::abs( PointA.y ) > HalfExtents.y
+				|| std::abs( PointA.z ) > HalfExtents.z )
+			{
+				bSameAndInside = false;
+				continue;
+			}
+
+			SumX += PointA.x;
+			SumY += PointA.y;
+			SumZ += PointA.z;
+			const f64 NormalizedX = static_cast<f64>( PointA.x )
+				/ HalfExtents.x;
+			const f64 NormalizedY = static_cast<f64>( PointA.y )
+				/ HalfExtents.y;
+			const f64 NormalizedZ = static_cast<f64>( PointA.z )
+				/ HalfExtents.z;
+			SumNormalizedX2 += NormalizedX * NormalizedX;
+			SumNormalizedY2 += NormalizedY * NormalizedY;
+			SumNormalizedZ2 += NormalizedZ * NormalizedZ;
+			SumNormalizedXY += NormalizedX * NormalizedY;
+			SumNormalizedXZ += NormalizedX * NormalizedZ;
+			SumNormalizedYZ += NormalizedY * NormalizedZ;
+			/** 端点1を末尾へ収めるX軸の度数位置。 */
+			usize BinX = static_cast<usize>( ( NormalizedX + 1.0 ) * 4.0 );
+			/** 端点1を末尾へ収めるY軸の度数位置。 */
+			usize BinY = static_cast<usize>( ( NormalizedY + 1.0 ) * 4.0 );
+			/** 端点1を末尾へ収めるZ軸の度数位置。 */
+			usize BinZ = static_cast<usize>( ( NormalizedZ + 1.0 ) * 4.0 );
+			if ( BinX >= 8u ) BinX = 7u;
+			if ( BinY >= 8u ) BinY = 7u;
+			if ( BinZ >= 8u ) BinZ = 7u;
+			++AxisBinCounts[0][BinX];
+			++AxisBinCounts[1][BinY];
+			++AxisBinCounts[2][BinZ];
+		}
+
+		const f64 InverseCount = 1.0 / static_cast<f64>( kSampleCount );
+		/** 各軸の各binが期待値から十分近いか。 */
+		bool bBinsBalanced = true;
+		constexpr u32 kExpectedBinCount =
+			static_cast<u32>( kSampleCount / 8u );
+		constexpr u32 kBinTolerance = 96u;
+		for ( usize AxisIndex = 0u; AxisIndex < 3u; ++AxisIndex )
+		{
+			for ( usize BinIndex = 0u; BinIndex < 8u; ++BinIndex )
+			{
+				const u32 BinCount = AxisBinCounts[AxisIndex][BinIndex];
+				if ( BinCount < kExpectedBinCount - kBinTolerance
+					|| BinCount > kExpectedBinCount + kBinTolerance )
+				{
+					bBinsBalanced = false;
+				}
+			}
+		}
+		Harness.Check( bSameAndInside,
+			"同じ種で同じ箱内部位置を各軸範囲内に選ぶ" );
+		Harness.Check( std::abs( SumX * InverseCount ) < 0.08
+			&& std::abs( SumY * InverseCount ) < 0.10
+			&& std::abs( SumZ * InverseCount ) < 0.12,
+			"箱内部位置の平均が中心付近へ戻る" );
+		Harness.Check( std::abs(
+				SumNormalizedX2 * InverseCount - ( 1.0 / 3.0 ) ) < 0.03
+			&& std::abs(
+				SumNormalizedY2 * InverseCount - ( 1.0 / 3.0 ) ) < 0.03
+			&& std::abs(
+				SumNormalizedZ2 * InverseCount - ( 1.0 / 3.0 ) ) < 0.03,
+			"3軸を独立した一様範囲として選ぶ" );
+		Harness.Check( std::abs( SumNormalizedXY * InverseCount ) < 0.03
+			&& std::abs( SumNormalizedXZ * InverseCount ) < 0.03
+			&& std::abs( SumNormalizedYZ * InverseCount ) < 0.03,
+			"3軸の組へ相関を残さない" );
+		Harness.Check( bBinsBalanced,
+			"各軸の8区間へ過度な偏りなく分布する" );
+		Harness.CheckEqualU64( A.GetDrawCount(), kSampleCount * 3u,
+			"箱内部1点につき32bit乱数を3個進める" );
+	}
+
+	Harness.BeginSuite( "CDeterministicRandom / 3D箱抽選を安全に復元する" );
+
+	{
+		CDeterministicRandom Random;
+		Random.Reseed( 271828u );
+		FVec3 Warmup{};
+		Random.TryPointInBox3D( FVec3{ 1.0f, 0.0f, 2.0f }, Warmup );
+		FRandomSnapshot Snapshot{};
+		u64 SnapshotDrawCount = 0u;
+		Random.CaptureSnapshot( Snapshot, SnapshotDrawCount );
+		constexpr usize kReplayCount = 64u;
+		FVec3 ExpectedPoints[kReplayCount]{};
+		for ( usize Index = 0u; Index < kReplayCount; ++Index )
+		{
+			Random.TryPointInBox3D(
+				FVec3{ 2.0f, 3.0f, 4.0f }, ExpectedPoints[Index] );
+		}
+
+		const bool bRestored = Random.TryRestoreSnapshot(
+			Snapshot, SnapshotDrawCount );
+		bool bReplayed = bRestored;
+		for ( usize Index = 0u; Index < kReplayCount; ++Index )
+		{
+			FVec3 Point{};
+			if ( !Random.TryPointInBox3D(
+					FVec3{ 2.0f, 3.0f, 4.0f }, Point )
+				|| Point.x != ExpectedPoints[Index].x
+				|| Point.y != ExpectedPoints[Index].y
+				|| Point.z != ExpectedPoints[Index].z )
+			{
+				bReplayed = false;
+			}
+		}
+
+		Harness.CheckEqualU64( SnapshotDrawCount, 3u,
+			"退化軸を含む箱抽選後も3個の消費数を写す" );
+		Harness.Check( bReplayed,
+			"途中状態へ戻すと同じ箱内部位置列を再生する" );
+		Harness.CheckEqualU64( Random.GetDrawCount(),
+			SnapshotDrawCount + kReplayCount * 3u,
+			"復元後の箱抽選でも消費数が一致する" );
+	}
+
+	{
+		/** 不正値で出力を変えないことを確認する乱数。 */
+		CDeterministicRandom Random;
+		/** 拒否後の乱数位置を比較する同じ種の乱数。 */
+		CDeterministicRandom Expected;
+		Random.Reseed( 42u );
+		Expected.Reseed( 42u );
+		/** 失敗時に保持する出力値。 */
+		FVec3 Point{ 7.0f, 8.0f, 9.0f };
+		/** 各成分へ混ぜる非数値。 */
+		const f32 NotANumber =
+			std::numeric_limits<f32>::quiet_NaN();
+		/** 各成分へ混ぜる無限値。 */
+		const f32 Infinity = std::numeric_limits<f32>::infinity();
+		const bool bRejected =
+			!Random.TryPointInBox3D( FVec3{ -1.0f, 2.0f, 3.0f }, Point )
+			&& !Random.TryPointInBox3D(
+				FVec3{ 1.0f, NotANumber, 3.0f }, Point )
+			&& !Random.TryPointInBox3D(
+				FVec3{ 1.0f, 2.0f, Infinity }, Point );
+		Harness.Check( bRejected && Point.x == 7.0f
+			&& Point.y == 8.0f && Point.z == 9.0f,
+			"負または非有限の半寸法を出力変更なしで拒否する" );
+		Harness.CheckEqualU64( Random.GetDrawCount(), 0u,
+			"不正半寸法では乱数を進めない" );
+
+		/** 全辺0から原点へ正規化する出力値。 */
+		FVec3 ZeroPoint{ 1.0f, 2.0f, 3.0f };
+		Harness.Check( Random.TryPointInBox3D( FVec3{}, ZeroPoint )
+			&& ZeroPoint.x == 0.0f && ZeroPoint.y == 0.0f
+			&& ZeroPoint.z == 0.0f,
+			"全辺0は乱数なしで原点を返す" );
+		Harness.CheckEqualU64( Random.GetDrawCount(), 0u,
+			"全辺0でも乱数を進めない" );
+		Harness.CheckEqualU64( Random.NextU32(), Expected.NextU32(),
+			"拒否と全辺0の後も次の乱数値が変わらない" );
+	}
+
+	{
+		/** 面へ退化した箱と最大有限値を確認する乱数。 */
+		CDeterministicRandom Random;
+		Random.Reseed( 314159u );
+		/** Y軸の幅だけ0にした箱内部位置。 */
+		FVec3 DegeneratePoint{};
+		const bool bDegenerate = Random.TryPointInBox3D(
+			FVec3{ 2.0f, 0.0f, 4.0f }, DegeneratePoint );
+		Harness.Check( bDegenerate && std::abs( DegeneratePoint.x ) <= 2.0f
+			&& DegeneratePoint.y == 0.0f
+			&& std::abs( DegeneratePoint.z ) <= 4.0f,
+			"退化した軸を0へ固定して残り2軸へ散らす" );
+		Harness.CheckEqualU64( Random.GetDrawCount(), 3u,
+			"退化軸を含んでも箱抽選の消費数を固定する" );
+
+		/** 最大有限半寸法の箱内部位置。 */
+		FVec3 HugePoint{};
+		const f32 HugeExtent = std::numeric_limits<f32>::max();
+		const bool bHuge = Random.TryPointInBox3D(
+			FVec3{ HugeExtent, HugeExtent, HugeExtent }, HugePoint );
+		Harness.Check( bHuge && std::isfinite( HugePoint.x )
+			&& std::isfinite( HugePoint.y ) && std::isfinite( HugePoint.z )
+			&& std::abs( HugePoint.x ) <= HugeExtent
+			&& std::abs( HugePoint.y ) <= HugeExtent
+			&& std::abs( HugePoint.z ) <= HugeExtent,
+			"最大有限半寸法でもoverflowせず箱内部へ収める" );
+		Harness.CheckEqualU64( Random.GetDrawCount(), 6u,
+			"連続した2回の箱抽選で6個の乱数を進める" );
+	}
+
 	Harness.BeginSuite( "CDeterministicRandom / 3D球面を均等に選ぶ" );
 
 	{

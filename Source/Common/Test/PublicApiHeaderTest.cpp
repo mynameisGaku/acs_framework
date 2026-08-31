@@ -4,6 +4,8 @@
 
 #include "Common/Test/TestHarness.h"
 
+#include <cmath>
+
 /**
  * 利用側が共通ヘッダーだけを読み込んでも、3D公開入口の型が解決できることを確かめる。
  *
@@ -56,6 +58,7 @@ void RunPublicApiHeaderTests( CTestHarness& Harness )
 	usize WeightedIndex = 9u;
 	u32 PublicOrder[] = { 0u, 1u, 2u };
 	usize PublicRandomIndex = 9u;
+	FVec3 PublicBoxPoint{};
 	FVec3 PublicSpherePoint{};
 	FVec3 PublicConeDirection{};
 	bool bPublicChanceOccurred = false;
@@ -115,6 +118,12 @@ void RunPublicApiHeaderTests( CTestHarness& Harness )
 	Harness.Check( WeightedRandom.TryChooseIndex( 3u, PublicRandomIndex )
 		&& PublicRandomIndex < 3u,
 		"決定論的な均等index抽選の公開APIが解決できる" );
+	Harness.Check( WeightedRandom.TryPointInBox3D(
+			FVec3{ 1.0f, 2.0f, 3.0f }, PublicBoxPoint )
+		&& std::abs( PublicBoxPoint.x ) <= 1.0f
+		&& std::abs( PublicBoxPoint.y ) <= 2.0f
+		&& std::abs( PublicBoxPoint.z ) <= 3.0f,
+		"決定論的な3D箱内部抽選の公開APIが解決できる" );
 	Harness.Check( WeightedRandom.TryPointOnSphere3D(
 			2.0f, PublicSpherePoint )
 		&& LengthSq( PublicSpherePoint ) > 3.99f,

@@ -190,6 +190,39 @@ bool CDeterministicRandom::TryChooseWeightedIndex( const f32* Weights,
 }
 
 
+bool CDeterministicRandom::TryPointInBox3D( FVec3 HalfExtents,
+	FVec3& OutPoint ) noexcept
+{
+	if ( !IsFiniteVector_Internal( HalfExtents )
+		|| HalfExtents.x < 0.0f || HalfExtents.y < 0.0f
+		|| HalfExtents.z < 0.0f ) return false;
+	if ( HalfExtents.x == 0.0f && HalfExtents.y == 0.0f
+		&& HalfExtents.z == 0.0f )
+	{
+		OutPoint = FVec3{};
+		return true;
+	}
+
+	/** X軸の負端より大きく正端以下へ移す単位値。 */
+	const f64 UnitX = 1.0
+		- 2.0 * static_cast<f64>( NextUnitFloat() );
+	/** Y軸の負端より大きく正端以下へ移す単位値。 */
+	const f64 UnitY = 1.0
+		- 2.0 * static_cast<f64>( NextUnitFloat() );
+	/** Z軸の負端より大きく正端以下へ移す単位値。 */
+	const f64 UnitZ = 1.0
+		- 2.0 * static_cast<f64>( NextUnitFloat() );
+	OutPoint = FVec3{
+		HalfExtents.x == 0.0f ? 0.0f : static_cast<f32>(
+			static_cast<f64>( HalfExtents.x ) * UnitX ),
+		HalfExtents.y == 0.0f ? 0.0f : static_cast<f32>(
+			static_cast<f64>( HalfExtents.y ) * UnitY ),
+		HalfExtents.z == 0.0f ? 0.0f : static_cast<f32>(
+			static_cast<f64>( HalfExtents.z ) * UnitZ ) };
+	return true;
+}
+
+
 bool CDeterministicRandom::TryPointOnSphere3D( f32 Radius,
 	FVec3& OutPoint ) noexcept
 {

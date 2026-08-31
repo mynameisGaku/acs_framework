@@ -111,6 +111,18 @@ public:
 	bool TryShuffle( T* Items, usize ItemCount ) noexcept;
 
 	/**
+	 * 原点中心のローカル3D箱内部から、各軸の長さに対して均等に1点を選ぶ。
+	 *
+	 * @details 各軸の範囲は-HalfExtents以上HalfExtents以下。全成分0では原点を返し、
+	 * 乱数を進めない。それ以外は退化した軸を含めて32bit乱数を3個進める。
+	 * 利用側は返ったoffsetへ中心位置を加え、必要ならローカル回転を適用する。
+	 * @param HalfExtents 有限かつ各成分0以上の箱の半寸法。
+	 * @param OutPoint 選んだ原点相対位置。失敗時は変更しない。
+	 * @return 有効な半寸法から選べたらtrue。
+	 */
+	bool TryPointInBox3D( FVec3 HalfExtents, FVec3& OutPoint ) noexcept;
+
+	/**
 	 * 原点中心の3D球面から均等に1点を選ぶ。
 	 *
 	 * @details Yを上下軸として全方向を同じ面積確率で選ぶ。半径0では原点を返し、
