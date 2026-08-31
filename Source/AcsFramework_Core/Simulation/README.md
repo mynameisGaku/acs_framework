@@ -58,6 +58,7 @@ CSimulationSubsystem ── CFixedStepDriver (ACS CFixedStepClock)
         ↓ FSimulationContext     └ CDeterministicRandom (ACS FRandom + 種と引いた回数)
    ISimulationRule (ゲーム側が実装)
 		├→ FActionAxisResponse         ← 1軸または2軸の遊びを除き応答曲線を適用
+		├→ FActionChord                ← 必要操作と禁止操作から同時押しを判定
 		├→ FActionInputMask            ← ゲーム状態ごとに許可した入力だけを履歴ごと残す
 		├→ FActionInputBuffer          ← 通常履歴または固定ステップ入力から押下を短時間保持
 		├→ FActionHoldTracker          ← 通常履歴または固定ステップ入力から短押しと長押しを判定
@@ -79,7 +80,7 @@ CSimulationEventQueue → 読む側 (Actor / Audio / VFX)
 | 直下 | 部品 | `CFixedStepDriver`、`CDeterministicRandom`、`CActionInputTape`、`CSimulationEventQueue`、`CReplayFile` |
 | 直下 | 途中から始める | `CSimulationSnapshot`、`CSimulationSnapshotFile` |
 | 直下 | 所有と順番 | `CSimulationSubsystem` |
-| `Input/` | 装置 → アクションの変換、通常履歴、通常・固定の両方で使う局所入力判定 | `IActionDeviceReader`、`CActionBindingTable`、`CActionInputTracker`、`FActionInputMask`、`FActionAxisResponse`、`FActionInputBuffer`、`FActionHoldTracker`、`FActionTapSequenceTracker`、`FActionKeyRebindState`、`FActionGamepadRebindState`、`CDeviceActionReader`、`CBoundActionSource` |
+| `Input/` | 装置 → アクションの変換、通常履歴、通常・固定の両方で使う局所入力判定 | `IActionDeviceReader`、`CActionBindingTable`、`CActionInputTracker`、`FActionInputMask`、`FActionChord`、`FActionAxisResponse`、`FActionInputBuffer`、`FActionHoldTracker`、`FActionTapSequenceTracker`、`FActionKeyRebindState`、`FActionGamepadRebindState`、`CDeviceActionReader`、`CBoundActionSource` |
 | `Test/` | ゲーム抜きで回す自己テスト | `SimulationDeterminismTest.cpp` |
 
 **ゲームのルールはここへ置かない。** `ISimulationRule` を実装するのはゲーム側。
@@ -131,6 +132,28 @@ if ( CurrentInput.IsDown( kActionAdvanceText )
 Context.PreviousInput, CurrentInput, PreviousInput )`を使い、変換後の2値を入力バッファ、長押し、
 複数回タップなどへそのまま渡す。許可bitを保存する場合は`GetActionMask()` / `GetAxisMask()`で取得し、
 読み込み時に`TrySetMasks()`へまとめて渡すと、未使用の軸bitを拒否して設定を原子的に保てる。
+
+### アクションの同時押しを判定する
+
+構えながら攻撃、修飾操作付きショートカット、複数ボタン入力には`FActionChord`を設定値として持つ。
+必要操作を1つ以上追加し、必要なら押されていてはいけない操作も指定する。入力装置のキー名ではなく
+アクション番号を使うため、キーボード、ゲームパッド、AI、再生入力で同じゲーム規則を使える。
+
+```cpp
+FActionChord FocusAttack{ kActionAttack };
+FocusAttack.RequireAction( kActionFocus );
+FocusAttack.ForbidAction( kActionPause );
+
+Input.Update();
+if ( FocusAttack.WasActivated( Input ) ) BeginFocusAttack();
+if ( FocusAttack.WasDeactivated( Input ) ) CancelFocusAttack();
+```
+
+必要操作をどの順で押しても、最後の必要操作を押した更新だけ`WasActivated()`がtrueになる。
+禁止操作を離しただけでは有効化せず、必要操作をいったん離して押し直すまで待つ。禁止操作を押すか
+必要操作を離すと`WasDeactivated()`がtrueになる。固定ステップでは
+`WasActivated( Context.Input, Context.PreviousInput )`を使う。`FActionInputMask`で変換した履歴も
+同じ入口へ渡せる。設定を保存する場合は2つのmaskを取得し、`TrySetMasks()`で重なりを検証して戻す。
 
 ### 入力を取りこぼさない
 
