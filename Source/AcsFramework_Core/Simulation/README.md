@@ -64,6 +64,7 @@ CSimulationSubsystem ── CFixedStepDriver (ACS CFixedStepClock)
 		├→ FActionInputMaskStack       ← 入れ子の入力制限を後から重ねた順に戻す
 		├→ FActionInputBuffer          ← 通常履歴または固定ステップ入力から押下を短時間保持
 		├→ FActionHoldTracker          ← 通常履歴または固定ステップ入力から短押しと長押しを判定
+		├→ FActionRepeatTracker        ← 押下直後と長押し後の一定間隔を発火回数へ変換
 		├→ FActionTapSequenceTracker   ← 押下間隔からダブルタップや複数回タップを判定
 		├→ FGameplayChargePool         ← 整数チャージの消費と自動回復を明示時間で進める
 		├→ FGameplayCooldown           ← 使用成功から再使用可能までを明示時間で進める
@@ -87,7 +88,7 @@ CSimulationEventQueue → 読む側 (Actor / Audio / VFX)
 | 直下 | 部品 | `CFixedStepDriver`、`CDeterministicRandom`、`CActionInputTape`、`CSimulationEventQueue`、`CReplayFile` |
 | 直下 | 途中から始める | `CSimulationSnapshot`、`CSimulationSnapshotFile` |
 | 直下 | 所有と順番 | `CSimulationSubsystem` |
-| `Input/` | 装置 → アクションの変換、通常履歴、通常・固定の両方で使う局所入力判定 | `IActionDeviceReader`、`CActionBindingTable`、`CActionInputTracker`、`FActionInputMask`、`FActionInputMaskStack`、`FActionChord`、`FActionCommandSequenceTracker`、`FActionAxisResponse`、`FActionInputBuffer`、`FActionHoldTracker`、`FActionTapSequenceTracker`、`FActionKeyRebindState`、`FActionGamepadRebindState`、`CDeviceActionReader`、`CBoundActionSource` |
+| `Input/` | 装置 → アクションの変換、通常履歴、通常・固定の両方で使う局所入力判定 | `IActionDeviceReader`、`CActionBindingTable`、`CActionInputTracker`、`FActionInputMask`、`FActionInputMaskStack`、`FActionChord`、`FActionCommandSequenceTracker`、`FActionAxisResponse`、`FActionInputBuffer`、`FActionHoldTracker`、`FActionRepeatTracker`、`FActionTapSequenceTracker`、`FActionKeyRebindState`、`FActionGamepadRebindState`、`CDeviceActionReader`、`CBoundActionSource` |
 | `Test/` | ゲーム抜きで回す自己テスト | `SimulationDeterminismTest.cpp` |
 
 **ゲームのルールはここへ置かない。** `ISimulationRule` を実装するのはゲーム側。
@@ -496,6 +497,27 @@ Context.StepSeconds )`を使う。閾値を押下中に変更しても、現在�
 押下から新しい値を使う。途中状態を再現する場合は`CaptureState()`で得た
 `FActionHoldTrackerState`の各項目を`ISimulationRule`の盤面へ含め、読み込み時に
 `RestoreState()`へ渡す。追跡中の秒、操作番号、開始時閾値も戻るため、復元後の到達tickがずれない。
+
+### 押した瞬間と長押し中を一定間隔で繰り返す
+
+メニューのカーソル移動、数値調整、格子移動など、押した瞬間に1回動き、長押し後は一定間隔で
+繰り返す操作には`FActionRepeatTracker`を操作対象のfieldとして持つ。1更新で複数回ぶんの時間が
+進んでも発火回数として受け取れ、上限を超えたぶんは次の更新へ残る。
+
+```cpp
+FActionRepeatTracker MenuMoveRepeat{ 0.4f, 0.1f };
+
+Input.Update();
+u32 MoveCount = 0u;
+if ( !MenuMoveRepeat.Update(
+		Input, kActionMenuDown, DeltaSeconds, MoveCount ) ) return;
+for ( u32 MoveIndex = 0u; MoveIndex < MoveCount; ++MoveIndex ) MoveMenuDown();
+```
+
+固定ステップでは現在と前回の`FActionInput`を明示する`Update()`を使う。待ち時間や間隔を押下中に
+変更しても現在の押下は開始時設定を保ち、次の押下から新設定になる。途中状態は
+`FActionRepeatTrackerState`へ保存して原子的に戻せる。押していない更新または`Reset()`で追跡を
+空にするため、画面を閉じた後の持越しを次の画面へ漏らさない。
 
 ### ダブルタップや複数回タップを判定する
 

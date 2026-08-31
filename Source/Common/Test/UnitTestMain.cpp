@@ -47,6 +47,7 @@ void RunActionBindingTableTests( CTestHarness& Harness );
 void RunActionChordTests( CTestHarness& Harness );
 void RunActionCommandSequenceTrackerTests( CTestHarness& Harness );
 void RunActionHoldTrackerTests( CTestHarness& Harness );
+void RunActionRepeatTrackerTests( CTestHarness& Harness );
 void RunActionInputBufferTests( CTestHarness& Harness );
 void RunActionInputMaskTests( CTestHarness& Harness );
 void RunActionInputMaskStackTests( CTestHarness& Harness );
@@ -135,6 +136,7 @@ int main()
 	RunActionChordTests( Harness );
 	RunActionCommandSequenceTrackerTests( Harness );
 	RunActionHoldTrackerTests( Harness );
+	RunActionRepeatTrackerTests( Harness );
 	RunActionInputBufferTests( Harness );
 	RunActionInputMaskTests( Harness );
 	RunActionInputMaskStackTests( Harness );

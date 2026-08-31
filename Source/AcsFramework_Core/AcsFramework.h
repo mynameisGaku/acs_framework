@@ -140,6 +140,8 @@
 #include "AcsFramework_Core/Simulation/Input/ActionCommandSequenceTrackerState.h"
 #include "AcsFramework_Core/Simulation/Input/ActionHoldTracker.h"
 #include "AcsFramework_Core/Simulation/Input/ActionHoldTrackerState.h"
+#include "AcsFramework_Core/Simulation/Input/ActionRepeatTracker.h"
+#include "AcsFramework_Core/Simulation/Input/ActionRepeatTrackerState.h"
 #include "AcsFramework_Core/Simulation/Input/ActionInputBuffer.h"
 #include "AcsFramework_Core/Simulation/Input/ActionInputBufferState.h"
 #include "AcsFramework_Core/Simulation/Input/ActionInputMask.h"

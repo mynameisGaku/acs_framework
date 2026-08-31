@@ -43,6 +43,7 @@ ACS Frameworkの利用側から見える追加、変更、修正を記録する�
 - 着地や硬直終了の直前に押した操作を短時間保持し、受理時に1回だけ消費する`FActionInputBuffer`
 - 押下猶予の設定と残り時間を検証付きで保存・原子的復元する`FActionInputBufferState`
 - 明示時間から短押し、長押し閾値到達、長押し解放を1回ずつ判定し、途中状態も復元できる`FActionHoldTracker`
+- 押下直後と長押し後の一定間隔を発火回数へ変え、追い付き上限超過と途中状態を保持する`FActionRepeatTracker`
 - 押し続けを重複させず、明示した押下間隔と回数でダブルタップや複数回タップを判定する`FActionTapSequenceTracker`
 - 使用成功から再使用可能までを明示時間で進め、進行率と途中状態を保存できる`FGameplayCooldown`
 - 上限付き整数チャージを消費し、複数回の追い付き、一時停止、手動補充、途中保存に対応する`FGameplayChargePool`

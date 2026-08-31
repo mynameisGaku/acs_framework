@@ -561,10 +561,13 @@
     <ClInclude Include="Source\AcsFramework_Core\Simulation\Input\ActionAxisResponse.h" />
     <ClInclude Include="Source\AcsFramework_Core\Simulation\Input\ActionHoldTracker.h" />
     <ClInclude Include="Source\AcsFramework_Core\Simulation\Input\ActionHoldTrackerState.h" />
+    <ClInclude Include="Source\AcsFramework_Core\Simulation\Input\ActionRepeatTracker.h" />
+    <ClInclude Include="Source\AcsFramework_Core\Simulation\Input\ActionRepeatTrackerState.h" />
     <ClInclude Include="Source\AcsFramework_Core\Simulation\Input\ActionInputBuffer.h" />
     <ClInclude Include="Source\AcsFramework_Core\Simulation\Input\ActionInputBufferState.h" />
     <None Include="Source\AcsFramework_Core\Simulation\Test\ActionAxisResponseTest.cpp" />
     <None Include="Source\AcsFramework_Core\Simulation\Test\ActionHoldTrackerTest.cpp" />
+    <None Include="Source\AcsFramework_Core\Simulation\Test\ActionRepeatTrackerTest.cpp" />
     <None Include="Source\AcsFramework_Core\Simulation\Test\ActionInputBufferTest.cpp" />
     <ClInclude Include="Source\AcsFramework_Core\Simulation\Input\ActionTapSequenceTracker.h" />
     <ClInclude Include="Source\AcsFramework_Core\Simulation\Input\ActionTapSequenceTrackerState.h" />
@@ -836,6 +839,8 @@
     <ClCompile Include="Source\AcsFramework_Core\Simulation\Input\ActionAxisResponse.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Simulation\Input\ActionHoldTracker.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Simulation\Input\ActionHoldTrackerState.cpp" />
+    <ClCompile Include="Source\AcsFramework_Core\Simulation\Input\ActionRepeatTracker.cpp" />
+    <ClCompile Include="Source\AcsFramework_Core\Simulation\Input\ActionRepeatTrackerState.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Simulation\Input\ActionInputBuffer.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Simulation\Input\ActionInputBufferState.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Simulation\Input\ActionTapSequenceTracker.cpp" />
