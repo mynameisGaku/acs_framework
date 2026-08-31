@@ -35,6 +35,9 @@ void RunPublicApiHeaderTests( CTestHarness& Harness )
 	const FActionInputBuffer ActionBuffer;
 	const FActionInputBufferState ActionBufferState = ActionBuffer.CaptureState();
 	const FActionInputMask ActionMask;
+	const FActionInputMaskStack ActionMaskStack;
+	const FActionInputMaskStackState ActionMaskStackState =
+		ActionMaskStack.CaptureState();
 	const CActionInputTracker ActionInput;
 	const FActionTapSequenceTracker ActionTapSequence;
 	const FActionTapSequenceTrackerState ActionTapSequenceState =
@@ -69,6 +72,8 @@ void RunPublicApiHeaderTests( CTestHarness& Harness )
 	Harness.Check( ActionMask.IsActionEnabled( 0u )
 		&& ActionMask.IsAxisEnabled( 0u ),
 		"入力許可マスクの公開型が解決できる" );
+	Harness.Check( ActionMaskStack.IsEmpty() && ActionMaskStackState.IsValid(),
+		"入力マスクstackと保存状態の公開型が解決できる" );
 	Harness.Check( ActionInput.GetCurrentInput().IsNeutral(), "通常フレームのアクション入力が解決できる" );
 	Harness.Check( !ActionTapSequence.IsWaitingForNextTap()
 		&& ActionTapSequenceState.IsValid(),

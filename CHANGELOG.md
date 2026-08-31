@@ -36,6 +36,7 @@ ACS Frameworkの利用側から見える追加、変更、修正を記録する�
 - 天候、空気遠近、Effekseer、3D音響、3D位置文字、照準、選択輪郭、3Dデバッグ描画
 - 通常の場面更新で、実機、AI、再生入力の現在・前回・押下・解放・軸を共通利用する`CActionInputTracker`
 - メニューや演出中に許可したアクションと軸だけを履歴ごと通し、複数制限も合成する`FActionInputMask`
+- 入れ子になった入力制限を最大8層まで重ね、LIFO解除と途中復元を行う`FActionInputMaskStack`
 - 必要操作と禁止操作を組み合わせ、最後の必要操作を押した瞬間だけ同時押しを有効化する`FActionChord`
 - 最大8操作の順番と間隔を追跡し、誤入力、同時押し、途中保存を決定論的に扱う`FActionCommandSequenceTracker`
 - アナログ1軸と2軸の遊びを除き、最大入力と方向を保って応答曲線を適用する`FActionAxisResponse`

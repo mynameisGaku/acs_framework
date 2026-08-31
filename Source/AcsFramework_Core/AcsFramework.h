@@ -135,6 +135,8 @@
 #include "AcsFramework_Core/Simulation/Input/ActionInputBuffer.h"
 #include "AcsFramework_Core/Simulation/Input/ActionInputBufferState.h"
 #include "AcsFramework_Core/Simulation/Input/ActionInputMask.h"
+#include "AcsFramework_Core/Simulation/Input/ActionInputMaskStack.h"
+#include "AcsFramework_Core/Simulation/Input/ActionInputMaskStackState.h"
 #include "AcsFramework_Core/Simulation/Input/ActionInputTracker.h"
 #include "AcsFramework_Core/Simulation/Input/ActionTapSequenceTracker.h"
 #include "AcsFramework_Core/Simulation/Input/ActionTapSequenceTrackerState.h"

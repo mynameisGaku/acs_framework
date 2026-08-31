@@ -837,6 +837,12 @@
     <ClCompile Include="Source\AcsFramework_Core\Simulation\Input\ActionInputMask.cpp">
       <Filter>Source\AcsFramework_Core\Simulation\Input</Filter>
     </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Simulation\Input\ActionInputMaskStack.cpp">
+      <Filter>Source\AcsFramework_Core\Simulation\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Simulation\Input\ActionInputMaskStackState.cpp">
+      <Filter>Source\AcsFramework_Core\Simulation\Input</Filter>
+    </ClCompile>
     <ClCompile Include="Source\AcsFramework_Core\Simulation\Input\ActionInputTracker.cpp">
       <Filter>Source\AcsFramework_Core\Simulation\Input</Filter>
     </ClCompile>
@@ -1712,6 +1718,12 @@
     <ClInclude Include="Source\AcsFramework_Core\Simulation\Input\ActionInputMask.h">
       <Filter>Source\AcsFramework_Core\Simulation\Input</Filter>
     </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Simulation\Input\ActionInputMaskStack.h">
+      <Filter>Source\AcsFramework_Core\Simulation\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Simulation\Input\ActionInputMaskStackState.h">
+      <Filter>Source\AcsFramework_Core\Simulation\Input</Filter>
+    </ClInclude>
     <ClInclude Include="Source\AcsFramework_Core\Simulation\Input\ActionInputTracker.h">
       <Filter>Source\AcsFramework_Core\Simulation\Input</Filter>
     </ClInclude>
@@ -2411,6 +2423,9 @@
       <Filter>Source\AcsFramework_Core\Simulation\Test</Filter>
     </None>
     <None Include="Source\AcsFramework_Core\Simulation\Test\ActionInputBufferTest.cpp">
+      <Filter>Source\AcsFramework_Core\Simulation\Test</Filter>
+    </None>
+    <None Include="Source\AcsFramework_Core\Simulation\Test\ActionInputMaskStackTest.cpp">
       <Filter>Source\AcsFramework_Core\Simulation\Test</Filter>
     </None>
     <None Include="Source\AcsFramework_Core\Simulation\Test\ActionInputMaskTest.cpp">

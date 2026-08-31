@@ -60,7 +60,8 @@ CSimulationSubsystem ── CFixedStepDriver (ACS CFixedStepClock)
 		├→ FActionAxisResponse         ← 1軸または2軸の遊びを除き応答曲線を適用
 		├→ FActionChord                ← 必要操作と禁止操作から同時押しを判定
 		├→ FActionCommandSequenceTracker ← 異なる操作の順番と間隔からコマンド完了を判定
-		├→ FActionInputMask            ← ゲーム状態ごとに許可した入力だけを履歴ごと残す
+		├→ FActionInputMask            ← 1つのゲーム状態で許可した入力だけを履歴ごと残す
+		├→ FActionInputMaskStack       ← 入れ子の入力制限を後から重ねた順に戻す
 		├→ FActionInputBuffer          ← 通常履歴または固定ステップ入力から押下を短時間保持
 		├→ FActionHoldTracker          ← 通常履歴または固定ステップ入力から短押しと長押しを判定
 		├→ FActionTapSequenceTracker   ← 押下間隔からダブルタップや複数回タップを判定
@@ -82,7 +83,7 @@ CSimulationEventQueue → 読む側 (Actor / Audio / VFX)
 | 直下 | 部品 | `CFixedStepDriver`、`CDeterministicRandom`、`CActionInputTape`、`CSimulationEventQueue`、`CReplayFile` |
 | 直下 | 途中から始める | `CSimulationSnapshot`、`CSimulationSnapshotFile` |
 | 直下 | 所有と順番 | `CSimulationSubsystem` |
-| `Input/` | 装置 → アクションの変換、通常履歴、通常・固定の両方で使う局所入力判定 | `IActionDeviceReader`、`CActionBindingTable`、`CActionInputTracker`、`FActionInputMask`、`FActionChord`、`FActionCommandSequenceTracker`、`FActionAxisResponse`、`FActionInputBuffer`、`FActionHoldTracker`、`FActionTapSequenceTracker`、`FActionKeyRebindState`、`FActionGamepadRebindState`、`CDeviceActionReader`、`CBoundActionSource` |
+| `Input/` | 装置 → アクションの変換、通常履歴、通常・固定の両方で使う局所入力判定 | `IActionDeviceReader`、`CActionBindingTable`、`CActionInputTracker`、`FActionInputMask`、`FActionInputMaskStack`、`FActionChord`、`FActionCommandSequenceTracker`、`FActionAxisResponse`、`FActionInputBuffer`、`FActionHoldTracker`、`FActionTapSequenceTracker`、`FActionKeyRebindState`、`FActionGamepadRebindState`、`CDeviceActionReader`、`CBoundActionSource` |
 | `Test/` | ゲーム抜きで回す自己テスト | `SimulationDeterminismTest.cpp` |
 
 **ゲームのルールはここへ置かない。** `ISimulationRule` を実装するのはゲーム側。
@@ -134,6 +135,22 @@ if ( CurrentInput.IsDown( kActionAdvanceText )
 Context.PreviousInput, CurrentInput, PreviousInput )`を使い、変換後の2値を入力バッファ、長押し、
 複数回タップなどへそのまま渡す。許可bitを保存する場合は`GetActionMask()` / `GetAxisMask()`で取得し、
 読み込み時に`TrySetMasks()`へまとめて渡すと、未使用の軸bitを拒否して設定を原子的に保てる。
+
+ポーズ中に確認画面を開くように制限の開始と終了が入れ子になる場合は、`FActionInputMaskStack`へ
+各状態のmaskを`Push()`する。全層が許可した操作だけが残り、確認画面、ポーズの順に`Pop()`すると
+直前の制限へ戻る。層が空なら全許可になり、誤った9層目や空の`Pop()`では現在状態を変えない。
+
+```cpp
+InputMasks.Push( PauseInput );
+InputMasks.Push( ConfirmDialogInput );
+InputMasks.ApplyHistory( Input, CurrentInput, PreviousInput );
+
+InputMasks.Pop(); // 確認画面を閉じ、ポーズ用の制限へ戻す
+```
+
+開始と終了が入れ子にならない独立した制限には、従来どおり`Intersect()`で明示的に合成する。
+`CaptureState()` / `RestoreState()`は下層からの順番と許可bitをまとめ、未使用層や不正な軸bitを
+持つ保存値を拒否して現在のstackを保つ。
 
 ### アクションの同時押しを判定する
 
