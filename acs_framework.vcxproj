@@ -585,6 +585,9 @@
     <ClInclude Include="Source\AcsFramework_Core\Simulation\GameplayResource.h" />
     <ClInclude Include="Source\AcsFramework_Core\Simulation\GameplayResourceState.h" />
     <None Include="Source\AcsFramework_Core\Simulation\Test\GameplayResourceTest.cpp" />
+    <ClInclude Include="Source\AcsFramework_Core\Simulation\GameplayTimer.h" />
+    <ClInclude Include="Source\AcsFramework_Core\Simulation\GameplayTimerState.h" />
+    <None Include="Source\AcsFramework_Core\Simulation\Test\GameplayTimerTest.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Common\Pch.cpp">
@@ -841,6 +844,8 @@
     <ClCompile Include="Source\AcsFramework_Core\Simulation\GameplayCooldownState.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Simulation\GameplayResource.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Simulation\GameplayResourceState.cpp" />
+    <ClCompile Include="Source\AcsFramework_Core\Simulation\GameplayTimer.cpp" />
+    <ClCompile Include="Source\AcsFramework_Core\Simulation\GameplayTimerState.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

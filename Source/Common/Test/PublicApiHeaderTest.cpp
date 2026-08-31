@@ -48,6 +48,9 @@ void RunPublicApiHeaderTests( CTestHarness& Harness )
 	FGameplayResource GameplayResource{ 100.0f, 40.0f };
 	const FGameplayResourceState GameplayResourceState =
 		GameplayResource.CaptureState();
+	FGameplayTimer GameplayTimer{ 2.0f };
+	const FGameplayTimerState GameplayTimerState =
+		GameplayTimer.CaptureState();
 	CDeterministicRandom WeightedRandom;
 	constexpr f32 PublicWeights[] = { 1.0f };
 	usize WeightedIndex = 9u;
@@ -97,6 +100,9 @@ void RunPublicApiHeaderTests( CTestHarness& Harness )
 		&& GameplayResource.TrySpend( 10.0f )
 		&& GameplayResource.GetCurrentValue() == 30.0f,
 		"上限付きゲーム資源と保存状態の公開型が解決できる" );
+	Harness.Check( GameplayTimerState.IsValid()
+		&& GameplayTimer.Start() && GameplayTimer.IsRunning(),
+		"局所ゲームプレイタイマーと保存状態の公開型が解決できる" );
 	Harness.Check( WeightedRandom.TryChance( 1.0f, bPublicChanceOccurred )
 		&& bPublicChanceOccurred,
 		"決定論的な成功確率判定の公開APIが解決できる" );

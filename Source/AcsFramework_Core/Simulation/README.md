@@ -66,7 +66,8 @@ CSimulationSubsystem ── CFixedStepDriver (ACS CFixedStepClock)
 		├→ FActionHoldTracker          ← 通常履歴または固定ステップ入力から短押しと長押しを判定
 		├→ FActionTapSequenceTracker   ← 押下間隔からダブルタップや複数回タップを判定
 		├→ FGameplayCooldown           ← 使用成功から再使用可能までを明示時間で進める
-		└→ FGameplayResource           ← 上限内の消費と回復だけを決定論的に扱う
+		├→ FGameplayResource           ← 上限内の消費と回復だけを決定論的に扱う
+		└→ FGameplayTimer              ← 開始・停止・再開できる局所時間を明示入力で進める
         ↓ FSimulationEvent
 CSimulationEventQueue → 読む側 (Actor / Audio / VFX)
 ```
@@ -79,7 +80,7 @@ CSimulationEventQueue → 読む側 (Actor / Audio / VFX)
 
 | 置き場所 | 置いてよいもの | 例 |
 |---|---|---|
-| 直下 | 値型 | `FActionInput`、`FSimulationEvent`、`FSimulationContext`、`FGameplayCooldown`、`FGameplayResource` |
+| 直下 | 値型 | `FActionInput`、`FSimulationEvent`、`FSimulationContext`、`FGameplayCooldown`、`FGameplayResource`、`FGameplayTimer` |
 | 直下 | 差込口 | `IActionInputSource`、`ISimulationRule` |
 | 直下 | 部品 | `CFixedStepDriver`、`CDeterministicRandom`、`CActionInputTape`、`CSimulationEventQueue`、`CReplayFile` |
 | 直下 | 途中から始める | `CSimulationSnapshot`、`CSimulationSnapshotFile` |
@@ -425,6 +426,30 @@ DrawGauge( Stamina.GetRatio() );
 上限で止め、必要なら実際に増えた量も返す。上限を下げた場合だけ現在値を新上限へ収め、上限を
 上げても自動で満杯にはしない。負、非有限、矛盾した上限・現在値は全状態と出力を変えず拒否する。
 途中状態は`CaptureState()`で`FGameplayResourceState`へ写し、`RestoreState()`で原子的に戻せる。
+
+---
+
+### 制限時間や状態持続時間を扱う
+
+ステージの制限時間、一定時間だけ続く状態、演出の待ち時間などをゲーム規則のfieldへ持つ場合は
+`FGameplayTimer`を使う。共有callbackを予約せず、呼出側が渡したゲーム時間だけを進めるため、
+固定ステップ、記録再生、保存復元へ同じ形で組み込める。
+
+```cpp
+FGameplayTimer TimeLimit{ 90.0f };
+TimeLimit.Start();
+
+// 固定ステップごと
+TimeLimit.Update( Context.StepSeconds );
+if ( TimeLimit.WasCompleted() ) FinishStage();
+DrawTimeLimit( TimeLimit.GetRemainingSeconds(), TimeLimit.GetProgress() );
+```
+
+`Pause()`と`Resume()`は経過秒を変えず停止・再開し、`Restart()`は最新設定の0秒地点から始め直す。
+実行中や一時停止中に秒数設定を変えても現在の計測は開始時設定を保ち、次の再開始から新設定を使う。
+`WasCompleted()`は完了した更新から次の有効な`Update()`まで保持されるため、同じ固定ステップ内で
+`Restart()`しても完了処理を読み落とさない。途中状態は`FGameplayTimerState`へ保存して原子的に戻せる。
+完了時の場面遷移、ダメージ、得点などの意味はタイマーへ固定せず、利用側の規則が決める。
 
 ---
 
