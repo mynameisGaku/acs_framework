@@ -62,6 +62,7 @@ void RunPublicApiHeaderTests( CTestHarness& Harness )
 	u32 PublicOrder[] = { 0u, 1u, 2u };
 	usize PublicRandomIndex = 9u;
 	FVec3 PublicBoxPoint{};
+	FVec3 PublicTrianglePoint{};
 	FVec3 PublicDiskPoint{};
 	FVec3 PublicCylinderPoint{};
 	FVec3 PublicSpherePoint{};
@@ -135,6 +136,13 @@ void RunPublicApiHeaderTests( CTestHarness& Harness )
 		&& std::abs( PublicBoxPoint.y ) <= 2.0f
 		&& std::abs( PublicBoxPoint.z ) <= 3.0f,
 		"決定論的な3D箱内部抽選の公開APIが解決できる" );
+	Harness.Check( WeightedRandom.TryPointInTriangle3D(
+			FVec3{}, FVec3::Right(), FVec3::Up(), PublicTrianglePoint )
+		&& PublicTrianglePoint.x >= 0.0f
+		&& PublicTrianglePoint.y >= 0.0f
+		&& PublicTrianglePoint.x + PublicTrianglePoint.y <= 1.000001f
+		&& PublicTrianglePoint.z == 0.0f,
+		"決定論的な3D三角形抽選の公開APIが解決できる" );
 	Harness.Check( WeightedRandom.TryPointInDisk3D(
 			FVec3::Up(), 2.0f, PublicDiskPoint )
 		&& PublicDiskPoint.y == 0.0f

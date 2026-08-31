@@ -21,6 +21,45 @@ namespace
 			&& std::isfinite( Value.z );
 	}
 
+	/** 3頂点が有限かつ面積0でない三角形を作るならtrue。 */
+	bool IsValidTriangle3D_Internal( FVec3 PointA, FVec3 PointB,
+		FVec3 PointC ) noexcept
+	{
+		if ( !IsFiniteVector_Internal( PointA )
+			|| !IsFiniteVector_Internal( PointB )
+			|| !IsFiniteVector_Internal( PointC ) ) return false;
+
+		const f64 EdgeABX = static_cast<f64>( PointB.x ) - PointA.x;
+		const f64 EdgeABY = static_cast<f64>( PointB.y ) - PointA.y;
+		const f64 EdgeABZ = static_cast<f64>( PointB.z ) - PointA.z;
+		const f64 EdgeACX = static_cast<f64>( PointC.x ) - PointA.x;
+		const f64 EdgeACY = static_cast<f64>( PointC.y ) - PointA.y;
+		const f64 EdgeACZ = static_cast<f64>( PointC.z ) - PointA.z;
+		/** 2辺の外積。1成分でも0でなければ面積を持つ。 */
+		const f64 CrossX = EdgeABY * EdgeACZ - EdgeABZ * EdgeACY;
+		const f64 CrossY = EdgeABZ * EdgeACX - EdgeABX * EdgeACZ;
+		const f64 CrossZ = EdgeABX * EdgeACY - EdgeABY * EdgeACX;
+		return CrossX != 0.0 || CrossY != 0.0 || CrossZ != 0.0;
+	}
+
+	/** barycentric補間を頂点範囲へ収め、f32で有限な1成分を返す。 */
+	f32 InterpolateTriangleComponent_Internal( f32 PointA, f32 PointB,
+		f32 PointC, f64 WeightA, f64 WeightB, f64 WeightC ) noexcept
+	{
+		f32 Minimum = PointA;
+		f32 Maximum = PointA;
+		if ( PointB < Minimum ) Minimum = PointB;
+		if ( PointC < Minimum ) Minimum = PointC;
+		if ( PointB > Maximum ) Maximum = PointB;
+		if ( PointC > Maximum ) Maximum = PointC;
+		const f64 Interpolated = static_cast<f64>( PointA ) * WeightA
+			+ static_cast<f64>( PointB ) * WeightB
+			+ static_cast<f64>( PointC ) * WeightC;
+		if ( Interpolated <= static_cast<f64>( Minimum ) ) return Minimum;
+		if ( Interpolated >= static_cast<f64>( Maximum ) ) return Maximum;
+		return static_cast<f32>( Interpolated );
+	}
+
 	/** 有限かつ0でない方向を、極端な大きさでも安全に正規化する。 */
 	bool TryNormalizeDirection_Internal( FVec3 Value,
 		FVec3& OutDirection ) noexcept
@@ -306,6 +345,30 @@ bool CDeterministicRandom::TryPointInBox3D( FVec3 HalfExtents,
 			static_cast<f64>( HalfExtents.y ) * UnitY ),
 		HalfExtents.z == 0.0f ? 0.0f : static_cast<f32>(
 			static_cast<f64>( HalfExtents.z ) * UnitZ ) };
+	return true;
+}
+
+
+bool CDeterministicRandom::TryPointInTriangle3D( FVec3 PointA,
+	FVec3 PointB, FVec3 PointC, FVec3& OutPoint ) noexcept
+{
+	if ( !IsValidTriangle3D_Internal( PointA, PointB, PointC ) ) return false;
+
+	/** 三角形面積へ比例させるため平方根へ移した単位乱数。 */
+	const f64 RootArea = std::sqrt(
+		static_cast<f64>( NextUnitFloat() ) );
+	/** RootArea側の2頂点間を均等に分ける単位乱数。 */
+	const f64 EdgeRatio = static_cast<f64>( NextUnitFloat() );
+	const f64 WeightA = 1.0 - RootArea;
+	const f64 WeightB = RootArea * ( 1.0 - EdgeRatio );
+	const f64 WeightC = RootArea * EdgeRatio;
+	OutPoint = FVec3{
+		InterpolateTriangleComponent_Internal(
+			PointA.x, PointB.x, PointC.x, WeightA, WeightB, WeightC ),
+		InterpolateTriangleComponent_Internal(
+			PointA.y, PointB.y, PointC.y, WeightA, WeightB, WeightC ),
+		InterpolateTriangleComponent_Internal(
+			PointA.z, PointB.z, PointC.z, WeightA, WeightB, WeightC ) };
 	return true;
 }
 

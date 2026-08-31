@@ -123,6 +123,20 @@ public:
 	bool TryPointInBox3D( FVec3 HalfExtents, FVec3& OutPoint ) noexcept;
 
 	/**
+	 * 3頂点で作る3D三角形から、面積に対して均等に1点を選ぶ。
+	 *
+	 * @details 同じ種、同じ開始位置、同じ頂点順なら同じ点になり、32bit乱数を2個進める。
+	 * 頂点の座標系やworld変換は利用側が決める。
+	 * @param PointA 有限な1つ目の頂点。
+	 * @param PointB 有限な2つ目の頂点。
+	 * @param PointC 有限な3つ目の頂点。
+	 * @param OutPoint 選んだ三角形上の位置。失敗時は変更しない。
+	 * @return 有限かつ面積0でない三角形から選べたらtrue。
+	 */
+	bool TryPointInTriangle3D( FVec3 PointA, FVec3 PointB,
+		FVec3 PointC, FVec3& OutPoint ) noexcept;
+
+	/**
 	 * 指定法線を持つ原点中心の3D円盤内部から、面積に対して均等に1点を選ぶ。
 	 *
 	 * @details 中心寄りへ偏らないよう、単位乱数の平方根で中心からの距離を決める。

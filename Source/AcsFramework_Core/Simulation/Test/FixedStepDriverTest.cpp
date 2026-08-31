@@ -797,6 +797,210 @@ void RunFixedStepDriverTests( CTestHarness& Harness )
 			"連続した2回の箱抽選で6個の乱数を進める" );
 	}
 
+	Harness.BeginSuite( "CDeterministicRandom / 3D三角形を面積で選ぶ" );
+
+	{
+		constexpr usize kSampleCount = 4096u;
+		const FVec3 PointA{};
+		const FVec3 PointB{ 2.0f, 0.0f, 0.0f };
+		const FVec3 PointC{ 0.0f, 3.0f, 0.0f };
+		CDeterministicRandom A;
+		CDeterministicRandom B;
+		A.Reseed( 20260831u );
+		B.Reseed( 20260831u );
+		bool bSameAndInside = true;
+		f64 WeightSums[3]{};
+		f64 WeightSquaredSums[3]{};
+		f64 WeightCrossSums[3]{};
+		u32 MajorityWeightCounts[3]{};
+		for ( usize SampleIndex = 0u; SampleIndex < kSampleCount;
+			++SampleIndex )
+		{
+			FVec3 SampleA{};
+			FVec3 SampleB{};
+			if ( !A.TryPointInTriangle3D(
+					PointA, PointB, PointC, SampleA )
+				|| !B.TryPointInTriangle3D(
+					PointA, PointB, PointC, SampleB )
+				|| !std::isfinite( SampleA.x )
+				|| !std::isfinite( SampleA.y )
+				|| !std::isfinite( SampleA.z )
+				|| SampleA.x != SampleB.x || SampleA.y != SampleB.y
+				|| SampleA.z != SampleB.z )
+			{
+				bSameAndInside = false;
+				continue;
+			}
+
+			const f64 WeightB = static_cast<f64>( SampleA.x ) / PointB.x;
+			const f64 WeightC = static_cast<f64>( SampleA.y ) / PointC.y;
+			const f64 WeightA = 1.0 - WeightB - WeightC;
+			if ( SampleA.z != 0.0f || WeightA < -0.000001
+				|| WeightB < -0.000001 || WeightC < -0.000001
+				|| WeightA > 1.000001 || WeightB > 1.000001
+				|| WeightC > 1.000001 )
+			{
+				bSameAndInside = false;
+				continue;
+			}
+
+			const f64 Weights[3] = { WeightA, WeightB, WeightC };
+			for ( usize WeightIndex = 0u; WeightIndex < 3u; ++WeightIndex )
+			{
+				WeightSums[WeightIndex] += Weights[WeightIndex];
+				WeightSquaredSums[WeightIndex] +=
+					Weights[WeightIndex] * Weights[WeightIndex];
+				if ( Weights[WeightIndex] > 0.5 )
+				{
+					++MajorityWeightCounts[WeightIndex];
+				}
+			}
+			WeightCrossSums[0] += WeightA * WeightB;
+			WeightCrossSums[1] += WeightA * WeightC;
+			WeightCrossSums[2] += WeightB * WeightC;
+		}
+
+		const f64 InverseCount = 1.0 / static_cast<f64>( kSampleCount );
+		bool bMomentsBalanced = true;
+		bool bMajoritiesBalanced = true;
+		constexpr u32 kExpectedMajorityCount =
+			static_cast<u32>( kSampleCount / 4u );
+		constexpr u32 kMajorityTolerance = 128u;
+		for ( usize WeightIndex = 0u; WeightIndex < 3u; ++WeightIndex )
+		{
+			if ( std::abs( WeightSums[WeightIndex] * InverseCount
+					- ( 1.0 / 3.0 ) ) >= 0.03
+				|| std::abs( WeightSquaredSums[WeightIndex] * InverseCount
+					- ( 1.0 / 6.0 ) ) >= 0.03 )
+			{
+				bMomentsBalanced = false;
+			}
+			if ( MajorityWeightCounts[WeightIndex]
+					< kExpectedMajorityCount - kMajorityTolerance
+				|| MajorityWeightCounts[WeightIndex]
+					> kExpectedMajorityCount + kMajorityTolerance )
+			{
+				bMajoritiesBalanced = false;
+			}
+		}
+		Harness.Check( bSameAndInside,
+			"同じ種で同じ三角形内の有限な点を選ぶ" );
+		Harness.Check( bMomentsBalanced,
+			"3頂点の重みを対称な面積分布へ揃える" );
+		Harness.Check( std::abs(
+				WeightCrossSums[0] * InverseCount - ( 1.0 / 12.0 ) ) < 0.02
+			&& std::abs(
+				WeightCrossSums[1] * InverseCount - ( 1.0 / 12.0 ) ) < 0.02
+			&& std::abs(
+				WeightCrossSums[2] * InverseCount - ( 1.0 / 12.0 ) ) < 0.02,
+			"頂点重みの組へ不正な相関を残さない" );
+		Harness.Check( bMajoritiesBalanced,
+			"各頂点寄りの面積へ過度な偏りなく分布する" );
+		Harness.CheckEqualU64( A.GetDrawCount(), kSampleCount * 2u,
+			"三角形上の1点につき32bit乱数を2個進める" );
+	}
+
+	Harness.BeginSuite( "CDeterministicRandom / 3D三角形抽選を安全に復元する" );
+
+	{
+		constexpr usize kReplayCount = 64u;
+		CDeterministicRandom Random;
+		Random.Reseed( 271828u );
+		const FVec3 PointA{ 1.0f, 2.0f, 3.0f };
+		const FVec3 PointB{ 4.0f, 3.0f, 5.0f };
+		const FVec3 PointC{ -2.0f, 6.0f, 1.0f };
+		FVec3 Warmup{};
+		Random.TryPointInTriangle3D( PointA, PointB, PointC, Warmup );
+		FRandomSnapshot Snapshot{};
+		u64 SnapshotDrawCount = 0u;
+		Random.CaptureSnapshot( Snapshot, SnapshotDrawCount );
+		FVec3 ExpectedPoints[kReplayCount]{};
+		for ( usize Index = 0u; Index < kReplayCount; ++Index )
+		{
+			Random.TryPointInTriangle3D(
+				PointA, PointB, PointC, ExpectedPoints[Index] );
+		}
+
+		const bool bRestored = Random.TryRestoreSnapshot(
+			Snapshot, SnapshotDrawCount );
+		bool bReplayed = bRestored;
+		for ( usize Index = 0u; Index < kReplayCount; ++Index )
+		{
+			FVec3 Point{};
+			if ( !Random.TryPointInTriangle3D(
+					PointA, PointB, PointC, Point )
+				|| Point.x != ExpectedPoints[Index].x
+				|| Point.y != ExpectedPoints[Index].y
+				|| Point.z != ExpectedPoints[Index].z )
+			{
+				bReplayed = false;
+			}
+		}
+
+		Harness.CheckEqualU64( SnapshotDrawCount, 2u,
+			"三角形抽選後の消費数を写す" );
+		Harness.Check( bReplayed,
+			"途中状態へ戻すと同じ三角形上の位置列を再生する" );
+		Harness.CheckEqualU64( Random.GetDrawCount(),
+			SnapshotDrawCount + kReplayCount * 2u,
+			"復元後の三角形抽選でも消費数が一致する" );
+	}
+
+	{
+		CDeterministicRandom Random;
+		CDeterministicRandom Expected;
+		Random.Reseed( 42u );
+		Expected.Reseed( 42u );
+		FVec3 Point{ 7.0f, 8.0f, 9.0f };
+		const f32 NotANumber =
+			std::numeric_limits<f32>::quiet_NaN();
+		const f32 Infinity = std::numeric_limits<f32>::infinity();
+		const bool bRejected =
+			!Random.TryPointInTriangle3D(
+				FVec3{ NotANumber, 0.0f, 0.0f }, FVec3::Right(),
+				FVec3::Up(), Point )
+			&& !Random.TryPointInTriangle3D(
+				FVec3{}, FVec3{ Infinity, 0.0f, 0.0f },
+				FVec3::Up(), Point )
+			&& !Random.TryPointInTriangle3D(
+				FVec3{}, FVec3{}, FVec3{}, Point )
+			&& !Random.TryPointInTriangle3D(
+				FVec3{}, FVec3{ 1.0f, 1.0f, 1.0f },
+				FVec3{ 2.0f, 2.0f, 2.0f }, Point );
+		Harness.Check( bRejected && Point.x == 7.0f
+			&& Point.y == 8.0f && Point.z == 9.0f,
+			"非有限または面積0の三角形を出力変更なしで拒否する" );
+		Harness.CheckEqualU64( Random.GetDrawCount(), 0u,
+			"不正な三角形では乱数を進めない" );
+		Harness.CheckEqualU64( Random.NextU32(), Expected.NextU32(),
+			"三角形の拒否後も次の乱数値が変わらない" );
+	}
+
+	{
+		const f32 MaximumValue = std::numeric_limits<f32>::max();
+		const f32 MinimumValue = std::numeric_limits<f32>::denorm_min();
+		CDeterministicRandom Random;
+		Random.Reseed( 314159u );
+		FVec3 HugePoint{};
+		FVec3 TinyPoint{};
+		const bool bHuge = Random.TryPointInTriangle3D(
+			FVec3{ MaximumValue, MaximumValue, MaximumValue },
+			FVec3{ -MaximumValue, MaximumValue, -MaximumValue },
+			FVec3{ 0.0f, -MaximumValue, 0.0f }, HugePoint );
+		const bool bTiny = Random.TryPointInTriangle3D(
+			FVec3{}, FVec3{ MinimumValue, 0.0f, 0.0f },
+			FVec3{ 0.0f, MinimumValue, 0.0f }, TinyPoint );
+		Harness.Check( bHuge && bTiny
+			&& std::isfinite( HugePoint.x )
+			&& std::isfinite( HugePoint.y )
+			&& std::isfinite( HugePoint.z )
+			&& std::isfinite( TinyPoint.x )
+			&& std::isfinite( TinyPoint.y ) && TinyPoint.z == 0.0f,
+			"最大座標を有限に補間し最小非退化三角形も受理する" );
+		Harness.CheckEqualU64( Random.GetDrawCount(), 4u,
+			"極端な有限三角形2回で4個の乱数を進める" );
+	}
+
 	Harness.BeginSuite( "CDeterministicRandom / 3D円盤内部を面積で選ぶ" );
 
 	{

@@ -180,6 +180,27 @@ const FVec3 SpawnPosition = AreaCenter + Offset;
 
 ---
 
+## 3D三角形へ均等に散らす
+
+メッシュ面、地形面、局所surfaceなど、3頂点で定まる平面部分へ位置を散らす場合は
+`TryPointInTriangle3D()`を使う。頂点はローカル座標でもworld座標でもよく、座標系と結果の用途は
+利用側が決める。
+
+```cpp
+FVec3 SurfacePoint{};
+if ( Context.Random == nullptr
+	|| !Context.Random->TryPointInTriangle3D(
+		PointA, PointB, PointC, SurfacePoint ) ) return;
+```
+
+単位乱数の平方根から3頂点の重みを作るため、頂点や辺の近くへ偏らず三角形面積に対して均等になる。
+成功ごとに32bit乱数を2個進め、同じ種、同じ乱数位置、同じ頂点順なら同じ点になり、snapshotからも
+再生できる。全頂点は有限で、3点が同一直線上にないことを要求する。非有限または面積0の三角形は、
+出力と乱数位置を変えずfalseにする。補間はf64で行い、丸め後も各成分を頂点の最小値と最大値の間へ
+収めるため、有限なf32頂点から非有限の結果を作らない。
+
+---
+
 ## 3D円盤へ均等に散らす
 
 地面や壁に沿う出現位置、範囲演出、探索候補などを平らな円形範囲へ散らす場合は、原点中心の
