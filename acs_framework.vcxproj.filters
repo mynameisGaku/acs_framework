@@ -798,6 +798,12 @@
     <ClCompile Include="Source\AcsFramework_Core\Simulation\FixedStepDriver.cpp">
       <Filter>Source\AcsFramework_Core\Simulation</Filter>
     </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Simulation\GameplayChargePool.cpp">
+      <Filter>Source\AcsFramework_Core\Simulation</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Simulation\GameplayChargePoolState.cpp">
+      <Filter>Source\AcsFramework_Core\Simulation</Filter>
+    </ClCompile>
     <ClCompile Include="Source\AcsFramework_Core\Simulation\GameplayCooldown.cpp">
       <Filter>Source\AcsFramework_Core\Simulation</Filter>
     </ClCompile>
@@ -1691,6 +1697,12 @@
     <ClInclude Include="Source\AcsFramework_Core\Simulation\FixedStepDriver.h">
       <Filter>Source\AcsFramework_Core\Simulation</Filter>
     </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Simulation\GameplayChargePool.h">
+      <Filter>Source\AcsFramework_Core\Simulation</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Simulation\GameplayChargePoolState.h">
+      <Filter>Source\AcsFramework_Core\Simulation</Filter>
+    </ClInclude>
     <ClInclude Include="Source\AcsFramework_Core\Simulation\GameplayCooldown.h">
       <Filter>Source\AcsFramework_Core\Simulation</Filter>
     </ClInclude>
@@ -2480,6 +2492,9 @@
       <Filter>Source\AcsFramework_Core\Simulation\Test</Filter>
     </None>
     <None Include="Source\AcsFramework_Core\Simulation\Test\FixedStepDriverTest.cpp">
+      <Filter>Source\AcsFramework_Core\Simulation\Test</Filter>
+    </None>
+    <None Include="Source\AcsFramework_Core\Simulation\Test\GameplayChargePoolTest.cpp">
       <Filter>Source\AcsFramework_Core\Simulation\Test</Filter>
     </None>
     <None Include="Source\AcsFramework_Core\Simulation\Test\GameplayCooldownTest.cpp">

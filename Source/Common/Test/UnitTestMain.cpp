@@ -55,6 +55,7 @@ void RunActionTapSequenceTrackerTests( CTestHarness& Harness );
 void RunActionGamepadRebindStateTests( CTestHarness& Harness );
 void RunActionKeyRebindStateTests( CTestHarness& Harness );
 void RunGameplayCooldownTests( CTestHarness& Harness );
+void RunGameplayChargePoolTests( CTestHarness& Harness );
 void RunGameplayIntervalTests( CTestHarness& Harness );
 void RunGameplayResourceTests( CTestHarness& Harness );
 void RunGameplayTimerTests( CTestHarness& Harness );
@@ -142,6 +143,7 @@ int main()
 	RunActionGamepadRebindStateTests( Harness );
 	RunActionKeyRebindStateTests( Harness );
 	RunGameplayCooldownTests( Harness );
+	RunGameplayChargePoolTests( Harness );
 	RunGameplayIntervalTests( Harness );
 	RunGameplayResourceTests( Harness );
 	RunGameplayTimerTests( Harness );

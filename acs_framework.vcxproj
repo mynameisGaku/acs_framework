@@ -582,6 +582,9 @@
     <ClInclude Include="Source\AcsFramework_Core\Simulation\GameplayCooldown.h" />
     <ClInclude Include="Source\AcsFramework_Core\Simulation\GameplayCooldownState.h" />
     <None Include="Source\AcsFramework_Core\Simulation\Test\GameplayCooldownTest.cpp" />
+    <ClInclude Include="Source\AcsFramework_Core\Simulation\GameplayChargePool.h" />
+    <ClInclude Include="Source\AcsFramework_Core\Simulation\GameplayChargePoolState.h" />
+    <None Include="Source\AcsFramework_Core\Simulation\Test\GameplayChargePoolTest.cpp" />
     <ClInclude Include="Source\AcsFramework_Core\Simulation\GameplayInterval.h" />
     <ClInclude Include="Source\AcsFramework_Core\Simulation\GameplayIntervalState.h" />
     <None Include="Source\AcsFramework_Core\Simulation\Test\GameplayIntervalTest.cpp" />
@@ -845,6 +848,8 @@
     <ClCompile Include="Source\AcsFramework_Core\Simulation\Input\ActionCommandSequenceTrackerState.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Simulation\GameplayCooldown.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Simulation\GameplayCooldownState.cpp" />
+    <ClCompile Include="Source\AcsFramework_Core\Simulation\GameplayChargePool.cpp" />
+    <ClCompile Include="Source\AcsFramework_Core\Simulation\GameplayChargePoolState.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Simulation\GameplayInterval.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Simulation\GameplayIntervalState.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Simulation\GameplayResource.cpp" />

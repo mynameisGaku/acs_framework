@@ -47,6 +47,9 @@ void RunPublicApiHeaderTests( CTestHarness& Harness )
 	const FGameplayCooldown GameplayCooldown;
 	const FGameplayCooldownState GameplayCooldownState =
 		GameplayCooldown.CaptureState();
+	FGameplayChargePool GameplayCharges{ 2u, 1u, 0.5f };
+	const FGameplayChargePoolState GameplayChargeState =
+		GameplayCharges.CaptureState();
 	FGameplayInterval GameplayInterval{ 0.5f };
 	const FGameplayIntervalState GameplayIntervalState =
 		GameplayInterval.CaptureState();
@@ -68,6 +71,7 @@ void RunPublicApiHeaderTests( CTestHarness& Harness )
 	FVec3 PublicCapsulePoint{};
 	FVec3 PublicSpherePoint{};
 	FVec3 PublicConeDirection{};
+	u32 PublicRestoredChargeCount = 0u;
 	u32 PublicOccurrenceCount = 0u;
 	bool bPublicChanceOccurred = false;
 	WeightedRandom.Reseed( 1u );
@@ -107,6 +111,10 @@ void RunPublicApiHeaderTests( CTestHarness& Harness )
 	Harness.Check( GameplayCooldown.IsReady()
 		&& GameplayCooldownState.IsValid(),
 		"再使用待ちと保存状態の公開型が解決できる" );
+	Harness.Check( GameplayChargeState.IsValid()
+		&& GameplayCharges.Update( 0.5f, PublicRestoredChargeCount )
+		&& PublicRestoredChargeCount == 1u && GameplayCharges.IsFull(),
+		"自動回復チャージと保存状態の公開型が解決できる" );
 	Harness.Check( GameplayIntervalState.IsValid()
 		&& GameplayInterval.Start()
 		&& GameplayInterval.Update( 0.5f, PublicOccurrenceCount )

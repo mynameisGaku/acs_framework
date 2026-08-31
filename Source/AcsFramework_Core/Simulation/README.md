@@ -65,6 +65,7 @@ CSimulationSubsystem ── CFixedStepDriver (ACS CFixedStepClock)
 		├→ FActionInputBuffer          ← 通常履歴または固定ステップ入力から押下を短時間保持
 		├→ FActionHoldTracker          ← 通常履歴または固定ステップ入力から短押しと長押しを判定
 		├→ FActionTapSequenceTracker   ← 押下間隔からダブルタップや複数回タップを判定
+		├→ FGameplayChargePool         ← 整数チャージの消費と自動回復を明示時間で進める
 		├→ FGameplayCooldown           ← 使用成功から再使用可能までを明示時間で進める
 		├→ FGameplayInterval           ← 一定間隔の到達回数を明示時間で進める
 		├→ FGameplayResource           ← 上限内の消費と回復だけを決定論的に扱う
@@ -81,7 +82,7 @@ CSimulationEventQueue → 読む側 (Actor / Audio / VFX)
 
 | 置き場所 | 置いてよいもの | 例 |
 |---|---|---|
-| 直下 | 値型 | `FActionInput`、`FSimulationEvent`、`FSimulationContext`、`FGameplayCooldown`、`FGameplayInterval`、`FGameplayResource`、`FGameplayTimer` |
+| 直下 | 値型 | `FActionInput`、`FSimulationEvent`、`FSimulationContext`、`FGameplayChargePool`、`FGameplayCooldown`、`FGameplayInterval`、`FGameplayResource`、`FGameplayTimer` |
 | 直下 | 差込口 | `IActionInputSource`、`ISimulationRule` |
 | 直下 | 部品 | `CFixedStepDriver`、`CDeterministicRandom`、`CActionInputTape`、`CSimulationEventQueue`、`CReplayFile` |
 | 直下 | 途中から始める | `CSimulationSnapshot`、`CSimulationSnapshotFile` |
@@ -536,6 +537,34 @@ DrawGauge( Stamina.GetRatio() );
 上限で止め、必要なら実際に増えた量も返す。上限を下げた場合だけ現在値を新上限へ収め、上限を
 上げても自動で満杯にはしない。負、非有限、矛盾した上限・現在値は全状態と出力を変えず拒否する。
 途中状態は`CaptureState()`で`FGameplayResourceState`へ写し、`RestoreState()`で原子的に戻せる。
+
+---
+
+### 回数制の操作を時間で自動回復する
+
+複数回ぶんを溜められる能力、回避、道具、弾薬などを、1個ずつ一定時間で戻す場合は
+`FGameplayChargePool`をゲーム規則のfieldへ持つ。利用目的や実行処理を固定せず、整数の上限・現在数・
+消費・自動回復だけを扱うため、3Dキャラクター以外の規則にも同じ値型を使える。
+
+```cpp
+FGameplayChargePool DodgeCharges{ 3u, 1.5f };
+
+// 固定ステップごと
+u32 RestoredChargeCount = 0u;
+if ( !DodgeCharges.Update(
+		Context.StepSeconds, RestoredChargeCount, 4u ) ) return;
+if ( Context.WasPressed( kActionDodge )
+	&& DodgeCharges.TryConsume() ) Dodge();
+DrawCharges( DodgeCharges.GetCurrentCharges(),
+	DodgeCharges.GetRechargeProgress() );
+```
+
+満杯から消費すると0秒から回復を始め、既に不足中なら現在の進行を巻き戻さない。大きな経過時間では
+複数個を戻し、1更新の追い付き上限を超えた時間は次回以降へ残す。回復中に秒数設定を変えても、
+現在の1個は開始時設定を保ち、次の1個から新設定を使う。`Pause()` / `Resume()`、容量変更、
+`RestoreCharges()`による手動補充、`Fill()` / `Empty()`も同じ進行状態へ接続できる。
+途中状態は`FGameplayChargePoolState`へ保存して原子的に戻せる。回復時の音、表示、能力の実行などは
+返された回復数と現在数を使って利用側が決める。
 
 ---
 
