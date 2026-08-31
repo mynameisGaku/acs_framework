@@ -107,6 +107,39 @@ bool CDeterministicRandom::TryChooseWeightedIndex( const f32* Weights,
 }
 
 
+bool CDeterministicRandom::TryPointOnSphere3D( f32 Radius,
+	FVec3& OutPoint ) noexcept
+{
+	if ( !std::isfinite( Radius ) || Radius < 0.0f ) return false;
+	if ( Radius == 0.0f )
+	{
+		OutPoint = FVec3{};
+		return true;
+	}
+
+	OutPoint = NextUnitSphereDirection3D_Internal() * Radius;
+	return true;
+}
+
+
+bool CDeterministicRandom::TryPointInSphere3D( f32 Radius,
+	FVec3& OutPoint ) noexcept
+{
+	if ( !std::isfinite( Radius ) || Radius < 0.0f ) return false;
+	if ( Radius == 0.0f )
+	{
+		OutPoint = FVec3{};
+		return true;
+	}
+
+	const FVec3 Direction = NextUnitSphereDirection3D_Internal();
+	/** 体積比がrの3乗で増えるため、単位乱数を立方根へ戻す。 */
+	const f32 Distance = Radius * std::cbrt( NextUnitFloat() );
+	OutPoint = Direction * Distance;
+	return true;
+}
+
+
 u32 CDeterministicRandom::NextBounded_Internal(
 	u32 ExclusiveUpperBound ) noexcept
 {
@@ -128,6 +161,26 @@ u32 CDeterministicRandom::NextBounded_Internal(
 			return static_cast<u32>( static_cast<u64>( Sample ) % Bound );
 		}
 	}
+}
+
+
+FVec3 CDeterministicRandom::NextUnitSphereDirection3D_Internal() noexcept
+{
+	/** 上下を同面積で選ぶ-1より大きく1以下のY成分。 */
+	const f64 Vertical = 1.0
+		- 2.0 * static_cast<f64>( NextUnitFloat() );
+	/** Y軸まわりの0以上2π未満の角度。 */
+	constexpr f64 kTwoPi = 6.28318530717958647692;
+	const f64 Azimuth = kTwoPi
+		* static_cast<f64>( NextUnitFloat() );
+	const f64 HorizontalSquared = 1.0 - Vertical * Vertical;
+	const f64 Horizontal = std::sqrt(
+		HorizontalSquared > 0.0 ? HorizontalSquared : 0.0 );
+
+	return FVec3{
+		static_cast<f32>( std::cos( Azimuth ) * Horizontal ),
+		static_cast<f32>( Vertical ),
+		static_cast<f32>( std::sin( Azimuth ) * Horizontal ) };
 }
 
 

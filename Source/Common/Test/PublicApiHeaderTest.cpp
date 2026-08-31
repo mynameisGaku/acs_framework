@@ -50,6 +50,7 @@ void RunPublicApiHeaderTests( CTestHarness& Harness )
 	usize WeightedIndex = 9u;
 	u32 PublicOrder[] = { 0u, 1u, 2u };
 	usize PublicRandomIndex = 9u;
+	FVec3 PublicSpherePoint{};
 	WeightedRandom.Reseed( 1u );
 
 	Harness.Check( Position.x == 0.0f, "ACSの基本型が解決できる" );
@@ -96,4 +97,12 @@ void RunPublicApiHeaderTests( CTestHarness& Harness )
 	Harness.Check( WeightedRandom.TryChooseIndex( 3u, PublicRandomIndex )
 		&& PublicRandomIndex < 3u,
 		"決定論的な均等index抽選の公開APIが解決できる" );
+	Harness.Check( WeightedRandom.TryPointOnSphere3D(
+			2.0f, PublicSpherePoint )
+		&& LengthSq( PublicSpherePoint ) > 3.99f,
+		"決定論的な3D球面抽選の公開APIが解決できる" );
+	Harness.Check( WeightedRandom.TryPointInSphere3D(
+			2.0f, PublicSpherePoint )
+		&& LengthSq( PublicSpherePoint ) <= 4.0f,
+		"決定論的な3D球内部抽選の公開APIが解決できる" );
 }

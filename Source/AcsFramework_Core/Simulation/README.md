@@ -134,6 +134,26 @@ null以外のポインターが指定件数ぶん有効であることは、通�
 
 ---
 
+## 3D球へ均等に散らす
+
+エフェクト、出現位置、探索方向などを球状に散らす場合は、原点相対の位置を
+`TryPointOnSphere3D()`または`TryPointInSphere3D()`で作り、利用側の中心位置へ加える。
+
+```cpp
+FVec3 Offset{};
+if ( Context.Random == nullptr
+	|| !Context.Random->TryPointInSphere3D( 5.0f, Offset ) ) return;
+const FVec3 SpawnPosition = EffectCenter + Offset;
+```
+
+球面はY成分を面積に対して一様に選び、Y軸まわりの角度と組み合わせるため、極付近へ点が
+集中しない。球内部はさらに単位乱数の立方根を半径へ掛け、中心寄りではなく体積に対して一様にする。
+球面は成功ごとに32bit乱数を2個、球内部は3個進める。同じ種と乱数位置なら同じ点になり、
+snapshotへ戻した後も再生できる。半径0は原点を乱数なしで返し、負または非有限の半径は
+出力と乱数位置を変えずfalseにする。
+
+---
+
 ## 通常の場面で入力を読む
 
 固定ステップを使わない場面では、`CActionInputTracker`を場面のfieldとして持つ。

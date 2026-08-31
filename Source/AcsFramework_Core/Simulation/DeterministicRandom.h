@@ -100,6 +100,28 @@ public:
 	bool TryShuffle( T* Items, usize ItemCount ) noexcept;
 
 	/**
+	 * 原点中心の3D球面から均等に1点を選ぶ。
+	 *
+	 * @details Yを上下軸として全方向を同じ面積確率で選ぶ。半径0では原点を返し、
+	 * 乱数を進めない。利用側は返ったoffsetへ任意の中心位置を加える。
+	 * @param Radius 有限かつ0以上の球半径。
+	 * @param OutPoint 選んだ原点相対位置。失敗時は変更しない。
+	 * @return 有効な半径から選べたらtrue。
+	 */
+	bool TryPointOnSphere3D( f32 Radius, FVec3& OutPoint ) noexcept;
+
+	/**
+	 * 原点中心の3D球内部から体積に対して均等に1点を選ぶ。
+	 *
+	 * @details 中心寄りへ偏らないよう、単位乱数の立方根で半径を決める。
+	 * 半径0では原点を返し、乱数を進めない。
+	 * @param Radius 有限かつ0以上の球半径。
+	 * @param OutPoint 選んだ原点相対位置。失敗時は変更しない。
+	 * @return 有効な半径から選べたらtrue。
+	 */
+	bool TryPointInSphere3D( f32 Radius, FVec3& OutPoint ) noexcept;
+
+	/**
 	 * いまの内部状態を写し取る。
 	 *
 	 * @details 途中から再生を始めるときに使う。
@@ -129,6 +151,13 @@ private:
 	 * @return 範囲内の値。
 	 */
 	u32 NextBounded_Internal( u32 ExclusiveUpperBound ) noexcept;
+
+	/**
+	 * Yを上下軸とする単位球面から均等な方向を返す。
+	 *
+	 * @return 長さ1の方向。
+	 */
+	FVec3 NextUnitSphereDirection3D_Internal() noexcept;
 
 	/** 乱数本体。 */
 	FRandom m_Random;

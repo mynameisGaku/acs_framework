@@ -3,6 +3,7 @@
 #include "AcsFramework_Core/Simulation/FixedStepDriver.h"
 #include "Common/Test/TestHarness.h"
 
+#include <cmath>
 #include <limits>
 
 
@@ -465,5 +466,172 @@ void RunFixedStepDriverTests( CTestHarness& Harness )
 			"並べ替えない入力では乱数を進めない" );
 		Harness.CheckEqualU64( Random.NextU32(), Expected.NextU32(),
 			"拒否後も次の乱数値が変わらない" );
+	}
+
+	Harness.BeginSuite( "CDeterministicRandom / 3D球面を均等に選ぶ" );
+
+	{
+		constexpr usize kSampleCount = 4096u;
+		constexpr f32 kRadius = 3.0f;
+		constexpr f64 kRadiusSquared = 9.0;
+		CDeterministicRandom A;
+		CDeterministicRandom B;
+		A.Reseed( 20260831u );
+		B.Reseed( 20260831u );
+		bool bSameAndOnSurface = true;
+		f64 SumX = 0.0;
+		f64 SumY = 0.0;
+		f64 SumZ = 0.0;
+		f64 SumNormalizedY2 = 0.0;
+		for ( usize SampleIndex = 0u; SampleIndex < kSampleCount;
+			++SampleIndex )
+		{
+			FVec3 PointA{};
+			FVec3 PointB{};
+			if ( !A.TryPointOnSphere3D( kRadius, PointA )
+				|| !B.TryPointOnSphere3D( kRadius, PointB )
+				|| PointA.x != PointB.x || PointA.y != PointB.y
+				|| PointA.z != PointB.z ) bSameAndOnSurface = false;
+
+			const f64 LengthSquared = static_cast<f64>( PointA.x ) * PointA.x
+				+ static_cast<f64>( PointA.y ) * PointA.y
+				+ static_cast<f64>( PointA.z ) * PointA.z;
+			if ( std::abs( LengthSquared - kRadiusSquared ) > 0.00001 )
+			{
+				bSameAndOnSurface = false;
+			}
+			SumX += PointA.x;
+			SumY += PointA.y;
+			SumZ += PointA.z;
+			const f64 NormalizedY = static_cast<f64>( PointA.y ) / kRadius;
+			SumNormalizedY2 += NormalizedY * NormalizedY;
+		}
+
+		const f64 InverseCount = 1.0 / static_cast<f64>( kSampleCount );
+		Harness.Check( bSameAndOnSurface,
+			"同じ種で同じ球面位置を長さを保って選ぶ" );
+		Harness.Check( std::abs( SumX * InverseCount ) < 0.08
+			&& std::abs( SumY * InverseCount ) < 0.08
+			&& std::abs( SumZ * InverseCount ) < 0.08,
+			"球面位置の平均が中心付近へ戻る" );
+		Harness.Check( std::abs(
+			SumNormalizedY2 * InverseCount - ( 1.0 / 3.0 ) ) < 0.03,
+			"上下軸も球面面積に比例して分布する" );
+		Harness.CheckEqualU64( A.GetDrawCount(), kSampleCount * 2u,
+			"球面1点につき32bit乱数を2個進める" );
+	}
+
+	Harness.BeginSuite( "CDeterministicRandom / 3D球内部を体積で選ぶ" );
+
+	{
+		constexpr usize kSampleCount = 4096u;
+		constexpr f32 kRadius = 4.0f;
+		constexpr f64 kRadiusSquared = 16.0;
+		CDeterministicRandom Random;
+		Random.Reseed( 314159u );
+		bool bInside = true;
+		f64 SumX = 0.0;
+		f64 SumY = 0.0;
+		f64 SumZ = 0.0;
+		f64 SumNormalizedRadiusCubed = 0.0;
+		for ( usize SampleIndex = 0u; SampleIndex < kSampleCount;
+			++SampleIndex )
+		{
+			FVec3 Point{};
+			if ( !Random.TryPointInSphere3D( kRadius, Point ) ) bInside = false;
+			const f64 LengthSquared = static_cast<f64>( Point.x ) * Point.x
+				+ static_cast<f64>( Point.y ) * Point.y
+				+ static_cast<f64>( Point.z ) * Point.z;
+			if ( LengthSquared > kRadiusSquared + 0.00001 ) bInside = false;
+			const f64 NormalizedRadius = std::sqrt( LengthSquared ) / kRadius;
+			SumNormalizedRadiusCubed += NormalizedRadius
+				* NormalizedRadius * NormalizedRadius;
+			SumX += Point.x;
+			SumY += Point.y;
+			SumZ += Point.z;
+		}
+
+		const f64 InverseCount = 1.0 / static_cast<f64>( kSampleCount );
+		Harness.Check( bInside, "全ての点が指定した球内部に収まる" );
+		Harness.Check( std::abs( SumX * InverseCount ) < 0.10
+			&& std::abs( SumY * InverseCount ) < 0.10
+			&& std::abs( SumZ * InverseCount ) < 0.10,
+			"球内部位置の平均が中心付近へ戻る" );
+		Harness.Check( std::abs(
+			SumNormalizedRadiusCubed * InverseCount - 0.5 ) < 0.03,
+			"半径の3乗が一様になり体積へ比例する" );
+		Harness.CheckEqualU64( Random.GetDrawCount(), kSampleCount * 3u,
+			"球内部1点につき32bit乱数を3個進める" );
+	}
+
+	Harness.BeginSuite( "CDeterministicRandom / 3D球抽選を復元する" );
+
+	{
+		CDeterministicRandom Random;
+		Random.Reseed( 271828u );
+		FVec3 Warmup{};
+		Random.TryPointInSphere3D( 2.0f, Warmup );
+		FRandomSnapshot Snapshot{};
+		u64 SnapshotDrawCount = 0u;
+		Random.CaptureSnapshot( Snapshot, SnapshotDrawCount );
+
+		FVec3 ExpectedSurface{};
+		FVec3 ExpectedVolume{};
+		const bool bExpected = Random.TryPointOnSphere3D(
+			3.0f, ExpectedSurface )
+			&& Random.TryPointInSphere3D( 5.0f, ExpectedVolume );
+		const u64 ExpectedDrawCount = Random.GetDrawCount();
+		const bool bRestored = Random.TryRestoreSnapshot(
+			Snapshot, SnapshotDrawCount );
+		FVec3 ReplayedSurface{};
+		FVec3 ReplayedVolume{};
+		const bool bReplayed = Random.TryPointOnSphere3D(
+			3.0f, ReplayedSurface )
+			&& Random.TryPointInSphere3D( 5.0f, ReplayedVolume );
+
+		Harness.Check( bExpected && bRestored && bReplayed
+			&& ExpectedSurface.x == ReplayedSurface.x
+			&& ExpectedSurface.y == ReplayedSurface.y
+			&& ExpectedSurface.z == ReplayedSurface.z
+			&& ExpectedVolume.x == ReplayedVolume.x
+			&& ExpectedVolume.y == ReplayedVolume.y
+			&& ExpectedVolume.z == ReplayedVolume.z,
+			"途中状態へ戻すと球面と球内部の点を再生する" );
+		Harness.CheckEqualU64( SnapshotDrawCount, 3u,
+			"球内部抽選後の消費数を写す" );
+		Harness.CheckEqualU64( Random.GetDrawCount(), ExpectedDrawCount,
+			"復元後の球抽選でも消費数が一致する" );
+	}
+
+	{
+		CDeterministicRandom Random;
+		CDeterministicRandom Expected;
+		Random.Reseed( 42u );
+		Expected.Reseed( 42u );
+		FVec3 Point{ 7.0f, 8.0f, 9.0f };
+		const bool bRejected =
+			!Random.TryPointOnSphere3D( -1.0f, Point )
+			&& !Random.TryPointInSphere3D(
+				std::numeric_limits<f32>::infinity(), Point )
+			&& !Random.TryPointOnSphere3D(
+				std::numeric_limits<f32>::quiet_NaN(), Point );
+		Harness.Check( bRejected && Point.x == 7.0f
+			&& Point.y == 8.0f && Point.z == 9.0f,
+			"負または非有限の半径を出力変更なしで拒否する" );
+		Harness.CheckEqualU64( Random.GetDrawCount(), 0u,
+			"不正半径では乱数を進めない" );
+
+		FVec3 SurfaceZero{ 1.0f, 2.0f, 3.0f };
+		FVec3 VolumeZero{ 4.0f, 5.0f, 6.0f };
+		Harness.Check( Random.TryPointOnSphere3D( 0.0f, SurfaceZero )
+			&& Random.TryPointInSphere3D( 0.0f, VolumeZero )
+			&& SurfaceZero.x == 0.0f && SurfaceZero.y == 0.0f
+			&& SurfaceZero.z == 0.0f && VolumeZero.x == 0.0f
+			&& VolumeZero.y == 0.0f && VolumeZero.z == 0.0f,
+			"半径0は乱数なしで原点を返す" );
+		Harness.CheckEqualU64( Random.GetDrawCount(), 0u,
+			"半径0でも乱数を進めない" );
+		Harness.CheckEqualU64( Random.NextU32(), Expected.NextU32(),
+			"拒否と半径0の後も次の乱数値が変わらない" );
 	}
 }
