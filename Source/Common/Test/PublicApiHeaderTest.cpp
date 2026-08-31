@@ -30,6 +30,7 @@ void RunPublicApiHeaderTests( CTestHarness& Harness )
 	const FActionHoldTrackerState ActionHoldState = ActionHold.CaptureState();
 	const FActionInputBuffer ActionBuffer;
 	const FActionInputBufferState ActionBufferState = ActionBuffer.CaptureState();
+	const FActionInputMask ActionMask;
 	const CActionInputTracker ActionInput;
 	const FActionTapSequenceTracker ActionTapSequence;
 	const FActionTapSequenceTrackerState ActionTapSequenceState =
@@ -53,6 +54,9 @@ void RunPublicApiHeaderTests( CTestHarness& Harness )
 		"長押し判定と保存状態の公開型が解決できる" );
 	Harness.Check( !ActionBuffer.IsBuffered( 0u ) && ActionBufferState.IsValid(),
 		"入力猶予と保存状態の公開型が解決できる" );
+	Harness.Check( ActionMask.IsActionEnabled( 0u )
+		&& ActionMask.IsAxisEnabled( 0u ),
+		"入力許可マスクの公開型が解決できる" );
 	Harness.Check( ActionInput.GetCurrentInput().IsNeutral(), "通常フレームのアクション入力が解決できる" );
 	Harness.Check( !ActionTapSequence.IsWaitingForNextTap()
 		&& ActionTapSequenceState.IsValid(),

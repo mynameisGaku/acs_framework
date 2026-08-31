@@ -58,6 +58,7 @@ CSimulationSubsystem ── CFixedStepDriver (ACS CFixedStepClock)
         ↓ FSimulationContext     └ CDeterministicRandom (ACS FRandom + 種と引いた回数)
    ISimulationRule (ゲーム側が実装)
 		├→ FActionAxisResponse         ← 1軸または2軸の遊びを除き応答曲線を適用
+		├→ FActionInputMask            ← ゲーム状態ごとに許可した入力だけを履歴ごと残す
 		├→ FActionInputBuffer          ← 通常履歴または固定ステップ入力から押下を短時間保持
 		├→ FActionHoldTracker          ← 通常履歴または固定ステップ入力から短押しと長押しを判定
 		└→ FActionTapSequenceTracker   ← 押下間隔からダブルタップや複数回タップを判定
@@ -78,7 +79,7 @@ CSimulationEventQueue → 読む側 (Actor / Audio / VFX)
 | 直下 | 部品 | `CFixedStepDriver`、`CDeterministicRandom`、`CActionInputTape`、`CSimulationEventQueue`、`CReplayFile` |
 | 直下 | 途中から始める | `CSimulationSnapshot`、`CSimulationSnapshotFile` |
 | 直下 | 所有と順番 | `CSimulationSubsystem` |
-| `Input/` | 装置 → アクションの変換、通常履歴、通常・固定の両方で使う局所入力判定 | `IActionDeviceReader`、`CActionBindingTable`、`CActionInputTracker`、`FActionAxisResponse`、`FActionInputBuffer`、`FActionHoldTracker`、`FActionTapSequenceTracker`、`FActionKeyRebindState`、`FActionGamepadRebindState`、`CDeviceActionReader`、`CBoundActionSource` |
+| `Input/` | 装置 → アクションの変換、通常履歴、通常・固定の両方で使う局所入力判定 | `IActionDeviceReader`、`CActionBindingTable`、`CActionInputTracker`、`FActionInputMask`、`FActionAxisResponse`、`FActionInputBuffer`、`FActionHoldTracker`、`FActionTapSequenceTracker`、`FActionKeyRebindState`、`FActionGamepadRebindState`、`CDeviceActionReader`、`CBoundActionSource` |
 | `Test/` | ゲーム抜きで回す自己テスト | `SimulationDeterminismTest.cpp` |
 
 **ゲームのルールはここへ置かない。** `ISimulationRule` を実装するのはゲーム側。
@@ -106,6 +107,30 @@ const f32 MoveX = Input.GetAxis( kAxisMoveX );
 AIや入力再生なら`Input.Update( ActionInput )`、装置なしのテストなら
 `Input.Update( FakeDeviceReader )`を使う。固定ステップでは1描画フレームに複数ティック進むことが
 あるため、このトラッカーではなく`FSimulationContext::WasPressed` / `WasReleased`を使う。
+
+### ゲーム状態ごとに入力を絞る
+
+メニュー、会話、演出、操作不能中に一部の操作だけを止める場合は`FActionInputMask`を局所設定として
+持つ。既定は全許可、`None()`は全禁止なので、必要な操作だけを短く列挙できる。複数の制限は
+`Intersect()`で重ねると、両方が許可した操作だけが残る。
+
+```cpp
+FActionInputMask DialogueInput = FActionInputMask::None();
+DialogueInput.SetActionEnabled( kActionAdvanceText, true );
+DialogueInput.SetActionEnabled( kActionPause, true );
+
+FActionInput CurrentInput;
+FActionInput PreviousInput;
+DialogueInput.ApplyHistory( Input, CurrentInput, PreviousInput );
+if ( CurrentInput.IsDown( kActionAdvanceText )
+	&& !PreviousInput.IsDown( kActionAdvanceText ) ) AdvanceText();
+```
+
+現在と前回を同じマスクで変換するため、禁止中から再許可した時点でボタンを押しっぱなしでも
+新しい押下を合成しない。固定ステップでは`ApplyHistory( Context.Input,
+Context.PreviousInput, CurrentInput, PreviousInput )`を使い、変換後の2値を入力バッファ、長押し、
+複数回タップなどへそのまま渡す。許可bitを保存する場合は`GetActionMask()` / `GetAxisMask()`で取得し、
+読み込み時に`TrySetMasks()`へまとめて渡すと、未使用の軸bitを拒否して設定を原子的に保てる。
 
 ### 入力を取りこぼさない
 

@@ -46,6 +46,7 @@ void RunActionAxisResponseTests( CTestHarness& Harness );
 void RunActionBindingTableTests( CTestHarness& Harness );
 void RunActionHoldTrackerTests( CTestHarness& Harness );
 void RunActionInputBufferTests( CTestHarness& Harness );
+void RunActionInputMaskTests( CTestHarness& Harness );
 void RunActionInputTrackerTests( CTestHarness& Harness );
 void RunActionTapSequenceTrackerTests( CTestHarness& Harness );
 void RunActionGamepadRebindStateTests( CTestHarness& Harness );
@@ -125,6 +126,7 @@ int main()
 	RunActionBindingTableTests( Harness );
 	RunActionHoldTrackerTests( Harness );
 	RunActionInputBufferTests( Harness );
+	RunActionInputMaskTests( Harness );
 	RunActionInputTrackerTests( Harness );
 	RunActionTapSequenceTrackerTests( Harness );
 	RunActionGamepadRebindStateTests( Harness );
