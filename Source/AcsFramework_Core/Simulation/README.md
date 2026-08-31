@@ -244,6 +244,30 @@ const FVec3 SpawnPosition = AreaCenter + Offset;
 
 ---
 
+## 3Dカプセルへ均等に散らす
+
+キャラクター周辺の出現範囲、細長い探索領域、カプセル衝突と同形の候補位置などを扱う場合は、
+原点中心のローカルoffsetを`TryPointInCapsule3D()`で作る。軸は任意の長さで渡せ、半線分長は
+中心から両端半球の中心までの距離で指定する。全長は`2 * (HalfSegmentLength + Radius)`になる。
+
+```cpp
+FVec3 Offset{};
+if ( Context.Random == nullptr
+	|| !Context.Random->TryPointInCapsule3D(
+		AreaAxis, 2.0f, 4.0f, Offset ) ) return;
+const FVec3 SpawnPosition = AreaCenter + Offset;
+```
+
+中央円柱と両端半球は、それぞれの体積に比例して選ぶ。中央円柱は断面半径の2乗と軸位置、
+両端半球は球半径の3乗と方向を均等にするため、カプセル全体の体積へ偏りなく散らせる。
+半径と半線分長が共に0なら原点を乱数なしで返す。それ以外は球または線へ退化していても、
+領域、形状値2個、軸位置または半径に32bit乱数を1個ずつ使い、常に合計4個進める。
+同じ種、同じ乱数位置、同じ軸と寸法なら同じ点になり、snapshotからも再生できる。0方向または
+非有限の軸、負または非有限の寸法、両端半球を含むworld成分をf32で表せない寸法は、出力と
+乱数位置を変えずfalseにする。
+
+---
+
 ## 3D球へ均等に散らす
 
 エフェクト、出現位置、探索方向などを球状に散らす場合は、原点相対の位置を

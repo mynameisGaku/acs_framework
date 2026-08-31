@@ -65,6 +65,7 @@ void RunPublicApiHeaderTests( CTestHarness& Harness )
 	FVec3 PublicTrianglePoint{};
 	FVec3 PublicDiskPoint{};
 	FVec3 PublicCylinderPoint{};
+	FVec3 PublicCapsulePoint{};
 	FVec3 PublicSpherePoint{};
 	FVec3 PublicConeDirection{};
 	u32 PublicOccurrenceCount = 0u;
@@ -154,6 +155,10 @@ void RunPublicApiHeaderTests( CTestHarness& Harness )
 			+ PublicCylinderPoint.z * PublicCylinderPoint.z <= 4.0f
 		&& std::abs( PublicCylinderPoint.y ) <= 3.0f,
 		"決定論的な3D円柱内部抽選の公開APIが解決できる" );
+	Harness.Check( WeightedRandom.TryPointInCapsule3D(
+			FVec3::Up(), 2.0f, 3.0f, PublicCapsulePoint )
+		&& std::abs( PublicCapsulePoint.y ) <= 5.0f,
+		"決定論的な3Dカプセル内部抽選の公開APIが解決できる" );
 	Harness.Check( WeightedRandom.TryPointOnSphere3D(
 			2.0f, PublicSpherePoint )
 		&& LengthSq( PublicSpherePoint ) > 3.99f,

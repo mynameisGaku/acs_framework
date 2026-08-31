@@ -167,6 +167,22 @@ public:
 		f32 HalfHeight, FVec3& OutPoint ) noexcept;
 
 	/**
+	 * 指定軸を持つ原点中心の3Dカプセル内部から、体積に対して均等に1点を選ぶ。
+	 *
+	 * @details 中央線分は-HalfSegmentLength以上HalfSegmentLength以下。半径と半線分長が共に0では
+	 * 原点を返し、乱数を進めない。それ以外は球または線へ退化していても32bit乱数を4個進める。
+	 * 出力の全成分を有限に保つため、両端半球を含む各world成分がf32範囲内であることも要求する。
+	 * 利用側は返ったoffsetへ任意の中心位置を加える。
+	 * @param AxisDirection 有限かつ0でないカプセルの中心軸。長さは問わない。
+	 * @param Radius 有限かつ0以上のカプセル半径。
+	 * @param HalfSegmentLength 有限かつ0以上の中央線分の半長。
+	 * @param OutPoint 選んだ原点相対位置。失敗時は変更しない。
+	 * @return 有効な軸と寸法から選べたらtrue。
+	 */
+	bool TryPointInCapsule3D( FVec3 AxisDirection, f32 Radius,
+		f32 HalfSegmentLength, FVec3& OutPoint ) noexcept;
+
+	/**
 	 * 原点中心の3D球面から均等に1点を選ぶ。
 	 *
 	 * @details Yを上下軸として全方向を同じ面積確率で選ぶ。半径0では原点を返し、

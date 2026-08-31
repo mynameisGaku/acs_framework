@@ -183,6 +183,30 @@ namespace
 				FirstPerpendicular.z, SecondPerpendicular.z,
 				MinimumDirectionLength, Radius, HalfHeight );
 	}
+
+	/** カプセルの1つのworld成分が全ての抽選結果でf32範囲に収まるならtrue。 */
+	bool DoesCapsuleComponentFit_Internal( f32 AxisComponent,
+		f32 Radius, f32 HalfSegmentLength ) noexcept
+	{
+		/** 端の半球と中央線分が同じ符号で重なる最大絶対成分。 */
+		const f64 MaximumComponentMagnitude = static_cast<f64>( Radius )
+			+ static_cast<f64>( HalfSegmentLength )
+			* std::abs( static_cast<f64>( AxisComponent ) );
+		return MaximumComponentMagnitude
+			<= static_cast<f64>( std::numeric_limits<f32>::max() );
+	}
+
+	/** カプセルの全抽選結果を有限なFVec3で表せるならtrue。 */
+	bool CanRepresentCapsulePoint3D_Internal( FVec3 Axis,
+		f32 Radius, f32 HalfSegmentLength ) noexcept
+	{
+		return DoesCapsuleComponentFit_Internal(
+				Axis.x, Radius, HalfSegmentLength )
+			&& DoesCapsuleComponentFit_Internal(
+				Axis.y, Radius, HalfSegmentLength )
+			&& DoesCapsuleComponentFit_Internal(
+				Axis.z, Radius, HalfSegmentLength );
+	}
 }
 
 
@@ -450,6 +474,115 @@ bool CDeterministicRandom::TryPointInCylinder3D( FVec3 AxisDirection,
 		static_cast<f32>( RadialDistance
 			* static_cast<f64>( RadialDirection.z )
 			+ AxialDistance * static_cast<f64>( Axis.z ) ) };
+	return true;
+}
+
+
+bool CDeterministicRandom::TryPointInCapsule3D( FVec3 AxisDirection,
+	f32 Radius, f32 HalfSegmentLength, FVec3& OutPoint ) noexcept
+{
+	if ( !std::isfinite( Radius ) || Radius < 0.0f
+		|| !std::isfinite( HalfSegmentLength )
+		|| HalfSegmentLength < 0.0f ) return false;
+
+	FVec3 Axis;
+	if ( !TryNormalizeDirection_Internal( AxisDirection, Axis ) ) return false;
+	if ( Radius == 0.0f && HalfSegmentLength == 0.0f )
+	{
+		OutPoint = FVec3{};
+		return true;
+	}
+	if ( !CanRepresentCapsulePoint3D_Internal(
+		Axis, Radius, HalfSegmentLength ) ) return false;
+	FVec3 FirstPerpendicular;
+	FVec3 SecondPerpendicular;
+	if ( Radius > 0.0f && HalfSegmentLength > 0.0f
+		&& !TryMakePerpendicularBasis_Internal(
+			Axis, FirstPerpendicular, SecondPerpendicular ) ) return false;
+
+	/** 中央円柱と両端半球を体積比で分ける32bit抽選値。 */
+	const u32 RegionSample = NextU32();
+	/** どちらの領域でも使い、成功時の消費数を固定する1個目の形状抽選値。 */
+	const f64 FirstShapeSample = static_cast<f64>( NextUnitFloat() );
+	/** どちらの領域でも使い、成功時の消費数を固定する2個目の形状抽選値。 */
+	const f64 SecondShapeSample = static_cast<f64>( NextUnitFloat() );
+	/** どちらの領域でも使う軸位置または半径の抽選値。 */
+	const f64 ThirdShapeSample = static_cast<f64>( NextUnitFloat() );
+
+	if ( Radius == 0.0f )
+	{
+		/** 負端より大きく正端以下へ均等に移す線分上の距離。 */
+		const f64 AxialDistance = static_cast<f64>( HalfSegmentLength )
+			* ( 1.0 - 2.0 * ThirdShapeSample );
+		OutPoint = FVec3{
+			static_cast<f32>( AxialDistance * static_cast<f64>( Axis.x ) ),
+			static_cast<f32>( AxialDistance * static_cast<f64>( Axis.y ) ),
+			static_cast<f32>( AxialDistance * static_cast<f64>( Axis.z ) ) };
+		return true;
+	}
+
+	/** πと半径2乗を約分した中央円柱の体積比用重み。 */
+	const f64 CylinderWeight = 2.0
+		* static_cast<f64>( HalfSegmentLength );
+	/** πと半径2乗を約分した両端半球の体積比用重み。 */
+	const f64 CapWeight = ( 4.0 / 3.0 ) * static_cast<f64>( Radius );
+	const f64 CylinderProbability = CylinderWeight
+		/ ( CylinderWeight + CapWeight );
+	/** 32bit出目のうち中央円柱へ割り当てる先頭側の個数。 */
+	constexpr f64 kSourceValueCount = 4294967296.0;
+	const u64 CylinderValueCount = static_cast<u64>(
+		CylinderProbability * kSourceValueCount );
+	if ( static_cast<u64>( RegionSample ) < CylinderValueCount )
+	{
+		/** 中央円柱断面の面積へ比例させる半径。 */
+		const f64 RadialDistance = static_cast<f64>( Radius )
+			* std::sqrt( FirstShapeSample );
+		/** 中央円柱の軸まわりの0以上2π以下の角度。 */
+		const f64 Azimuth = kFullTurnRadians * SecondShapeSample;
+		const FVec3 RadialDirection = MakeUnitCircleDirection3D_Internal(
+			FirstPerpendicular, SecondPerpendicular, Azimuth );
+		/** 負端より大きく正端以下へ均等に移す中央円柱の軸方向距離。 */
+		const f64 AxialDistance = static_cast<f64>( HalfSegmentLength )
+			* ( 1.0 - 2.0 * ThirdShapeSample );
+		OutPoint = FVec3{
+			static_cast<f32>( RadialDistance
+				* static_cast<f64>( RadialDirection.x )
+				+ AxialDistance * static_cast<f64>( Axis.x ) ),
+			static_cast<f32>( RadialDistance
+				* static_cast<f64>( RadialDirection.y )
+				+ AxialDistance * static_cast<f64>( Axis.y ) ),
+			static_cast<f32>( RadialDistance
+				* static_cast<f64>( RadialDirection.z )
+				+ AxialDistance * static_cast<f64>( Axis.z ) ) };
+		return true;
+	}
+
+	/** 球を軸の正負半分へ分け、対応する中央線分端へ移す単位方向。 */
+	const f64 Vertical = 1.0 - 2.0 * FirstShapeSample;
+	const f64 Azimuth = kFullTurnRadians * SecondShapeSample;
+	const f64 HorizontalSquared = 1.0 - Vertical * Vertical;
+	const f64 Horizontal = std::sqrt(
+		HorizontalSquared > 0.0 ? HorizontalSquared : 0.0 );
+	const FVec3 CapDirection{
+		static_cast<f32>( std::cos( Azimuth ) * Horizontal ),
+		static_cast<f32>( Vertical ),
+		static_cast<f32>( std::sin( Azimuth ) * Horizontal ) };
+	const f64 AxisDot = static_cast<f64>( CapDirection.x ) * Axis.x
+		+ static_cast<f64>( CapDirection.y ) * Axis.y
+		+ static_cast<f64>( CapDirection.z ) * Axis.z;
+	const f64 EndpointSign = AxisDot >= 0.0 ? 1.0 : -1.0;
+	/** 半球の体積へ比例させる端点中心からの距離。 */
+	const f64 CapDistance = static_cast<f64>( Radius )
+		* std::cbrt( ThirdShapeSample );
+	const f64 EndpointDistance = EndpointSign
+		* static_cast<f64>( HalfSegmentLength );
+	OutPoint = FVec3{
+		static_cast<f32>( CapDistance * static_cast<f64>( CapDirection.x )
+			+ EndpointDistance * static_cast<f64>( Axis.x ) ),
+		static_cast<f32>( CapDistance * static_cast<f64>( CapDirection.y )
+			+ EndpointDistance * static_cast<f64>( Axis.y ) ),
+		static_cast<f32>( CapDistance * static_cast<f64>( CapDirection.z )
+			+ EndpointDistance * static_cast<f64>( Axis.z ) ) };
 	return true;
 }
 

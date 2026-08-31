@@ -1517,6 +1517,269 @@ void RunFixedStepDriverTests( CTestHarness& Harness )
 			"最大有限の円柱3回で9個の乱数を進める" );
 	}
 
+	Harness.BeginSuite( "CDeterministicRandom / 3Dカプセル内部を体積で選ぶ" );
+
+	{
+		constexpr usize kSampleCount = 8192u;
+		constexpr f32 kRadius = 2.0f;
+		constexpr f32 kHalfSegmentLength = 3.0f;
+		/** 任意向きのカプセルを確認する単位軸。 */
+		const FVec3 Axis = Normalize( FVec3{ 1.0f, 2.0f, 3.0f } );
+		CDeterministicRandom A;
+		CDeterministicRandom B;
+		A.Reseed( 20260831u );
+		B.Reseed( 20260831u );
+		bool bSameAndInside = true;
+		u32 CylinderCount = 0u;
+		u32 CapCount = 0u;
+		f64 SumX = 0.0;
+		f64 SumY = 0.0;
+		f64 SumZ = 0.0;
+		f64 SumCylinderRadiusSquared = 0.0;
+		f64 SumCylinderHeightSquared = 0.0;
+		f64 SumCapRadiusCubed = 0.0;
+		f64 SumCapAxial = 0.0;
+		for ( usize SampleIndex = 0u; SampleIndex < kSampleCount;
+			++SampleIndex )
+		{
+			FVec3 PointA{};
+			FVec3 PointB{};
+			if ( !A.TryPointInCapsule3D(
+					FVec3{ 1.0f, 2.0f, 3.0f }, kRadius,
+					kHalfSegmentLength, PointA )
+				|| !B.TryPointInCapsule3D(
+					FVec3{ 2.0f, 4.0f, 6.0f }, kRadius,
+					kHalfSegmentLength, PointB )
+				|| !std::isfinite( PointA.x ) || !std::isfinite( PointA.y )
+				|| !std::isfinite( PointA.z )
+				|| PointA.x != PointB.x || PointA.y != PointB.y
+				|| PointA.z != PointB.z )
+			{
+				bSameAndInside = false;
+				continue;
+			}
+
+			const f64 Axial = static_cast<f64>( Dot( Axis, PointA ) );
+			f64 ClosestAxial = Axial;
+			if ( ClosestAxial < -kHalfSegmentLength )
+			{
+				ClosestAxial = -kHalfSegmentLength;
+			}
+			else if ( ClosestAxial > kHalfSegmentLength )
+			{
+				ClosestAxial = kHalfSegmentLength;
+			}
+			const FVec3 ClosestPoint = Axis * static_cast<f32>( ClosestAxial );
+			const FVec3 FromSegment = PointA - ClosestPoint;
+			if ( static_cast<f64>( LengthSq( FromSegment ) )
+				> static_cast<f64>( kRadius ) * kRadius + 0.0001 )
+			{
+				bSameAndInside = false;
+			}
+
+			SumX += PointA.x;
+			SumY += PointA.y;
+			SumZ += PointA.z;
+			if ( std::abs( Axial ) <= kHalfSegmentLength + 0.00001 )
+			{
+				++CylinderCount;
+				const FVec3 Radial = PointA
+					- Axis * static_cast<f32>( Axial );
+				const f64 NormalizedRadiusSquared =
+					static_cast<f64>( LengthSq( Radial ) )
+					/ ( static_cast<f64>( kRadius ) * kRadius );
+				const f64 NormalizedHeight = Axial / kHalfSegmentLength;
+				SumCylinderRadiusSquared += NormalizedRadiusSquared;
+				SumCylinderHeightSquared += NormalizedHeight
+					* NormalizedHeight;
+			}
+			else
+			{
+				++CapCount;
+				const f64 EndpointSign = Axial >= 0.0 ? 1.0 : -1.0;
+				const FVec3 Endpoint = Axis * static_cast<f32>(
+					EndpointSign * kHalfSegmentLength );
+				const FVec3 FromEndpoint = PointA - Endpoint;
+				const f64 LocalRadius = std::sqrt(
+					static_cast<f64>( LengthSq( FromEndpoint ) ) ) / kRadius;
+				const f64 LocalAxial = ( std::abs( Axial )
+					- kHalfSegmentLength ) / kRadius;
+				if ( LocalRadius > 1.00001 || LocalAxial < -0.00001 )
+				{
+					bSameAndInside = false;
+				}
+				SumCapRadiusCubed += LocalRadius * LocalRadius * LocalRadius;
+				SumCapAxial += LocalAxial;
+			}
+		}
+
+		const f64 InverseCount = 1.0 / static_cast<f64>( kSampleCount );
+		const f64 CylinderRatio = static_cast<f64>( CylinderCount )
+			* InverseCount;
+		/** R=2、半線分長=3で中央円柱が占める9/13の体積比。 */
+		constexpr f64 kExpectedCylinderRatio = 9.0 / 13.0;
+		Harness.Check( bSameAndInside,
+			"軸の長さに依らず同じカプセル内部位置を選ぶ" );
+		Harness.Check( std::abs( SumX * InverseCount ) < 0.10
+			&& std::abs( SumY * InverseCount ) < 0.10
+			&& std::abs( SumZ * InverseCount ) < 0.10,
+			"カプセル内部位置の平均が中心付近へ戻る" );
+		Harness.Check( CylinderCount > 0u && CapCount > 0u
+			&& std::abs( CylinderRatio - kExpectedCylinderRatio ) < 0.025,
+			"中央円柱と両端半球を体積比で選ぶ" );
+		Harness.Check( std::abs( SumCylinderRadiusSquared
+				/ CylinderCount - 0.5 ) < 0.035
+			&& std::abs( SumCylinderHeightSquared
+				/ CylinderCount - ( 1.0 / 3.0 ) ) < 0.035,
+			"中央円柱を断面面積と軸方向長さへ比例して散らす" );
+		Harness.Check( std::abs( SumCapRadiusCubed / CapCount - 0.5 ) < 0.035
+			&& std::abs( SumCapAxial / CapCount - 0.375 ) < 0.035,
+			"両端半球を半径3乗と半球体積へ比例して散らす" );
+		Harness.CheckEqualU64( A.GetDrawCount(), kSampleCount * 4u,
+			"カプセル内部1点につき32bit乱数を4個進める" );
+	}
+
+	Harness.BeginSuite( "CDeterministicRandom / 3Dカプセル抽選を安全に復元する" );
+
+	{
+		constexpr usize kReplayCount = 64u;
+		CDeterministicRandom Random;
+		Random.Reseed( 271828u );
+		FVec3 Warmup{};
+		Random.TryPointInCapsule3D(
+			FVec3::Forward(), 2.0f, 3.0f, Warmup );
+		FRandomSnapshot Snapshot{};
+		u64 SnapshotDrawCount = 0u;
+		Random.CaptureSnapshot( Snapshot, SnapshotDrawCount );
+		FVec3 ExpectedPoints[kReplayCount]{};
+		for ( usize Index = 0u; Index < kReplayCount; ++Index )
+		{
+			Random.TryPointInCapsule3D( FVec3{ 1.0f, 2.0f, 3.0f },
+				4.0f, 5.0f, ExpectedPoints[Index] );
+		}
+
+		const bool bRestored = Random.TryRestoreSnapshot(
+			Snapshot, SnapshotDrawCount );
+		bool bReplayed = bRestored;
+		for ( usize Index = 0u; Index < kReplayCount; ++Index )
+		{
+			FVec3 Point{};
+			if ( !Random.TryPointInCapsule3D(
+					FVec3{ 1.0f, 2.0f, 3.0f }, 4.0f, 5.0f, Point )
+				|| Point.x != ExpectedPoints[Index].x
+				|| Point.y != ExpectedPoints[Index].y
+				|| Point.z != ExpectedPoints[Index].z )
+			{
+				bReplayed = false;
+			}
+		}
+
+		Harness.CheckEqualU64( SnapshotDrawCount, 4u,
+			"カプセル抽選後の消費数を写す" );
+		Harness.Check( bReplayed,
+			"途中状態へ戻すと同じカプセル内部位置列を再生する" );
+		Harness.CheckEqualU64( Random.GetDrawCount(),
+			SnapshotDrawCount + kReplayCount * 4u,
+			"復元後のカプセル抽選でも消費数が一致する" );
+	}
+
+	{
+		CDeterministicRandom Random;
+		CDeterministicRandom Expected;
+		Random.Reseed( 42u );
+		Expected.Reseed( 42u );
+		FVec3 Point{ 7.0f, 8.0f, 9.0f };
+		const f32 NotANumber =
+			std::numeric_limits<f32>::quiet_NaN();
+		const f32 Infinity = std::numeric_limits<f32>::infinity();
+		const f32 MaximumValue = std::numeric_limits<f32>::max();
+		const bool bRejected =
+			!Random.TryPointInCapsule3D(
+				FVec3{}, 1.0f, 1.0f, Point )
+			&& !Random.TryPointInCapsule3D(
+				FVec3{ NotANumber, 0.0f, 1.0f }, 1.0f, 1.0f, Point )
+			&& !Random.TryPointInCapsule3D(
+				FVec3{ Infinity, 0.0f, 1.0f }, 1.0f, 1.0f, Point )
+			&& !Random.TryPointInCapsule3D(
+				FVec3::Up(), -1.0f, 1.0f, Point )
+			&& !Random.TryPointInCapsule3D(
+				FVec3::Up(), 1.0f, -1.0f, Point )
+			&& !Random.TryPointInCapsule3D(
+				FVec3::Up(), NotANumber, 1.0f, Point )
+			&& !Random.TryPointInCapsule3D(
+				FVec3::Up(), 1.0f, Infinity, Point )
+			&& !Random.TryPointInCapsule3D(
+				FVec3::Up(), MaximumValue * 0.75f,
+				MaximumValue * 0.75f, Point );
+		Harness.Check( bRejected && Point.x == 7.0f
+			&& Point.y == 8.0f && Point.z == 9.0f,
+			"無効な軸、寸法、world成分範囲を出力変更なしで拒否する" );
+		Harness.CheckEqualU64( Random.GetDrawCount(), 0u,
+			"不正なカプセル入力では乱数を進めない" );
+
+		FVec3 ZeroPoint{ 1.0f, 2.0f, 3.0f };
+		Harness.Check( Random.TryPointInCapsule3D(
+				FVec3::Up(), 0.0f, 0.0f, ZeroPoint )
+			&& ZeroPoint.x == 0.0f && ZeroPoint.y == 0.0f
+			&& ZeroPoint.z == 0.0f,
+			"半径と半線分長0は有効軸を確認して乱数なしで原点を返す" );
+		Harness.CheckEqualU64( Random.GetDrawCount(), 0u,
+			"全寸法0でも乱数を進めない" );
+		Harness.CheckEqualU64( Random.NextU32(), Expected.NextU32(),
+			"拒否と全寸法0の後も次の乱数値が変わらない" );
+	}
+
+	{
+		CDeterministicRandom Random;
+		Random.Reseed( 314159u );
+		FVec3 LinePoint{};
+		const bool bLine = Random.TryPointInCapsule3D(
+			FVec3::Up(), 0.0f, 2.0f, LinePoint );
+		Harness.Check( bLine && LinePoint.x == 0.0f
+			&& std::abs( LinePoint.y ) <= 2.0f
+			&& LinePoint.z == 0.0f,
+			"半径0は中央線分へ退化する" );
+		Harness.CheckEqualU64( Random.GetDrawCount(), 4u,
+			"線へ退化してもカプセル抽選の消費数を固定する" );
+
+		FVec3 SpherePoint{};
+		const bool bSphere = Random.TryPointInCapsule3D(
+			FVec3::Forward(), 2.0f, 0.0f, SpherePoint );
+		Harness.Check( bSphere && LengthSq( SpherePoint ) <= 4.00001f,
+			"半線分長0は球へ退化する" );
+		Harness.CheckEqualU64( Random.GetDrawCount(), 8u,
+			"球へ退化してもカプセル抽選の消費数を固定する" );
+	}
+
+	{
+		const f32 MaximumValue = std::numeric_limits<f32>::max();
+		CDeterministicRandom Random;
+		Random.Reseed( 161803u );
+		FVec3 SpherePoint{};
+		FVec3 LinePoint{};
+		FVec3 BoundaryPoint{};
+		const bool bSphere = Random.TryPointInCapsule3D(
+			FVec3::Up(), MaximumValue, 0.0f, SpherePoint );
+		const bool bLine = Random.TryPointInCapsule3D(
+			FVec3{ 1.0f, 1.0f, 1.0f }, 0.0f, MaximumValue, LinePoint );
+		const bool bBoundary = Random.TryPointInCapsule3D(
+			FVec3::Up(), MaximumValue * 0.5f,
+			MaximumValue * 0.5f, BoundaryPoint );
+		Harness.Check( bSphere && bLine && bBoundary
+			&& std::isfinite( SpherePoint.x )
+			&& std::isfinite( SpherePoint.y )
+			&& std::isfinite( SpherePoint.z )
+			&& std::isfinite( LinePoint.x )
+			&& std::isfinite( LinePoint.y )
+			&& std::isfinite( LinePoint.z )
+			&& std::isfinite( BoundaryPoint.x )
+			&& std::isfinite( BoundaryPoint.y )
+			&& std::isfinite( BoundaryPoint.z ),
+			"各world成分に収まる最大有限寸法を過剰拒否しない" );
+		Harness.CheckEqualU64( Random.GetDrawCount(), 12u,
+			"最大有限のカプセル3回で12個の乱数を進める" );
+	}
+
 	Harness.BeginSuite( "CDeterministicRandom / 3D球面を均等に選ぶ" );
 
 	{
