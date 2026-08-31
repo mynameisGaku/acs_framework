@@ -31,6 +31,9 @@ void RunPublicApiHeaderTests( CTestHarness& Harness )
 	const FActionInputBuffer ActionBuffer;
 	const FActionInputBufferState ActionBufferState = ActionBuffer.CaptureState();
 	const CActionInputTracker ActionInput;
+	const FActionTapSequenceTracker ActionTapSequence;
+	const FActionTapSequenceTrackerState ActionTapSequenceState =
+		ActionTapSequence.CaptureState();
 
 	Harness.Check( Position.x == 0.0f, "ACSの基本型が解決できる" );
 	Harness.Check( !EmptyResult.Succeeded(), "3D生成結果が解決できる" );
@@ -51,4 +54,7 @@ void RunPublicApiHeaderTests( CTestHarness& Harness )
 	Harness.Check( !ActionBuffer.IsBuffered( 0u ) && ActionBufferState.IsValid(),
 		"入力猶予と保存状態の公開型が解決できる" );
 	Harness.Check( ActionInput.GetCurrentInput().IsNeutral(), "通常フレームのアクション入力が解決できる" );
+	Harness.Check( !ActionTapSequence.IsWaitingForNextTap()
+		&& ActionTapSequenceState.IsValid(),
+		"複数回タップ判定と保存状態の公開型が解決できる" );
 }

@@ -566,6 +566,9 @@
     <None Include="Source\AcsFramework_Core\Simulation\Test\ActionAxisResponseTest.cpp" />
     <None Include="Source\AcsFramework_Core\Simulation\Test\ActionHoldTrackerTest.cpp" />
     <None Include="Source\AcsFramework_Core\Simulation\Test\ActionInputBufferTest.cpp" />
+    <ClInclude Include="Source\AcsFramework_Core\Simulation\Input\ActionTapSequenceTracker.h" />
+    <ClInclude Include="Source\AcsFramework_Core\Simulation\Input\ActionTapSequenceTrackerState.h" />
+    <None Include="Source\AcsFramework_Core\Simulation\Test\ActionTapSequenceTrackerTest.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Common\Pch.cpp">
@@ -810,6 +813,8 @@
     <ClCompile Include="Source\AcsFramework_Core\Simulation\Input\ActionHoldTrackerState.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Simulation\Input\ActionInputBuffer.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Simulation\Input\ActionInputBufferState.cpp" />
+    <ClCompile Include="Source\AcsFramework_Core\Simulation\Input\ActionTapSequenceTracker.cpp" />
+    <ClCompile Include="Source\AcsFramework_Core\Simulation\Input\ActionTapSequenceTrackerState.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

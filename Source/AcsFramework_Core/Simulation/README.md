@@ -59,7 +59,8 @@ CSimulationSubsystem ── CFixedStepDriver (ACS CFixedStepClock)
    ISimulationRule (ゲーム側が実装)
 		├→ FActionAxisResponse         ← 1軸または2軸の遊びを除き応答曲線を適用
 		├→ FActionInputBuffer          ← 通常履歴または固定ステップ入力から押下を短時間保持
-		└→ FActionHoldTracker          ← 通常履歴または固定ステップ入力から短押しと長押しを判定
+		├→ FActionHoldTracker          ← 通常履歴または固定ステップ入力から短押しと長押しを判定
+		└→ FActionTapSequenceTracker   ← 押下間隔からダブルタップや複数回タップを判定
         ↓ FSimulationEvent
 CSimulationEventQueue → 読む側 (Actor / Audio / VFX)
 ```
@@ -77,7 +78,7 @@ CSimulationEventQueue → 読む側 (Actor / Audio / VFX)
 | 直下 | 部品 | `CFixedStepDriver`、`CDeterministicRandom`、`CActionInputTape`、`CSimulationEventQueue`、`CReplayFile` |
 | 直下 | 途中から始める | `CSimulationSnapshot`、`CSimulationSnapshotFile` |
 | 直下 | 所有と順番 | `CSimulationSubsystem` |
-| `Input/` | 装置 → アクションの変換、通常履歴、通常・固定の両方で使う局所入力判定 | `IActionDeviceReader`、`CActionBindingTable`、`CActionInputTracker`、`FActionAxisResponse`、`FActionInputBuffer`、`FActionHoldTracker`、`FActionKeyRebindState`、`FActionGamepadRebindState`、`CDeviceActionReader`、`CBoundActionSource` |
+| `Input/` | 装置 → アクションの変換、通常履歴、通常・固定の両方で使う局所入力判定 | `IActionDeviceReader`、`CActionBindingTable`、`CActionInputTracker`、`FActionAxisResponse`、`FActionInputBuffer`、`FActionHoldTracker`、`FActionTapSequenceTracker`、`FActionKeyRebindState`、`FActionGamepadRebindState`、`CDeviceActionReader`、`CBoundActionSource` |
 | `Test/` | ゲーム抜きで回す自己テスト | `SimulationDeterminismTest.cpp` |
 
 **ゲームのルールはここへ置かない。** `ISimulationRule` を実装するのはゲーム側。
@@ -188,6 +189,26 @@ Context.StepSeconds )`を使う。閾値を押下中に変更しても、現在�
 押下から新しい値を使う。途中状態を再現する場合は`CaptureState()`で得た
 `FActionHoldTrackerState`の各項目を`ISimulationRule`の盤面へ含め、読み込み時に
 `RestoreState()`へ渡す。追跡中の秒、操作番号、開始時閾値も戻るため、復元後の到達tickがずれない。
+
+### ダブルタップや複数回タップを判定する
+
+同じ操作を短い間隔で2回押す回避や走行切り替え、3回以上の特殊入力には
+`FActionTapSequenceTracker`を操作対象のfieldとして持つ。押した瞬間だけを数えるため、
+ボタンを押し続けても回数は増えない。必要回数へ届いた更新だけ`WasCompleted()`がtrueになる。
+
+```cpp
+FActionTapSequenceTracker DodgeTaps{ 2u, 0.25f };
+
+Input.Update();
+if ( !DodgeTaps.Update( Input, kActionDodge, DeltaSeconds ) ) return;
+if ( DodgeTaps.WasCompleted() ) Dodge();
+```
+
+固定ステップでは`Update( Context.Input, Context.PreviousInput, kActionDodge,
+Context.StepSeconds )`を使う。最大間隔を超えてから押すと、古い列を捨て、その押下を新しい1回目として
+数える。待機中に`Configure()`しても現在の列は開始時の回数と間隔を保ち、次の列から新設定になる。
+途中状態を再現する場合は`CaptureState()`で得た`FActionTapSequenceTrackerState`をゲーム規則の盤面へ
+含め、`RestoreState()`へ渡す。途中回数、直前の押下からの時間、開始時設定と操作番号をまとめて戻せる。
 
 ---
 

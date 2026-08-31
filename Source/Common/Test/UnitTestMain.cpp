@@ -47,6 +47,7 @@ void RunActionBindingTableTests( CTestHarness& Harness );
 void RunActionHoldTrackerTests( CTestHarness& Harness );
 void RunActionInputBufferTests( CTestHarness& Harness );
 void RunActionInputTrackerTests( CTestHarness& Harness );
+void RunActionTapSequenceTrackerTests( CTestHarness& Harness );
 void RunActionGamepadRebindStateTests( CTestHarness& Harness );
 void RunActionKeyRebindStateTests( CTestHarness& Harness );
 void RunMusicStateArbiterTests( CTestHarness& Harness );
@@ -125,6 +126,7 @@ int main()
 	RunActionHoldTrackerTests( Harness );
 	RunActionInputBufferTests( Harness );
 	RunActionInputTrackerTests( Harness );
+	RunActionTapSequenceTrackerTests( Harness );
 	RunActionGamepadRebindStateTests( Harness );
 	RunActionKeyRebindStateTests( Harness );
 	RunMusicStateArbiterTests( Harness );
