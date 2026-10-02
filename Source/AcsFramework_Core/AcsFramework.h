@@ -136,6 +136,8 @@
 #include "AcsFramework_Core/Simulation/Input/ActionAxisResponse.h"
 #include "AcsFramework_Core/Simulation/Input/ActionDirection2D.h"
 #include "AcsFramework_Core/Simulation/Input/ActionDirectionQuantizer.h"
+#include "AcsFramework_Core/Simulation/Input/ActionDirectionRepeatTracker.h"
+#include "AcsFramework_Core/Simulation/Input/ActionDirectionRepeatTrackerState.h"
 #include "AcsFramework_Core/Simulation/Input/ActionDirectionTracker.h"
 #include "AcsFramework_Core/Simulation/Input/ActionDirectionTrackerState.h"
 #include "AcsFramework_Core/Simulation/Input/ActionBindingTable.h"

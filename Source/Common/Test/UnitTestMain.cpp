@@ -44,6 +44,7 @@ void RunActionInputTapeTests( CTestHarness& Harness );
 void RunSimulationSnapshotTests( CTestHarness& Harness );
 void RunActionAxisResponseTests( CTestHarness& Harness );
 void RunActionDirectionQuantizerTests( CTestHarness& Harness );
+void RunActionDirectionRepeatTrackerTests( CTestHarness& Harness );
 void RunActionDirectionTrackerTests( CTestHarness& Harness );
 void RunActionBindingTableTests( CTestHarness& Harness );
 void RunActionChordTests( CTestHarness& Harness );
@@ -136,6 +137,7 @@ int main()
 	RunSimulationSnapshotTests( Harness );
 	RunActionAxisResponseTests( Harness );
 	RunActionDirectionQuantizerTests( Harness );
+	RunActionDirectionRepeatTrackerTests( Harness );
 	RunActionDirectionTrackerTests( Harness );
 	RunActionBindingTableTests( Harness );
 	RunActionChordTests( Harness );

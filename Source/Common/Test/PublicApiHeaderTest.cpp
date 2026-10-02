@@ -31,6 +31,9 @@ void RunPublicApiHeaderTests( CTestHarness& Harness )
 	const FActionDirectionQuantizer ActionDirectionQuantizer;
 	EActionDirection2D PublicActionDirection = EActionDirection2D::None;
 	FVec2 PublicActionDirectionVector{};
+	const FActionDirectionRepeatTracker ActionDirectionRepeat;
+	const FActionDirectionRepeatTrackerState ActionDirectionRepeatState =
+		ActionDirectionRepeat.CaptureState();
 	const FActionDirectionTracker ActionDirectionTracker;
 	const FActionDirectionTrackerState ActionDirectionTrackerState =
 		ActionDirectionTracker.CaptureState();
@@ -109,6 +112,11 @@ void RunPublicApiHeaderTests( CTestHarness& Harness )
 	Harness.Check( !ActionDirectionTracker.IsActive()
 		&& ActionDirectionTrackerState.IsValid(),
 		"離散方向追跡と保存状態の公開型が解決できる" );
+	Harness.Check( !ActionDirectionRepeat.IsActive()
+		&& ActionDirectionRepeatState.IsValid()
+		&& ActionDirectionRepeat.GetActiveInitialDelaySeconds() == 0.4f
+		&& ActionDirectionRepeat.GetActiveRepeatIntervalSeconds() == 0.1f,
+		"離散方向repeatと保存状態の公開型が解決できる" );
 	Harness.Check( ActionChord.IsValid() && ActionChord.IsActionRequired( 0u ),
 		"アクション同時押しの公開型が解決できる" );
 	Harness.Check( !ActionCommandSequence.IsConfigured()

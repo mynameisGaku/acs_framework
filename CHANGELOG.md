@@ -42,6 +42,7 @@ ACS Frameworkの利用側から見える追加、変更、修正を記録する�
 - アナログ1軸と2軸の遊びを除き、最大入力と方向を保って応答曲線を適用する`FActionAxisResponse`
 - 2軸入力を開始・解除閾値付きの4方向または8方向へ変換する`FActionDirectionQuantizer`
 - 2軸の離散方向を保持し、今回だけの開始・方向変更・解除と途中復元を扱う`FActionDirectionTracker`
+- 方向開始・変更を即時発火し、同方向保持を一定間隔の発火回数へ変える`FActionDirectionRepeatTracker`
 - 着地や硬直終了の直前に押した操作を短時間保持し、受理時に1回だけ消費する`FActionInputBuffer`
 - 押下猶予の設定と残り時間を検証付きで保存・原子的復元する`FActionInputBufferState`
 - 明示時間から短押し、長押し閾値到達、長押し解放を1回ずつ判定し、途中状態も復元できる`FActionHoldTracker`

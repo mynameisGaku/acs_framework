@@ -60,6 +60,7 @@ CSimulationSubsystem ── CFixedStepDriver (ACS CFixedStepClock)
 		├→ FActionAxisResponse         ← 1軸または2軸の遊びを除き応答曲線を適用
 		├→ FActionDirectionQuantizer   ← 2軸を開始・解除閾値付きの4方向または8方向へ変換
 		├→ FActionDirectionTracker     ← 離散方向の開始・変更・解除を今回結果として保持
+		├→ FActionDirectionRepeatTracker ← 方向変更を即時、同方向保持を一定間隔で発火
 		├→ FActionChord                ← 必要操作と禁止操作から同時押しを判定
 		├→ FActionCommandSequenceTracker ← 異なる操作の順番と間隔からコマンド完了を判定
 		├→ FActionInputMask            ← 1つのゲーム状態で許可した入力だけを履歴ごと残す
@@ -533,6 +534,30 @@ const FVec3 WorldDirection{ Direction2D.x, 0.0f, Direction2D.y };
 `WasStarted()`と`WasReleased()`がfalseの更新を使う。量子化設定を変える場合は`Configure()`、
 保存と途中再開には`CaptureState()` / `RestoreState()`を使う。snapshotへ入れるときは
 `FActionDirectionTrackerState`の量子化設定、現在方向、前回方向をゲーム規則の盤面へ保存する。
+
+### 離散方向を押した直後と保持中に繰り返す
+
+メニュー、格子移動、対象選択など、方向を倒した直後に1回動き、同じ方向の保持中だけ一定間隔で
+繰り返す操作には`FActionDirectionRepeatTracker`をfieldとして持つ。方向を変えた場合は古い方向の
+待ち時間を捨て、新方向を即時1回発火して待ちを始め直す。
+
+```cpp
+FActionDirectionRepeatTracker MenuDirection;
+
+Input.Update();
+u32 MoveCount = 0u;
+if ( !MenuDirection.Update(
+		Input, kMenuXAxis, kMenuYAxis, DeltaSeconds, MoveCount ) ) return;
+for ( u32 MoveIndex = 0u; MoveIndex < MoveCount; ++MoveIndex )
+{
+	MoveMenu( MenuDirection.GetDirection() );
+}
+```
+
+1更新で複数回ぶん進んだ場合も発火回数で受け取り、上限を超えた時間は次回へ残る。量子化と
+repeat時間は`Configure()`でまとめて検証する。保持中に設定を変えても現在方向の時間は固定し、
+解除または方向変更から新時間を使う。途中状態は`FActionDirectionRepeatTrackerState`へ保存し、
+方向の有無とrepeat追跡状態が矛盾する値は`RestoreState()`が原子的に拒否する。
 
 ### 短押しと長押しを分ける
 
