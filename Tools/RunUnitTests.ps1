@@ -133,6 +133,8 @@ $sources = @(
     'AcsFramework_Core\Scene\Animation3D\Test\CharacterAnimator3DTest.cpp',
     'AcsFramework_Core\Scene\Camera3D\NodeOrbitCamera3D.cpp',
     'AcsFramework_Core\Scene\Camera3D\Test\NodeOrbitCamera3DTest.cpp',
+	'AcsFramework_Core\Scene\Node3D\NodeWorldMovement3D.cpp',
+	'AcsFramework_Core\Scene\Node3D\Test\NodeWorldMovement3DTest.cpp',
 	'AcsFramework_Core\Scene\Character3D\CameraRelativeMovement3D.cpp',
 	'AcsFramework_Core\Scene\Character3D\Test\CameraRelativeMovement3DTest.cpp',
     'AcsFramework_Core\Scene\Character3D\CharacterMover3D.cpp',

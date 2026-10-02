@@ -32,6 +32,10 @@ void RunPublicApiHeaderTests( CTestHarness& Harness )
 	PublicMovementCamera.SetLookAt( FVec3{ 0.0f, 1.0f, -4.0f }, FVec3{ 0.0f, 1.0f, 0.0f } );
 	/** カメラ相対移動の公開関数が返すworld X/Z速度。 */
 	FVec2 PublicCameraRelativeVelocity{ 9.0f, 9.0f };
+	/** 共通ヘッダーからworld移動する親なしノード。 */
+	ANode PublicWorldMovingNode;
+	/** world移動後に必要なローカル位置の公開計算結果。 */
+	FVec3 PublicWorldMovingLocalPosition{ 9.0f, 9.0f, 9.0f };
 	const FActionAxisResponse AxisResponse;
 	const FActionDirectionQuantizer ActionDirectionQuantizer;
 	EActionDirection2D PublicActionDirection = EActionDirection2D::None;
@@ -108,6 +112,13 @@ void RunPublicApiHeaderTests( CTestHarness& Harness )
 		&& PublicCameraRelativeVelocity.x == 0.0f
 		&& PublicCameraRelativeVelocity.y == 3.0f,
 		"カメラ相対の3D水平移動を共通ヘッダーから計算できる" );
+	Harness.Check( TryCalculateLocalPositionAfterWorldTranslation3D( PublicWorldMovingNode, FVec3{ 1.0f, 2.0f, 3.0f }, PublicWorldMovingLocalPosition )
+		&& PublicWorldMovingLocalPosition.x == 1.0f
+		&& PublicWorldMovingLocalPosition.y == 2.0f
+		&& PublicWorldMovingLocalPosition.z == 3.0f
+		&& TryTranslateNodeWorld3D( PublicWorldMovingNode, FVec3{ 1.0f, 0.0f, 0.0f } )
+		&& PublicWorldMovingNode.Position().x == 1.0f,
+		"ノードのworld移動計算と直接適用を共通ヘッダーから使える" );
 	f32 AxisValue = 9.0f;
 	Harness.Check( AxisResponse.TryApply( 0.0f, AxisValue ) && AxisValue == 0.0f,
 		"アナログ軸応答の公開型が解決できる" );

@@ -145,7 +145,8 @@ Frameworkは金属度、粗さ、方向性の既定値だけを揃え、実際�
 戻す。球型キャラクターの次状態も、同期済み形状からACSの決定的な移動処理で計算する。
 `TryCalculateCameraRelativeVelocity3D`は2軸入力だけを水平なカメラ基準の世界X/Z速度へ変換し、
 キャラクターに限らない3D移動から使える。`CCharacterMover3D`は同じ変換とACSの移動結果を
-親座標へ戻してノードへ反映し、速度と接地状態だけを保持する。
+`TryCalculateLocalPositionAfterWorldTranslation3D`で親座標へ戻してノードへ反映し、速度と接地状態だけを
+保持する。単純なノード移動は`TryTranslateNodeWorld3D`で同じ変換と適用を1回にまとめられる。
 固定更新と入力寿命は所有せず、キャラクターごとの短い寿命なのでsubsystemにはしない。
 
 3D近接トリガーは、場面またはゲーム機能が`CProximityTrigger3D`を所有する。基準ノードへ追従する

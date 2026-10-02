@@ -81,6 +81,8 @@ HeroAnimator.Update( FCharacterAnimation3DInput{ Length( FVec2{ HeroMover.Veloci
 
 `Bind()`は球中心のローカル位置を受け取る。足元をノード原点にする場合は、Yへ球半径を指定する。
 ノードが親を持つ場合も、計算結果の世界移動量を親座標へ戻してからローカル位置へ反映する。
+この変換は公開関数`TryCalculateLocalPositionAfterWorldTranslation3D`へ委譲するため、衝突を使わない
+任意ノードは`TryTranslateNodeWorld3D`で同じworld移動を直接利用できる。
 `MoveFromCamera()`へ画面の左右・前後操作量と最大速度を渡すと、カメラの上下角を除いた向きへ
 変換する。斜め入力は長さ1へ制限するので、前後移動より速くならない。世界X/Z速度を直接決める
 AIや再生処理は`Move()`を使う。

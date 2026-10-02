@@ -455,6 +455,9 @@
     <ClInclude Include="Source\AcsFramework_Core\Scene\Collision3D\SceneSweepHit3D.h" />
     <None Include="Source\AcsFramework_Core\Scene\Collision3D\README.md" />
     <None Include="Source\AcsFramework_Core\Scene\Collision3D\Test\SceneCollision3DTest.cpp" />
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Node3D\NodeWorldMovement3D.h" />
+    <None Include="Source\AcsFramework_Core\Scene\Node3D\README.md" />
+    <None Include="Source\AcsFramework_Core\Scene\Node3D\Test\NodeWorldMovement3DTest.cpp" />
     <ClInclude Include="Source\AcsFramework_Core\Scene\Character3D\CameraRelativeMovement3D.h" />
     <ClInclude Include="Source\AcsFramework_Core\Scene\Character3D\CharacterMover3D.h" />
     <ClInclude Include="Source\AcsFramework_Core\Scene\Character3D\ThirdPersonCharacter3D.h" />
@@ -806,6 +809,7 @@
       <ClCompile Include="Source\AcsFramework_Core\Assets\Image\ImageLibrary.cpp" />
       <ClCompile Include="Source\AcsFramework_Sample\Scene\MinimalScene.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Scene\Collision3D\SceneCollision3D.cpp" />
+    <ClCompile Include="Source\AcsFramework_Core\Scene\Node3D\NodeWorldMovement3D.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Scene\Character3D\CameraRelativeMovement3D.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Scene\Character3D\CharacterMover3D.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Scene\Character3D\ThirdPersonCharacter3D.cpp" />

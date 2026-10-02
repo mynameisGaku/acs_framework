@@ -2,6 +2,7 @@
 #include "AcsFramework_Core/Scene/Character3D/CharacterMover3D.h"
 
 #include "AcsFramework_Core/Scene/Character3D/CameraRelativeMovement3D.h"
+#include "AcsFramework_Core/Scene/Node3D/NodeWorldMovement3D.h"
 
 #include <cmath>
 
@@ -55,8 +56,9 @@ bool CCharacterMover3D::Move( FVec2 DesiredWorldXZVelocity, bool bJumpRequested,
 	FKinematicCharacterMovementResult3D Result;
 	if ( !m_Collision->TryMoveCharacter( Input, State, DeltaSeconds, m_Params, Result ) ) return false;
 
+	/** ACSが返したworld移動を親座標へ戻した適用先。 */
 	FVec3 LocalPosition;
-	if ( !TryLocalPositionAfterWorldTranslation_Internal( *m_Node, Result.Translation, LocalPosition ) ) return false;
+	if ( !TryCalculateLocalPositionAfterWorldTranslation3D( *m_Node, Result.Translation, LocalPosition ) ) return false;
 
 	m_Node->SetPosition( LocalPosition );
 	m_State = Result.NextState;
@@ -148,25 +150,6 @@ bool CCharacterMover3D::TryWorldCenter_Internal( const ANode& Node, FVec3 LocalC
 	const FVec3 WorldCenter = TransformPoint( LocalCenter, Node.World().ToMat4() );
 	if ( !IsFinite_Internal( WorldCenter ) ) return false;
 	OutWorldCenter = WorldCenter;
-	return true;
-}
-
-
-bool CCharacterMover3D::TryLocalPositionAfterWorldTranslation_Internal( const ANode& Node, FVec3 WorldTranslation, FVec3& OutLocalPosition ) noexcept
-{
-	const FVec3 CurrentWorldPosition = Node.World().position;
-	if ( !IsFinite_Internal( CurrentWorldPosition ) || !IsFinite_Internal( WorldTranslation ) ) return false;
-	const FVec3 TargetWorldPosition = CurrentWorldPosition + WorldTranslation;
-	if ( !IsFinite_Internal( TargetWorldPosition ) ) return false;
-
-	FVec3 LocalPosition = TargetWorldPosition;
-	if ( const ANode* const Parent = Node.Parent() )
-	{
-		LocalPosition = TransformPoint( TargetWorldPosition, Inverse( Parent->World().ToMat4() ) );
-	}
-	if ( !IsFinite_Internal( LocalPosition ) ) return false;
-
-	OutLocalPosition = LocalPosition;
 	return true;
 }
 

@@ -28,6 +28,7 @@ ACS Frameworkの利用側から見える追加、変更、修正を記録する�
 - 既存の太陽を保ち、中心・見る方向・半径からキー、フィル、リムを配置・同期更新する`SpawnStudioLightRig3D` / `TryUpdateStudioLightRig3D`
 - 3D衝突、近接トリガー、視線操作、第三者視点キャラクター、追従カメラの接続層
 - 2軸操作をカメラ基準の水平な世界X/Z速度へ変換し、任意の3D移動へ再利用できる`TryCalculateCameraRelativeVelocity3D`
+- 親の移動・回転・拡縮に左右されず任意ノードをworld量で動かす`TryCalculateLocalPositionAfterWorldTranslation3D` / `TryTranslateNodeWorld3D`
 - 指定した1形状の進入を一度限りまたは再進入ごとに発火する`SpawnCheckpoint3D`
 - 発火番号を順番どおりに受理し、複数周の完了を決定論的に返す`FCheckpointRoute3D`
 - チェックポイント数と周回数の不一致を拒否して順序ルートを保存・復元する`FCheckpointRoute3DProgress`

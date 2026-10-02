@@ -187,6 +187,12 @@
     <Filter Include="Source\AcsFramework_Core\Scene\Model3D\Test">
       <UniqueIdentifier>{5bd1a830-88a7-ca66-6d13-4e065822d9b0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\AcsFramework_Core\Scene\Node3D">
+      <UniqueIdentifier>{0d766499-00d5-b7fa-0bce-7a2ee624be46}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\AcsFramework_Core\Scene\Node3D\Test">
+      <UniqueIdentifier>{87d1a93f-ed3f-5ae6-180b-827d414972af}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Source\AcsFramework_Core\Scene\Pick3D">
       <UniqueIdentifier>{95c2034c-64f4-a947-a3b7-83c0b7cdde25}</UniqueIdentifier>
     </Filter>
@@ -683,6 +689,9 @@
     </ClCompile>
     <ClCompile Include="Source\AcsFramework_Core\Scene\Model3D\Model3DSpawnParams.cpp">
       <Filter>Source\AcsFramework_Core\Scene\Model3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AcsFramework_Core\Scene\Node3D\NodeWorldMovement3D.cpp">
+      <Filter>Source\AcsFramework_Core\Scene\Node3D</Filter>
     </ClCompile>
     <ClCompile Include="Source\AcsFramework_Core\Scene\Pick3D\ScenePicker.cpp">
       <Filter>Source\AcsFramework_Core\Scene\Pick3D</Filter>
@@ -1586,6 +1595,9 @@
     <ClInclude Include="Source\AcsFramework_Core\Scene\Model3D\Model3DSpawnParams.h">
       <Filter>Source\AcsFramework_Core\Scene\Model3D</Filter>
     </ClInclude>
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Node3D\NodeWorldMovement3D.h">
+      <Filter>Source\AcsFramework_Core\Scene\Node3D</Filter>
+    </ClInclude>
     <ClInclude Include="Source\AcsFramework_Core\Scene\Pick3D\ScenePicker.h">
       <Filter>Source\AcsFramework_Core\Scene\Pick3D</Filter>
     </ClInclude>
@@ -2433,6 +2445,12 @@
     </None>
     <None Include="Source\AcsFramework_Core\Scene\Model3D\Test\Model3DSpawnerTest.cpp">
       <Filter>Source\AcsFramework_Core\Scene\Model3D\Test</Filter>
+    </None>
+    <None Include="Source\AcsFramework_Core\Scene\Node3D\README.md">
+      <Filter>Source\AcsFramework_Core\Scene\Node3D</Filter>
+    </None>
+    <None Include="Source\AcsFramework_Core\Scene\Node3D\Test\NodeWorldMovement3DTest.cpp">
+      <Filter>Source\AcsFramework_Core\Scene\Node3D\Test</Filter>
     </None>
     <None Include="Source\AcsFramework_Core\Scene\Pick3D\README.md">
       <Filter>Source\AcsFramework_Core\Scene\Pick3D</Filter>

@@ -98,6 +98,7 @@
 #include "AcsFramework_Core/Scene/Light3D/StudioLightRig3DSpawner.h"
 #include "AcsFramework_Core/Scene/Model3D/CollidableModel3DSpawnResult.h"
 #include "AcsFramework_Core/Scene/Model3D/Model3DSpawner.h"
+#include "AcsFramework_Core/Scene/Node3D/NodeWorldMovement3D.h"
 #include "AcsFramework_Core/Scene/Room3D/Room3DSpawner.h"
 #include "AcsFramework_Core/Scene/Room3D/Room3DSpawnParams.h"
 #include "AcsFramework_Core/Scene/Room3D/Room3DSpawnResult.h"

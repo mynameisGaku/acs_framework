@@ -110,9 +110,6 @@ private:
 	/** ノードの現在変形からキャラクター球の世界中心を作る。 */
 	static bool TryWorldCenter_Internal( const ANode& Node, FVec3 LocalCenter, FVec3& OutWorldCenter ) noexcept;
 
-	/** 世界移動量を親座標へ変換し、適用後のローカル位置を作る。 */
-	static bool TryLocalPositionAfterWorldTranslation_Internal( const ANode& Node, FVec3 WorldTranslation, FVec3& OutLocalPosition ) noexcept;
-
 	/** ACSの移動処理へ安全に渡せる調整値ならtrueを返す。 */
 	static bool IsValidParams_Internal( const FKinematicCharacterMovementParams3D& Params ) noexcept;
 

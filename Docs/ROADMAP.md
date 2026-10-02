@@ -52,6 +52,7 @@ ACS のモジュールは **438 個**ある。この枠組みが窓口を用意�
 | 3D 材質 | PBR、光沢コート、自己発光、トゥーン、布の毛羽反射、肌・蝋向け内部散乱 |
 | 3D の形状重なり | `AUi3DScene::Collision3D`、`CSceneCollision3D`、ACSの`CCollisionWorld3D` |
 | 3D のカメラ相対移動 | `TryCalculateCameraRelativeVelocity3D`、`CCharacterMover3D::MoveFromCamera`、上下角を除いたXZ速度と斜め入力制限 |
+| 3D ノードのworld移動 | `TryCalculateLocalPositionAfterWorldTranslation3D` / `TryTranslateNodeWorld3D`、親Transformの安全な逆変換 |
 | 3D の視線操作 | `AUi3DScene::PickScreen3D`、`CInteractionFocus3D`、`CWorldLabel3DLayer` |
 | 3D デバッグ描画 | `DrawLine3D`、`DrawArrow3D`、`DrawAxes3D`、`DrawGrid3D`、`DrawCircle3D`、`DrawCone3D`、`DrawCylinder3D`、`DrawBox3D`、`DrawAabb3D`、`DrawSphere3D`、ACSの`FDebugDraw3D` |
 | 遊ぶ人向け UI | `AUi3DScene`、`CUiLayer`、ACSの `AWidget` 群 |
@@ -191,7 +192,8 @@ cameraからの距離に応じて大気へ馴染み、雲も実距離まで同�
   球スイープ、壁沿い移動、貫通解消を固定回数で計算する。`CCharacterMover3D`は球中心をノードから
   読み、成功結果の世界移動量だけを親座標へ戻して反映する。画面の左右・前後操作量は公開関数
   `TryCalculateCameraRelativeVelocity3D`が水平なカメラ基準速度へ変換し、`MoveFromCamera`も同じ計算へ
-  委譲する。`TurnTowardMovement`は実速度へ滑らかに向ける。
+  委譲する。成功したworld移動量は`TryCalculateLocalPositionAfterWorldTranslation3D`が親座標へ戻し、
+  `TurnTowardMovement`は実速度へ滑らかに向ける。
   `CThirdPersonCharacter3D`はこれらと追従カメラ、任意アニメーションを1回の更新へまとめ、
   `AUi3DScene::BindThirdPersonCharacter3D`が場面所有の衝突集合とカメラへの接続を1回にする。
   新規の単一モデルなら`SpawnThirdPersonCharacter3D`が静的または骨格モデル生成、自己衝突登録、

@@ -15,6 +15,7 @@
 | 見た目 | `AcsFramework_Core/UI/Ui3DScene.h` | `TryApplyVisualPreset3D` |
 | カメラ相対の水平移動 | `AcsFramework_Core/Scene/Character3D/CameraRelativeMovement3D.h` | `TryCalculateCameraRelativeVelocity3D` |
 | ノード | `AcsFramework_Core/UI/Ui3DScene.h` | `SpawnNode3D` |
+| ノードのworld移動 | `AcsFramework_Core/Scene/Node3D/NodeWorldMovement3D.h` | `TryCalculateLocalPositionAfterWorldTranslation3D`、`TryTranslateNodeWorld3D` |
 | 地面配置 | `AcsFramework_Core/UI/Ui3DScene.h` | `SpawnGround3D` |
 | 地面更新 | `AcsFramework_Core/UI/Ui3DScene.h` | `TryUpdateGround3D` |
 | 箱 | `AcsFramework_Core/UI/Ui3DScene.h` | `SpawnBlock3D`、`TryUpdateBlock3D` |
