@@ -47,6 +47,7 @@
 #include "AcsFramework_Core/Scene/Bridge3D/Bridge3DSpawnResult.h"
 #include "AcsFramework_Core/Scene/Camera3D/NodeOrbitCamera3D.h"
 #include "AcsFramework_Core/Scene/Camera3D/NodeOrbitCamera3DParams.h"
+#include "AcsFramework_Core/Scene/Character3D/CameraRelativeMovement3D.h"
 #include "AcsFramework_Core/Scene/Character3D/CharacterMover3D.h"
 #include "AcsFramework_Core/Scene/Character3D/ThirdPersonCharacter3D.h"
 #include "AcsFramework_Core/Scene/Character3D/ThirdPersonCharacter3DActionSet.h"

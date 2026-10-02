@@ -13,6 +13,7 @@
 |---|---|---|
 | 基底場面 | `AcsFramework_Core/UI/Ui3DScene.h` | `AUi3DScene` |
 | 見た目 | `AcsFramework_Core/UI/Ui3DScene.h` | `TryApplyVisualPreset3D` |
+| カメラ相対の水平移動 | `AcsFramework_Core/Scene/Character3D/CameraRelativeMovement3D.h` | `TryCalculateCameraRelativeVelocity3D` |
 | ノード | `AcsFramework_Core/UI/Ui3DScene.h` | `SpawnNode3D` |
 | 地面配置 | `AcsFramework_Core/UI/Ui3DScene.h` | `SpawnGround3D` |
 | 地面更新 | `AcsFramework_Core/UI/Ui3DScene.h` | `TryUpdateGround3D` |

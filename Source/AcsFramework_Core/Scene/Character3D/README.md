@@ -62,6 +62,10 @@ PreviousInput = CurrentInput;
 成功した移動だけをシーンノードへ反映する。重力、床への接地、壁沿いの移動、天井、
 初期貫通の解消を1回の`Move()`で扱える。
 
+`TryCalculateCameraRelativeVelocity3D`は移動対象や衝突を所有せず、2軸操作をカメラ基準の
+水平な世界X/Z速度へ変換する。キャラクター以外のノード、AI、独自の移動処理でも同じ操作感を
+使いたい場合は、この関数だけを呼べる。失敗時は出力速度を変更しない。
+
 ```cpp
 CSceneCollision3D& Collision = Collision3D();
 Collision.TryAddBox( *Floor, FVec3{}, FVec3{ 10.0f, 0.5f, 10.0f }, 0x1u );

@@ -27,6 +27,11 @@ void RunPublicApiHeaderTests( CTestHarness& Harness )
 	const FCheckpointRoute3DTimerState RouteTimerState = RouteTimer.CaptureState();
 	const FCheckpointRoute3DTimingResult RouteTiming{};
 	const EVisualPreset3D Preset = EVisualPreset3D::Balanced;
+	/** 共通ヘッダーから使うカメラ相対移動の基準。 */
+	CCamera PublicMovementCamera;
+	PublicMovementCamera.SetLookAt( FVec3{ 0.0f, 1.0f, -4.0f }, FVec3{ 0.0f, 1.0f, 0.0f } );
+	/** カメラ相対移動の公開関数が返すworld X/Z速度。 */
+	FVec2 PublicCameraRelativeVelocity{ 9.0f, 9.0f };
 	const FActionAxisResponse AxisResponse;
 	const FActionDirectionQuantizer ActionDirectionQuantizer;
 	EActionDirection2D PublicActionDirection = EActionDirection2D::None;
@@ -99,6 +104,10 @@ void RunPublicApiHeaderTests( CTestHarness& Harness )
 		&& RouteTiming.TotalElapsedSeconds == 0.0,
 		"3Dチェックポイント順序ルートの計測型が解決できる" );
 	Harness.Check( Preset == EVisualPreset3D::Balanced, "3D見た目設定が解決できる" );
+	Harness.Check( TryCalculateCameraRelativeVelocity3D( PublicMovementCamera, FVec2{ 0.0f, 1.0f }, 3.0f, PublicCameraRelativeVelocity )
+		&& PublicCameraRelativeVelocity.x == 0.0f
+		&& PublicCameraRelativeVelocity.y == 3.0f,
+		"カメラ相対の3D水平移動を共通ヘッダーから計算できる" );
 	f32 AxisValue = 9.0f;
 	Harness.Check( AxisResponse.TryApply( 0.0f, AxisValue ) && AxisValue == 0.0f,
 		"アナログ軸応答の公開型が解決できる" );

@@ -455,6 +455,7 @@
     <ClInclude Include="Source\AcsFramework_Core\Scene\Collision3D\SceneSweepHit3D.h" />
     <None Include="Source\AcsFramework_Core\Scene\Collision3D\README.md" />
     <None Include="Source\AcsFramework_Core\Scene\Collision3D\Test\SceneCollision3DTest.cpp" />
+    <ClInclude Include="Source\AcsFramework_Core\Scene\Character3D\CameraRelativeMovement3D.h" />
     <ClInclude Include="Source\AcsFramework_Core\Scene\Character3D\CharacterMover3D.h" />
     <ClInclude Include="Source\AcsFramework_Core\Scene\Character3D\ThirdPersonCharacter3D.h" />
     <ClInclude Include="Source\AcsFramework_Core\Scene\Character3D\ThirdPersonCharacter3DActionSet.h" />
@@ -466,6 +467,7 @@
     <ClInclude Include="Source\AcsFramework_Core\Scene\Character3D\ThirdPersonCharacter3DSpawnResult.h" />
     <ClInclude Include="Source\AcsFramework_Core\Scene\Character3D\ThirdPersonCharacter3DUpdateResult.h" />
     <None Include="Source\AcsFramework_Core\Scene\Character3D\README.md" />
+    <None Include="Source\AcsFramework_Core\Scene\Character3D\Test\CameraRelativeMovement3DTest.cpp" />
     <None Include="Source\AcsFramework_Core\Scene\Character3D\Test\CharacterMover3DTest.cpp" />
     <None Include="Source\AcsFramework_Core\Scene\Character3D\Test\ThirdPersonCharacter3DActionSetTest.cpp" />
     <None Include="Source\AcsFramework_Core\Scene\Character3D\Test\ThirdPersonCharacter3DControlPresetTest.cpp" />
@@ -804,6 +806,7 @@
       <ClCompile Include="Source\AcsFramework_Core\Assets\Image\ImageLibrary.cpp" />
       <ClCompile Include="Source\AcsFramework_Sample\Scene\MinimalScene.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Scene\Collision3D\SceneCollision3D.cpp" />
+    <ClCompile Include="Source\AcsFramework_Core\Scene\Character3D\CameraRelativeMovement3D.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Scene\Character3D\CharacterMover3D.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Scene\Character3D\ThirdPersonCharacter3D.cpp" />
     <ClCompile Include="Source\AcsFramework_Core\Scene\Character3D\ThirdPersonCharacter3DActionSet.cpp" />

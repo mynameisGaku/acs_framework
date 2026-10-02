@@ -116,9 +116,6 @@ private:
 	/** ACSの移動処理へ安全に渡せる調整値ならtrueを返す。 */
 	static bool IsValidParams_Internal( const FKinematicCharacterMovementParams3D& Params ) noexcept;
 
-	/** 画面上の操作量を水平なカメラ基準の世界X/Z速度へ変換する。 */
-	static bool TryCameraRelativeVelocity_Internal( const CCamera& Camera, FVec2 MoveAxes, f32 MaximumSpeed, FVec2& OutVelocity ) noexcept;
-
 	/** 全成分が有限ならtrueを返す。 */
 	static bool IsFinite_Internal( FVec3 Value ) noexcept;
 
